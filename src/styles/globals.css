@@ -74,3 +74,75 @@
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
 }
+
+/* =============================================================================
+   ConnectedButtonGroup - CSS-based shape rules using pseudo-selectors
+   Horizontal: left/right edges, Vertical: top/bottom edges
+   - First button: outer edge from shape, inner edge squared
+   - Last button: outer edge from shape, inner edge squared
+   - Middle buttons: all corners squared
+   - Selected buttons: always full circle (overrides all above)
+   ============================================================================= */
+
+/* Radius values per size */
+[data-connected-group][data-size="xs"] { --square-radius: 0.5rem; --round-radius: 1rem; }
+[data-connected-group][data-size="sm"] { --square-radius: 0.5rem; --round-radius: 1.25rem; }
+[data-connected-group][data-size="md"] { --square-radius: 0.75rem; --round-radius: 1.75rem; }
+[data-connected-group][data-size="lg"] { --square-radius: 1rem; --round-radius: 3rem; }
+[data-connected-group][data-size="xl"] { --square-radius: 1rem; --round-radius: 3.75rem; }
+
+/* -----------------------------------------------------------------------------
+   Horizontal orientation (default)
+   ----------------------------------------------------------------------------- */
+
+/* First button: right side squared, left keeps shape */
+[data-connected-group][data-orientation="horizontal"] > *:first-child:not(:last-child):not([data-selected]) {
+  border-top-right-radius: var(--square-radius);
+  border-bottom-right-radius: var(--square-radius);
+}
+
+/* Last button: left side squared, right keeps shape */
+[data-connected-group][data-orientation="horizontal"] > *:last-child:not(:first-child):not([data-selected]) {
+  border-top-left-radius: var(--square-radius);
+  border-bottom-left-radius: var(--square-radius);
+}
+
+/* Middle buttons: all corners squared */
+[data-connected-group][data-orientation="horizontal"] > *:not(:first-child):not(:last-child):not([data-selected]) {
+  border-radius: var(--square-radius);
+}
+
+/* -----------------------------------------------------------------------------
+   Vertical orientation
+   ----------------------------------------------------------------------------- */
+
+/* First button: bottom side squared, top keeps shape */
+[data-connected-group][data-orientation="vertical"] > *:first-child:not(:last-child):not([data-selected]) {
+  border-bottom-left-radius: var(--square-radius);
+  border-bottom-right-radius: var(--square-radius);
+}
+
+/* Last button: top side squared, bottom keeps shape */
+[data-connected-group][data-orientation="vertical"] > *:last-child:not(:first-child):not([data-selected]) {
+  border-top-left-radius: var(--square-radius);
+  border-top-right-radius: var(--square-radius);
+}
+
+/* Middle buttons: all corners squared */
+[data-connected-group][data-orientation="vertical"] > *:not(:first-child):not(:last-child):not([data-selected]) {
+  border-radius: var(--square-radius);
+}
+
+/* -----------------------------------------------------------------------------
+   Selected & Morph (applies to both orientations)
+   ----------------------------------------------------------------------------- */
+
+/* Selected buttons -> always full circle (overrides all above) */
+[data-connected-group] > *[data-selected] {
+  border-radius: var(--round-radius);
+}
+
+/* Selected middle buttons with morph: active state -> squared (first/last don't morph) */
+[data-connected-group][data-morph] > *[data-selected]:not(:first-child):not(:last-child):active {
+  border-radius: var(--square-radius);
+}
