@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@import "m3-ripple/ripple.css";
+
+@theme {
+  /* Primary */
+  --color-primary: hsl(218 38% 41%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-primary-container: hsl(221 100% 92%);
+  --color-primary-container-foreground: hsl(217 50% 31%);
+
+  /* Secondary */
+  --color-secondary: hsl(220 14% 39%);
+  --color-secondary-foreground: hsl(0 0% 100%);
+  --color-secondary-container: hsl(225 72% 92%);
+  --color-secondary-container-foreground: hsl(220 18% 30%);
+
+  /* Tertiary */
+  --color-tertiary: hsl(291 16% 40%);
+  --color-tertiary-foreground: hsl(0 0% 100%);
+  --color-tertiary-container: hsl(295 91% 92%);
+  --color-tertiary-container-foreground: hsl(290 20% 30%);
+
+  /* Error */
+  --color-error: hsl(0 75% 42%);
+  --color-error-foreground: hsl(0 0% 100%);
+  --color-error-container: hsl(6 100% 92%);
+  --color-error-container-foreground: hsl(356 100% 29%);
+
+  /* Surface */
+  --color-background: hsl(240 100% 99%);
+  --color-foreground: hsl(213 12% 11%);
+  --color-surface: hsl(240 100% 99%);
+  --color-surface-foreground: hsl(213 12% 11%);
+  --color-surface-variant: hsl(227, 6%, 68%);
+  --color-surface-variant-foreground: hsl(222 7% 29%);
+  --color-surface-tint: hsl(218 38% 41%);
+
+  /* Surface containers */
+  --color-surface-dim: hsl(225 14% 86%);
+  --color-surface-bright: hsl(240 100% 99%);
+  --color-surface-container-lowest: hsl(0 0% 100%);
+  --color-surface-container-low: hsl(240 58% 97%);
+  --color-surface-container: hsl(233 27% 94%);
+  --color-surface-container-high: hsl(230 18% 92%);
+  --color-surface-container-highest: hsl(229 14% 90%);
+
+  /* Outline */
+  --color-outline: hsl(225, 5%, 29%);
+  --color-outline-foreground: hsl(0 0% 100%);
+  --color-outline-variant: hsl(230 11% 79%);
+
+  /* Inverse */
+  --color-inverse-surface: hsl(225 8% 20%);
+  --color-inverse-surface-foreground: hsl(240 31% 95%);
+  --color-inverse-primary: hsl(220 100% 83%);
+
+  /* Shadow & Scrim */
+  --color-shadow: hsl(0 0% 0%);
+  --color-scrim: hsl(0 0% 0%);
+
+  /* Aliases for compatibility */
+  --color-destructive: var(--color-error);
+  --color-destructive-foreground: var(--color-error-foreground);
+  --color-muted: var(--color-surface-variant);
+  --color-muted-foreground: var(--color-surface-variant-foreground);
+  --color-accent: var(--color-tertiary);
+  --color-accent-foreground: var(--color-tertiary-foreground);
+  --color-border: var(--color-outline-variant);
+  --color-input: var(--color-outline-variant);
+  --color-ring: var(--color-primary);
+
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+}

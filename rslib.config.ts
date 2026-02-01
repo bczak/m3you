@@ -18,4 +18,11 @@ export default defineConfig({
     target: 'web',
   },
   plugins: [pluginReact()],
+  tools: {
+    postcss: {
+      postcssOptions: {
+        plugins: [require('@tailwindcss/postcss')],
+      },
+    },
+  },
 });

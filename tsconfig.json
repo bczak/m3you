@@ -10,7 +10,8 @@
     "moduleResolution": "bundler",
     "useDefineForClassFields": true,
     "paths": {
-      "m3-lib": ["."]
+      "m3-lib": ["."],
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src", "docs", "rspress.config.ts"]
