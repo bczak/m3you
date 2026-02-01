@@ -9,6 +9,15 @@ export {
   ConnectedButtonGroup,
   connectedButtonGroupVariants,
 } from './components/ui/button-group';
+export type { ExtendedFABProps } from './components/ui/extended-fab';
+export { ExtendedFAB } from './components/ui/extended-fab';
+export type {
+  FABMenuContentProps,
+  FABMenuItemProps,
+  FABMenuProps,
+  FABMenuTriggerProps,
+} from './components/ui/fab-menu';
+export { FABMenu, FABMenuContent, FABMenuItem, FABMenuTrigger } from './components/ui/fab-menu';
 export type { IconButtonProps } from './components/ui/icon-button';
 export { IconButton, iconButtonVariants } from './components/ui/icon-button';
 
