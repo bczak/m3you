@@ -85,11 +85,26 @@
    ============================================================================= */
 
 /* Radius values per size */
-[data-connected-group][data-size="xs"] { --square-radius: 0.5rem; --round-radius: 1rem; }
-[data-connected-group][data-size="sm"] { --square-radius: 0.5rem; --round-radius: 1.25rem; }
-[data-connected-group][data-size="md"] { --square-radius: 0.75rem; --round-radius: 1.75rem; }
-[data-connected-group][data-size="lg"] { --square-radius: 1rem; --round-radius: 3rem; }
-[data-connected-group][data-size="xl"] { --square-radius: 1rem; --round-radius: 3.75rem; }
+[data-connected-group][data-size="xs"] {
+  --square-radius: 0.5rem;
+  --round-radius: 1rem;
+}
+[data-connected-group][data-size="sm"] {
+  --square-radius: 0.5rem;
+  --round-radius: 1.25rem;
+}
+[data-connected-group][data-size="md"] {
+  --square-radius: 0.75rem;
+  --round-radius: 1.75rem;
+}
+[data-connected-group][data-size="lg"] {
+  --square-radius: 1rem;
+  --round-radius: 3rem;
+}
+[data-connected-group][data-size="xl"] {
+  --square-radius: 1rem;
+  --round-radius: 3.75rem;
+}
 
 /* -----------------------------------------------------------------------------
    Horizontal orientation (default)
