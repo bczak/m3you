@@ -160,4 +160,3 @@ test('has relative class for ripple positioning', async () => {
   const button = screen.getByRole('button', { name: 'Ripple Button' });
   expect(button).toHaveClass('relative');
 });
-

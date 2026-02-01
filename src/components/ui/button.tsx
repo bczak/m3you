@@ -1,18 +1,19 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Ripple } from 'm3-ripple';
-import { type HTMLMotionProps, motion } from 'motion/react';
 import * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'relative inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap font-medium transition-[color,background-color,border-radius] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  'relative inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap font-medium transition-[color,background-color,border-radius,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        filled: 'bg-primary text-primary-foreground disabled:bg-muted disabled:text-muted-foreground',
+        filled:
+          'bg-primary text-primary-foreground hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)] disabled:bg-muted disabled:text-muted-foreground',
         elevated: 'bg-surface-container text-foreground shadow-md',
-        tonal: 'bg-secondary-container text-secondary-container-foreground',
+        tonal:
+          'bg-secondary-container text-secondary-container-foreground hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]',
         outlined: 'border border-outline bg-transparent text-primary',
         text: 'bg-transparent text-primary hover:bg-secondary-container/50',
       },
@@ -91,62 +92,28 @@ const buttonVariants = cva(
   },
 );
 
-// CRITICAL: All animation configs MUST be outside the component to prevent infinite re-renders
-const hoverShadow = '0 2px 6px 2px rgba(0,0,0,0.15), 0 1px 2px 0 rgba(0,0,0,0.3)';
-
-const defaultAnimations = {
-  transition: {
-    boxShadow: { type: 'tween', duration: 0.2, ease: 'easeInOut' },
-  },
-} as const;
-
-const variantHoverAnimations = {
-  filled: { boxShadow: hoverShadow },
-  elevated: {},
-  tonal: { boxShadow: hoverShadow },
-  outlined: {},
-  text: {},
-} as const;
-
-export type ButtonProps = HTMLMotionProps<'button'> &
+export type ButtonProps = React.ComponentProps<'button'> &
   Omit<VariantProps<typeof buttonVariants>, 'selected'> & {
     selected?: boolean;
   };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    {
-      className,
-      variant = 'filled',
-      shape = 'round',
-      size = 'sm',
-      morph = false,
-      selected,
-      whileHover,
-      whileTap,
-      transition,
-      children,
-      ...props
-    },
+    { className, variant = 'filled', shape = 'round', size = 'sm', morph = false, selected, children, ...props },
     ref,
   ) => {
-    const defaultHover = variantHoverAnimations[variant ?? 'filled'];
-
     // Only pass selected to variants if it's defined and variant is not 'text' (text buttons are not toggleable)
     const selectedVariant = selected !== undefined && variant !== 'text' ? selected : undefined;
 
     return (
-      <motion.button
+      <button
         className={cn(buttonVariants({ variant, shape, size, morph, selected: selectedVariant, className }))}
         ref={ref}
-        whileHover={whileHover ?? defaultHover}
-        whileTap={whileTap}
-        transition={transition ?? defaultAnimations.transition}
         {...props}
       >
         <Ripple />
-        {children as React.ReactNode}
-      </motion.button>
+        {children}
+      </button>
     );
   },
 );
