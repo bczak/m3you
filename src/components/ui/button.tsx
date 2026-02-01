@@ -11,10 +11,10 @@ const buttonVariants = cva(
       variant: {
         filled:
           'bg-primary text-primary-foreground hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)] disabled:bg-muted disabled:text-muted-foreground',
-        elevated: 'bg-surface-container text-foreground shadow-md',
+        elevated: 'bg-surface-container text-foreground shadow-lg',
         tonal:
           'bg-secondary-container text-secondary-container-foreground hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]',
-        outlined: 'border border-outline bg-transparent text-primary',
+        outlined: 'border border-outline/40 bg-transparent text-primary',
         text: 'bg-transparent text-primary hover:bg-secondary-container/50',
       },
       shape: {
@@ -65,7 +65,7 @@ const buttonVariants = cva(
       // Selected: false (unselected state) - secondary bg for filled
       { selected: false, variant: 'filled', class: 'bg-secondary/70 text-secondary-foreground' },
       // Selected states for elevated variant
-      { selected: true, variant: 'elevated', class: 'bg-primary text-primary-foreground' },
+      { selected: true, variant: 'elevated', class: 'bg-primary text-primary-foreground shadow-xl' },
       // Selected states for tonal variant
       { selected: true, variant: 'tonal', class: 'bg-tertiary text-tertiary-foreground' },
       // Selected states for outlined variant
