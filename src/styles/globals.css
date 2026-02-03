@@ -2,6 +2,9 @@
 @import "m3-ripple/ripple.css";
 
 @theme {
+  /* Custom spacing for M3 checkbox (18px) */
+  --spacing-4_5: 1.125rem;
+
   /* Primary */
   --color-primary: hsl(218 38% 41%);
   --color-primary-foreground: hsl(0 0% 100%);

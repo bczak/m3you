@@ -9,6 +9,10 @@ export {
   ConnectedButtonGroup,
   connectedButtonGroupVariants,
 } from './components/ui/button-group';
+export type { CheckboxProps } from './components/ui/checkbox';
+export { Checkbox, checkboxVariants } from './components/ui/checkbox';
+export type { ChipProps } from './components/ui/chip';
+export { Chip, chipVariants } from './components/ui/chip';
 export type { ExtendedFABProps } from './components/ui/extended-fab';
 export { ExtendedFAB } from './components/ui/extended-fab';
 export type {
