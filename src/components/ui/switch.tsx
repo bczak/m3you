@@ -60,7 +60,7 @@ const switchTrackVariants = cva(
 );
 
 const switchThumbVariants = cva(
-  'pointer-events-none absolute flex items-center justify-center rounded-full shadow-sm transition-all duration-300 ease-out [&_svg]:transition-all [&_svg]:duration-300 [&_svg]:ease-out',
+  'pointer-events-none absolute left-0 flex items-center justify-center rounded-full shadow-sm transition-all duration-300 ease-out [&_svg]:transition-all [&_svg]:duration-300 [&_svg]:ease-out',
   {
     variants: {
       variant: {
@@ -68,10 +68,9 @@ const switchThumbVariants = cva(
         error: '',
       },
       checked: {
-        // Position from right when checked (anchored to right edge)
-        true: 'right-[2px]',
-        // Position from left when unchecked (anchored to left edge)
-        false: 'left-[2px]',
+        // Use translateX for smooth position animation
+        true: 'translate-x-[22px]',
+        false: 'translate-x-[6px]',
       },
       withIcon: {
         true: '',
@@ -80,8 +79,8 @@ const switchThumbVariants = cva(
     },
     compoundVariants: [
       // Unchecked thumb: outline color, smaller size (16dp default, 24dp with icon)
-      { checked: false, withIcon: false, class: 'size-4 left-[6px] bg-outline' },
-      { checked: false, withIcon: true, class: 'size-6 bg-outline' },
+      { checked: false, withIcon: false, class: 'size-4 bg-outline' },
+      { checked: false, withIcon: true, class: 'size-6 translate-x-[2px] bg-outline' },
 
       // Checked thumb: primary-foreground color, larger size (24dp)
       { checked: true, variant: 'primary', class: 'size-6 bg-primary-foreground' },
