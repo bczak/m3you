@@ -102,9 +102,9 @@ export type NavigationBarItemProps = Omit<React.ComponentProps<'button'>, 'value
   Omit<VariantProps<typeof navigationBarItemVariants>, 'active' | 'orientation'> & {
     /** Unique value for this item */
     value: string;
-    /** Icon to display (outline style recommended for inactive state) */
+    /** Icon to display (outline style for inactive state) */
     icon: React.ReactNode;
-    /** Active icon variant (filled style recommended, uses icon if not provided) */
+    /** Active icon variant (filled style for active state) */
     activeIcon?: React.ReactNode;
     /** Label text */
     label: string;
@@ -134,8 +134,29 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
       props.onKeyDown?.(e);
     };
 
-    const displayedIcon = isActive && activeIcon ? activeIcon : icon;
     const showLabel = !hideInactiveLabel || isActive;
+
+    // Icon with opacity transition between outline and filled
+    const renderIcon = () => {
+      if (!activeIcon) {
+        // No activeIcon provided, just show the icon
+        return icon;
+      }
+
+      // Stack both icons and transition opacity
+      return (
+        <span className="relative">
+          {/* Outline icon - visible when inactive */}
+          <span className={cn('transition-opacity duration-200', isActive ? 'opacity-0' : 'opacity-100')}>{icon}</span>
+          {/* Filled icon - visible when active */}
+          <span
+            className={cn('absolute inset-0 transition-opacity duration-200', isActive ? 'opacity-100' : 'opacity-0')}
+          >
+            {activeIcon}
+          </span>
+        </span>
+      );
+    };
 
     return (
       <button
@@ -165,7 +186,7 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
               {/* Icon container with badge */}
               <span className="relative z-10 flex h-8 items-center justify-center px-5">
                 <span className="relative">
-                  {displayedIcon}
+                  {renderIcon()}
                   {/* Badge - positioned relative to icon */}
                   {badge && (
                     <span className="absolute -top-2 -right-2 z-20 flex min-w-4 items-center justify-center">
@@ -198,7 +219,7 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
             </span>
             {/* Icon with badge */}
             <span className="relative z-10 flex items-center justify-center">
-              {displayedIcon}
+              {renderIcon()}
               {/* Badge - positioned on icon */}
               {badge && (
                 <span className="absolute -top-1.5 -right-1.5 z-20 flex min-w-4 items-center justify-center">

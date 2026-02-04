@@ -1,18 +1,29 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  BellIcon,
-  CalendarIcon,
-  HeartIcon,
-  HomeIcon,
-  MessageCircleIcon,
-  MusicIcon,
-  SearchIcon,
-  SettingsIcon,
-  ShoppingCartIcon,
-  StarIcon,
-  UserIcon,
-} from 'lucide-react';
 import * as React from 'react';
+import {
+  MdCalendarToday,
+  MdFavorite,
+  MdHome,
+  MdMessage,
+  MdMusicNote,
+  MdNotifications,
+  MdOutlineCalendarToday,
+  MdOutlineFavorite,
+  MdOutlineHome,
+  MdOutlineMessage,
+  MdOutlineMusicNote,
+  MdOutlineNotifications,
+  MdOutlinePerson,
+  MdOutlineSearch,
+  MdOutlineSettings,
+  MdOutlineShoppingCart,
+  MdOutlineStar,
+  MdPerson,
+  MdSearch,
+  MdSettings,
+  MdShoppingCart,
+  MdStar,
+} from 'react-icons/md';
 import { Badge } from '../src/components/ui/badge';
 import { NavigationBar, NavigationBarItem } from '../src/components/ui/navigation-bar';
 
@@ -43,7 +54,7 @@ const DefaultNavigationBar = () => {
       <div className="p-4 pb-24">
         <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Bar - Vertical</h1>
         <p className="text-foreground/60 text-sm">
-          Default orientation with icon above label. Indicator appears behind icon only.
+          Default orientation with icon above label. Icons transition from outline to filled on selection.
         </p>
         <p className="mt-2 text-foreground/60 text-sm">
           Current selection: <strong className="text-primary">{value}</strong>
@@ -51,10 +62,15 @@ const DefaultNavigationBar = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-        <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
-        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
+        <NavigationBarItem value="home" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Home" />
+        <NavigationBarItem value="search" icon={<MdOutlineSearch />} activeIcon={<MdSearch />} label="Search" />
+        <NavigationBarItem
+          value="favorites"
+          icon={<MdOutlineFavorite />}
+          activeIcon={<MdFavorite />}
+          label="Favorites"
+        />
+        <NavigationBarItem value="profile" icon={<MdOutlinePerson />} activeIcon={<MdPerson />} label="Profile" />
       </NavigationBar>
     </div>
   );
@@ -84,9 +100,14 @@ const HorizontalNavigationBar = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue} orientation="horizontal">
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-        <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
+        <NavigationBarItem value="home" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Home" />
+        <NavigationBarItem value="search" icon={<MdOutlineSearch />} activeIcon={<MdSearch />} label="Search" />
+        <NavigationBarItem
+          value="favorites"
+          icon={<MdOutlineFavorite />}
+          activeIcon={<MdFavorite />}
+          label="Favorites"
+        />
       </NavigationBar>
     </div>
   );
@@ -111,17 +132,25 @@ const WithBadgesVertical = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
+        <NavigationBarItem value="home" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Home" />
         <NavigationBarItem
           value="messages"
-          icon={<MessageCircleIcon />}
+          icon={<MdOutlineMessage />}
+          activeIcon={<MdMessage />}
           label="Messages"
           badge={<Badge variant="small">3</Badge>}
         />
-        <NavigationBarItem value="notifications" icon={<BellIcon />} label="Alerts" badge={<Badge variant="dot" />} />
+        <NavigationBarItem
+          value="notifications"
+          icon={<MdOutlineNotifications />}
+          activeIcon={<MdNotifications />}
+          label="Alerts"
+          badge={<Badge variant="dot" />}
+        />
         <NavigationBarItem
           value="cart"
-          icon={<ShoppingCartIcon />}
+          icon={<MdOutlineShoppingCart />}
+          activeIcon={<MdShoppingCart />}
           label="Cart"
           badge={<Badge variant="small">99+</Badge>}
         />
@@ -149,14 +178,21 @@ const WithBadgesHorizontal = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue} orientation="horizontal">
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
+        <NavigationBarItem value="home" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Home" />
         <NavigationBarItem
           value="messages"
-          icon={<MessageCircleIcon />}
+          icon={<MdOutlineMessage />}
+          activeIcon={<MdMessage />}
           label="Messages"
           badge={<Badge variant="small">3</Badge>}
         />
-        <NavigationBarItem value="notifications" icon={<BellIcon />} label="Alerts" badge={<Badge variant="dot" />} />
+        <NavigationBarItem
+          value="notifications"
+          icon={<MdOutlineNotifications />}
+          activeIcon={<MdNotifications />}
+          label="Alerts"
+          badge={<Badge variant="dot" />}
+        />
       </NavigationBar>
     </div>
   );
@@ -167,66 +203,18 @@ export const BadgesHorizontal: Story = {
 };
 
 /* =============================================================================
-   Outline/Filled Icons - Shows icon state change on selection
+   Icon Transition Demo - Shows outline to filled transition
    ============================================================================= */
 
-const OutlineFilledIconsDemo = () => {
+const IconTransitionDemo = () => {
   const [value, setValue] = React.useState('home');
-
-  // SVG filled variants (simulated - in real use, import filled icon variants)
-  const FilledHomeIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      stroke="currentColor"
-      strokeWidth="0"
-      aria-hidden="true"
-    >
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-    </svg>
-  );
-
-  const FilledStarIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      stroke="currentColor"
-      strokeWidth="0"
-      aria-hidden="true"
-    >
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  );
-
-  const FilledUserIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      stroke="currentColor"
-      strokeWidth="0"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="8" r="5" />
-      <path d="M20 21a8 8 0 0 0-16 0" />
-    </svg>
-  );
 
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Outline → Filled Icons</h1>
+        <h1 className="mb-2 font-medium text-foreground text-lg">Icon Transition</h1>
         <p className="text-foreground/60 text-sm">
-          Use <code className="rounded bg-surface-container px-1">icon</code> for outline (unselected) and{' '}
-          <code className="rounded bg-surface-container px-1">activeIcon</code> for filled (selected).
+          Icons smoothly transition from outline to filled when selected. Click different items to see the effect.
         </p>
         <p className="mt-2 text-foreground/60 text-sm">
           Current selection: <strong className="text-primary">{value}</strong>
@@ -234,17 +222,17 @@ const OutlineFilledIconsDemo = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
-        <NavigationBarItem value="home" icon={<HomeIcon />} activeIcon={<FilledHomeIcon />} label="Home" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-        <NavigationBarItem value="favorites" icon={<StarIcon />} activeIcon={<FilledStarIcon />} label="Favorites" />
-        <NavigationBarItem value="profile" icon={<UserIcon />} activeIcon={<FilledUserIcon />} label="Profile" />
+        <NavigationBarItem value="home" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Home" />
+        <NavigationBarItem value="search" icon={<MdOutlineSearch />} activeIcon={<MdSearch />} label="Search" />
+        <NavigationBarItem value="favorites" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Favorites" />
+        <NavigationBarItem value="profile" icon={<MdOutlinePerson />} activeIcon={<MdPerson />} label="Profile" />
       </NavigationBar>
     </div>
   );
 };
 
-export const OutlineFilledIcons: Story = {
-  render: () => <OutlineFilledIconsDemo />,
+export const IconTransition: Story = {
+  render: () => <IconTransitionDemo />,
 };
 
 /* =============================================================================
@@ -262,9 +250,9 @@ const ThreeDestinationsVerticalDemo = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
+        <NavigationBarItem value="home" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Home" />
+        <NavigationBarItem value="search" icon={<MdOutlineSearch />} activeIcon={<MdSearch />} label="Search" />
+        <NavigationBarItem value="profile" icon={<MdOutlinePerson />} activeIcon={<MdPerson />} label="Profile" />
       </NavigationBar>
     </div>
   );
@@ -289,11 +277,21 @@ const FiveDestinationsVerticalDemo = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-        <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
-        <NavigationBarItem value="notifications" icon={<BellIcon />} label="Alerts" />
-        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
+        <NavigationBarItem value="home" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Home" />
+        <NavigationBarItem value="search" icon={<MdOutlineSearch />} activeIcon={<MdSearch />} label="Search" />
+        <NavigationBarItem
+          value="favorites"
+          icon={<MdOutlineFavorite />}
+          activeIcon={<MdFavorite />}
+          label="Favorites"
+        />
+        <NavigationBarItem
+          value="notifications"
+          icon={<MdOutlineNotifications />}
+          activeIcon={<MdNotifications />}
+          label="Alerts"
+        />
+        <NavigationBarItem value="profile" icon={<MdOutlinePerson />} activeIcon={<MdPerson />} label="Profile" />
       </NavigationBar>
     </div>
   );
@@ -318,10 +316,15 @@ const ElevatedNavigationBar = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue} elevation="elevated">
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-        <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
-        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
+        <NavigationBarItem value="home" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Home" />
+        <NavigationBarItem value="search" icon={<MdOutlineSearch />} activeIcon={<MdSearch />} label="Search" />
+        <NavigationBarItem
+          value="favorites"
+          icon={<MdOutlineFavorite />}
+          activeIcon={<MdFavorite />}
+          label="Favorites"
+        />
+        <NavigationBarItem value="profile" icon={<MdOutlinePerson />} activeIcon={<MdPerson />} label="Profile" />
       </NavigationBar>
     </div>
   );
@@ -361,7 +364,7 @@ const MusicAppNavigationBar = () => {
     <div className="relative min-h-[500px] bg-gradient-to-b from-primary/10 to-surface-container-lowest">
       <div className="p-6 pb-24">
         <div className="mb-6 flex items-center gap-3">
-          <MusicIcon className="size-8 text-primary" />
+          <MdMusicNote className="size-8 text-primary" />
           <span className="font-bold text-foreground text-xl">Music</span>
         </div>
 
@@ -381,10 +384,10 @@ const MusicAppNavigationBar = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue} elevation="elevated">
-        <NavigationBarItem value="listen" icon={<HomeIcon />} label="Listen" />
-        <NavigationBarItem value="browse" icon={<MusicIcon />} label="Browse" />
-        <NavigationBarItem value="library" icon={<HeartIcon />} label="Library" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
+        <NavigationBarItem value="listen" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Listen" />
+        <NavigationBarItem value="browse" icon={<MdOutlineMusicNote />} activeIcon={<MdMusicNote />} label="Browse" />
+        <NavigationBarItem value="library" icon={<MdOutlineFavorite />} activeIcon={<MdFavorite />} label="Library" />
+        <NavigationBarItem value="search" icon={<MdOutlineSearch />} activeIcon={<MdSearch />} label="Search" />
       </NavigationBar>
     </div>
   );
@@ -436,11 +439,18 @@ const ECommerceNavigationBar = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue} orientation="horizontal">
-        <NavigationBarItem value="shop" icon={<HomeIcon />} label="Shop" />
-        <NavigationBarItem value="wishlist" icon={<HeartIcon />} label="Wishlist" badge={<Badge variant="dot" />} />
+        <NavigationBarItem value="shop" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Shop" />
+        <NavigationBarItem
+          value="wishlist"
+          icon={<MdOutlineFavorite />}
+          activeIcon={<MdFavorite />}
+          label="Wishlist"
+          badge={<Badge variant="dot" />}
+        />
         <NavigationBarItem
           value="cart"
-          icon={<ShoppingCartIcon />}
+          icon={<MdOutlineShoppingCart />}
+          activeIcon={<MdShoppingCart />}
           label="Cart"
           badge={cartCount > 0 ? <Badge variant="small">{cartCount}</Badge> : undefined}
         />
@@ -467,10 +477,10 @@ const CalendarAppNavigationBar = () => {
           <h1 className="font-semibold text-foreground text-lg">February 2026</h1>
           <div className="flex gap-2">
             <button type="button" className="rounded-full p-2 hover:bg-surface-container">
-              <SearchIcon className="size-5 text-foreground" />
+              <MdOutlineSearch className="size-5 text-foreground" />
             </button>
             <button type="button" className="rounded-full p-2 hover:bg-surface-container">
-              <SettingsIcon className="size-5 text-foreground" />
+              <MdOutlineSettings className="size-5 text-foreground" />
             </button>
           </div>
         </div>
@@ -510,15 +520,27 @@ const CalendarAppNavigationBar = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
-        <NavigationBarItem value="today" icon={<HomeIcon />} label="Today" />
-        <NavigationBarItem value="schedule" icon={<CalendarIcon />} label="Schedule" />
+        <NavigationBarItem value="today" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Today" />
+        <NavigationBarItem
+          value="schedule"
+          icon={<MdOutlineCalendarToday />}
+          activeIcon={<MdCalendarToday />}
+          label="Schedule"
+        />
         <NavigationBarItem
           value="reminders"
-          icon={<BellIcon />}
+          icon={<MdOutlineNotifications />}
+          activeIcon={<MdNotifications />}
           label="Reminders"
           badge={<Badge variant="small">5</Badge>}
         />
-        <NavigationBarItem value="settings" icon={<SettingsIcon />} label="Settings" disabled />
+        <NavigationBarItem
+          value="settings"
+          icon={<MdOutlineSettings />}
+          activeIcon={<MdSettings />}
+          label="Settings"
+          disabled
+        />
       </NavigationBar>
     </div>
   );
@@ -541,13 +563,13 @@ export const BuildingBlocksVertical: Story = {
         <div className="mx-auto max-w-2xl space-y-8">
           {/* Row 1: Basic states */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States</h2>
+            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States (Outline → Filled)</h2>
             <div className="flex justify-center gap-8">
               <NavigationBar value="none" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
-                <NavigationBarItem value="item1" icon={<StarIcon />} label="Label" />
+                <NavigationBarItem value="item1" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Label" />
               </NavigationBar>
               <NavigationBar value="item2" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
-                <NavigationBarItem value="item2" icon={<StarIcon />} label="Label" />
+                <NavigationBarItem value="item2" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Label" />
               </NavigationBar>
             </div>
             <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
@@ -561,10 +583,22 @@ export const BuildingBlocksVertical: Story = {
             <h2 className="mb-4 text-center text-foreground/60 text-sm">With Dot Badge</h2>
             <div className="flex justify-center gap-8">
               <NavigationBar value="none" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
-                <NavigationBarItem value="item1" icon={<StarIcon />} label="Label" badge={<Badge variant="dot" />} />
+                <NavigationBarItem
+                  value="item1"
+                  icon={<MdOutlineStar />}
+                  activeIcon={<MdStar />}
+                  label="Label"
+                  badge={<Badge variant="dot" />}
+                />
               </NavigationBar>
               <NavigationBar value="item2" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
-                <NavigationBarItem value="item2" icon={<StarIcon />} label="Label" badge={<Badge variant="dot" />} />
+                <NavigationBarItem
+                  value="item2"
+                  icon={<MdOutlineStar />}
+                  activeIcon={<MdStar />}
+                  label="Label"
+                  badge={<Badge variant="dot" />}
+                />
               </NavigationBar>
             </div>
             <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
@@ -580,7 +614,8 @@ export const BuildingBlocksVertical: Story = {
               <NavigationBar value="none" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
                 <NavigationBarItem
                   value="item1"
-                  icon={<StarIcon />}
+                  icon={<MdOutlineStar />}
+                  activeIcon={<MdStar />}
                   label="Label"
                   badge={<Badge variant="small">3</Badge>}
                 />
@@ -588,7 +623,8 @@ export const BuildingBlocksVertical: Story = {
               <NavigationBar value="item2" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
                 <NavigationBarItem
                   value="item2"
-                  icon={<StarIcon />}
+                  icon={<MdOutlineStar />}
+                  activeIcon={<MdStar />}
                   label="Label"
                   badge={<Badge variant="small">3</Badge>}
                 />
@@ -620,7 +656,7 @@ export const BuildingBlocksHorizontal: Story = {
         <div className="mx-auto max-w-2xl space-y-8">
           {/* Row 1: Basic states */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States</h2>
+            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States (Outline → Filled)</h2>
             <div className="flex justify-center gap-8">
               <NavigationBar
                 value="none"
@@ -628,7 +664,7 @@ export const BuildingBlocksHorizontal: Story = {
                 orientation="horizontal"
                 className="!static !h-auto !w-auto !p-0"
               >
-                <NavigationBarItem value="item1" icon={<StarIcon />} label="Label" />
+                <NavigationBarItem value="item1" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Label" />
               </NavigationBar>
               <NavigationBar
                 value="item2"
@@ -636,7 +672,7 @@ export const BuildingBlocksHorizontal: Story = {
                 orientation="horizontal"
                 className="!static !h-auto !w-auto !p-0"
               >
-                <NavigationBarItem value="item2" icon={<StarIcon />} label="Label" />
+                <NavigationBarItem value="item2" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Label" />
               </NavigationBar>
             </div>
             <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
@@ -655,7 +691,13 @@ export const BuildingBlocksHorizontal: Story = {
                 orientation="horizontal"
                 className="!static !h-auto !w-auto !p-0"
               >
-                <NavigationBarItem value="item1" icon={<StarIcon />} label="Label" badge={<Badge variant="dot" />} />
+                <NavigationBarItem
+                  value="item1"
+                  icon={<MdOutlineStar />}
+                  activeIcon={<MdStar />}
+                  label="Label"
+                  badge={<Badge variant="dot" />}
+                />
               </NavigationBar>
               <NavigationBar
                 value="item2"
@@ -663,7 +705,13 @@ export const BuildingBlocksHorizontal: Story = {
                 orientation="horizontal"
                 className="!static !h-auto !w-auto !p-0"
               >
-                <NavigationBarItem value="item2" icon={<StarIcon />} label="Label" badge={<Badge variant="dot" />} />
+                <NavigationBarItem
+                  value="item2"
+                  icon={<MdOutlineStar />}
+                  activeIcon={<MdStar />}
+                  label="Label"
+                  badge={<Badge variant="dot" />}
+                />
               </NavigationBar>
             </div>
             <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
@@ -684,7 +732,8 @@ export const BuildingBlocksHorizontal: Story = {
               >
                 <NavigationBarItem
                   value="item1"
-                  icon={<StarIcon />}
+                  icon={<MdOutlineStar />}
+                  activeIcon={<MdStar />}
                   label="Label"
                   badge={<Badge variant="small">3</Badge>}
                 />
@@ -697,7 +746,8 @@ export const BuildingBlocksHorizontal: Story = {
               >
                 <NavigationBarItem
                   value="item2"
-                  icon={<StarIcon />}
+                  icon={<MdOutlineStar />}
+                  activeIcon={<MdStar />}
                   label="Label"
                   badge={<Badge variant="small">3</Badge>}
                 />
@@ -765,11 +815,12 @@ const AccessibilityShowcase = () => {
             <h2 className="mb-2 font-medium text-foreground">Icon Guidelines</h2>
             <ul className="space-y-1">
               <li>
-                • Use <code>icon</code> prop for outline icons (unselected)
+                • Use <code>icon</code> prop for outline icons (MdOutline*)
               </li>
               <li>
-                • Use <code>activeIcon</code> prop for filled icons (selected)
+                • Use <code>activeIcon</code> prop for filled icons (Md*)
               </li>
+              <li>• Icons transition with opacity animation on selection</li>
             </ul>
           </div>
 
@@ -782,10 +833,15 @@ const AccessibilityShowcase = () => {
       </div>
 
       <NavigationBar value={value} onValueChange={handleValueChange} aria-label="Main app navigation">
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-        <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
-        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
+        <NavigationBarItem value="home" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Home" />
+        <NavigationBarItem value="search" icon={<MdOutlineSearch />} activeIcon={<MdSearch />} label="Search" />
+        <NavigationBarItem
+          value="favorites"
+          icon={<MdOutlineFavorite />}
+          activeIcon={<MdFavorite />}
+          label="Favorites"
+        />
+        <NavigationBarItem value="profile" icon={<MdOutlinePerson />} activeIcon={<MdPerson />} label="Profile" />
       </NavigationBar>
     </div>
   );
