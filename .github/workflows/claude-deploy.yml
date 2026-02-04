@@ -1,0 +1,82 @@
+name: Deploy Claude Branch to GitHub Pages
+
+on:
+  push:
+    branches:
+      - 'claude/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get branch name
+        id: branch
+        run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+
+      - name: Detect project type and build
+        id: build
+        run: |
+          if [ -f "package.json" ]; then
+            echo "Node.js project detected"
+
+            # Detect package manager
+            if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
+              echo "Using bun"
+              curl -fsSL https://bun.sh/install | bash
+              export PATH="$HOME/.bun/bin:$PATH"
+              bun install
+              bun run build:storybook
+              echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
+            elif [ -f "pnpm-lock.yaml" ]; then
+              echo "Using pnpm"
+              npm install -g pnpm
+              pnpm install
+              pnpm run build:storybook || pnpm run build
+              if [ -d "storybook-static" ]; then
+                echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
+              elif [ -d "dist" ]; then
+                echo "publish_dir=./dist" >> $GITHUB_OUTPUT
+              elif [ -d "build" ]; then
+                echo "publish_dir=./build" >> $GITHUB_OUTPUT
+              fi
+            elif [ -f "yarn.lock" ]; then
+              echo "Using yarn"
+              yarn install
+              yarn build:storybook || yarn build
+              if [ -d "storybook-static" ]; then
+                echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
+              elif [ -d "dist" ]; then
+                echo "publish_dir=./dist" >> $GITHUB_OUTPUT
+              elif [ -d "build" ]; then
+                echo "publish_dir=./build" >> $GITHUB_OUTPUT
+              fi
+            else
+              echo "Using npm"
+              npm install
+              npm run build:storybook || npm run build
+              if [ -d "storybook-static" ]; then
+                echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
+              elif [ -d "dist" ]; then
+                echo "publish_dir=./dist" >> $GITHUB_OUTPUT
+              elif [ -d "build" ]; then
+                echo "publish_dir=./build" >> $GITHUB_OUTPUT
+              fi
+            fi
+          else
+            echo "Static HTML site detected"
+            echo "publish_dir=./" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ steps.build.outputs.publish_dir }}
+          destination_dir: ${{ steps.branch.outputs.name }}
+          keep_files: true
