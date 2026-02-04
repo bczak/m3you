@@ -31,7 +31,7 @@ const config: StorybookConfig = {
   rsbuildFinal: (config) => {
     // Use relative paths for assets to support deployment in subdirectories
     config.output = config.output || {};
-    config.output.assetPrefix = 'auto';
+    config.output.assetPrefix = './';
     return config;
   },
 };
