@@ -28,6 +28,12 @@ const config: StorybookConfig = {
     reactDocgen: 'react-docgen-typescript',
     check: true,
   },
+  rsbuildFinal: (config) => {
+    // Use relative paths for assets to support deployment in subdirectories
+    config.output = config.output || {};
+    config.output.assetPrefix = 'auto';
+    return config;
+  },
 };
 
 export default config;
