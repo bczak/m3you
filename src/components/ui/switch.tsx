@@ -60,7 +60,7 @@ const switchTrackVariants = cva(
 );
 
 const switchThumbVariants = cva(
-  'pointer-events-none relative flex items-center justify-center rounded-full shadow-sm transition-all duration-200 ease-out [&_svg]:transition-all [&_svg]:duration-200 [&_svg]:ease-out',
+  'pointer-events-none absolute flex items-center justify-center rounded-full shadow-sm transition-all duration-200 ease-out [&_svg]:transition-all [&_svg]:duration-200 [&_svg]:ease-out',
   {
     variants: {
       variant: {
@@ -68,8 +68,10 @@ const switchThumbVariants = cva(
         error: '',
       },
       checked: {
-        true: '',
-        false: '',
+        // Position from right when checked (anchored to right edge)
+        true: 'right-[2px]',
+        // Position from left when unchecked (anchored to left edge)
+        false: 'left-[2px]',
       },
       withIcon: {
         true: '',
@@ -82,7 +84,7 @@ const switchThumbVariants = cva(
     },
     compoundVariants: [
       // Unchecked thumb: outline color, smaller size (16dp default, 24dp with icon)
-      { checked: false, withIcon: false, pressed: false, class: 'size-4 bg-outline' },
+      { checked: false, withIcon: false, pressed: false, class: 'size-4 left-[6px] bg-outline' },
       { checked: false, withIcon: true, pressed: false, class: 'size-6 bg-outline' },
       { checked: false, pressed: true, class: 'size-7 bg-outline' },
 
@@ -147,24 +149,6 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
       return () => window.removeEventListener('pointerup', handleGlobalPointerUp);
     }, []);
 
-    // Calculate thumb position
-    // Track inner width = 52px - 4px border = 48px
-    // Thumb positions: unchecked = 2px from left, checked = right side
-    const getThumbPosition = () => {
-      if (checked) {
-        // Checked: align to right side with 2px margin
-        // For pressed (28px thumb): translate-x-[18px]
-        // For normal (24px thumb): translate-x-[22px]
-        return isPressed ? 'translate-x-[18px]' : 'translate-x-[22px]';
-      }
-      // Unchecked: align to left with 2px margin
-      // For pressed (28px thumb): translate-x-[1px]
-      // For normal with icon (24px thumb): translate-x-[2px]
-      // For normal no icon (16px thumb): translate-x-[6px]
-      if (isPressed) return 'translate-x-[1px]';
-      return showIcons ? 'translate-x-[2px]' : 'translate-x-[6px]';
-    };
-
     return (
       <label
         className={cn(
@@ -194,13 +178,10 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           aria-hidden="true"
           className={cn('pointer-events-none', switchTrackVariants({ variant, checked }))}
         >
-          {/* Thumb */}
+          {/* Thumb - positioned absolutely, anchored to left (unchecked) or right (checked) */}
           <span
             data-thumb
-            className={cn(
-              switchThumbVariants({ variant, checked, withIcon: showIcons, pressed: isPressed }),
-              getThumbPosition(),
-            )}
+            className={switchThumbVariants({ variant, checked, withIcon: showIcons, pressed: isPressed })}
           >
             {showIcons && (
               <span
