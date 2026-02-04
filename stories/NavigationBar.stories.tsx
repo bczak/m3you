@@ -9,6 +9,7 @@ import {
   SearchIcon,
   SettingsIcon,
   ShoppingCartIcon,
+  StarIcon,
   UserIcon,
 } from 'lucide-react';
 import * as React from 'react';
@@ -21,7 +22,7 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
     controls: {
-      include: ['elevation', 'value'],
+      include: ['elevation', 'orientation', 'value'],
     },
   },
   tags: ['autodocs'],
@@ -31,7 +32,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /* =============================================================================
-   Default Story - Basic usage
+   Default Story - Vertical orientation (icon above label)
    ============================================================================= */
 
 const DefaultNavigationBar = () => {
@@ -40,8 +41,11 @@ const DefaultNavigationBar = () => {
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Bar Demo</h1>
+        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Bar - Vertical</h1>
         <p className="text-foreground/60 text-sm">
+          Default orientation with icon above label. Indicator appears behind icon only.
+        </p>
+        <p className="mt-2 text-foreground/60 text-sm">
           Current selection: <strong className="text-primary">{value}</strong>
         </p>
       </div>
@@ -61,17 +65,49 @@ export const Default: Story = {
 };
 
 /* =============================================================================
-   With Badges - Shows notification badges
+   Horizontal Orientation - Icon and label side by side
    ============================================================================= */
 
-const WithBadgesNavigationBar = () => {
+const HorizontalNavigationBar = () => {
   const [value, setValue] = React.useState('home');
 
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Bar with Badges</h1>
-        <p className="text-foreground/60 text-sm">Badges show notifications, counts, or status indicators.</p>
+        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Bar - Horizontal</h1>
+        <p className="text-foreground/60 text-sm">
+          Horizontal orientation with icon and label side by side. Indicator covers both icon and label.
+        </p>
+        <p className="mt-2 text-foreground/60 text-sm">
+          Current selection: <strong className="text-primary">{value}</strong>
+        </p>
+      </div>
+
+      <NavigationBar value={value} onValueChange={setValue} orientation="horizontal">
+        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
+        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
+        <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
+      </NavigationBar>
+    </div>
+  );
+};
+
+export const Horizontal: Story = {
+  render: () => <HorizontalNavigationBar />,
+};
+
+/* =============================================================================
+   With Badges - Vertical with badges
+   ============================================================================= */
+
+const WithBadgesVertical = () => {
+  const [value, setValue] = React.useState('home');
+
+  return (
+    <div className="relative min-h-[400px] bg-surface-container-lowest">
+      <div className="p-4 pb-24">
+        <h1 className="mb-2 font-medium text-foreground text-lg">Badges - Vertical</h1>
+        <p className="text-foreground/60 text-sm">Vertical navigation with dot and number badges.</p>
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
@@ -82,24 +118,193 @@ const WithBadgesNavigationBar = () => {
           label="Messages"
           badge={<Badge variant="small">3</Badge>}
         />
+        <NavigationBarItem value="notifications" icon={<BellIcon />} label="Alerts" badge={<Badge variant="dot" />} />
         <NavigationBarItem
-          value="notifications"
-          icon={<BellIcon />}
-          label="Alerts"
+          value="cart"
+          icon={<ShoppingCartIcon />}
+          label="Cart"
           badge={<Badge variant="small">99+</Badge>}
         />
-        <NavigationBarItem value="cart" icon={<ShoppingCartIcon />} label="Cart" badge={<Badge variant="dot" />} />
       </NavigationBar>
     </div>
   );
 };
 
-export const WithBadges: Story = {
-  render: () => <WithBadgesNavigationBar />,
+export const BadgesVertical: Story = {
+  render: () => <WithBadgesVertical />,
 };
 
 /* =============================================================================
-   Elevated Style - With shadow elevation
+   With Badges - Horizontal with badges
+   ============================================================================= */
+
+const WithBadgesHorizontal = () => {
+  const [value, setValue] = React.useState('home');
+
+  return (
+    <div className="relative min-h-[400px] bg-surface-container-lowest">
+      <div className="p-4 pb-24">
+        <h1 className="mb-2 font-medium text-foreground text-lg">Badges - Horizontal</h1>
+        <p className="text-foreground/60 text-sm">Horizontal navigation with dot and number badges.</p>
+      </div>
+
+      <NavigationBar value={value} onValueChange={setValue} orientation="horizontal">
+        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
+        <NavigationBarItem
+          value="messages"
+          icon={<MessageCircleIcon />}
+          label="Messages"
+          badge={<Badge variant="small">3</Badge>}
+        />
+        <NavigationBarItem value="notifications" icon={<BellIcon />} label="Alerts" badge={<Badge variant="dot" />} />
+      </NavigationBar>
+    </div>
+  );
+};
+
+export const BadgesHorizontal: Story = {
+  render: () => <WithBadgesHorizontal />,
+};
+
+/* =============================================================================
+   Outline/Filled Icons - Shows icon state change on selection
+   ============================================================================= */
+
+const OutlineFilledIconsDemo = () => {
+  const [value, setValue] = React.useState('home');
+
+  // SVG filled variants (simulated - in real use, import filled icon variants)
+  const FilledHomeIcon = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeWidth="0"
+      aria-hidden="true"
+    >
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    </svg>
+  );
+
+  const FilledStarIcon = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeWidth="0"
+      aria-hidden="true"
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+
+  const FilledUserIcon = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeWidth="0"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="8" r="5" />
+      <path d="M20 21a8 8 0 0 0-16 0" />
+    </svg>
+  );
+
+  return (
+    <div className="relative min-h-[400px] bg-surface-container-lowest">
+      <div className="p-4 pb-24">
+        <h1 className="mb-2 font-medium text-foreground text-lg">Outline → Filled Icons</h1>
+        <p className="text-foreground/60 text-sm">
+          Use <code className="rounded bg-surface-container px-1">icon</code> for outline (unselected) and{' '}
+          <code className="rounded bg-surface-container px-1">activeIcon</code> for filled (selected).
+        </p>
+        <p className="mt-2 text-foreground/60 text-sm">
+          Current selection: <strong className="text-primary">{value}</strong>
+        </p>
+      </div>
+
+      <NavigationBar value={value} onValueChange={setValue}>
+        <NavigationBarItem value="home" icon={<HomeIcon />} activeIcon={<FilledHomeIcon />} label="Home" />
+        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
+        <NavigationBarItem value="favorites" icon={<StarIcon />} activeIcon={<FilledStarIcon />} label="Favorites" />
+        <NavigationBarItem value="profile" icon={<UserIcon />} activeIcon={<FilledUserIcon />} label="Profile" />
+      </NavigationBar>
+    </div>
+  );
+};
+
+export const OutlineFilledIcons: Story = {
+  render: () => <OutlineFilledIconsDemo />,
+};
+
+/* =============================================================================
+   Three Destinations - Vertical
+   ============================================================================= */
+
+const ThreeDestinationsVerticalDemo = () => {
+  const [value, setValue] = React.useState('home');
+
+  return (
+    <div className="relative min-h-[400px] bg-surface-container-lowest">
+      <div className="p-4 pb-24">
+        <h1 className="mb-2 font-medium text-foreground text-lg">Three Destinations - Vertical</h1>
+        <p className="text-foreground/60 text-sm">Minimum recommended destinations for a navigation bar.</p>
+      </div>
+
+      <NavigationBar value={value} onValueChange={setValue}>
+        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
+        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
+        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
+      </NavigationBar>
+    </div>
+  );
+};
+
+export const ThreeDestinationsVertical: Story = {
+  render: () => <ThreeDestinationsVerticalDemo />,
+};
+
+/* =============================================================================
+   Five Destinations - Vertical
+   ============================================================================= */
+
+const FiveDestinationsVerticalDemo = () => {
+  const [value, setValue] = React.useState('home');
+
+  return (
+    <div className="relative min-h-[400px] bg-surface-container-lowest">
+      <div className="p-4 pb-24">
+        <h1 className="mb-2 font-medium text-foreground text-lg">Five Destinations - Vertical</h1>
+        <p className="text-foreground/60 text-sm">Maximum recommended destinations for a navigation bar.</p>
+      </div>
+
+      <NavigationBar value={value} onValueChange={setValue}>
+        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
+        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
+        <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
+        <NavigationBarItem value="notifications" icon={<BellIcon />} label="Alerts" />
+        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
+      </NavigationBar>
+    </div>
+  );
+};
+
+export const FiveDestinationsVertical: Story = {
+  render: () => <FiveDestinationsVerticalDemo />,
+};
+
+/* =============================================================================
+   Elevated Style
    ============================================================================= */
 
 const ElevatedNavigationBar = () => {
@@ -124,92 +329,6 @@ const ElevatedNavigationBar = () => {
 
 export const Elevated: Story = {
   render: () => <ElevatedNavigationBar />,
-};
-
-/* =============================================================================
-   Three Destinations - Minimum recommended
-   ============================================================================= */
-
-const ThreeDestinationsNavigationBar = () => {
-  const [value, setValue] = React.useState('home');
-
-  return (
-    <div className="relative min-h-[400px] bg-surface-container-lowest">
-      <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Three Destinations</h1>
-        <p className="text-foreground/60 text-sm">Minimum recommended destinations for a navigation bar.</p>
-      </div>
-
-      <NavigationBar value={value} onValueChange={setValue}>
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
-      </NavigationBar>
-    </div>
-  );
-};
-
-export const ThreeDestinations: Story = {
-  render: () => <ThreeDestinationsNavigationBar />,
-};
-
-/* =============================================================================
-   Five Destinations - Maximum recommended
-   ============================================================================= */
-
-const FiveDestinationsNavigationBar = () => {
-  const [value, setValue] = React.useState('home');
-
-  return (
-    <div className="relative min-h-[400px] bg-surface-container-lowest">
-      <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Five Destinations</h1>
-        <p className="text-foreground/60 text-sm">Maximum recommended destinations for a navigation bar.</p>
-      </div>
-
-      <NavigationBar value={value} onValueChange={setValue}>
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-        <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
-        <NavigationBarItem value="notifications" icon={<BellIcon />} label="Alerts" />
-        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
-      </NavigationBar>
-    </div>
-  );
-};
-
-export const FiveDestinations: Story = {
-  render: () => <FiveDestinationsNavigationBar />,
-};
-
-/* =============================================================================
-   Hide Inactive Labels - M3 Expressive style
-   ============================================================================= */
-
-const HideInactiveLabelsNavigationBar = () => {
-  const [value, setValue] = React.useState('home');
-
-  return (
-    <div className="relative min-h-[400px] bg-surface-container-lowest">
-      <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Hide Inactive Labels</h1>
-        <p className="text-foreground/60 text-sm">
-          Labels are hidden for inactive items, only showing for the active destination.
-        </p>
-      </div>
-
-      <NavigationBar value={value} onValueChange={setValue}>
-        <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" hideInactiveLabel />
-        <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" hideInactiveLabel />
-        <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" hideInactiveLabel />
-        <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" hideInactiveLabel />
-      </NavigationBar>
-    </div>
-  );
-};
-
-export const HideInactiveLabels: Story = {
-  render: () => <HideInactiveLabelsNavigationBar />,
 };
 
 /* =============================================================================
@@ -276,7 +395,7 @@ export const MusicAppExample: Story = {
 };
 
 /* =============================================================================
-   E-Commerce App Example - Shopping app navigation
+   E-Commerce App Example - Horizontal with badges
    ============================================================================= */
 
 const ECommerceNavigationBar = () => {
@@ -305,7 +424,7 @@ const ECommerceNavigationBar = () => {
 
         <div className="grid grid-cols-2 gap-3">
           {[1, 2, 3, 4].map((item) => (
-            <div key={item} className="overflow-hidden rounded-xl bg-surface-container">
+            <div key={`product-${item}`} className="overflow-hidden rounded-xl bg-surface-container">
               <div className="aspect-square bg-secondary-container/50" />
               <div className="p-3">
                 <span className="text-foreground text-sm">Product {item}</span>
@@ -316,9 +435,8 @@ const ECommerceNavigationBar = () => {
         </div>
       </div>
 
-      <NavigationBar value={value} onValueChange={setValue}>
+      <NavigationBar value={value} onValueChange={setValue} orientation="horizontal">
         <NavigationBarItem value="shop" icon={<HomeIcon />} label="Shop" />
-        <NavigationBarItem value="explore" icon={<SearchIcon />} label="Explore" />
         <NavigationBarItem value="wishlist" icon={<HeartIcon />} label="Wishlist" badge={<Badge variant="dot" />} />
         <NavigationBarItem
           value="cart"
@@ -326,7 +444,6 @@ const ECommerceNavigationBar = () => {
           label="Cart"
           badge={cartCount > 0 ? <Badge variant="small">{cartCount}</Badge> : undefined}
         />
-        <NavigationBarItem value="account" icon={<UserIcon />} label="Account" />
       </NavigationBar>
     </div>
   );
@@ -412,7 +529,193 @@ export const CalendarAppExample: Story = {
 };
 
 /* =============================================================================
-   Accessibility Showcase - Keyboard navigation demo
+   Building Blocks - Vertical Nav Items (all states)
+   ============================================================================= */
+
+export const BuildingBlocksVertical: Story = {
+  render: () => {
+    return (
+      <div className="min-h-screen bg-surface-container-lowest p-8">
+        <h1 className="mb-6 text-center font-semibold text-foreground text-xl">Building Blocks - Vertical Nav Item</h1>
+
+        <div className="mx-auto max-w-2xl space-y-8">
+          {/* Row 1: Basic states */}
+          <div className="rounded-xl border border-outline-variant border-dashed p-6">
+            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States</h2>
+            <div className="flex justify-center gap-8">
+              <NavigationBar value="none" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
+                <NavigationBarItem value="item1" icon={<StarIcon />} label="Label" />
+              </NavigationBar>
+              <NavigationBar value="item2" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
+                <NavigationBarItem value="item2" icon={<StarIcon />} label="Label" />
+              </NavigationBar>
+            </div>
+            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+              <span className="w-16 text-center">Unselected</span>
+              <span className="w-16 text-center">Selected</span>
+            </div>
+          </div>
+
+          {/* Row 2: With dot badge */}
+          <div className="rounded-xl border border-outline-variant border-dashed p-6">
+            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Dot Badge</h2>
+            <div className="flex justify-center gap-8">
+              <NavigationBar value="none" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
+                <NavigationBarItem value="item1" icon={<StarIcon />} label="Label" badge={<Badge variant="dot" />} />
+              </NavigationBar>
+              <NavigationBar value="item2" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
+                <NavigationBarItem value="item2" icon={<StarIcon />} label="Label" badge={<Badge variant="dot" />} />
+              </NavigationBar>
+            </div>
+            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+              <span className="w-16 text-center">Unselected</span>
+              <span className="w-16 text-center">Selected</span>
+            </div>
+          </div>
+
+          {/* Row 3: With number badge */}
+          <div className="rounded-xl border border-outline-variant border-dashed p-6">
+            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Number Badge</h2>
+            <div className="flex justify-center gap-8">
+              <NavigationBar value="none" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
+                <NavigationBarItem
+                  value="item1"
+                  icon={<StarIcon />}
+                  label="Label"
+                  badge={<Badge variant="small">3</Badge>}
+                />
+              </NavigationBar>
+              <NavigationBar value="item2" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
+                <NavigationBarItem
+                  value="item2"
+                  icon={<StarIcon />}
+                  label="Label"
+                  badge={<Badge variant="small">3</Badge>}
+                />
+              </NavigationBar>
+            </div>
+            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+              <span className="w-16 text-center">Unselected</span>
+              <span className="w-16 text-center">Selected</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  },
+};
+
+/* =============================================================================
+   Building Blocks - Horizontal Nav Items (all states)
+   ============================================================================= */
+
+export const BuildingBlocksHorizontal: Story = {
+  render: () => {
+    return (
+      <div className="min-h-screen bg-surface-container-lowest p-8">
+        <h1 className="mb-6 text-center font-semibold text-foreground text-xl">
+          Building Blocks - Horizontal Nav Item
+        </h1>
+
+        <div className="mx-auto max-w-2xl space-y-8">
+          {/* Row 1: Basic states */}
+          <div className="rounded-xl border border-outline-variant border-dashed p-6">
+            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States</h2>
+            <div className="flex justify-center gap-8">
+              <NavigationBar
+                value="none"
+                onValueChange={() => {}}
+                orientation="horizontal"
+                className="!static !h-auto !w-auto !p-0"
+              >
+                <NavigationBarItem value="item1" icon={<StarIcon />} label="Label" />
+              </NavigationBar>
+              <NavigationBar
+                value="item2"
+                onValueChange={() => {}}
+                orientation="horizontal"
+                className="!static !h-auto !w-auto !p-0"
+              >
+                <NavigationBarItem value="item2" icon={<StarIcon />} label="Label" />
+              </NavigationBar>
+            </div>
+            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+              <span className="w-24 text-center">Unselected</span>
+              <span className="w-24 text-center">Selected</span>
+            </div>
+          </div>
+
+          {/* Row 2: With dot badge */}
+          <div className="rounded-xl border border-outline-variant border-dashed p-6">
+            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Dot Badge</h2>
+            <div className="flex justify-center gap-8">
+              <NavigationBar
+                value="none"
+                onValueChange={() => {}}
+                orientation="horizontal"
+                className="!static !h-auto !w-auto !p-0"
+              >
+                <NavigationBarItem value="item1" icon={<StarIcon />} label="Label" badge={<Badge variant="dot" />} />
+              </NavigationBar>
+              <NavigationBar
+                value="item2"
+                onValueChange={() => {}}
+                orientation="horizontal"
+                className="!static !h-auto !w-auto !p-0"
+              >
+                <NavigationBarItem value="item2" icon={<StarIcon />} label="Label" badge={<Badge variant="dot" />} />
+              </NavigationBar>
+            </div>
+            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+              <span className="w-24 text-center">Unselected</span>
+              <span className="w-24 text-center">Selected</span>
+            </div>
+          </div>
+
+          {/* Row 3: With number badge */}
+          <div className="rounded-xl border border-outline-variant border-dashed p-6">
+            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Number Badge</h2>
+            <div className="flex justify-center gap-8">
+              <NavigationBar
+                value="none"
+                onValueChange={() => {}}
+                orientation="horizontal"
+                className="!static !h-auto !w-auto !p-0"
+              >
+                <NavigationBarItem
+                  value="item1"
+                  icon={<StarIcon />}
+                  label="Label"
+                  badge={<Badge variant="small">3</Badge>}
+                />
+              </NavigationBar>
+              <NavigationBar
+                value="item2"
+                onValueChange={() => {}}
+                orientation="horizontal"
+                className="!static !h-auto !w-auto !p-0"
+              >
+                <NavigationBarItem
+                  value="item2"
+                  icon={<StarIcon />}
+                  label="Label"
+                  badge={<Badge variant="small">3</Badge>}
+                />
+              </NavigationBar>
+            </div>
+            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+              <span className="w-24 text-center">Unselected</span>
+              <span className="w-24 text-center">Selected</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  },
+};
+
+/* =============================================================================
+   Accessibility Showcase
    ============================================================================= */
 
 const AccessibilityShowcase = () => {
@@ -459,11 +762,14 @@ const AccessibilityShowcase = () => {
           </div>
 
           <div className="rounded-lg bg-surface-container p-4">
-            <h2 className="mb-2 font-medium text-foreground">Visual Indicators</h2>
+            <h2 className="mb-2 font-medium text-foreground">Icon Guidelines</h2>
             <ul className="space-y-1">
-              <li>• Focus ring visible on keyboard focus</li>
-              <li>• Active indicator pill for selected state</li>
-              <li>• Color contrast meets WCAG requirements</li>
+              <li>
+                • Use <code>icon</code> prop for outline icons (unselected)
+              </li>
+              <li>
+                • Use <code>activeIcon</code> prop for filled icons (selected)
+              </li>
             </ul>
           </div>
 
@@ -487,90 +793,4 @@ const AccessibilityShowcase = () => {
 
 export const AccessibilityDemo: Story = {
   render: () => <AccessibilityShowcase />,
-};
-
-/* =============================================================================
-   All States Showcase - Visual reference of all states
-   ============================================================================= */
-
-export const AllStatesShowcase: Story = {
-  render: () => {
-    return (
-      <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h1 className="mb-6 text-center font-semibold text-foreground text-xl">Navigation Bar States</h1>
-
-        <div className="mx-auto max-w-md space-y-8">
-          {/* Flat elevation */}
-          <div className="rounded-xl border border-outline-variant p-4">
-            <h2 className="mb-4 text-foreground/60 text-sm">Flat (Default)</h2>
-            <div className="relative h-20 overflow-hidden rounded-lg">
-              <NavigationBar value="home" onValueChange={() => {}} className="!fixed relative">
-                <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-                <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-                <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
-                <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
-              </NavigationBar>
-            </div>
-          </div>
-
-          {/* Elevated */}
-          <div className="rounded-xl border border-outline-variant p-4">
-            <h2 className="mb-4 text-foreground/60 text-sm">Elevated</h2>
-            <div className="relative h-20 overflow-hidden rounded-lg">
-              <NavigationBar value="search" onValueChange={() => {}} elevation="elevated" className="!fixed relative">
-                <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-                <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-                <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" />
-                <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
-              </NavigationBar>
-            </div>
-          </div>
-
-          {/* With Badges */}
-          <div className="rounded-xl border border-outline-variant p-4">
-            <h2 className="mb-4 text-foreground/60 text-sm">With Badges</h2>
-            <div className="relative h-20 overflow-hidden rounded-lg">
-              <NavigationBar value="home" onValueChange={() => {}} className="!fixed relative">
-                <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-                <NavigationBarItem
-                  value="messages"
-                  icon={<MessageCircleIcon />}
-                  label="Messages"
-                  badge={<Badge variant="small">3</Badge>}
-                />
-                <NavigationBarItem value="alerts" icon={<BellIcon />} label="Alerts" badge={<Badge variant="dot" />} />
-                <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
-              </NavigationBar>
-            </div>
-          </div>
-
-          {/* Hidden inactive labels */}
-          <div className="rounded-xl border border-outline-variant p-4">
-            <h2 className="mb-4 text-foreground/60 text-sm">Hidden Inactive Labels</h2>
-            <div className="relative h-20 overflow-hidden rounded-lg">
-              <NavigationBar value="favorites" onValueChange={() => {}} className="!fixed relative">
-                <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" hideInactiveLabel />
-                <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" hideInactiveLabel />
-                <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" hideInactiveLabel />
-                <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" hideInactiveLabel />
-              </NavigationBar>
-            </div>
-          </div>
-
-          {/* With disabled item */}
-          <div className="rounded-xl border border-outline-variant p-4">
-            <h2 className="mb-4 text-foreground/60 text-sm">With Disabled Item</h2>
-            <div className="relative h-20 overflow-hidden rounded-lg">
-              <NavigationBar value="home" onValueChange={() => {}} className="!fixed relative">
-                <NavigationBarItem value="home" icon={<HomeIcon />} label="Home" />
-                <NavigationBarItem value="search" icon={<SearchIcon />} label="Search" />
-                <NavigationBarItem value="favorites" icon={<HeartIcon />} label="Favorites" disabled />
-                <NavigationBarItem value="profile" icon={<UserIcon />} label="Profile" />
-              </NavigationBar>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  },
 };

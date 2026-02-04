@@ -9,16 +9,24 @@ import { cn } from '../../lib/utils';
    ============================================================================= */
 
 const navigationBarVariants = cva(
-  'fixed bottom-0 left-0 right-0 z-50 flex h-20 w-full items-end justify-around bg-surface-container px-2 pb-4 pt-3',
+  'fixed bottom-0 left-0 right-0 z-50 flex w-full items-end justify-around bg-surface-container px-2',
   {
     variants: {
       elevation: {
         flat: '',
         elevated: 'shadow-md',
       },
+      /** Item orientation within the navigation bar */
+      orientation: {
+        /** Icon above label (default) */
+        vertical: 'h-20 pb-4 pt-3',
+        /** Icon and label side by side */
+        horizontal: 'h-16 py-3',
+      },
     },
     defaultVariants: {
       elevation: 'flat',
+      orientation: 'vertical',
     },
   },
 );
@@ -34,6 +42,7 @@ export type NavigationBarProps = React.ComponentProps<'nav'> &
 interface NavigationBarContextValue {
   value?: string;
   onValueChange?: (value: string) => void;
+  orientation: 'vertical' | 'horizontal';
 }
 
 const NavigationBarContext = React.createContext<NavigationBarContextValue | null>(null);
@@ -47,13 +56,14 @@ const useNavigationBar = () => {
 };
 
 const NavigationBar = React.forwardRef<HTMLElement, NavigationBarProps>(
-  ({ className, elevation, value, onValueChange, children, ...props }, ref) => {
+  ({ className, elevation, orientation = 'vertical', value, onValueChange, children, ...props }, ref) => {
+    const resolvedOrientation = orientation ?? 'vertical';
     return (
-      <NavigationBarContext.Provider value={{ value, onValueChange }}>
+      <NavigationBarContext.Provider value={{ value, onValueChange, orientation: resolvedOrientation }}>
         <nav
           ref={ref}
           aria-label={props['aria-label'] || 'Main navigation'}
-          className={cn(navigationBarVariants({ elevation, className }))}
+          className={cn(navigationBarVariants({ elevation, orientation, className }))}
           {...props}
         >
           {children}
@@ -69,42 +79,32 @@ NavigationBar.displayName = 'NavigationBar';
    ============================================================================= */
 
 const navigationBarItemVariants = cva(
-  'relative flex min-w-16 max-w-24 flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg bg-transparent text-surface-variant-foreground outline-none transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0',
+  'relative flex min-w-16 cursor-pointer items-center justify-center gap-1 bg-transparent text-surface-variant-foreground outline-none transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0',
   {
     variants: {
       active: {
         true: 'text-primary',
         false: 'hover:text-foreground',
       },
-    },
-    defaultVariants: {
-      active: false,
-    },
-  },
-);
-
-const navigationBarIndicatorVariants = cva(
-  'absolute top-0 left-1/2 flex h-8 w-16 -translate-x-1/2 items-center justify-center rounded-full transition-all duration-200 ease-out',
-  {
-    variants: {
-      active: {
-        true: 'scale-100 bg-secondary-container opacity-100',
-        false: 'scale-75 bg-transparent opacity-0',
+      orientation: {
+        vertical: 'max-w-24 flex-1 flex-col',
+        horizontal: 'flex-row gap-2 px-4',
       },
     },
     defaultVariants: {
       active: false,
+      orientation: 'vertical',
     },
   },
 );
 
 export type NavigationBarItemProps = Omit<React.ComponentProps<'button'>, 'value'> &
-  Omit<VariantProps<typeof navigationBarItemVariants>, 'active'> & {
+  Omit<VariantProps<typeof navigationBarItemVariants>, 'active' | 'orientation'> & {
     /** Unique value for this item */
     value: string;
-    /** Icon to display */
+    /** Icon to display (outline style recommended for inactive state) */
     icon: React.ReactNode;
-    /** Active icon variant (optional, uses icon if not provided) */
+    /** Active icon variant (filled style recommended, uses icon if not provided) */
     activeIcon?: React.ReactNode;
     /** Label text */
     label: string;
@@ -116,7 +116,7 @@ export type NavigationBarItemProps = Omit<React.ComponentProps<'button'>, 'value
 
 const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemProps>(
   ({ className, value, icon, activeIcon, label, badge, hideInactiveLabel = false, disabled, ...props }, ref) => {
-    const { value: selectedValue, onValueChange } = useNavigationBar();
+    const { value: selectedValue, onValueChange, orientation } = useNavigationBar();
     const isActive = selectedValue === value;
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -144,44 +144,79 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
         aria-current={isActive ? 'page' : undefined}
         aria-label={label}
         disabled={disabled}
-        className={cn(navigationBarItemVariants({ active: isActive, className }))}
+        className={cn(navigationBarItemVariants({ active: isActive, orientation, className }))}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         {...props}
       >
-        {/* Active indicator with ripple */}
-        <span className={cn(navigationBarIndicatorVariants({ active: isActive }))}>
-          <Ripple />
-        </span>
-
-        {/* Icon container */}
-        <span className="relative z-10 flex items-center justify-center">
-          {displayedIcon}
-          {/* Badge */}
-          {badge && (
-            <span className="absolute -top-1 left-3 z-20 flex min-w-4 items-center justify-center">{badge}</span>
-          )}
-        </span>
-
-        {/* Label */}
-        <span
-          className={cn(
-            'z-10 font-medium text-xs leading-none transition-opacity duration-200',
-            showLabel ? 'opacity-100' : 'h-0 opacity-0',
-          )}
-        >
-          {label}
-        </span>
+        {orientation === 'vertical' ? (
+          <>
+            {/* Vertical: Icon with indicator behind it only */}
+            <span className="relative flex items-center justify-center">
+              {/* Active indicator - only behind icon */}
+              <span
+                className={cn(
+                  'absolute inset-0 flex h-8 items-center justify-center rounded-full transition-all duration-500 ease-out',
+                  isActive ? 'w-16 bg-secondary-container opacity-100' : 'w-0 bg-transparent opacity-0',
+                )}
+              >
+                <Ripple />
+              </span>
+              {/* Icon */}
+              <span className="relative z-10 flex h-8 items-center justify-center px-5">
+                {displayedIcon}
+                {/* Badge */}
+                {badge && (
+                  <span className="absolute -top-0.5 right-1 z-20 flex min-w-4 items-center justify-center">
+                    {badge}
+                  </span>
+                )}
+              </span>
+            </span>
+            {/* Label */}
+            <span
+              className={cn(
+                'z-10 mt-1 font-medium text-xs leading-none transition-opacity duration-200',
+                showLabel ? 'opacity-100' : 'h-0 opacity-0',
+              )}
+            >
+              {label}
+            </span>
+          </>
+        ) : (
+          <>
+            {/* Horizontal: Indicator behind both icon and label */}
+            <span
+              className={cn(
+                'absolute inset-0 flex items-center justify-center rounded-full transition-all duration-500 ease-out',
+                isActive ? 'bg-secondary-container opacity-100' : 'w-0 bg-transparent opacity-0',
+              )}
+            >
+              <Ripple />
+            </span>
+            {/* Icon */}
+            <span className="relative z-10 flex items-center justify-center">
+              {displayedIcon}
+              {/* Badge */}
+              {badge && (
+                <span className="absolute -top-1 left-3 z-20 flex min-w-4 items-center justify-center">{badge}</span>
+              )}
+            </span>
+            {/* Label */}
+            <span
+              className={cn(
+                'z-10 font-medium text-sm leading-none transition-opacity duration-200',
+                showLabel ? 'opacity-100' : 'w-0 opacity-0',
+              )}
+            >
+              {label}
+            </span>
+          </>
+        )}
       </button>
     );
   },
 );
 NavigationBarItem.displayName = 'NavigationBarItem';
 
-export {
-  NavigationBar,
-  navigationBarVariants,
-  NavigationBarItem,
-  navigationBarItemVariants,
-  navigationBarIndicatorVariants,
-};
+export { NavigationBar, navigationBarVariants, NavigationBarItem, navigationBarItemVariants };

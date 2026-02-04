@@ -345,7 +345,7 @@ test('NavigationBar has correct layout classes', async () => {
   expect(nav).toHaveClass('h-20');
 });
 
-test('NavigationBarItem has flex layout', async () => {
+test('NavigationBarItem has flex layout (vertical)', async () => {
   render(
     <NavigationBar value="home" onValueChange={() => {}}>
       <NavigationBarItem value="home" icon={<MockIcon />} label="Home" />
@@ -354,6 +354,18 @@ test('NavigationBarItem has flex layout', async () => {
   const item = screen.getByRole('button', { name: 'Home' });
   expect(item).toHaveClass('flex');
   expect(item).toHaveClass('flex-col');
+  expect(item).toHaveClass('items-center');
+});
+
+test('NavigationBarItem has flex layout (horizontal)', async () => {
+  render(
+    <NavigationBar value="home" onValueChange={() => {}} orientation="horizontal">
+      <NavigationBarItem value="home" icon={<MockIcon />} label="Home" />
+    </NavigationBar>,
+  );
+  const item = screen.getByRole('button', { name: 'Home' });
+  expect(item).toHaveClass('flex');
+  expect(item).toHaveClass('flex-row');
   expect(item).toHaveClass('items-center');
 });
 

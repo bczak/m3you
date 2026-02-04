@@ -30,7 +30,6 @@ export type { NavigationBarItemProps, NavigationBarProps } from './components/ui
 export {
   NavigationBar,
   NavigationBarItem,
-  navigationBarIndicatorVariants,
   navigationBarItemVariants,
   navigationBarVariants,
 } from './components/ui/navigation-bar';
