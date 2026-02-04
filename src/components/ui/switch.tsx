@@ -86,13 +86,15 @@ const switchThumbVariants = cva(
       // Unchecked thumb: outline color, smaller size (16dp default, 24dp with icon)
       { checked: false, withIcon: false, pressed: false, class: 'size-4 left-[6px] bg-outline' },
       { checked: false, withIcon: true, pressed: false, class: 'size-6 bg-outline' },
-      { checked: false, pressed: true, class: 'size-7 bg-outline' },
+      // Pressed unchecked: stick to left edge (no gap)
+      { checked: false, pressed: true, class: 'left-0 size-7 bg-outline' },
 
       // Checked thumb: primary-foreground color, larger size (24dp default, 28dp pressed)
       { checked: true, variant: 'primary', pressed: false, class: 'size-6 bg-primary-foreground' },
       { checked: true, variant: 'error', pressed: false, class: 'size-6 bg-error-foreground' },
-      { checked: true, variant: 'primary', pressed: true, class: 'size-7 bg-primary-foreground' },
-      { checked: true, variant: 'error', pressed: true, class: 'size-7 bg-error-foreground' },
+      // Pressed checked: stick to right edge (no gap)
+      { checked: true, variant: 'primary', pressed: true, class: 'right-0 size-7 bg-primary-foreground' },
+      { checked: true, variant: 'error', pressed: true, class: 'right-0 size-7 bg-error-foreground' },
 
       // Icon colors
       { checked: false, variant: 'primary', class: '[&_svg]:text-surface-container-highest' },
