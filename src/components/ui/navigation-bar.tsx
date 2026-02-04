@@ -88,7 +88,7 @@ const navigationBarItemVariants = cva(
       },
       orientation: {
         vertical: 'max-w-24 flex-1 flex-col',
-        horizontal: 'flex-row gap-2 px-4',
+        horizontal: 'flex-row gap-2 px-4 py-2',
       },
     },
     defaultVariants: {
@@ -153,19 +153,19 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
           <>
             {/* Vertical: Icon with indicator behind it only */}
             <span className="relative flex items-center justify-center">
-              {/* Active indicator - only behind icon */}
+              {/* Active indicator - expands from center */}
               <span
                 className={cn(
-                  'absolute inset-0 flex h-8 items-center justify-center rounded-full transition-all duration-500 ease-out',
-                  isActive ? 'w-16 bg-secondary-container opacity-100' : 'w-0 bg-transparent opacity-0',
+                  'absolute flex h-8 w-16 items-center justify-center rounded-full transition-transform duration-200 ease-out',
+                  isActive ? 'scale-x-100 bg-secondary-container' : 'scale-x-0 bg-secondary-container',
                 )}
               >
                 <Ripple />
               </span>
-              {/* Icon */}
+              {/* Icon with badge */}
               <span className="relative z-10 flex h-8 items-center justify-center px-5">
                 {displayedIcon}
-                {/* Badge */}
+                {/* Badge - positioned on icon */}
                 {badge && (
                   <span className="absolute -top-0.5 right-1 z-20 flex min-w-4 items-center justify-center">
                     {badge}
@@ -185,21 +185,23 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
           </>
         ) : (
           <>
-            {/* Horizontal: Indicator behind both icon and label */}
+            {/* Horizontal: Indicator behind both icon and label - expands from center */}
             <span
               className={cn(
-                'absolute inset-0 flex items-center justify-center rounded-full transition-all duration-500 ease-out',
-                isActive ? 'bg-secondary-container opacity-100' : 'w-0 bg-transparent opacity-0',
+                'absolute inset-0 flex items-center justify-center rounded-full transition-transform duration-200 ease-out',
+                isActive ? 'scale-x-100 bg-secondary-container' : 'scale-x-0 bg-secondary-container',
               )}
             >
               <Ripple />
             </span>
-            {/* Icon */}
+            {/* Icon with badge */}
             <span className="relative z-10 flex items-center justify-center">
               {displayedIcon}
-              {/* Badge */}
+              {/* Badge - positioned on icon */}
               {badge && (
-                <span className="absolute -top-1 left-3 z-20 flex min-w-4 items-center justify-center">{badge}</span>
+                <span className="absolute -top-1.5 -right-1.5 z-20 flex min-w-4 items-center justify-center">
+                  {badge}
+                </span>
               )}
             </span>
             {/* Label */}
