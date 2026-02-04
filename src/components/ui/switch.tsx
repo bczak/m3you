@@ -16,7 +16,7 @@ import { cn } from '../../lib/utils';
  */
 
 const switchTrackVariants = cva(
-  'relative inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full border-2 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+  'relative inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full border-2 transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
   {
     variants: {
       variant: {
@@ -60,7 +60,7 @@ const switchTrackVariants = cva(
 );
 
 const switchThumbVariants = cva(
-  'pointer-events-none absolute flex items-center justify-center rounded-full shadow-sm transition-all duration-200 ease-out [&_svg]:transition-all [&_svg]:duration-200 [&_svg]:ease-out',
+  'pointer-events-none absolute flex items-center justify-center rounded-full shadow-sm transition-all duration-500 ease-out [&_svg]:transition-all [&_svg]:duration-500 [&_svg]:ease-out',
   {
     variants: {
       variant: {
@@ -87,14 +87,14 @@ const switchThumbVariants = cva(
       { checked: false, withIcon: false, pressed: false, class: 'size-4 left-[6px] bg-outline' },
       { checked: false, withIcon: true, pressed: false, class: 'size-6 bg-outline' },
       // Pressed unchecked: stick to left edge (no gap)
-      { checked: false, pressed: true, class: 'left-0 size-7 bg-outline' },
+      { checked: false, pressed: true, class: '-left-1 size-7 bg-outline' },
 
       // Checked thumb: primary-foreground color, larger size (24dp default, 28dp pressed)
       { checked: true, variant: 'primary', pressed: false, class: 'size-6 bg-primary-foreground' },
       { checked: true, variant: 'error', pressed: false, class: 'size-6 bg-error-foreground' },
       // Pressed checked: stick to right edge (no gap)
-      { checked: true, variant: 'primary', pressed: true, class: 'right-0 size-7 bg-primary-foreground' },
-      { checked: true, variant: 'error', pressed: true, class: 'right-0 size-7 bg-error-foreground' },
+      { checked: true, variant: 'primary', pressed: true, class: '-right-1 size-7 bg-primary-foreground' },
+      { checked: true, variant: 'error', pressed: true, class: '-right-1 size-7 bg-error-foreground' },
 
       // Icon colors
       { checked: false, variant: 'primary', class: '[&_svg]:text-surface-container-highest' },
@@ -164,7 +164,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
         {/* State layer (40dp circular, centered on thumb) */}
         <span
           className={cn(
-            'pointer-events-none absolute flex size-10 items-center justify-center rounded-full transition-all duration-200',
+            'pointer-events-none absolute flex size-10 items-center justify-center rounded-full transition-all duration-500',
             variant === 'primary' && (checked ? 'group-hover:bg-primary/8' : 'group-hover:bg-outline/8'),
             variant === 'error' && (checked ? 'group-hover:bg-error/8' : 'group-hover:bg-error/8'),
             // Position state layer with thumb
@@ -188,7 +188,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             {showIcons && (
               <span
                 className={cn(
-                  'absolute inset-0 flex items-center justify-center transition-all duration-200 ease-out',
+                  'absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out',
                   checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
                 )}
               >
@@ -198,7 +198,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             {showIcons && (
               <span
                 className={cn(
-                  'absolute inset-0 flex items-center justify-center transition-all duration-200 ease-out',
+                  'absolute inset-0 flex items-center justify-center transition-all duration-500 ease-out',
                   !checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
                 )}
               >
