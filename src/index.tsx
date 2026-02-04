@@ -26,6 +26,14 @@ export type {
 export { FABMenu, FABMenuContent, FABMenuItem, FABMenuTrigger } from './components/ui/fab-menu';
 export type { IconButtonProps } from './components/ui/icon-button';
 export { IconButton, iconButtonVariants } from './components/ui/icon-button';
+export type { NavigationBarItemProps, NavigationBarProps } from './components/ui/navigation-bar';
+export {
+  NavigationBar,
+  NavigationBarItem,
+  navigationBarIndicatorVariants,
+  navigationBarItemVariants,
+  navigationBarVariants,
+} from './components/ui/navigation-bar';
 
 // Utilities
 export { cn } from './lib/utils';
