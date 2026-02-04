@@ -137,21 +137,19 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
     const showLabel = !hideInactiveLabel || isActive;
 
     // Icon with opacity transition between outline and filled
+    // Both icons are stacked using CSS Grid, with opacity toggling based on active state
     const renderIcon = () => {
       if (!activeIcon) {
-        // No activeIcon provided, just show the icon
         return icon;
       }
 
-      // Stack both icons and transition opacity
+      // Use CSS Grid to stack both icons in the same cell
       return (
-        <span className="relative">
-          {/* Outline icon - visible when inactive */}
+        <span className="grid [&>*]:col-start-1 [&>*]:row-start-1">
+          {/* Outline icon - opacity 100 when inactive, 0 when active */}
           <span className={cn('transition-opacity duration-200', isActive ? 'opacity-0' : 'opacity-100')}>{icon}</span>
-          {/* Filled icon - visible when active */}
-          <span
-            className={cn('absolute inset-0 transition-opacity duration-200', isActive ? 'opacity-100' : 'opacity-0')}
-          >
+          {/* Filled icon - opacity 0 when inactive, 100 when active */}
+          <span className={cn('transition-opacity duration-200', isActive ? 'opacity-100' : 'opacity-0')}>
             {activeIcon}
           </span>
         </span>
