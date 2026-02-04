@@ -207,7 +207,7 @@ test('has transition classes for animations', async () => {
   render(<Switch data-testid="switch" />);
   const { track } = getTrackAndThumb();
   expect(track).toHaveClass('transition-all');
-  expect(track).toHaveClass('duration-200');
+  expect(track).toHaveClass('duration-300');
   expect(track).toHaveClass('ease-out');
 });
 

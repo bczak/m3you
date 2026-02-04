@@ -10,13 +10,13 @@ import { cn } from '../../lib/utils';
  *
  * M3 Specs:
  * - Track: 52dp × 32dp with full rounded corners
- * - Handle (thumb): 16dp unchecked, 24dp checked, 28dp pressed
+ * - Handle (thumb): 16dp unchecked, 24dp checked
  * - Handle has 40dp state layer for hover/ripple
  * - Optional icons inside handle (16dp)
  */
 
 const switchTrackVariants = cva(
-  'relative inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full border-2 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+  'relative inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full border-2 transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
   {
     variants: {
       variant: {
@@ -60,7 +60,7 @@ const switchTrackVariants = cva(
 );
 
 const switchThumbVariants = cva(
-  'pointer-events-none absolute flex items-center justify-center rounded-full shadow-sm transition-all duration-200 ease-out [&_svg]:transition-all [&_svg]:duration-200 [&_svg]:ease-out',
+  'pointer-events-none absolute flex items-center justify-center rounded-full shadow-sm transition-all duration-300 ease-out [&_svg]:transition-all [&_svg]:duration-300 [&_svg]:ease-out',
   {
     variants: {
       variant: {
@@ -77,24 +77,15 @@ const switchThumbVariants = cva(
         true: '',
         false: '',
       },
-      pressed: {
-        true: '',
-        false: '',
-      },
     },
     compoundVariants: [
       // Unchecked thumb: outline color, smaller size (16dp default, 24dp with icon)
-      { checked: false, withIcon: false, pressed: false, class: 'size-4 left-[6px] bg-outline' },
-      { checked: false, withIcon: true, pressed: false, class: 'size-6 bg-outline' },
-      // Pressed unchecked: scale and translate left to stay anchored
-      { checked: false, pressed: true, class: '-translate-x-1 size-7 bg-outline' },
+      { checked: false, withIcon: false, class: 'size-4 left-[6px] bg-outline' },
+      { checked: false, withIcon: true, class: 'size-6 bg-outline' },
 
-      // Checked thumb: primary-foreground color, larger size (24dp default, 28dp pressed)
-      { checked: true, variant: 'primary', pressed: false, class: 'size-6 bg-primary-foreground' },
-      { checked: true, variant: 'error', pressed: false, class: 'size-6 bg-error-foreground' },
-      // Pressed checked: scale and translate right to stay anchored
-      { checked: true, variant: 'primary', pressed: true, class: 'translate-x-2 size-7 bg-primary-foreground' },
-      { checked: true, variant: 'error', pressed: true, class: 'translate-x-2 size-7 bg-error-foreground' },
+      // Checked thumb: primary-foreground color, larger size (24dp)
+      { checked: true, variant: 'primary', class: 'size-6 bg-primary-foreground' },
+      { checked: true, variant: 'error', class: 'size-6 bg-error-foreground' },
 
       // Icon colors
       { checked: false, variant: 'primary', class: '[&_svg]:text-surface-container-highest' },
@@ -106,7 +97,6 @@ const switchThumbVariants = cva(
       variant: 'primary',
       checked: false,
       withIcon: false,
-      pressed: false,
     },
   },
 );
@@ -119,12 +109,8 @@ export type SwitchProps = Omit<React.ComponentProps<'input'>, 'type'> & {
 };
 
 const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
-  (
-    { className, checked = false, variant = 'primary', showIcons = false, disabled, onCheckedChange, ...props },
-    ref,
-  ) => {
+  ({ className, checked = false, variant = 'primary', showIcons = false, disabled, onCheckedChange, ...props }, ref) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [isPressed, setIsPressed] = React.useState(false);
 
     // Merge refs
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
@@ -134,23 +120,6 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
       props.onChange?.(e);
     };
 
-    const handlePointerDown = () => {
-      if (!disabled) {
-        setIsPressed(true);
-      }
-    };
-
-    const handlePointerUp = () => {
-      setIsPressed(false);
-    };
-
-    React.useEffect(() => {
-      // Clean up pressed state on pointer up anywhere
-      const handleGlobalPointerUp = () => setIsPressed(false);
-      window.addEventListener('pointerup', handleGlobalPointerUp);
-      return () => window.removeEventListener('pointerup', handleGlobalPointerUp);
-    }, []);
-
     return (
       <label
         className={cn(
@@ -158,13 +127,11 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           disabled && 'pointer-events-none opacity-38',
           className,
         )}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
       >
         {/* State layer (40dp circular, centered on thumb) */}
         <span
           className={cn(
-            'pointer-events-none absolute flex size-10 items-center justify-center rounded-full transition-all duration-200',
+            'pointer-events-none absolute flex size-10 items-center justify-center rounded-full transition-all duration-300',
             variant === 'primary' && (checked ? 'group-hover:bg-primary/8' : 'group-hover:bg-outline/8'),
             variant === 'error' && (checked ? 'group-hover:bg-error/8' : 'group-hover:bg-error/8'),
             // Position state layer with thumb
@@ -183,12 +150,12 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           {/* Thumb - positioned absolutely, anchored to left (unchecked) or right (checked) */}
           <span
             data-thumb
-            className={switchThumbVariants({ variant, checked, withIcon: showIcons, pressed: isPressed })}
+            className={switchThumbVariants({ variant, checked, withIcon: showIcons })}
           >
             {showIcons && (
               <span
                 className={cn(
-                  'absolute inset-0 flex items-center justify-center transition-all duration-200 ease-out',
+                  'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
                   checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
                 )}
               >
@@ -198,7 +165,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             {showIcons && (
               <span
                 className={cn(
-                  'absolute inset-0 flex items-center justify-center transition-all duration-200 ease-out',
+                  'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
                   !checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
                 )}
               >
