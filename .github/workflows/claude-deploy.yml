@@ -20,65 +20,90 @@ jobs:
         id: branch
         run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
 
-      - name: Detect project type and build
-        id: build
+      - name: Detect package manager
+        id: detect
         run: |
           if [ -f "package.json" ]; then
-            echo "Node.js project detected"
-
-            # Detect package manager
+            echo "is_node=true" >> $GITHUB_OUTPUT
             if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
-              echo "Using bun"
-              curl -fsSL https://bun.sh/install | bash
-              export PATH="$HOME/.bun/bin:$PATH"
-              bun install
-              bun run build:storybook
-              echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
+              echo "manager=bun" >> $GITHUB_OUTPUT
             elif [ -f "pnpm-lock.yaml" ]; then
-              echo "Using pnpm"
-              npm install -g pnpm
-              pnpm install
-              pnpm run build:storybook || pnpm run build
-              if [ -d "storybook-static" ]; then
-                echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
-              elif [ -d "dist" ]; then
-                echo "publish_dir=./dist" >> $GITHUB_OUTPUT
-              elif [ -d "build" ]; then
-                echo "publish_dir=./build" >> $GITHUB_OUTPUT
-              fi
+              echo "manager=pnpm" >> $GITHUB_OUTPUT
             elif [ -f "yarn.lock" ]; then
-              echo "Using yarn"
-              yarn install
-              yarn build:storybook || yarn build
-              if [ -d "storybook-static" ]; then
-                echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
-              elif [ -d "dist" ]; then
-                echo "publish_dir=./dist" >> $GITHUB_OUTPUT
-              elif [ -d "build" ]; then
-                echo "publish_dir=./build" >> $GITHUB_OUTPUT
-              fi
+              echo "manager=yarn" >> $GITHUB_OUTPUT
             else
-              echo "Using npm"
-              npm install
-              npm run build:storybook || npm run build
-              if [ -d "storybook-static" ]; then
-                echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
-              elif [ -d "dist" ]; then
-                echo "publish_dir=./dist" >> $GITHUB_OUTPUT
-              elif [ -d "build" ]; then
-                echo "publish_dir=./build" >> $GITHUB_OUTPUT
-              fi
+              echo "manager=npm" >> $GITHUB_OUTPUT
             fi
           else
-            echo "Static HTML site detected"
-            echo "publish_dir=./" >> $GITHUB_OUTPUT
+            echo "is_node=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Setup Bun
+        if: steps.detect.outputs.manager == 'bun'
+        # v2.0.1 - pinned to commit SHA for supply-chain security
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - name: Build with Bun
+        if: steps.detect.outputs.manager == 'bun'
+        id: build-bun
+        run: |
+          bun install
+          bun run build:storybook
+          echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
+
+      - name: Build with pnpm
+        if: steps.detect.outputs.manager == 'pnpm'
+        id: build-pnpm
+        run: |
+          npm install -g pnpm
+          pnpm install
+          pnpm run build:storybook || pnpm run build
+          if [ -d "storybook-static" ]; then
+            echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
+          elif [ -d "dist" ]; then
+            echo "publish_dir=./dist" >> $GITHUB_OUTPUT
+          elif [ -d "build" ]; then
+            echo "publish_dir=./build" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build with yarn
+        if: steps.detect.outputs.manager == 'yarn'
+        id: build-yarn
+        run: |
+          yarn install
+          yarn build:storybook || yarn build
+          if [ -d "storybook-static" ]; then
+            echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
+          elif [ -d "dist" ]; then
+            echo "publish_dir=./dist" >> $GITHUB_OUTPUT
+          elif [ -d "build" ]; then
+            echo "publish_dir=./build" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build with npm
+        if: steps.detect.outputs.manager == 'npm'
+        id: build-npm
+        run: |
+          npm install
+          npm run build:storybook || npm run build
+          if [ -d "storybook-static" ]; then
+            echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
+          elif [ -d "dist" ]; then
+            echo "publish_dir=./dist" >> $GITHUB_OUTPUT
+          elif [ -d "build" ]; then
+            echo "publish_dir=./build" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set publish dir for static sites
+        if: steps.detect.outputs.is_node == 'false'
+        id: build-static
+        run: echo "publish_dir=./" >> $GITHUB_OUTPUT
 
       - name: Deploy to GitHub Pages
         # v3.9.3 - pinned to commit SHA for supply-chain security
         uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ steps.build.outputs.publish_dir }}
+          publish_dir: ${{ steps.build-bun.outputs.publish_dir || steps.build-pnpm.outputs.publish_dir || steps.build-yarn.outputs.publish_dir || steps.build-npm.outputs.publish_dir || steps.build-static.outputs.publish_dir }}
           destination_dir: ${{ steps.branch.outputs.name }}
           keep_files: true
