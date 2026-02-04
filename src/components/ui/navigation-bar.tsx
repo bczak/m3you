@@ -162,14 +162,18 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
               >
                 <Ripple />
               </span>
-              {/* Icon */}
+              {/* Icon container with badge */}
               <span className="relative z-10 flex h-8 items-center justify-center px-5">
-                {displayedIcon}
+                <span className="relative">
+                  {displayedIcon}
+                  {/* Badge - positioned relative to icon */}
+                  {badge && (
+                    <span className="absolute -top-2 -right-2 z-20 flex min-w-4 items-center justify-center">
+                      {badge}
+                    </span>
+                  )}
+                </span>
               </span>
-              {/* Badge - positioned outside indicator, on icon */}
-              {badge && (
-                <span className="absolute -top-1 right-0 z-20 flex min-w-4 items-center justify-center">{badge}</span>
-              )}
             </span>
             {/* Label */}
             <span
