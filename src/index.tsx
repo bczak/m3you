@@ -1,5 +1,7 @@
 // Components
 
+export type { BadgeAnchorProps, BadgeProps } from './components/ui/badge';
+export { Badge, BadgeAnchor, badgeVariants } from './components/ui/badge';
 export type { ButtonProps } from './components/ui/button';
 export { Button, buttonVariants } from './components/ui/button';
 export type { ButtonGroupProps, ConnectedButtonGroupProps } from './components/ui/button-group';
