@@ -164,3 +164,92 @@
 [data-connected-group][data-morph] > *[data-selected]:not(:first-child):not(:last-child):active {
   border-radius: var(--square-radius);
 }
+
+/* =============================================================================
+   Loading Indicator Animation
+   Morphing star shape that rotates and scales
+   ============================================================================= */
+
+@keyframes loading-indicator {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(0.9);
+  }
+  50% {
+    transform: rotate(180deg) scale(1);
+  }
+  75% {
+    transform: rotate(270deg) scale(0.9);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.animate-loading-indicator {
+  animation: loading-indicator 1.4s ease-in-out infinite;
+}
+
+/* =============================================================================
+   Linear Progress Indicator Animation
+   Indeterminate sliding bar animation
+   ============================================================================= */
+
+@keyframes linear-progress-indeterminate {
+  0% {
+    left: -35%;
+    width: 35%;
+  }
+  60% {
+    left: 100%;
+    width: 35%;
+  }
+  100% {
+    left: 100%;
+    width: 35%;
+  }
+}
+
+.animate-linear-progress-indeterminate {
+  animation: linear-progress-indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+}
+
+/* =============================================================================
+   Circular Progress Indicator Animations
+   Rotation and dash offset animations for indeterminate state
+   ============================================================================= */
+
+@keyframes circular-progress-rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes circular-progress-dash {
+  0% {
+    stroke-dasharray: 1, 126;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 126;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 89, 126;
+    stroke-dashoffset: -124;
+  }
+}
+
+.animate-circular-progress-rotate {
+  animation: circular-progress-rotate 2s linear infinite;
+}
+
+.animate-circular-progress-dash {
+  animation: circular-progress-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 89, 126;
+  stroke-dashoffset: -35;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
