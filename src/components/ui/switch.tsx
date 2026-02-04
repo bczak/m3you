@@ -93,8 +93,8 @@ const switchThumbVariants = cva(
       { checked: true, variant: 'primary', pressed: false, class: 'size-6 bg-primary-foreground' },
       { checked: true, variant: 'error', pressed: false, class: 'size-6 bg-error-foreground' },
       // Pressed checked: scale and translate right to stay anchored
-      { checked: true, variant: 'primary', pressed: true, class: 'translate-x-1 size-7 bg-primary-foreground' },
-      { checked: true, variant: 'error', pressed: true, class: 'translate-x-1 size-7 bg-error-foreground' },
+      { checked: true, variant: 'primary', pressed: true, class: 'translate-x-2 size-7 bg-primary-foreground' },
+      { checked: true, variant: 'error', pressed: true, class: 'translate-x-2 size-7 bg-error-foreground' },
 
       // Icon colors
       { checked: false, variant: 'primary', class: '[&_svg]:text-surface-container-highest' },
