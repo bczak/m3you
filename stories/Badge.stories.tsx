@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Bell, Heart, Home, Mail, Settings, ShoppingCart, Star, User } from 'lucide-react';
+import { Bell, Heart, Home, Mail, MessageSquare, Settings, ShoppingCart, Star, Tag, User } from 'lucide-react';
 import * as React from 'react';
 import { Badge, BadgeAnchor } from '../src/components/ui/badge';
+import { Chip } from '../src/components/ui/chip';
 import { IconButton } from '../src/components/ui/icon-button';
 
 const meta = {
@@ -558,6 +559,114 @@ export const M3Configuration: Story = {
       </div>
     </div>
   ),
+};
+
+// Badge with Chips
+export const WithChips: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => {
+    const FilterChipWithBadge = ({
+      children,
+      count,
+      selected: initialSelected = false,
+    }: {
+      children: React.ReactNode;
+      count?: number;
+      selected?: boolean;
+    }) => {
+      const [selected, setSelected] = React.useState(initialSelected);
+      return (
+        <BadgeAnchor badge={<Badge count={count} visible={count !== undefined && count > 0} />}>
+          <Chip type="filter" variant="outlined" selected={selected} onClick={() => setSelected(!selected)}>
+            {children}
+          </Chip>
+        </BadgeAnchor>
+      );
+    };
+
+    return (
+      <div className="min-h-screen bg-surface-container-lowest p-8">
+        <h2 className="mb-8 text-center text-foreground/60 text-sm">Badges with Chips</h2>
+        <div className="mx-auto max-w-4xl space-y-8">
+          {/* Filter chips with notification badges */}
+          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+            <h3 className="mb-6 text-center text-foreground/60 text-xs">Filter Chips with Notification Counts</h3>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <FilterChipWithBadge count={12} selected>
+                Inbox
+              </FilterChipWithBadge>
+              <FilterChipWithBadge count={3}>Starred</FilterChipWithBadge>
+              <FilterChipWithBadge count={156}>All Mail</FilterChipWithBadge>
+              <FilterChipWithBadge>Sent</FilterChipWithBadge>
+              <FilterChipWithBadge count={2}>Drafts</FilterChipWithBadge>
+            </div>
+          </div>
+
+          {/* Assist chips with badges */}
+          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+            <h3 className="mb-6 text-center text-foreground/60 text-xs">Assist Chips with Status Indicators</h3>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <BadgeAnchor badge={<Badge size="small" />}>
+                <Chip type="assist" variant="outlined" leadingIcon={<MessageSquare />}>
+                  Messages
+                </Chip>
+              </BadgeAnchor>
+              <BadgeAnchor badge={<Badge count={5} />}>
+                <Chip type="assist" variant="outlined" leadingIcon={<Bell />}>
+                  Notifications
+                </Chip>
+              </BadgeAnchor>
+              <BadgeAnchor badge={<Badge count={1500} max={999} />}>
+                <Chip type="assist" variant="elevated" leadingIcon={<Mail />}>
+                  Emails
+                </Chip>
+              </BadgeAnchor>
+            </div>
+          </div>
+
+          {/* Category filter with counts */}
+          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+            <h3 className="mb-6 text-center text-foreground/60 text-xs">Category Filters with Item Counts</h3>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <BadgeAnchor badge={<Badge count={42} />}>
+                <Chip type="filter" variant="elevated" leadingIcon={<Tag />}>
+                  Electronics
+                </Chip>
+              </BadgeAnchor>
+              <BadgeAnchor badge={<Badge count={18} />}>
+                <Chip type="filter" variant="elevated" leadingIcon={<Tag />}>
+                  Clothing
+                </Chip>
+              </BadgeAnchor>
+              <BadgeAnchor badge={<Badge count={7} />}>
+                <Chip type="filter" variant="elevated" leadingIcon={<Tag />}>
+                  Books
+                </Chip>
+              </BadgeAnchor>
+              <BadgeAnchor badge={<Badge count={103} />}>
+                <Chip type="filter" variant="elevated" leadingIcon={<Tag />}>
+                  Home
+                </Chip>
+              </BadgeAnchor>
+            </div>
+          </div>
+
+          {/* Interactive example */}
+          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+            <h3 className="mb-6 text-center text-foreground/60 text-xs">Interactive Filter Chips (Click to toggle)</h3>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <FilterChipWithBadge count={8} selected>
+                Unread
+              </FilterChipWithBadge>
+              <FilterChipWithBadge count={24}>Important</FilterChipWithBadge>
+              <FilterChipWithBadge count={5}>Attachments</FilterChipWithBadge>
+              <FilterChipWithBadge count={0}>Archived</FilterChipWithBadge>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  },
 };
 
 // Complete showcase
