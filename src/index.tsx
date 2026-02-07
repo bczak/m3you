@@ -33,6 +33,20 @@ export {
   navigationBarItemVariants,
   navigationBarVariants,
 } from './components/ui/navigation-bar';
+export type {
+  NavigationRailItemProps,
+  NavigationRailMenuButtonProps,
+  NavigationRailProps,
+  NavigationRailSectionProps,
+} from './components/ui/navigation-rail';
+export {
+  NavigationRail,
+  NavigationRailItem,
+  NavigationRailMenuButton,
+  NavigationRailSection,
+  navigationRailItemVariants,
+  navigationRailVariants,
+} from './components/ui/navigation-rail';
 
 // Utilities
 export { cn } from './lib/utils';
