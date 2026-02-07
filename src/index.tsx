@@ -26,6 +26,8 @@ export type {
 export { FABMenu, FABMenuContent, FABMenuItem, FABMenuTrigger } from './components/ui/fab-menu';
 export type { IconButtonProps } from './components/ui/icon-button';
 export { IconButton, iconButtonVariants } from './components/ui/icon-button';
+export type { SnackbarHostProps, SnackbarProps } from './components/ui/snackbar';
+export { Snackbar, SnackbarHost, snackbar, snackbarVariants } from './components/ui/snackbar';
 
 // Utilities
 export { cn } from './lib/utils';
