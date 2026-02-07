@@ -213,13 +213,13 @@ const WithPanelsDemo = () => {
   return (
     <div className="w-[400px] bg-surface">
       <Tabs value={value} onValueChange={setValue} aria-label="Travel navigation">
-        <Tab value="flights" icon={<MdOutlineFlight />} aria-controls="panel-flights">
+        <Tab value="flights" id="tab-flights" icon={<MdOutlineFlight />} aria-controls="panel-flights">
           Flights
         </Tab>
-        <Tab value="trips" icon={<MdOutlineLocalActivity />} aria-controls="panel-trips">
+        <Tab value="trips" id="tab-trips" icon={<MdOutlineLocalActivity />} aria-controls="panel-trips">
           Trips
         </Tab>
-        <Tab value="explore" icon={<MdOutlineExplore />} aria-controls="panel-explore">
+        <Tab value="explore" id="tab-explore" icon={<MdOutlineExplore />} aria-controls="panel-explore">
           Explore
         </Tab>
       </Tabs>
@@ -229,7 +229,7 @@ const WithPanelsDemo = () => {
           key={key}
           id={`panel-${key}`}
           role="tabpanel"
-          aria-labelledby={key}
+          aria-labelledby={`tab-${key}`}
           hidden={value !== key}
           className="p-4 text-foreground text-sm"
         >
