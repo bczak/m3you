@@ -109,13 +109,23 @@ export type SwitchProps = Omit<React.ComponentProps<'input'>, 'type'> & {
 };
 
 const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
-  ({ className, checked = false, variant = 'primary', showIcons = false, disabled, onCheckedChange, ...props }, ref) => {
+  (
+    { className, checked: checkedProp, defaultChecked = false, variant = 'primary', showIcons = false, disabled, onCheckedChange, ...props },
+    ref,
+  ) => {
+    const isControlled = checkedProp !== undefined;
+    const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
+    const checked = isControlled ? checkedProp : internalChecked;
+
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     // Merge refs
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!isControlled) {
+        setInternalChecked(e.target.checked);
+      }
       onCheckedChange?.(e.target.checked);
       props.onChange?.(e);
     };
