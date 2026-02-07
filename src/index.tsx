@@ -47,6 +47,8 @@ export {
   navigationRailItemVariants,
   navigationRailVariants,
 } from './components/ui/navigation-rail';
+export type { SwitchProps } from './components/ui/switch';
+export { Switch, switchThumbVariants, switchTrackVariants } from './components/ui/switch';
 
 // Utilities
 export { cn } from './lib/utils';
