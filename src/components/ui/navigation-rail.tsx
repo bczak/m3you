@@ -115,16 +115,14 @@ const NavigationRail = React.forwardRef<HTMLElement, NavigationRailProps>(
         >
           {/* Header section: Menu button */}
           {menu && (
-            <div className={cn('flex shrink-0 px-3 pt-4', state === 'expanded' ? 'justify-start' : 'justify-center')}>
+            <div className="flex shrink-0 justify-start px-3 pt-4">
               {menu}
             </div>
           )}
 
           {/* FAB section */}
           {fab && (
-            <div
-              className={cn('flex shrink-0 px-3 py-3', state === 'expanded' ? 'justify-start pl-4' : 'justify-center')}
-            >
+            <div className="flex shrink-0 justify-start px-3 py-3">
               {fab}
             </div>
           )}
@@ -133,7 +131,7 @@ const NavigationRail = React.forwardRef<HTMLElement, NavigationRailProps>(
           <div
             className={cn(
               'flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-2',
-              state === 'collapsed' ? 'items-center' : 'items-stretch',
+              'items-stretch',
             )}
           >
             {children}
@@ -179,7 +177,13 @@ const navigationRailItemVariants = cva(
       },
       {
         active: false,
+        state: 'collapsed',
         className: 'text-surface-variant-foreground hover:text-foreground',
+      },
+      {
+        active: false,
+        state: 'expanded',
+        className: 'text-surface-variant-foreground',
       },
     ],
     defaultVariants: {
@@ -258,8 +262,8 @@ const NavigationRailItem = React.forwardRef<HTMLButtonElement, NavigationRailIte
             {/* Active indicator - pill shape behind icon */}
             <span
               className={cn(
-                'absolute flex h-8 w-14 items-center justify-center rounded-full transition-transform duration-200 ease-out',
-                isActive ? 'scale-x-100 bg-secondary-container' : 'scale-x-0 bg-secondary-container',
+                'absolute flex h-8 w-14 items-center justify-center rounded-full bg-secondary-container transition-all duration-200 ease-out',
+                isActive ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0',
               )}
             >
               <Ripple />
@@ -298,8 +302,8 @@ const NavigationRailItem = React.forwardRef<HTMLButtonElement, NavigationRailIte
         {/* Active indicator - full item background */}
         <span
           className={cn(
-            'absolute inset-0 flex items-center justify-center rounded-full transition-transform duration-200 ease-out',
-            isActive ? 'scale-x-100 bg-secondary-container' : 'scale-x-0 bg-secondary-container',
+            'absolute inset-0 flex items-center justify-center rounded-full bg-secondary-container transition-all duration-200 ease-out',
+            isActive ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0',
           )}
         >
           <Ripple />
