@@ -32,6 +32,31 @@ export type { LinearProgressProps } from './components/ui/linear-progress';
 export { LinearProgress, linearProgressVariants } from './components/ui/linear-progress';
 export type { LoadingIndicatorProps } from './components/ui/loading-indicator';
 export { LoadingIndicator, loadingIndicatorVariants } from './components/ui/loading-indicator';
+export type { NavigationBarItemProps, NavigationBarProps } from './components/ui/navigation-bar';
+export {
+  NavigationBar,
+  NavigationBarItem,
+  navigationBarItemVariants,
+  navigationBarVariants,
+} from './components/ui/navigation-bar';
+export type {
+  NavigationRailItemProps,
+  NavigationRailMenuButtonProps,
+  NavigationRailProps,
+  NavigationRailSectionProps,
+} from './components/ui/navigation-rail';
+export {
+  NavigationRail,
+  NavigationRailItem,
+  NavigationRailMenuButton,
+  NavigationRailSection,
+  navigationRailItemVariants,
+  navigationRailVariants,
+} from './components/ui/navigation-rail';
+export type { SnackbarHostProps, SnackbarProps } from './components/ui/snackbar';
+export { Snackbar, SnackbarHost, snackbar, snackbarVariants } from './components/ui/snackbar';
+export type { SwitchProps } from './components/ui/switch';
+export { Switch, switchThumbVariants, switchTrackVariants } from './components/ui/switch';
 
 // Utilities
 export { cn } from './lib/utils';
