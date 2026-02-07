@@ -1,0 +1,828 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import {
+  ArchiveIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  BoldIcon,
+  CameraOffIcon,
+  ClockIcon,
+  DownloadIcon,
+  HandIcon,
+  ImageIcon,
+  ItalicIcon,
+  MailIcon,
+  MessageSquareIcon,
+  MicIcon,
+  MoreVerticalIcon,
+  PaintbrushIcon,
+  PenIcon,
+  PlusIcon,
+  Redo2Icon,
+  Share2Icon,
+  StarIcon,
+  Trash2Icon,
+  TypeIcon,
+  UnderlineIcon,
+  Undo2Icon,
+} from 'lucide-react';
+import * as React from 'react';
+import { Chip } from '../src/components/ui/chip';
+import { IconButton } from '../src/components/ui/icon-button';
+import { Toolbar } from '../src/components/ui/toolbar';
+
+const meta = {
+  title: 'Components/Toolbar',
+  component: Toolbar,
+  parameters: {
+    layout: 'centered',
+    controls: {
+      include: ['type', 'color', 'layout'],
+    },
+  },
+  tags: ['autodocs'],
+} satisfies Meta<typeof Toolbar>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// Default floating standard toolbar
+export const Default: Story = {
+  render: () => (
+    <Toolbar>
+      <IconButton variant="text" size="sm">
+        <Share2Icon />
+      </IconButton>
+      <IconButton variant="text" size="sm">
+        <MessageSquareIcon />
+      </IconButton>
+      <IconButton variant="text" size="sm">
+        <DownloadIcon />
+      </IconButton>
+    </Toolbar>
+  ),
+};
+
+// Types comparison
+export const Types: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <div className="min-h-screen bg-surface-container-lowest p-8">
+      <h2 className="mb-8 text-center text-foreground/60 text-sm">Toolbar Types</h2>
+      <div className="mx-auto max-w-2xl space-y-12">
+        <div className="space-y-3">
+          <h3 className="text-center text-foreground/50 text-xs">Floating (default)</h3>
+          <div className="flex justify-center">
+            <Toolbar type="floating">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+            </Toolbar>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-center text-foreground/50 text-xs">Docked (full-width, replaces bottom app bar)</h3>
+          <Toolbar type="docked">
+            <IconButton variant="text" size="sm">
+              <Share2Icon />
+            </IconButton>
+            <IconButton variant="text" size="sm">
+              <MessageSquareIcon />
+            </IconButton>
+            <IconButton variant="text" size="sm">
+              <DownloadIcon />
+            </IconButton>
+          </Toolbar>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+// Color schemes
+export const Colors: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <div className="min-h-screen bg-surface-container-lowest p-8">
+      <h2 className="mb-8 text-center text-foreground/60 text-sm">Color Schemes</h2>
+      <div className="mx-auto max-w-2xl space-y-12">
+        {/* Floating */}
+        <div className="space-y-6">
+          <h3 className="text-center text-foreground/50 text-xs">Floating</h3>
+          <div className="flex flex-wrap items-center justify-center gap-8">
+            <div className="flex flex-col items-center gap-2">
+              <Toolbar type="floating" color="standard">
+                <IconButton variant="text" size="sm">
+                  <Share2Icon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <MessageSquareIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <DownloadIcon />
+                </IconButton>
+              </Toolbar>
+              <span className="text-foreground/50 text-xs">Standard</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Toolbar type="floating" color="vibrant">
+                <IconButton variant="text" size="sm">
+                  <Share2Icon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <MessageSquareIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <DownloadIcon />
+                </IconButton>
+              </Toolbar>
+              <span className="text-foreground/50 text-xs">Vibrant</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Docked */}
+        <div className="space-y-6">
+          <h3 className="text-center text-foreground/50 text-xs">Docked</h3>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Toolbar type="docked" color="standard">
+                <IconButton variant="text" size="sm">
+                  <Share2Icon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <MessageSquareIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <DownloadIcon />
+                </IconButton>
+              </Toolbar>
+              <p className="text-center text-foreground/50 text-xs">Standard</p>
+            </div>
+            <div className="space-y-2">
+              <Toolbar type="docked" color="vibrant">
+                <IconButton variant="text" size="sm">
+                  <Share2Icon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <MessageSquareIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <DownloadIcon />
+                </IconButton>
+              </Toolbar>
+              <p className="text-center text-foreground/50 text-xs">Vibrant</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+// Layouts: horizontal and vertical
+export const Layouts: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <div className="min-h-screen bg-surface-container-lowest p-8">
+      <h2 className="mb-8 text-center text-foreground/60 text-sm">Layouts</h2>
+      <div className="mx-auto max-w-2xl space-y-12">
+        <div className="flex flex-wrap items-start justify-center gap-12">
+          <div className="flex flex-col items-center gap-3">
+            <Toolbar type="floating" layout="horizontal">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+            </Toolbar>
+            <span className="text-foreground/50 text-xs">Horizontal</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-3">
+            <Toolbar type="floating" layout="vertical">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+            </Toolbar>
+            <span className="text-foreground/50 text-xs">Vertical</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-3">
+            <Toolbar type="floating" color="vibrant" layout="horizontal">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+            </Toolbar>
+            <span className="text-foreground/50 text-xs">Vibrant Horizontal</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-3">
+            <Toolbar type="floating" color="vibrant" layout="vertical">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+            </Toolbar>
+            <span className="text-foreground/50 text-xs">Vibrant Vertical</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+// Floating toolbar with FAB pairing
+export const WithFAB: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <div className="min-h-screen bg-surface-container-lowest p-8">
+      <h2 className="mb-8 text-center text-foreground/60 text-sm">Toolbar with FAB</h2>
+      <div className="mx-auto max-w-2xl space-y-12">
+        {/* Floating toolbar with inline filled button */}
+        <div className="space-y-3">
+          <h3 className="text-center text-foreground/50 text-xs">Floating with embedded primary action</h3>
+          <div className="flex justify-center">
+            <Toolbar type="floating" color="standard">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <PenIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+              <IconButton variant="filled" size="md" shape="round">
+                <PlusIcon />
+              </IconButton>
+            </Toolbar>
+          </div>
+        </div>
+
+        {/* Floating toolbar paired with separate FAB */}
+        <div className="space-y-3">
+          <h3 className="text-center text-foreground/50 text-xs">Floating toolbar paired with separate FAB</h3>
+          <div className="flex items-center justify-center gap-2">
+            <Toolbar type="floating" color="vibrant">
+              <IconButton variant="text" size="sm">
+                <ArchiveIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <Trash2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MailIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <ClockIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <StarIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+            </Toolbar>
+            <IconButton variant="tonal" size="md" shape="round">
+              <Undo2Icon />
+            </IconButton>
+          </div>
+        </div>
+
+        {/* Docked toolbar with embedded FAB */}
+        <div className="space-y-3">
+          <h3 className="text-center text-foreground/50 text-xs">Docked with embedded primary action</h3>
+          <Toolbar type="docked" color="standard">
+            <IconButton variant="text" size="sm">
+              <ArrowLeftIcon />
+            </IconButton>
+            <IconButton variant="text" size="sm">
+              <ArrowRightIcon />
+            </IconButton>
+            <IconButton variant="filled" size="md" shape="round">
+              <PlusIcon />
+            </IconButton>
+            <IconButton variant="text" size="sm">
+              <ImageIcon />
+            </IconButton>
+            <IconButton variant="text" size="sm">
+              <MoreVerticalIcon />
+            </IconButton>
+          </Toolbar>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+// Text formatting toolbar
+export const TextFormatting: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => {
+    const TextFormattingDemo = () => {
+      const [bold, setBold] = React.useState(true);
+      const [italic, setItalic] = React.useState(false);
+      const [underline, setUnderline] = React.useState(false);
+
+      return (
+        <div className="min-h-screen bg-surface-container-lowest p-8">
+          <h2 className="mb-8 text-center text-foreground/60 text-sm">Text Formatting Toolbars</h2>
+          <div className="mx-auto max-w-2xl space-y-8">
+            {/* Standard */}
+            <div className="flex flex-col items-center gap-3">
+              <Toolbar type="floating" color="standard">
+                <IconButton variant="tonal" size="sm" selected={bold} onClick={() => setBold(!bold)}>
+                  <BoldIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm" selected={italic} onClick={() => setItalic(!italic)}>
+                  <ItalicIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm" selected={underline} onClick={() => setUnderline(!underline)}>
+                  <UnderlineIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <TypeIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <PaintbrushIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <MoreVerticalIcon />
+                </IconButton>
+              </Toolbar>
+              <span className="text-foreground/50 text-xs">Standard</span>
+            </div>
+
+            {/* Vibrant */}
+            <div className="flex flex-col items-center gap-3">
+              <Toolbar type="floating" color="vibrant">
+                <IconButton variant="tonal" size="sm" selected={bold} onClick={() => setBold(!bold)}>
+                  <BoldIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm" selected={italic} onClick={() => setItalic(!italic)}>
+                  <ItalicIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm" selected={underline} onClick={() => setUnderline(!underline)}>
+                  <UnderlineIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <TypeIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <PaintbrushIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <MoreVerticalIcon />
+                </IconButton>
+              </Toolbar>
+              <span className="text-foreground/50 text-xs">Vibrant</span>
+            </div>
+
+            {/* Vertical */}
+            <div className="flex flex-col items-center gap-3">
+              <Toolbar type="floating" color="standard" layout="vertical">
+                <IconButton variant="tonal" size="sm" selected={bold} onClick={() => setBold(!bold)}>
+                  <BoldIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm" selected={italic} onClick={() => setItalic(!italic)}>
+                  <ItalicIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm" selected={underline} onClick={() => setUnderline(!underline)}>
+                  <UnderlineIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <TypeIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <PaintbrushIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <MoreVerticalIcon />
+                </IconButton>
+              </Toolbar>
+              <span className="text-foreground/50 text-xs">Vertical</span>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    return <TextFormattingDemo />;
+  },
+};
+
+// Media controls toolbar
+export const MediaControls: Story = {
+  render: () => (
+    <div className="flex flex-col items-center gap-6">
+      <Toolbar type="floating" color="standard">
+        <IconButton variant="text" size="sm">
+          <CameraOffIcon />
+        </IconButton>
+        <IconButton variant="text" size="sm">
+          <MicIcon />
+        </IconButton>
+        <IconButton variant="tonal" size="sm" selected>
+          <HandIcon />
+        </IconButton>
+        <IconButton variant="text" size="sm">
+          <PenIcon />
+        </IconButton>
+        <IconButton variant="text" size="sm">
+          <MoreVerticalIcon />
+        </IconButton>
+      </Toolbar>
+    </div>
+  ),
+};
+
+// Toolbar with chips
+export const WithChips: Story = {
+  render: () => (
+    <div className="flex flex-col items-center gap-6">
+      <Toolbar type="floating" color="standard" className="gap-1 px-3">
+        <Chip type="filter" selected leadingIcon={<ImageIcon />}>
+          Photos
+        </Chip>
+        <Chip type="filter">Memories</Chip>
+        <Chip type="filter">Library</Chip>
+      </Toolbar>
+    </div>
+  ),
+};
+
+// Building blocks - various content combinations
+export const BuildingBlocks: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <div className="min-h-screen bg-surface-container-lowest p-8">
+      <h2 className="mb-8 text-center text-foreground/60 text-sm">Building Blocks</h2>
+      <div className="mx-auto max-w-3xl space-y-6">
+        {/* Standard icon buttons */}
+        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+          <h3 className="mb-4 text-center text-foreground/50 text-xs">Standard icon buttons (text variant)</h3>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <Toolbar type="floating" color="standard">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <PenIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+            </Toolbar>
+            <Toolbar type="floating" color="vibrant">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <PenIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+            </Toolbar>
+          </div>
+        </div>
+
+        {/* Outlined icon buttons */}
+        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+          <h3 className="mb-4 text-center text-foreground/50 text-xs">Outlined icon buttons</h3>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <Toolbar type="floating" color="standard">
+              <IconButton variant="outlined" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="outlined" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="outlined" size="sm">
+                <DownloadIcon />
+              </IconButton>
+              <IconButton variant="outlined" size="sm">
+                <PenIcon />
+              </IconButton>
+              <IconButton variant="outlined" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+            </Toolbar>
+            <Toolbar type="floating" color="vibrant">
+              <IconButton variant="outlined" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="outlined" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="outlined" size="sm">
+                <DownloadIcon />
+              </IconButton>
+              <IconButton variant="outlined" size="sm">
+                <PenIcon />
+              </IconButton>
+              <IconButton variant="outlined" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+            </Toolbar>
+          </div>
+        </div>
+
+        {/* Mixed variants with selected state */}
+        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+          <h3 className="mb-4 text-center text-foreground/50 text-xs">Mixed variants (with selected state)</h3>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <Toolbar type="floating" color="standard">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="tonal" size="sm" selected>
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+              <IconButton variant="tonal" size="sm" selected>
+                <PenIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+            </Toolbar>
+            <Toolbar type="floating" color="vibrant">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="tonal" size="sm" selected>
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+              <IconButton variant="tonal" size="sm" selected>
+                <PenIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+            </Toolbar>
+          </div>
+        </div>
+
+        {/* Chips */}
+        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+          <h3 className="mb-4 text-center text-foreground/50 text-xs">Chips</h3>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <Toolbar type="floating" color="standard" className="gap-1 px-3">
+              <Chip type="filter" selected leadingIcon={<ImageIcon />}>
+                Photos
+              </Chip>
+              <Chip type="filter">Memories</Chip>
+              <Chip type="filter">Library</Chip>
+            </Toolbar>
+            <Toolbar type="floating" color="vibrant" className="gap-1 px-3">
+              <Chip type="filter" variant="elevated" selected leadingIcon={<ImageIcon />}>
+                Photos
+              </Chip>
+              <Chip type="filter" variant="elevated">
+                Memories
+              </Chip>
+              <Chip type="filter" variant="elevated">
+                Library
+              </Chip>
+            </Toolbar>
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+// Complete showcase
+export const CompleteShowcase: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <div className="min-h-screen bg-surface-container-lowest p-8">
+      <h2 className="mb-8 text-center text-foreground/60 text-sm">M3 Toolbar - Complete Showcase</h2>
+      <div className="mx-auto max-w-3xl space-y-12">
+        {/* Floating section */}
+        <div className="space-y-6">
+          <h3 className="font-medium text-foreground/60 text-sm">Floating Toolbars</h3>
+          <div className="flex flex-wrap items-start gap-6">
+            {/* Standard horizontal */}
+            <Toolbar type="floating" color="standard">
+              <IconButton variant="text" size="sm">
+                <Share2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MessageSquareIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <DownloadIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <PenIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+              <IconButton variant="filled" size="md" shape="round">
+                <PlusIcon />
+              </IconButton>
+            </Toolbar>
+
+            {/* Vibrant horizontal */}
+            <Toolbar type="floating" color="vibrant">
+              <IconButton variant="text" size="sm">
+                <ArchiveIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <Trash2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MailIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <ClockIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <StarIcon />
+              </IconButton>
+            </Toolbar>
+
+            {/* Standard vertical */}
+            <Toolbar type="floating" color="standard" layout="vertical">
+              <IconButton variant="text" size="sm">
+                <Undo2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <Redo2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <PlusIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <TypeIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+            </Toolbar>
+
+            {/* Vibrant vertical */}
+            <Toolbar type="floating" color="vibrant" layout="vertical">
+              <IconButton variant="text" size="sm">
+                <BoldIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <ItalicIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <UnderlineIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <TypeIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <PaintbrushIcon />
+              </IconButton>
+            </Toolbar>
+          </div>
+        </div>
+
+        {/* Floating with FAB pairing */}
+        <div className="space-y-6">
+          <h3 className="font-medium text-foreground/60 text-sm">Floating with FAB Pairing</h3>
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Toolbar type="floating" color="vibrant">
+                <IconButton variant="text" size="sm">
+                  <ArchiveIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <Trash2Icon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <MailIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <ClockIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <StarIcon />
+                </IconButton>
+                <IconButton variant="text" size="sm">
+                  <MoreVerticalIcon />
+                </IconButton>
+              </Toolbar>
+              <IconButton variant="tonal" size="md" shape="round">
+                <Undo2Icon />
+              </IconButton>
+            </div>
+          </div>
+        </div>
+
+        {/* Docked section */}
+        <div className="space-y-6">
+          <h3 className="font-medium text-foreground/60 text-sm">Docked Toolbars</h3>
+          <div className="space-y-4">
+            <Toolbar type="docked" color="standard">
+              <IconButton variant="text" size="sm">
+                <ArrowLeftIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <ArrowRightIcon />
+              </IconButton>
+              <IconButton variant="filled" size="md" shape="round">
+                <PlusIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <ImageIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MoreVerticalIcon />
+              </IconButton>
+            </Toolbar>
+            <Toolbar type="docked" color="vibrant">
+              <IconButton variant="text" size="sm">
+                <ArchiveIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <Trash2Icon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <MailIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <ClockIcon />
+              </IconButton>
+              <IconButton variant="text" size="sm">
+                <StarIcon />
+              </IconButton>
+            </Toolbar>
+          </div>
+        </div>
+
+        {/* Chips in toolbar */}
+        <div className="space-y-6">
+          <h3 className="font-medium text-foreground/60 text-sm">With Chips</h3>
+          <div className="flex flex-wrap gap-6">
+            <Toolbar type="floating" color="standard" className="gap-1 px-3">
+              <Chip type="filter" selected leadingIcon={<ImageIcon />}>
+                Photos
+              </Chip>
+              <Chip type="filter">Memories</Chip>
+              <Chip type="filter">Library</Chip>
+            </Toolbar>
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+};
