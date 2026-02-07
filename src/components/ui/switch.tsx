@@ -79,7 +79,7 @@ const switchThumbVariants = cva(
     compoundVariants: [
       // Unchecked thumb positions and sizes
       { checked: false, withIcon: false, class: 'size-4 translate-x-[6px] bg-outline' },
-      { checked: false, withIcon: true, class: 'size-6 translate-x-[2px] bg-outline' },
+      { checked: false, withIcon: true, class: 'size-6 translate-x-[3px] bg-outline' },
 
       // Checked thumb positions and sizes
       { checked: true, withIcon: false, variant: 'primary', class: 'size-6 translate-x-[22px] bg-primary-foreground' },
