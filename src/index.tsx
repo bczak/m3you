@@ -47,6 +47,8 @@ export {
   navigationRailItemVariants,
   navigationRailVariants,
 } from './components/ui/navigation-rail';
+export type { SnackbarHostProps, SnackbarProps } from './components/ui/snackbar';
+export { Snackbar, SnackbarHost, snackbar, snackbarVariants } from './components/ui/snackbar';
 export type { SwitchProps } from './components/ui/switch';
 export { Switch, switchThumbVariants, switchTrackVariants } from './components/ui/switch';
 
