@@ -62,7 +62,7 @@ const NavigationBar = React.forwardRef<HTMLElement, NavigationBarProps>(
       <NavigationBarContext.Provider value={{ value, onValueChange, orientation: resolvedOrientation }}>
         <nav
           ref={ref}
-          aria-label={props['aria-label'] || 'Main navigation'}
+          aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
           className={cn(navigationBarVariants({ elevation, orientation, className }))}
           {...props}
         >
@@ -127,10 +127,6 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-        e.preventDefault();
-        onValueChange?.(value);
-      }
       props.onKeyDown?.(e);
     };
 
@@ -161,7 +157,6 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
         ref={ref}
         type="button"
         aria-current={isActive ? 'page' : undefined}
-        aria-label={label}
         disabled={disabled}
         className={cn(navigationBarItemVariants({ active: isActive, orientation, className }))}
         onClick={handleClick}
@@ -178,7 +173,9 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
                   'absolute flex h-8 w-16 items-center justify-center rounded-full transition-transform duration-200 ease-out',
                   isActive ? 'scale-x-100 bg-secondary-container' : 'scale-x-0 bg-secondary-container',
                 )}
-              >
+              />
+              {/* Ripple - always present for touch feedback */}
+              <span className="absolute flex h-8 w-16 items-center justify-center rounded-full">
                 <Ripple />
               </span>
               {/* Icon container with badge */}
@@ -212,7 +209,9 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
                 'absolute inset-0 flex items-center justify-center rounded-full transition-transform duration-200 ease-out',
                 isActive ? 'scale-x-100 bg-secondary-container' : 'scale-x-0 bg-secondary-container',
               )}
-            >
+            />
+            {/* Ripple - always present for touch feedback */}
+            <span className="absolute inset-0 flex items-center justify-center rounded-full">
               <Ripple />
             </span>
             {/* Icon with badge */}

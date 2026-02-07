@@ -109,33 +109,18 @@ const NavigationRail = React.forwardRef<HTMLElement, NavigationRailProps>(
         )}
         <nav
           ref={ref}
-          aria-label={props['aria-label'] || 'Main navigation'}
+          aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
           className={cn(navigationRailVariants({ state, modality, position, className }))}
           {...props}
         >
           {/* Header section: Menu button */}
-          {menu && (
-            <div className="flex shrink-0 justify-start px-3 pt-4">
-              {menu}
-            </div>
-          )}
+          {menu && <div className="flex shrink-0 justify-start px-3 pt-4">{menu}</div>}
 
           {/* FAB section */}
-          {fab && (
-            <div className="flex shrink-0 justify-start px-3 py-3">
-              {fab}
-            </div>
-          )}
+          {fab && <div className="flex shrink-0 justify-start px-3 py-3">{fab}</div>}
 
           {/* Navigation items */}
-          <div
-            className={cn(
-              'flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-2',
-              'items-stretch',
-            )}
-          >
-            {children}
-          </div>
+          <div className={cn('flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-2', 'items-stretch')}>{children}</div>
 
           {/* Footer section */}
           {footer && (
@@ -220,10 +205,6 @@ const NavigationRailItem = React.forwardRef<HTMLButtonElement, NavigationRailIte
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-        e.preventDefault();
-        onValueChange?.(value);
-      }
       props.onKeyDown?.(e);
     };
 
@@ -250,7 +231,6 @@ const NavigationRailItem = React.forwardRef<HTMLButtonElement, NavigationRailIte
           ref={ref}
           type="button"
           aria-current={isActive ? 'page' : undefined}
-          aria-label={label}
           disabled={disabled}
           className={cn(navigationRailItemVariants({ active: isActive, state, className }))}
           onClick={handleClick}
