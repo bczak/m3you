@@ -15,6 +15,8 @@ export type { CheckboxProps } from './components/ui/checkbox';
 export { Checkbox, checkboxVariants } from './components/ui/checkbox';
 export type { ChipProps } from './components/ui/chip';
 export { Chip, chipVariants } from './components/ui/chip';
+export type { CircularProgressProps } from './components/ui/circular-progress';
+export { CircularProgress, circularProgressVariants } from './components/ui/circular-progress';
 export type { ExtendedFABProps } from './components/ui/extended-fab';
 export { ExtendedFAB } from './components/ui/extended-fab';
 export type {
@@ -26,6 +28,8 @@ export type {
 export { FABMenu, FABMenuContent, FABMenuItem, FABMenuTrigger } from './components/ui/fab-menu';
 export type { IconButtonProps } from './components/ui/icon-button';
 export { IconButton, iconButtonVariants } from './components/ui/icon-button';
+export type { LinearProgressProps } from './components/ui/linear-progress';
+export { LinearProgress, linearProgressVariants } from './components/ui/linear-progress';
 export type { NavigationBarItemProps, NavigationBarProps } from './components/ui/navigation-bar';
 export {
   NavigationBar,
