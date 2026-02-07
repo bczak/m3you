@@ -1,16 +1,16 @@
-# M3-Lib
+# m3you
 
 A Material Design 3 (M3) component library for React, built with Tailwind CSS v4 and class-variance-authority (CVA).
 
 ## Installation
 
 ```bash
-bun add m3-lib
+bun add m3you
 ```
 
 ```tsx
-import 'm3-lib/styles.css';
-import { Button } from 'm3-lib';
+import 'm3you/styles.css';
+import { Button } from 'm3you';
 ```
 
 ## Components
