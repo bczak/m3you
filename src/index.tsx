@@ -26,6 +26,8 @@ export type {
 export { FABMenu, FABMenuContent, FABMenuItem, FABMenuTrigger } from './components/ui/fab-menu';
 export type { IconButtonProps } from './components/ui/icon-button';
 export { IconButton, iconButtonVariants } from './components/ui/icon-button';
+export type { SwitchProps } from './components/ui/switch';
+export { Switch, switchThumbVariants, switchTrackVariants } from './components/ui/switch';
 
 // Utilities
 export { cn } from './lib/utils';
