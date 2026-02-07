@@ -34,6 +34,8 @@ import {
   MdStar,
 } from 'react-icons/md';
 import { Badge } from '../src/components/ui/badge';
+import { ExtendedFAB } from '../src/components/ui/extended-fab';
+import { IconButton } from '../src/components/ui/icon-button';
 import {
   NavigationRail,
   NavigationRailItem,
@@ -252,17 +254,14 @@ const WithFAB = () => {
   const [value, setValue] = React.useState('inbox');
   const [state, setState] = React.useState<'collapsed' | 'expanded'>('collapsed');
 
-  const fabButton = (
-    <button
-      type="button"
-      className={`flex items-center justify-center gap-2 rounded-2xl bg-primary-container text-primary-container-foreground shadow-md transition-all hover:shadow-lg ${
-        state === 'expanded' ? 'h-14 px-4' : 'size-14'
-      }`}
-    >
-      <MdOutlineEdit className="size-6" />
-      {state === 'expanded' && <span className="font-medium">Compose</span>}
-    </button>
-  );
+  const fabButton =
+    state === 'expanded' ? (
+      <ExtendedFAB variant="tonal" icon={<MdOutlineEdit />} label="Compose" />
+    ) : (
+      <IconButton variant="tonal" size="md">
+        <MdOutlineEdit />
+      </IconButton>
+    );
 
   return (
     <div className="flex min-h-screen bg-surface-container-lowest">
@@ -527,15 +526,13 @@ const MusicAppRail = () => {
         position="relative"
         menu={<NavigationRailMenuButton collapsedIcon={<MdMenu />} expandedIcon={<MdClose />} />}
         fab={
-          <button
-            type="button"
-            className={`flex items-center justify-center gap-2 rounded-2xl bg-primary text-primary-foreground shadow-md transition-all hover:shadow-lg ${
-              state === 'expanded' ? 'h-14 px-4' : 'size-14'
-            }`}
-          >
-            <MdAdd className="size-6" />
-            {state === 'expanded' && <span className="font-medium">New Playlist</span>}
-          </button>
+          state === 'expanded' ? (
+            <ExtendedFAB variant="filled" icon={<MdAdd />} label="New Playlist" />
+          ) : (
+            <IconButton variant="filled" size="md">
+              <MdAdd />
+            </IconButton>
+          )
         }
       >
         <NavigationRailItem value="listen" icon={<MdOutlineHome />} activeIcon={<MdHome />} label="Listen" />
@@ -596,15 +593,13 @@ const EmailAppRail = () => {
         position="relative"
         menu={<NavigationRailMenuButton collapsedIcon={<MdMenu />} expandedIcon={<MdClose />} />}
         fab={
-          <button
-            type="button"
-            className={`flex items-center justify-center gap-2 rounded-2xl bg-primary-container text-primary-container-foreground shadow-md transition-all hover:shadow-lg ${
-              state === 'expanded' ? 'h-14 px-4' : 'size-14'
-            }`}
-          >
-            <MdOutlineEdit className="size-6" />
-            {state === 'expanded' && <span className="font-medium">Compose</span>}
-          </button>
+          state === 'expanded' ? (
+            <ExtendedFAB variant="tonal" icon={<MdOutlineEdit />} label="Compose" />
+          ) : (
+            <IconButton variant="tonal" size="md">
+              <MdOutlineEdit />
+            </IconButton>
+          )
         }
         footer={
           <div className={`flex ${state === 'expanded' ? 'flex-row items-center gap-3' : 'flex-col items-center'}`}>

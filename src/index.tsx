@@ -55,6 +55,8 @@ export type { SnackbarHostProps, SnackbarProps } from './components/ui/snackbar'
 export { Snackbar, SnackbarHost, snackbar, snackbarVariants } from './components/ui/snackbar';
 export type { SwitchProps } from './components/ui/switch';
 export { Switch, switchThumbVariants, switchTrackVariants } from './components/ui/switch';
+export type { TextFieldProps } from './components/ui/text-field';
+export { TextField, textFieldVariants } from './components/ui/text-field';
 
 // Utilities
 export { cn } from './lib/utils';

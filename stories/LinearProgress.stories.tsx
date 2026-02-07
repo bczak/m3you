@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import * as React from 'react';
+import { Button } from '../src/components/ui/button';
 import { LinearProgress } from '../src/components/ui/linear-progress';
 
 const meta = {
@@ -125,17 +126,12 @@ export const InteractiveDemo: Story = {
           </div>
           <span className="text-foreground/70 text-sm">{progress}% complete</span>
           <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={startProgress}
-              disabled={isLoading}
-              className="rounded-lg bg-primary px-4 py-2 text-primary-foreground text-sm disabled:opacity-50"
-            >
+            <Button variant="filled" size="sm" onClick={startProgress} disabled={isLoading}>
               Start
-            </button>
-            <button type="button" onClick={reset} className="rounded-lg bg-surface-container px-4 py-2 text-sm">
+            </Button>
+            <Button variant="outlined" size="sm" onClick={reset}>
               Reset
-            </button>
+            </Button>
           </div>
         </div>
       );

@@ -45,11 +45,12 @@ Components use CVA for variant management:
 
 ### Exports
 Library exports from `src/index.tsx`:
-- Components: `Button`, `ButtonGroup`
-- Variants: `buttonVariants`, `buttonGroupVariants`
-- Types: `ButtonProps`, `ButtonGroupProps`
-- Utilities: `cn`
+- Components: `Badge`, `BadgeAnchor`, `Button`, `ButtonGroup`, `ConnectedButtonGroup`, `Checkbox`, `Chip`, `CircularProgress`, `ExtendedFAB`, `FABMenu`, `FABMenuContent`, `FABMenuItem`, `FABMenuTrigger`, `IconButton`, `LinearProgress`, `NavigationBar`, `NavigationBarItem`, `NavigationRail`, `NavigationRailItem`, `NavigationRailMenuButton`, `NavigationRailSection`, `Snackbar`, `SnackbarHost`, `Switch`, `TextField`
+- Utilities: `cn`, `snackbar` (imperative snackbar API)
 - Styles: `./styles.css` (import separately)
+
+### Stories
+- Always use library components instead of native HTML elements in stories (e.g., `<Button>` not `<button>`, `<IconButton>` not `<button>` for icon actions, `<ExtendedFAB>`/`<IconButton>` not `<button>` for FABs)
 
 ## Documentation Links
 

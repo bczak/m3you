@@ -25,6 +25,7 @@ import {
   MdStar,
 } from 'react-icons/md';
 import { Badge } from '../src/components/ui/badge';
+import { IconButton } from '../src/components/ui/icon-button';
 import { NavigationBar, NavigationBarItem } from '../src/components/ui/navigation-bar';
 
 const meta = {
@@ -476,12 +477,12 @@ const CalendarAppNavigationBar = () => {
         <div className="flex items-center justify-between">
           <h1 className="font-semibold text-foreground text-lg">February 2026</h1>
           <div className="flex gap-2">
-            <button type="button" className="rounded-full p-2 hover:bg-surface-container">
+            <IconButton variant="text" size="sm">
               <MdOutlineSearch className="size-5 text-foreground" />
-            </button>
-            <button type="button" className="rounded-full p-2 hover:bg-surface-container">
+            </IconButton>
+            <IconButton variant="text" size="sm">
               <MdOutlineSettings className="size-5 text-foreground" />
-            </button>
+            </IconButton>
           </div>
         </div>
       </div>
