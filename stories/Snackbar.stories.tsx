@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { expect, fn } from 'storybook/test';
 import { Snackbar, SnackbarHost, snackbar } from '../src/components/ui/snackbar';
 
 const meta = {
@@ -240,6 +241,84 @@ export const InteractiveDemo: Story = {
     };
 
     return <InteractiveSnackbar />;
+  },
+};
+
+// ─── Interaction Tests ──────────────────────────────────────────────────────
+
+export const ActionCallback: Story = {
+  args: {
+    message: 'Item deleted',
+    actionLabel: 'Undo',
+    onAction: fn(),
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    const actionButton = canvas.getByRole('button', { name: /undo/i });
+    await userEvent.click(actionButton);
+    await expect(args.onAction).toHaveBeenCalledOnce();
+  },
+};
+
+export const CloseCallback: Story = {
+  args: {
+    message: 'Message sent',
+    closable: true,
+    onClose: fn(),
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    const closeButton = canvas.getByRole('button', { name: /dismiss/i });
+    await userEvent.click(closeButton);
+    await expect(args.onClose).toHaveBeenCalledOnce();
+  },
+};
+
+export const LongerActionClosable: Story = {
+  args: {
+    message: 'This item already has the label "travel".',
+    layout: 'longerAction' as const,
+    actionLabel: 'Add a new label',
+    closable: true,
+    onAction: fn(),
+    onClose: fn(),
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    const closeButton = canvas.getByRole('button', { name: /dismiss/i });
+    await expect(closeButton).toBeVisible();
+    await userEvent.click(closeButton);
+    await expect(args.onClose).toHaveBeenCalledOnce();
+  },
+};
+
+export const ImperativeSnackbar: Story = {
+  parameters: { layout: 'fullscreen' },
+  render: () => (
+    <div className="flex min-h-screen items-center justify-center bg-surface-container-lowest">
+      <SnackbarHost />
+      <button
+        type="button"
+        data-testid="trigger"
+        className="rounded-lg bg-primary px-4 py-2.5 text-primary-foreground text-sm"
+        onClick={() =>
+          snackbar({
+            message: 'File saved successfully',
+            actionLabel: 'View',
+            onAction: () => {},
+          })
+        }
+      >
+        Show snackbar
+      </button>
+    </div>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    const trigger = canvas.getByTestId('trigger');
+    await userEvent.click(trigger);
+
+    const toast = await canvas.findByText('File saved successfully');
+    await expect(toast).toBeVisible();
+
+    const actionButton = canvas.getByRole('button', { name: /view/i });
+    await expect(actionButton).toBeVisible();
   },
 };
 

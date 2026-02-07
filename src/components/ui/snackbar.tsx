@@ -9,7 +9,7 @@ import { cn } from '../../lib/utils';
 
 const snackbarVariants = cva(
   // M3: inverse-surface bg, extra-small shape (4px rounded), elevation level 3
-  'flex w-full min-w-[288px] max-w-[568px] rounded bg-inverse-surface text-inverse-surface-foreground shadow-lg',
+  'flex w-full min-w-[288px] max-w-[568px] animate-snackbar-slide-up rounded bg-inverse-surface text-inverse-surface-foreground shadow-lg',
   {
     variants: {
       layout: {
@@ -62,6 +62,16 @@ const Snackbar = React.forwardRef<HTMLOutputElement, SnackbarProps>(
                   {actionLabel}
                 </button>
               )}
+              {closable && (
+                <button
+                  type="button"
+                  aria-label="Dismiss"
+                  onClick={onClose}
+                  className="cursor-pointer rounded-full p-3 text-inverse-surface-foreground hover:bg-inverse-surface-foreground/12"
+                >
+                  <X className="size-5" />
+                </button>
+              )}
             </div>
           </>
         ) : (
@@ -112,10 +122,11 @@ const SnackbarHost = ({ position = 'bottom-center', ...props }: SnackbarHostProp
       position={position}
       offset={16}
       gap={8}
+      visibleToasts={1}
       toastOptions={{
         unstyled: true,
         classNames: {
-          toast: 'w-full flex justify-center',
+          toast: 'w-full flex justify-center !transition-opacity !duration-150 !ease-out',
         },
       }}
       {...props}
@@ -160,6 +171,9 @@ type SnackbarOptions = {
 function snackbar(options: SnackbarOptions | string) {
   const opts = typeof options === 'string' ? { message: options } : options;
   const { message, actionLabel, onAction, closable, duration, layout } = opts;
+
+  // M3: only one snackbar at a time — dismiss any existing ones
+  sonnerToast.dismiss();
 
   // M3: snackbars with actions should not auto-dismiss
   const effectiveDuration = actionLabel || closable ? Number.POSITIVE_INFINITY : (duration ?? 4000);
