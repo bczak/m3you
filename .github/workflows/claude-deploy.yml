@@ -1,8 +1,9 @@
-name: Deploy Claude Branch to GitHub Pages
+name: Deploy Storybook to GitHub Pages
 
 on:
   push:
     branches:
+      - 'development'
       - 'claude/**'
 
 permissions:
@@ -99,8 +100,18 @@ jobs:
         id: build-static
         run: echo "publish_dir=./" >> $GITHUB_OUTPUT
 
-      - name: Deploy to GitHub Pages
-        # v3.9.3 - pinned to commit SHA for supply-chain security
+      # Deploy development branch to root so Storybook is served at https://bczak.github.io/m3you/
+      - name: Deploy development to GitHub Pages root
+        if: steps.branch.outputs.name == 'development'
+        uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ steps.build-bun.outputs.publish_dir || steps.build-pnpm.outputs.publish_dir || steps.build-yarn.outputs.publish_dir || steps.build-npm.outputs.publish_dir || steps.build-static.outputs.publish_dir }}
+          keep_files: true
+
+      # Deploy claude branches to subdirectories for preview
+      - name: Deploy claude branch to GitHub Pages subdirectory
+        if: steps.branch.outputs.name != 'development'
         uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
