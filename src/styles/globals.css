@@ -166,33 +166,6 @@
 }
 
 /* =============================================================================
-   Loading Indicator Animation
-   Morphing star shape that rotates and scales
-   ============================================================================= */
-
-@keyframes loading-indicator {
-  0% {
-    transform: rotate(0deg) scale(1);
-  }
-  25% {
-    transform: rotate(90deg) scale(0.9);
-  }
-  50% {
-    transform: rotate(180deg) scale(1);
-  }
-  75% {
-    transform: rotate(270deg) scale(0.9);
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
-  }
-}
-
-.animate-loading-indicator {
-  animation: loading-indicator 1.4s ease-in-out infinite;
-}
-
-/* =============================================================================
    Linear Progress Indicator Animation
    Indeterminate sliding bar animation
    ============================================================================= */
