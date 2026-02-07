@@ -30,8 +30,6 @@ export type { IconButtonProps } from './components/ui/icon-button';
 export { IconButton, iconButtonVariants } from './components/ui/icon-button';
 export type { LinearProgressProps } from './components/ui/linear-progress';
 export { LinearProgress, linearProgressVariants } from './components/ui/linear-progress';
-export type { LoadingIndicatorProps } from './components/ui/loading-indicator';
-export { LoadingIndicator, loadingIndicatorVariants } from './components/ui/loading-indicator';
 export type { NavigationBarItemProps, NavigationBarProps } from './components/ui/navigation-bar';
 export {
   NavigationBar,
