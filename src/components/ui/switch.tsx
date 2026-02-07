@@ -110,7 +110,16 @@ export type SwitchProps = Omit<React.ComponentProps<'input'>, 'type'> & {
 
 const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
   (
-    { className, checked: checkedProp, defaultChecked = false, variant = 'primary', showIcons = false, disabled, onCheckedChange, ...props },
+    {
+      className,
+      checked: checkedProp,
+      defaultChecked = false,
+      variant = 'primary',
+      showIcons = false,
+      disabled,
+      onCheckedChange,
+      ...props
+    },
     ref,
   ) => {
     const isControlled = checkedProp !== undefined;
@@ -158,10 +167,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           className={cn('pointer-events-none', switchTrackVariants({ variant, checked }))}
         >
           {/* Thumb - positioned absolutely, anchored to left (unchecked) or right (checked) */}
-          <span
-            data-thumb
-            className={switchThumbVariants({ variant, checked, withIcon: showIcons })}
-          >
+          <span data-thumb className={switchThumbVariants({ variant, checked, withIcon: showIcons })}>
             {showIcons && (
               <span
                 className={cn(
