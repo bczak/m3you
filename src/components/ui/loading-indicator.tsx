@@ -40,30 +40,54 @@ const loadingIndicatorIconVariants = cva('text-primary', {
   },
 });
 
-// Generate a star/polygon path with rounded corners
-function generateStarPath(
-  points: number,
+// M3 Loading Indicator shapes - from 8-pointed star to ellipse
+// These shapes follow the Material 3 design specification
+
+// Helper to generate a scalloped/wavy circle (for 8-pointed and 6-pointed stars)
+function generateScallopedPath(
+  lobes: number,
   outerRadius: number,
   innerRadius: number,
-  centerX: number,
-  centerY: number,
-  cornerRadius: number,
+  cx: number,
+  cy: number,
 ): string {
-  if (points < 2) points = 2;
+  const points: string[] = [];
+  const totalPoints = lobes * 2;
 
-  const vertices: { x: number; y: number }[] = [];
-  const totalPoints = points * 2;
-
-  for (let i = 0; i < totalPoints; i++) {
-    const angle = (i * Math.PI) / points - Math.PI / 2;
+  for (let i = 0; i <= totalPoints; i++) {
+    const angle = (i * Math.PI * 2) / totalPoints - Math.PI / 2;
     const radius = i % 2 === 0 ? outerRadius : innerRadius;
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle);
+
+    if (i === 0) {
+      points.push(`M ${x} ${y}`);
+    } else {
+      // Control point for smooth curve
+      const midAngle = ((i - 0.5) * Math.PI * 2) / totalPoints - Math.PI / 2;
+      const controlRadius = (outerRadius + innerRadius) / 2;
+      const cpX = cx + controlRadius * Math.cos(midAngle);
+      const cpY = cy + controlRadius * Math.sin(midAngle);
+
+      points.push(`Q ${cpX} ${cpY} ${x} ${y}`);
+    }
+  }
+
+  return `${points.join(' ')} Z`;
+}
+
+// Generate rounded polygon (pentagon, etc.)
+function generateRoundedPolygon(sides: number, radius: number, cx: number, cy: number, cornerRadius: number): string {
+  const vertices: { x: number; y: number }[] = [];
+
+  for (let i = 0; i < sides; i++) {
+    const angle = (i * Math.PI * 2) / sides - Math.PI / 2;
     vertices.push({
-      x: centerX + radius * Math.cos(angle),
-      y: centerY + radius * Math.sin(angle),
+      x: cx + radius * Math.cos(angle),
+      y: cy + radius * Math.sin(angle),
     });
   }
 
-  // Build path with rounded corners using quadratic bezier curves
   let path = '';
   const n = vertices.length;
 
@@ -72,18 +96,15 @@ function generateStarPath(
     const next = vertices[(i + 1) % n];
     const prev = vertices[(i - 1 + n) % n];
 
-    // Calculate vectors to prev and next
     const toPrev = { x: prev.x - curr.x, y: prev.y - curr.y };
     const toNext = { x: next.x - curr.x, y: next.y - curr.y };
 
-    // Normalize vectors
     const lenPrev = Math.sqrt(toPrev.x * toPrev.x + toPrev.y * toPrev.y);
     const lenNext = Math.sqrt(toNext.x * toNext.x + toNext.y * toNext.y);
 
     const normPrev = { x: toPrev.x / lenPrev, y: toPrev.y / lenPrev };
     const normNext = { x: toNext.x / lenNext, y: toNext.y / lenNext };
 
-    // Calculate corner points (offset from vertex)
     const offset = Math.min(cornerRadius, lenPrev / 2, lenNext / 2);
     const startPt = { x: curr.x + normPrev.x * offset, y: curr.y + normPrev.y * offset };
     const endPt = { x: curr.x + normNext.x * offset, y: curr.y + normNext.y * offset };
@@ -94,11 +115,10 @@ function generateStarPath(
       path += ` L ${startPt.x} ${startPt.y}`;
     }
 
-    // Quadratic bezier curve for rounded corner
     path += ` Q ${curr.x} ${curr.y} ${endPt.x} ${endPt.y}`;
   }
 
-  // Close the path by connecting back to start
+  // Close path
   const first = vertices[0];
   const last = vertices[n - 1];
   const second = vertices[1];
@@ -116,58 +136,150 @@ function generateStarPath(
   return path;
 }
 
-// Pre-generate paths for all point counts (8 down to 2)
-const CENTER = 24;
-const OUTER_RADIUS = 20;
-const INNER_RADIUS = 10;
-const CORNER_RADIUS = 3;
+// Generate ellipse path
+function generateEllipse(cx: number, cy: number, rx: number, ry: number, rotation = 0): string {
+  // Create ellipse using bezier curves (approximation)
+  const kappa = 0.5522847498; // 4 * (sqrt(2) - 1) / 3
 
-const STAR_PATHS = [
-  generateStarPath(8, OUTER_RADIUS, INNER_RADIUS, CENTER, CENTER, CORNER_RADIUS), // 8 points
-  generateStarPath(7, OUTER_RADIUS, INNER_RADIUS, CENTER, CENTER, CORNER_RADIUS), // 7 points
-  generateStarPath(6, OUTER_RADIUS, INNER_RADIUS, CENTER, CENTER, CORNER_RADIUS), // 6 points
-  generateStarPath(5, OUTER_RADIUS, INNER_RADIUS, CENTER, CENTER, CORNER_RADIUS), // 5 points
-  generateStarPath(4, OUTER_RADIUS, INNER_RADIUS, CENTER, CENTER, CORNER_RADIUS), // 4 points
-  generateStarPath(3, OUTER_RADIUS, INNER_RADIUS, CENTER, CENTER, CORNER_RADIUS), // 3 points
-  generateStarPath(2, OUTER_RADIUS, INNER_RADIUS, CENTER, CENTER, CORNER_RADIUS), // 2 points
+  const cos = Math.cos((rotation * Math.PI) / 180);
+  const sin = Math.sin((rotation * Math.PI) / 180);
+
+  const transform = (x: number, y: number) => ({
+    x: cx + (x - cx) * cos - (y - cy) * sin,
+    y: cy + (x - cx) * sin + (y - cy) * cos,
+  });
+
+  const ox = rx * kappa;
+  const oy = ry * kappa;
+
+  const p0 = transform(cx, cy - ry);
+  const p1 = transform(cx + rx, cy);
+  const p2 = transform(cx, cy + ry);
+  const p3 = transform(cx - rx, cy);
+
+  const c01a = transform(cx + ox, cy - ry);
+  const c01b = transform(cx + rx, cy - oy);
+  const c12a = transform(cx + rx, cy + oy);
+  const c12b = transform(cx + ox, cy + ry);
+  const c23a = transform(cx - ox, cy + ry);
+  const c23b = transform(cx - rx, cy + oy);
+  const c30a = transform(cx - rx, cy - oy);
+  const c30b = transform(cx - ox, cy - ry);
+
+  return `M ${p0.x} ${p0.y} C ${c01a.x} ${c01a.y} ${c01b.x} ${c01b.y} ${p1.x} ${p1.y} C ${c12a.x} ${c12a.y} ${c12b.x} ${c12b.y} ${p2.x} ${p2.y} C ${c23a.x} ${c23a.y} ${c23b.x} ${c23b.y} ${p3.x} ${p3.y} C ${c30a.x} ${c30a.y} ${c30b.x} ${c30b.y} ${p0.x} ${p0.y} Z`;
+}
+
+// Generate quatrefoil (4-lobed shape with concave sides)
+function generateQuatrefoil(cx: number, cy: number, outerRadius: number, innerRadius: number): string {
+  const points: string[] = [];
+  const lobes = 4;
+  const totalPoints = lobes * 2;
+
+  for (let i = 0; i <= totalPoints; i++) {
+    const angle = (i * Math.PI * 2) / totalPoints - Math.PI / 4; // Rotated 45 degrees
+    const isOuter = i % 2 === 0;
+    const radius = isOuter ? outerRadius : innerRadius;
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle);
+
+    if (i === 0) {
+      points.push(`M ${x} ${y}`);
+    } else {
+      const midAngle = ((i - 0.5) * Math.PI * 2) / totalPoints - Math.PI / 4;
+      const controlRadius = isOuter ? innerRadius * 1.3 : outerRadius * 0.85;
+      const cpX = cx + controlRadius * Math.cos(midAngle);
+      const cpY = cy + controlRadius * Math.sin(midAngle);
+
+      points.push(`Q ${cpX} ${cpY} ${x} ${y}`);
+    }
+  }
+
+  return `${points.join(' ')} Z`;
+}
+
+// Generate 8-lobed flower/blob shape
+function generateFlowerBlob(cx: number, cy: number, outerRadius: number, innerRadius: number): string {
+  const lobes = 8;
+  const points: string[] = [];
+
+  for (let i = 0; i <= lobes * 2; i++) {
+    const angle = (i * Math.PI) / lobes - Math.PI / 2;
+    const isOuter = i % 2 === 0;
+    const radius = isOuter ? outerRadius : innerRadius;
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle);
+
+    if (i === 0) {
+      points.push(`M ${x} ${y}`);
+    } else {
+      const midAngle = ((i - 0.5) * Math.PI) / lobes - Math.PI / 2;
+      const controlRadius = (outerRadius + innerRadius) / 2;
+      const cpX = cx + controlRadius * Math.cos(midAngle);
+      const cpY = cy + controlRadius * Math.sin(midAngle);
+      points.push(`Q ${cpX} ${cpY} ${x} ${y}`);
+    }
+  }
+
+  return `${points.join(' ')} Z`;
+}
+
+const CENTER = 24;
+const OUTER_RADIUS = 18;
+
+// M3 Loading Indicator shape sequence
+const LOADING_SHAPES = [
+  // Shape 1: 8-pointed star with scalloped edges
+  generateScallopedPath(8, OUTER_RADIUS, OUTER_RADIUS * 0.7, CENTER, CENTER),
+  // Shape 2: 8-lobed flower/blob (more rounded)
+  generateFlowerBlob(CENTER, CENTER, OUTER_RADIUS * 0.9, OUTER_RADIUS * 0.75),
+  // Shape 3: Pentagon with very rounded corners
+  generateRoundedPolygon(5, OUTER_RADIUS * 0.95, CENTER, CENTER, 8),
+  // Shape 4: Horizontal ellipse
+  generateEllipse(CENTER, CENTER, OUTER_RADIUS, OUTER_RADIUS * 0.65, 0),
+  // Shape 5: 6-pointed star with rounded edges
+  generateScallopedPath(6, OUTER_RADIUS * 0.95, OUTER_RADIUS * 0.7, CENTER, CENTER),
+  // Shape 6: 4-pointed quatrefoil (concave sides)
+  generateQuatrefoil(CENTER, CENTER, OUTER_RADIUS * 0.9, OUTER_RADIUS * 0.55),
+  // Shape 7: Tilted ellipse (diagonal)
+  generateEllipse(CENTER, CENTER, OUTER_RADIUS, OUTER_RADIUS * 0.6, 45),
 ];
 
 export type LoadingIndicatorProps = React.ComponentProps<'div'> & VariantProps<typeof loadingIndicatorVariants>;
 
 const LoadingIndicator = React.forwardRef<HTMLDivElement, LoadingIndicatorProps>(
   ({ className, size = 'md', contained = false, ...props }, ref) => {
-    const [pathIndex, setPathIndex] = React.useState(0);
+    const [shapeIndex, setShapeIndex] = React.useState(0);
     const [rotation, setRotation] = React.useState(0);
-    const lastTimeRef = React.useRef(0);
-    const rotationRef = React.useRef(0);
-    const lastRotationCycleRef = React.useRef(0);
+    const startTimeRef = React.useRef(0);
+    const lastCycleRef = React.useRef(0);
 
-    // Animation duration per rotation cycle (ms)
-    const rotationDuration = 800;
+    // Duration for each rotation cycle (ms)
+    const cycleDuration = 800;
 
     useAnimationFrame((time) => {
-      if (lastTimeRef.current === 0) {
-        lastTimeRef.current = time;
+      if (startTimeRef.current === 0) {
+        startTimeRef.current = time;
       }
 
-      const elapsed = time - lastTimeRef.current;
+      const elapsed = time - startTimeRef.current;
 
-      // Calculate rotation with ease-in-out
-      const progress = (elapsed % rotationDuration) / rotationDuration;
-      // Ease in-out cubic
-      const eased = progress < 0.5 ? 4 * progress * progress * progress : 1 - (-2 * progress + 2) ** 3 / 2;
+      // Calculate progress within current cycle (0 to 1)
+      const cycleProgress = (elapsed % cycleDuration) / cycleDuration;
 
-      // Calculate which rotation cycle we're in
-      const currentCycle = Math.floor(elapsed / rotationDuration);
+      // Ease in-out cubic for smooth rotation
+      const eased =
+        cycleProgress < 0.5 ? 4 * cycleProgress * cycleProgress * cycleProgress : 1 - (-2 * cycleProgress + 2) ** 3 / 2;
 
-      // Update rotation (continuous 360° cycles)
-      rotationRef.current = currentCycle * 360 + eased * 360;
-      setRotation(rotationRef.current);
+      // Current cycle number
+      const currentCycle = Math.floor(elapsed / cycleDuration);
 
-      // Change shape at the end of each rotation cycle
-      if (currentCycle !== lastRotationCycleRef.current) {
-        lastRotationCycleRef.current = currentCycle;
-        setPathIndex((prev) => (prev + 1) % STAR_PATHS.length);
+      // Update rotation (360° per cycle with easing)
+      setRotation(currentCycle * 360 + eased * 360);
+
+      // Change shape at start of each new cycle
+      if (currentCycle !== lastCycleRef.current) {
+        lastCycleRef.current = currentCycle;
+        setShapeIndex((prev) => (prev + 1) % LOADING_SHAPES.length);
       }
     });
 
@@ -188,11 +300,11 @@ const LoadingIndicator = React.forwardRef<HTMLDivElement, LoadingIndicatorProps>
           style={{ transform: `rotate(${rotation}deg)` }}
         >
           <motion.path
-            d={STAR_PATHS[pathIndex]}
+            d={LOADING_SHAPES[shapeIndex]}
             initial={false}
-            animate={{ d: STAR_PATHS[pathIndex] }}
+            animate={{ d: LOADING_SHAPES[shapeIndex] }}
             transition={{
-              duration: 0.3,
+              duration: 0.35,
               ease: 'easeInOut',
             }}
           />
