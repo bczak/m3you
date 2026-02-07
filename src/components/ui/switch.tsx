@@ -68,9 +68,8 @@ const switchThumbVariants = cva(
         error: '',
       },
       checked: {
-        // Use translateX for smooth position animation
-        true: 'translate-x-[22px]',
-        false: 'translate-x-[6px]',
+        true: '',
+        false: '',
       },
       withIcon: {
         true: '',
@@ -78,13 +77,15 @@ const switchThumbVariants = cva(
       },
     },
     compoundVariants: [
-      // Unchecked thumb: outline color, smaller size (16dp default, 24dp with icon)
-      { checked: false, withIcon: false, class: 'size-4 bg-outline' },
+      // Unchecked thumb positions and sizes
+      { checked: false, withIcon: false, class: 'size-4 translate-x-[2px] bg-outline' },
       { checked: false, withIcon: true, class: 'size-6 translate-x-[2px] bg-outline' },
 
-      // Checked thumb: primary-foreground color, larger size (24dp)
-      { checked: true, variant: 'primary', class: 'size-6 bg-primary-foreground' },
-      { checked: true, variant: 'error', class: 'size-6 bg-error-foreground' },
+      // Checked thumb positions and sizes
+      { checked: true, withIcon: false, variant: 'primary', class: 'size-6 translate-x-[22px] bg-primary-foreground' },
+      { checked: true, withIcon: false, variant: 'error', class: 'size-6 translate-x-[22px] bg-error-foreground' },
+      { checked: true, withIcon: true, variant: 'primary', class: 'size-6 translate-x-[22px] bg-primary-foreground' },
+      { checked: true, withIcon: true, variant: 'error', class: 'size-6 translate-x-[22px] bg-error-foreground' },
 
       // Icon colors
       { checked: false, variant: 'primary', class: '[&_svg]:text-surface-container-highest' },
