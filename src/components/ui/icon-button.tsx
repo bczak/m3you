@@ -1,8 +1,8 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
 
 import { cn } from '../../lib/utils';
+import { Button } from './button';
 
 const iconButtonVariants = cva(
   'relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap transition-[color,background-color,border-radius,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
@@ -10,11 +10,11 @@ const iconButtonVariants = cva(
     variants: {
       variant: {
         filled:
-          'bg-primary text-primary-foreground hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)] disabled:bg-muted disabled:text-muted-foreground',
-        elevated: 'bg-surface-container text-foreground shadow-lg',
+          'bg-primary text-primary-foreground hover:bg-primary hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)] disabled:bg-muted disabled:text-muted-foreground',
+        elevated: 'bg-surface-container text-foreground hover:bg-surface-container shadow-lg',
         tonal:
-          'bg-secondary-container text-secondary-container-foreground hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]',
-        outlined: 'border border-outline/40 bg-transparent text-primary',
+          'bg-secondary-container text-secondary-container-foreground hover:bg-secondary-container hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]',
+        outlined: 'border border-outline/40 bg-transparent text-primary hover:bg-transparent',
         text: 'bg-transparent text-primary hover:bg-secondary-container/50',
       },
       shape: {
@@ -84,13 +84,19 @@ const iconButtonVariants = cva(
       { morph: true, shape: 'square', size: 'lg', class: 'active:rounded-xl' },
       { morph: true, shape: 'square', size: 'xl', class: 'active:rounded-xl' },
       // Selected: false (unselected state) - secondary bg for filled
-      { selected: false, variant: 'filled', class: 'bg-secondary/70 text-secondary-foreground' },
+      { selected: false, variant: 'filled', class: 'bg-secondary/70 hover:bg-secondary/70 text-secondary-foreground' },
       // Selected states for elevated variant
-      { selected: true, variant: 'elevated', class: 'bg-primary text-primary-foreground shadow-xl' },
+      { selected: true, variant: 'elevated', class: 'bg-primary hover:bg-primary text-primary-foreground shadow-xl' },
       // Selected states for tonal variant
-      { selected: true, variant: 'tonal', class: 'bg-tertiary text-tertiary-foreground' },
+      { selected: true, variant: 'tonal', class: 'bg-tertiary hover:bg-tertiary text-tertiary-foreground' },
       // Selected states for outlined variant
-      { selected: true, variant: 'outlined', class: 'bg-outline text-outline-foreground' },
+      { selected: true, variant: 'outlined', class: 'bg-outline hover:bg-outline text-outline-foreground' },
+      // Selected states for text variant
+      {
+        selected: true,
+        variant: 'text',
+        class: 'bg-secondary-container hover:bg-secondary-container text-secondary-container-foreground',
+      },
       // Selected: true + round shape -> square radius
       { selected: true, shape: 'round', size: 'xs', class: 'rounded-lg' },
       { selected: true, shape: 'round', size: 'sm', class: 'rounded-lg' },
@@ -134,18 +140,17 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     },
     ref,
   ) => {
-    // Only pass selected to variants if it's defined and variant is not 'text' (text buttons are not toggleable)
-    const selectedVariant = selected !== undefined && variant !== 'text' ? selected : undefined;
+    const selectedVariant = selected !== undefined ? selected : undefined;
 
     return (
-      <button
-        className={cn(iconButtonVariants({ variant, shape, size, width, morph, selected: selectedVariant, className }))}
+      <Button
+        variant="text"
         ref={ref}
+        className={cn(iconButtonVariants({ variant, shape, size, width, morph, selected: selectedVariant, className }))}
         {...props}
       >
-        <Ripple />
         {children}
-      </button>
+      </Button>
     );
   },
 );
