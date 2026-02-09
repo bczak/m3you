@@ -1,0 +1,125 @@
+import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
+import * as React from 'react';
+
+import { cn } from '../../lib/utils';
+
+// =============================================================================
+// TooltipProvider
+// =============================================================================
+
+function TooltipProvider({ children, ...props }: React.ComponentProps<typeof BaseTooltip.Provider>) {
+  return (
+    <BaseTooltip.Provider delay={500} closeDelay={0} {...props}>
+      {children}
+    </BaseTooltip.Provider>
+  );
+}
+
+// =============================================================================
+// Tooltip (Root)
+// =============================================================================
+
+function Tooltip(props: React.ComponentProps<typeof BaseTooltip.Root>) {
+  return <BaseTooltip.Root {...props} />;
+}
+
+// =============================================================================
+// TooltipTrigger
+// =============================================================================
+
+const TooltipTrigger = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof BaseTooltip.Trigger>>(
+  (props, ref) => {
+    return <BaseTooltip.Trigger ref={ref} {...props} />;
+  },
+);
+TooltipTrigger.displayName = 'TooltipTrigger';
+
+// =============================================================================
+// TooltipContent
+// =============================================================================
+
+export interface TooltipContentProps extends React.ComponentPropsWithoutRef<typeof BaseTooltip.Popup> {
+  side?: 'top' | 'bottom' | 'left' | 'right';
+  sideOffset?: number;
+}
+
+const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentProps>(
+  ({ side = 'top', sideOffset = 4, className, ...props }, ref) => {
+    return (
+      <BaseTooltip.Portal>
+        <BaseTooltip.Positioner side={side} sideOffset={sideOffset}>
+          <BaseTooltip.Popup
+            ref={ref}
+            className={cn(
+              'max-w-[200px] rounded bg-inverse-surface px-2 py-1 text-inverse-surface-foreground text-xs',
+              className,
+            )}
+            {...props}
+          />
+        </BaseTooltip.Positioner>
+      </BaseTooltip.Portal>
+    );
+  },
+);
+TooltipContent.displayName = 'TooltipContent';
+
+// =============================================================================
+// Rich Tooltip
+// =============================================================================
+
+function RichTooltip(props: React.ComponentProps<typeof BaseTooltip.Root>) {
+  return <BaseTooltip.Root {...props} />;
+}
+
+// =============================================================================
+// RichTooltipTrigger
+// =============================================================================
+
+const RichTooltipTrigger = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof BaseTooltip.Trigger>>(
+  (props, ref) => {
+    return <BaseTooltip.Trigger ref={ref} {...props} />;
+  },
+);
+RichTooltipTrigger.displayName = 'RichTooltipTrigger';
+
+// =============================================================================
+// RichTooltipContent
+// =============================================================================
+
+export interface RichTooltipContentProps extends React.ComponentPropsWithoutRef<typeof BaseTooltip.Popup> {
+  headline?: string;
+  actions?: React.ReactNode;
+  side?: 'top' | 'bottom' | 'left' | 'right';
+  sideOffset?: number;
+}
+
+const RichTooltipContent = React.forwardRef<HTMLDivElement, RichTooltipContentProps>(
+  ({ headline, actions, side = 'bottom', sideOffset = 4, className, children, ...props }, ref) => {
+    return (
+      <BaseTooltip.Portal>
+        <BaseTooltip.Positioner side={side} sideOffset={sideOffset}>
+          <BaseTooltip.Popup
+            ref={ref}
+            className={cn('max-w-xs rounded-xl bg-surface-container pt-3 pr-4 pb-2 pl-4 shadow-md', className)}
+            {...props}
+          >
+            {headline && <div className="font-medium text-sm text-surface-variant-foreground">{headline}</div>}
+            <div className={cn('text-sm text-surface-variant-foreground', headline && 'mt-1')}>{children}</div>
+            {actions && <div className="mt-3 flex justify-end gap-2">{actions}</div>}
+          </BaseTooltip.Popup>
+        </BaseTooltip.Positioner>
+      </BaseTooltip.Portal>
+    );
+  },
+);
+RichTooltipContent.displayName = 'RichTooltipContent';
+
+export {
+  RichTooltip,
+  RichTooltipContent,
+  RichTooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+};
