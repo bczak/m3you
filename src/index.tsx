@@ -11,6 +11,8 @@ export {
   ConnectedButtonGroup,
   connectedButtonGroupVariants,
 } from './components/ui/button-group';
+export type { CardProps } from './components/ui/card';
+export { Card, cardVariants } from './components/ui/card';
 export type { CheckboxProps } from './components/ui/checkbox';
 export { Checkbox, checkboxVariants } from './components/ui/checkbox';
 export type { ChipProps } from './components/ui/chip';
