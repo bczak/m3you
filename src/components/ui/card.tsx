@@ -29,7 +29,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     const showRipple = ripple ?? isInteractive;
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (isInteractive && (e.key === 'Enter' || e.key === ' ')) {
+      if (isInteractive && !disabled && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
         onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
       }
