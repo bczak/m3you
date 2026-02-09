@@ -396,10 +396,10 @@ export const RichContent: Story = {
           className="h-12 w-12 shrink-0 rounded-full object-cover"
         />
         <div className="flex flex-1 items-center justify-end gap-2">
-          <Chip type="assist" variant="outlined" leadingIcon={<Heart />}>
+          <Chip type="assist" variant="outlined" leadingIcon={<Heart />} className="h-7 text-xs [&_svg]:size-4">
             Preferido
           </Chip>
-          <Chip type="assist" variant="outlined" leadingIcon={<CalendarDays />}>
+          <Chip type="assist" variant="outlined" leadingIcon={<CalendarDays />} className="h-7 text-xs [&_svg]:size-4">
             Ayudar
           </Chip>
         </div>
