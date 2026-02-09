@@ -20,11 +20,13 @@ const cardVariants = cva('relative overflow-hidden rounded-xl', {
 export type CardProps = React.ComponentProps<'div'> &
   VariantProps<typeof cardVariants> & {
     disabled?: boolean;
+    ripple?: boolean;
   };
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = 'filled', disabled, onClick, onKeyDown, children, ...props }, ref) => {
+  ({ className, variant = 'filled', disabled, ripple, onClick, onKeyDown, children, ...props }, ref) => {
     const isInteractive = Boolean(onClick);
+    const showRipple = ripple ?? isInteractive;
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (isInteractive && (e.key === 'Enter' || e.key === ' ')) {
@@ -55,7 +57,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         )}
         {...props}
       >
-        {isInteractive && !disabled && <Ripple />}
+        {showRipple && !disabled && <Ripple />}
         {children}
       </div>
     );
