@@ -1,5 +1,5 @@
 {
-  "name": "m3-lib",
+  "name": "m3you",
   "version": "1.0.0",
   "type": "module",
   "exports": {
@@ -65,7 +65,7 @@
   },
   "private": true,
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.4",
+    "@base-ui/react": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.29.2",

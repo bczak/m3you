@@ -59,6 +59,16 @@ export type { TabProps, TabsProps } from './components/ui/tabs';
 export { Tab, Tabs, tabsVariants, tabVariants } from './components/ui/tabs';
 export type { TextFieldProps } from './components/ui/text-field';
 export { TextField, textFieldVariants } from './components/ui/text-field';
+export type { RichTooltipContentProps, TooltipContentProps } from './components/ui/tooltip';
+export {
+  RichTooltip,
+  RichTooltipContent,
+  RichTooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './components/ui/tooltip';
 
 // Utilities
 export { cn } from './lib/utils';
