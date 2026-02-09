@@ -16,6 +16,7 @@ import {
   MoreVerticalIcon,
   PaintbrushIcon,
   PenIcon,
+  PhoneOffIcon,
   PlusIcon,
   Redo2Icon,
   Share2Icon,
@@ -26,7 +27,7 @@ import {
   Undo2Icon,
 } from 'lucide-react';
 import * as React from 'react';
-import { Chip } from '../src/components/ui/chip';
+import { Button } from '../src/components/ui/button';
 import { IconButton } from '../src/components/ui/icon-button';
 import { Toolbar } from '../src/components/ui/toolbar';
 
@@ -45,20 +46,152 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Default floating standard toolbar
+// Default floating standard toolbar with toggleable buttons
 export const Default: Story = {
+  render: () => {
+    const DefaultDemo = () => {
+      const [selected, setSelected] = React.useState<Record<string, boolean>>({});
+      const toggle = (key: string) => setSelected((prev) => ({ ...prev, [key]: !prev[key] }));
+      console.log(selected);
+      return (
+        <Toolbar>
+          <IconButton variant="text" size="sm" morph selected={selected.share} onClick={() => toggle('share')}>
+            <Share2Icon />
+          </IconButton>
+          <IconButton variant="text" size="sm" morph selected={selected.pen} onClick={() => toggle('pen')}>
+            <PenIcon />
+          </IconButton>
+          <IconButton variant="text" size="sm" morph selected={selected.mic} onClick={() => toggle('mic')}>
+            <MicIcon />
+          </IconButton>
+          <IconButton variant="text" size="sm" morph selected={selected.image} onClick={() => toggle('image')}>
+            <ImageIcon />
+          </IconButton>
+          <IconButton variant="text" size="sm" morph selected={selected.more} onClick={() => toggle('more')}>
+            <MoreVerticalIcon />
+          </IconButton>
+        </Toolbar>
+      );
+    };
+
+    return <DefaultDemo />;
+  },
+};
+
+// Floating toolbar variants with FAB pairing
+export const FloatingVariants: Story = {
+  parameters: { layout: 'fullscreen' },
   render: () => (
-    <Toolbar>
-      <IconButton variant="text" size="sm">
-        <Share2Icon />
-      </IconButton>
-      <IconButton variant="text" size="sm">
-        <MessageSquareIcon />
-      </IconButton>
-      <IconButton variant="text" size="sm">
-        <DownloadIcon />
-      </IconButton>
-    </Toolbar>
+    <div className="flex min-h-screen flex-col items-center gap-8 bg-surface-container-lowest p-8">
+      {/* Row 1: Standard toolbar + square FAB */}
+      <div className="flex items-center gap-2">
+        <Toolbar type="floating" color="standard">
+          <IconButton variant="text" morph>
+            <Share2Icon />
+          </IconButton>
+          <IconButton variant="text">
+            <MessageSquareIcon />
+          </IconButton>
+          <IconButton variant="text">
+            <DownloadIcon />
+          </IconButton>
+          <IconButton variant="text">
+            <PenIcon />
+          </IconButton>
+          <IconButton variant="text">
+            <MoreVerticalIcon />
+          </IconButton>
+        </Toolbar>
+        <IconButton variant="filled" size="md" shape="square">
+          <PlusIcon />
+        </IconButton>
+      </div>
+
+      {/* Row 2: Email actions toolbar + undo FAB */}
+      <div className="flex items-center gap-2">
+        <Toolbar type="floating" color="vibrant">
+          <IconButton variant="text" size="sm">
+            <ArchiveIcon />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <Trash2Icon />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <MailIcon />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <ClockIcon />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <MoreVerticalIcon />
+          </IconButton>
+        </Toolbar>
+        <IconButton variant="filled" size="md" shape="square">
+          <Undo2Icon />
+        </IconButton>
+      </div>
+
+      {/* Row 3: Meeting toolbar with selected state + end call FAB */}
+      <div className="flex items-center gap-2">
+        <Toolbar type="floating" color="vibrant">
+          <IconButton variant="text" size="sm">
+            <Share2Icon />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <MessageSquareIcon />
+          </IconButton>
+          <IconButton variant="tonal" size="sm" selected>
+            <HandIcon />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <MoreVerticalIcon />
+          </IconButton>
+        </Toolbar>
+        <IconButton
+          variant="filled"
+          size="md"
+          shape="square"
+          className="bg-error-container text-error-container-foreground"
+        >
+          <PhoneOffIcon />
+        </IconButton>
+      </div>
+
+      {/* Row 4: Tonal text buttons toolbar */}
+      <Toolbar type="floating" color="vibrant">
+        <Button variant="tonal" size="sm" selected>
+          <ImageIcon />
+          Photos
+        </Button>
+        <Button variant="tonal" size="sm" selected={false}>
+          Memories
+        </Button>
+        <Button variant="tonal" size="sm" selected={false}>
+          Library
+        </Button>
+      </Toolbar>
+
+      {/* Row 5: Toolbar with embedded circular FAB */}
+      <div className="flex items-center gap-2">
+        <Toolbar type="floating" color="vibrant">
+          <IconButton variant="text" size="sm">
+            <Share2Icon />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <MessageSquareIcon />
+          </IconButton>
+          <IconButton variant="filled" size="sm" shape="round">
+            <PlusIcon />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <MoreVerticalIcon />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <ImageIcon />
+          </IconButton>
+        </Toolbar>
+      </div>
+    </div>
   ),
 };
 
@@ -286,7 +419,7 @@ export const WithFAB: Story = {
               <IconButton variant="text" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
-              <IconButton variant="filled" size="md" shape="round">
+              <IconButton variant="filled" size="sm" shape="round">
                 <PlusIcon />
               </IconButton>
             </Toolbar>
@@ -333,7 +466,7 @@ export const WithFAB: Story = {
             <IconButton variant="text" size="sm">
               <ArrowRightIcon />
             </IconButton>
-            <IconButton variant="filled" size="md" shape="round">
+            <IconButton variant="filled" size="sm" shape="round">
               <PlusIcon />
             </IconButton>
             <IconButton variant="text" size="sm">
@@ -470,19 +603,45 @@ export const MediaControls: Story = {
   ),
 };
 
-// Toolbar with chips
-export const WithChips: Story = {
-  render: () => (
-    <div className="flex flex-col items-center gap-6">
-      <Toolbar type="floating" color="standard" className="gap-1 px-3">
-        <Chip type="filter" selected leadingIcon={<ImageIcon />}>
-          Photos
-        </Chip>
-        <Chip type="filter">Memories</Chip>
-        <Chip type="filter">Library</Chip>
-      </Toolbar>
-    </div>
-  ),
+// Toolbar with tonal text buttons (toggleable)
+export const TonalToggleable: Story = {
+  render: () => {
+    const TonalToggleableDemo = () => {
+      const [active, setActive] = React.useState('photos');
+
+      return (
+        <div className="flex flex-col items-center gap-6">
+          <Toolbar type="floating" color="standard">
+            <Button variant="tonal" size="sm" selected={active === 'photos'} onClick={() => setActive('photos')}>
+              {active === 'photos' && <ImageIcon />}
+              Photos
+            </Button>
+            <Button variant="tonal" size="sm" selected={active === 'memories'} onClick={() => setActive('memories')}>
+              Memories
+            </Button>
+            <Button variant="tonal" size="sm" selected={active === 'library'} onClick={() => setActive('library')}>
+              Library
+            </Button>
+          </Toolbar>
+
+          <Toolbar type="floating" color="vibrant">
+            <Button variant="tonal" size="sm" selected={active === 'photos'} onClick={() => setActive('photos')}>
+              {active === 'photos' && <ImageIcon />}
+              Photos
+            </Button>
+            <Button variant="tonal" size="sm" selected={active === 'memories'} onClick={() => setActive('memories')}>
+              Memories
+            </Button>
+            <Button variant="tonal" size="sm" selected={active === 'library'} onClick={() => setActive('library')}>
+              Library
+            </Button>
+          </Toolbar>
+        </div>
+      );
+    };
+
+    return <TonalToggleableDemo />;
+  },
 };
 
 // Building blocks - various content combinations
@@ -615,27 +774,33 @@ export const BuildingBlocks: Story = {
           </div>
         </div>
 
-        {/* Chips */}
+        {/* Tonal text buttons */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-center text-foreground/50 text-xs">Chips</h3>
+          <h3 className="mb-4 text-center text-foreground/50 text-xs">Tonal text buttons (toggleable)</h3>
           <div className="flex flex-wrap items-center justify-center gap-6">
-            <Toolbar type="floating" color="standard" className="gap-1 px-3">
-              <Chip type="filter" selected leadingIcon={<ImageIcon />}>
+            <Toolbar type="floating" color="standard">
+              <Button variant="tonal" size="sm" selected>
+                <ImageIcon />
                 Photos
-              </Chip>
-              <Chip type="filter">Memories</Chip>
-              <Chip type="filter">Library</Chip>
-            </Toolbar>
-            <Toolbar type="floating" color="vibrant" className="gap-1 px-3">
-              <Chip type="filter" variant="elevated" selected leadingIcon={<ImageIcon />}>
-                Photos
-              </Chip>
-              <Chip type="filter" variant="elevated">
+              </Button>
+              <Button variant="tonal" size="sm" selected={false}>
                 Memories
-              </Chip>
-              <Chip type="filter" variant="elevated">
+              </Button>
+              <Button variant="tonal" size="sm" selected={false}>
                 Library
-              </Chip>
+              </Button>
+            </Toolbar>
+            <Toolbar type="floating" color="vibrant">
+              <Button variant="tonal" size="sm" selected>
+                <ImageIcon />
+                Photos
+              </Button>
+              <Button variant="tonal" size="sm" selected={false}>
+                Memories
+              </Button>
+              <Button variant="tonal" size="sm" selected={false}>
+                Library
+              </Button>
             </Toolbar>
           </div>
         </div>
@@ -672,7 +837,7 @@ export const CompleteShowcase: Story = {
               <IconButton variant="text" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
-              <IconButton variant="filled" size="md" shape="round">
+              <IconButton variant="filled" size="sm" shape="round">
                 <PlusIcon />
               </IconButton>
             </Toolbar>
@@ -779,7 +944,7 @@ export const CompleteShowcase: Story = {
               <IconButton variant="text" size="sm">
                 <ArrowRightIcon />
               </IconButton>
-              <IconButton variant="filled" size="md" shape="round">
+              <IconButton variant="filled" size="sm" shape="round">
                 <PlusIcon />
               </IconButton>
               <IconButton variant="text" size="sm">
@@ -809,16 +974,21 @@ export const CompleteShowcase: Story = {
           </div>
         </div>
 
-        {/* Chips in toolbar */}
+        {/* Tonal text buttons */}
         <div className="space-y-6">
-          <h3 className="font-medium text-foreground/60 text-sm">With Chips</h3>
+          <h3 className="font-medium text-foreground/60 text-sm">Tonal Text Buttons</h3>
           <div className="flex flex-wrap gap-6">
-            <Toolbar type="floating" color="standard" className="gap-1 px-3">
-              <Chip type="filter" selected leadingIcon={<ImageIcon />}>
+            <Toolbar type="floating" color="standard">
+              <Button variant="tonal" size="sm" selected>
+                <ImageIcon />
                 Photos
-              </Chip>
-              <Chip type="filter">Memories</Chip>
-              <Chip type="filter">Library</Chip>
+              </Button>
+              <Button variant="tonal" size="sm" selected={false}>
+                Memories
+              </Button>
+              <Button variant="tonal" size="sm" selected={false}>
+                Library
+              </Button>
             </Toolbar>
           </div>
         </div>

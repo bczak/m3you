@@ -14,7 +14,7 @@ const toolbarVariants = cva('flex items-center', {
   variants: {
     type: {
       docked: 'h-16 w-full justify-evenly',
-      floating: 'w-fit rounded-full shadow-md',
+      floating: 'w-fit rounded-full shadow-md p-3',
     },
     color: {
       standard: 'bg-surface-container text-foreground',
@@ -26,8 +26,8 @@ const toolbarVariants = cva('flex items-center', {
     },
   },
   compoundVariants: [
-    { type: 'floating', layout: 'horizontal', class: 'h-16 px-2' },
-    { type: 'floating', layout: 'vertical', class: 'w-16 py-2' },
+    { type: 'floating', layout: 'horizontal', class: 'h-16 gap-2' },
+    { type: 'floating', layout: 'vertical', class: 'w-16 gap-1' },
   ],
   defaultVariants: {
     type: 'floating',
