@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Heart, MoreVertical, Share2, Star, Triangle } from 'lucide-react';
+import { CalendarDays, Heart, MessageSquareText, MoreVertical, Phone, Share2, Star, Triangle } from 'lucide-react';
 import * as React from 'react';
 import { Button } from '../src/components/ui/button';
 import { Card } from '../src/components/ui/card';
+import { Chip } from '../src/components/ui/chip';
 import { IconButton } from '../src/components/ui/icon-button';
 
 const meta = {
@@ -377,6 +378,72 @@ export const WithActions: Story = {
         </Card>
       </div>
     </div>
+  ),
+};
+
+/* ---------------------------------------------------------------------------
+   Rich Content — Card with photos, chips, and mixed actions
+   --------------------------------------------------------------------------- */
+
+export const RichContent: Story = {
+  render: () => (
+    <Card variant="outlined" className="w-[420px]">
+      {/* Header: avatar + chips */}
+      <div className="flex items-center gap-3 px-4 pt-4">
+        <img
+          src="https://picsum.photos/id/1027/100/100"
+          alt="Avatar"
+          className="h-12 w-12 shrink-0 rounded-full object-cover"
+        />
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <Chip type="assist" variant="outlined" leadingIcon={<Heart />}>
+            Preferido
+          </Chip>
+          <Chip type="assist" variant="outlined" leadingIcon={<CalendarDays />}>
+            Ayudar
+          </Chip>
+        </div>
+      </div>
+
+      {/* Media: main image + overlapping side portrait */}
+      <div className="relative mx-4 mt-4">
+        <img src="https://picsum.photos/id/188/600/400" alt="Nature" className="h-52 w-full rounded-xl object-cover" />
+        <img
+          src="https://picsum.photos/id/1005/200/400"
+          alt="Portrait"
+          className="absolute top-0 right-0 h-full w-20 rounded-xl object-cover shadow-md"
+        />
+      </div>
+
+      {/* Supporting text */}
+      <div className="px-4 pt-4">
+        <p className="text-foreground/80 text-sm leading-relaxed">
+          Caminante, son tus huellas el camino y nada m&aacute;s; Caminante, no hay camino, se hace camino al andar. Al
+          andar se hace el camino, y al volver la vista atr&aacute;s se ve la senda que nunca. Visite el enlace
+          aqu&iacute;.
+        </p>
+      </div>
+
+      {/* Actions: tonal buttons + icon buttons */}
+      <div className="flex items-center justify-between px-4 pt-3 pb-4">
+        <div className="flex gap-2">
+          <Button variant="tonal" size="xs">
+            Escucha
+          </Button>
+          <Button variant="tonal" size="xs">
+            Ahorrar
+          </Button>
+        </div>
+        <div className="flex gap-1">
+          <IconButton variant="text" size="sm">
+            <Phone />
+          </IconButton>
+          <IconButton variant="text" size="sm">
+            <MessageSquareText />
+          </IconButton>
+        </div>
+      </div>
+    </Card>
   ),
 };
 
