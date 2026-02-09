@@ -13,7 +13,7 @@ import { cn } from '../../lib/utils';
 const toolbarVariants = cva('flex items-center', {
   variants: {
     type: {
-      docked: 'h-16 w-full justify-evenly',
+      docked: 'h-16 w-full justify-center gap-8 px-4',
       floating: 'w-fit rounded-full shadow-md p-3',
     },
     color: {
@@ -27,7 +27,7 @@ const toolbarVariants = cva('flex items-center', {
   },
   compoundVariants: [
     { type: 'floating', layout: 'horizontal', class: 'h-16 gap-2' },
-    { type: 'floating', layout: 'vertical', class: 'w-16 gap-1' },
+    { type: 'floating', layout: 'vertical', class: 'w-16 gap-2' },
   ],
   defaultVariants: {
     type: 'floating',
