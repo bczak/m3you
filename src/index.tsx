@@ -19,6 +19,28 @@ export type { ChipProps } from './components/ui/chip';
 export { Chip, chipVariants } from './components/ui/chip';
 export type { CircularProgressProps } from './components/ui/circular-progress';
 export { CircularProgress, circularProgressVariants } from './components/ui/circular-progress';
+export type { DialogHeaderProps, FullScreenDialogHeaderProps } from './components/ui/dialog';
+export {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogDivider,
+  DialogFooter,
+  DialogHeader,
+  DialogIcon,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+  FullScreenDialog,
+  FullScreenDialogBody,
+  FullScreenDialogClose,
+  FullScreenDialogContent,
+  FullScreenDialogHeader,
+  FullScreenDialogTrigger,
+} from './components/ui/dialog';
 export type { ExtendedFABProps } from './components/ui/extended-fab';
 export { ExtendedFAB } from './components/ui/extended-fab';
 export type {
