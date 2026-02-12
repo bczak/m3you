@@ -11,6 +11,8 @@ export {
   ConnectedButtonGroup,
   connectedButtonGroupVariants,
 } from './components/ui/button-group';
+export type { CardProps } from './components/ui/card';
+export { Card, cardVariants } from './components/ui/card';
 export type { CheckboxProps } from './components/ui/checkbox';
 export { Checkbox, checkboxVariants } from './components/ui/checkbox';
 export type { ChipProps } from './components/ui/chip';
@@ -25,6 +27,28 @@ export {
   dayCellVariants,
   yearCellVariants,
 } from './components/ui/date-picker';
+export type { DialogHeaderProps, FullScreenDialogHeaderProps } from './components/ui/dialog';
+export {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogDivider,
+  DialogFooter,
+  DialogHeader,
+  DialogIcon,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+  FullScreenDialog,
+  FullScreenDialogBody,
+  FullScreenDialogClose,
+  FullScreenDialogContent,
+  FullScreenDialogHeader,
+  FullScreenDialogTrigger,
+} from './components/ui/dialog';
 export type { ExtendedFABProps } from './components/ui/extended-fab';
 export { ExtendedFAB } from './components/ui/extended-fab';
 export type {
