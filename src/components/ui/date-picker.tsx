@@ -340,6 +340,7 @@ const CalendarGrid = ({
   onNextMonth,
   slideDirection,
 }: CalendarGridProps) => {
+  const sectionRef = React.useRef<HTMLDivElement>(null);
   const days = getCalendarDays(viewYear, viewMonth);
   const gridKey = `${viewYear}-${viewMonth}`;
   const [animClass, setAnimClass] = React.useState('');
@@ -393,8 +394,8 @@ const CalendarGrid = ({
     } else if (newIndex >= days.length) {
       onNextMonth();
     } else {
-      const buttons = document.querySelectorAll('[data-calendar-day]');
-      (buttons[newIndex] as HTMLButtonElement)?.focus();
+      const buttons = sectionRef.current?.querySelectorAll('[data-calendar-day]');
+      (buttons?.[newIndex] as HTMLButtonElement)?.focus();
     }
   };
 
@@ -411,7 +412,7 @@ const CalendarGrid = ({
           </div>
         ))}
       </div>
-      <div className="overflow-hidden px-3">
+      <div ref={sectionRef} className="overflow-hidden px-3">
         <section
           key={gridKey}
           className={cn('grid grid-cols-7', animClass)}
@@ -703,12 +704,9 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     };
 
     const handleConfirm = React.useCallback(() => {
-      setPendingDate((current) => {
-        if (current) updateDate(current);
-        return current;
-      });
+      updateDate(pendingDate);
       setOpen(false);
-    }, [updateDate]);
+    }, [pendingDate, updateDate]);
 
     const handleCancel = React.useCallback(() => {
       setPendingDate(selectedDate ?? null);
@@ -917,10 +915,16 @@ const DatePickerModal = React.forwardRef<HTMLDivElement, DatePickerModalProps>(
       onChange?.(date);
     };
 
+    const isOutOfRange = (date: Date): boolean => {
+      if (minDate && date < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())) return true;
+      if (maxDate && date > new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate())) return true;
+      return false;
+    };
+
     const handleConfirm = () => {
       if (view === 'input') {
         const parsed = parseDate(inputValue);
-        if (parsed) updateValue(parsed);
+        if (parsed && !isOutOfRange(parsed)) updateValue(parsed);
         else if (inputValue === '') updateValue(null);
       } else {
         updateValue(pendingDate);
