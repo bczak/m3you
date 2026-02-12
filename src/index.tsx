@@ -19,6 +19,14 @@ export type { ChipProps } from './components/ui/chip';
 export { Chip, chipVariants } from './components/ui/chip';
 export type { CircularProgressProps } from './components/ui/circular-progress';
 export { CircularProgress, circularProgressVariants } from './components/ui/circular-progress';
+export type { DatePickerModalProps, DatePickerProps } from './components/ui/date-picker';
+export {
+  DatePicker,
+  DatePickerModal,
+  datePickerContainerVariants,
+  dayCellVariants,
+  yearCellVariants,
+} from './components/ui/date-picker';
 export type { DialogHeaderProps, FullScreenDialogHeaderProps } from './components/ui/dialog';
 export {
   Dialog,
