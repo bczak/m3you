@@ -342,13 +342,15 @@ const CalendarGrid = ({
 }: CalendarGridProps) => {
   const days = getCalendarDays(viewYear, viewMonth);
   const gridKey = `${viewYear}-${viewMonth}`;
+  const [animClass, setAnimClass] = React.useState('');
+  const prevKeyRef = React.useRef(gridKey);
 
-  const initialAnimClass = slideDirection
-    ? slideDirection === 'left'
-      ? 'animate-slide-in-right'
-      : 'animate-slide-in-left'
-    : '';
-  const [animClass, setAnimClass] = React.useState(initialAnimClass);
+  React.useEffect(() => {
+    if (prevKeyRef.current !== gridKey && slideDirection) {
+      setAnimClass(slideDirection === 'left' ? 'animate-calendar-slide-right' : 'animate-calendar-slide-left');
+    }
+    prevKeyRef.current = gridKey;
+  }, [gridKey, slideDirection]);
 
   const isDateDisabled = (date: Date): boolean => {
     if (minDate && date < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())) return true;
