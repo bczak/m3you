@@ -25,8 +25,6 @@ const MONTH_NAMES = [
 
 const MONTH_NAMES_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
 const WEEKDAYS = [
   { key: 'sun', label: 'S' },
   { key: 'mon', label: 'M' },
@@ -56,9 +54,8 @@ function formatDateSlash(date: Date): string {
 }
 
 function formatDateHeader(date: Date): string {
-  const weekday = WEEKDAY_NAMES[date.getDay()].slice(0, 3);
   const month = MONTH_NAMES[date.getMonth()].slice(0, 3);
-  return `${weekday}, ${month} ${date.getDate()}`;
+  return `${date.getDate()} ${month} ${date.getFullYear()}`;
 }
 
 function parseDate(str: string): Date | null {
@@ -280,8 +277,7 @@ interface YearGridProps {
 const YearGrid = ({ year, onSelect }: YearGridProps) => {
   const gridRef = React.useRef<HTMLDivElement>(null);
   const currentYear = new Date().getFullYear();
-  const baseYear = Math.floor(year / 12) * 12 - 1;
-  const years = Array.from({ length: 15 }, (_, i) => baseYear + i);
+  const years = Array.from({ length: 201 }, (_, i) => currentYear - 100 + i);
 
   React.useEffect(() => {
     if (gridRef.current) {
@@ -291,31 +287,35 @@ const YearGrid = ({ year, onSelect }: YearGridProps) => {
   }, []);
 
   return (
-    <div ref={gridRef} className="grid grid-cols-3 gap-y-1 px-3 py-4">
-      {years.map((y) => {
-        const isSelected = y === year;
-        const isCurrent = y === currentYear;
-        return (
-          <button
-            key={y}
-            type="button"
-            data-selected={isSelected || undefined}
-            onClick={() => onSelect(y)}
-            className={cn(
-              yearCellVariants({ state: isSelected ? 'selected' : 'default' }),
-              !isSelected && isCurrent && 'text-primary',
-            )}
-          >
-            <Ripple />
-            {y}
-          </button>
-        );
-      })}
+    <div ref={gridRef} className="max-h-[300px] overflow-y-auto px-3 py-4">
+      <div className="grid grid-cols-3 gap-y-1">
+        {years.map((y) => {
+          const isSelected = y === year;
+          const isCurrent = y === currentYear;
+          return (
+            <button
+              key={y}
+              type="button"
+              data-selected={isSelected || undefined}
+              onClick={() => onSelect(y)}
+              className={cn(
+                yearCellVariants({ state: isSelected ? 'selected' : 'default' }),
+                !isSelected && isCurrent && 'text-primary',
+              )}
+            >
+              <Ripple />
+              {y}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 };
 
 // ── Internal: Shared Calendar Grid ───────────────────────────────────────────
+
+type SlideDirection = 'left' | 'right' | null;
 
 interface CalendarGridProps {
   viewMonth: number;
@@ -326,6 +326,7 @@ interface CalendarGridProps {
   onSelect: (date: Date) => void;
   onPrevMonth: () => void;
   onNextMonth: () => void;
+  slideDirection?: SlideDirection;
 }
 
 const CalendarGrid = ({
@@ -337,8 +338,17 @@ const CalendarGrid = ({
   onSelect,
   onPrevMonth,
   onNextMonth,
+  slideDirection,
 }: CalendarGridProps) => {
   const days = getCalendarDays(viewYear, viewMonth);
+  const gridKey = `${viewYear}-${viewMonth}`;
+
+  const initialAnimClass = slideDirection
+    ? slideDirection === 'left'
+      ? 'animate-slide-in-right'
+      : 'animate-slide-in-left'
+    : '';
+  const [animClass, setAnimClass] = React.useState(initialAnimClass);
 
   const isDateDisabled = (date: Date): boolean => {
     if (minDate && date < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())) return true;
@@ -399,35 +409,45 @@ const CalendarGrid = ({
           </div>
         ))}
       </div>
-      <section className="grid grid-cols-7 px-3" aria-label={`${MONTH_NAMES[viewMonth]} ${viewYear}`}>
-        {days.map((day, index) => {
-          const state = getDayState(day);
-          return (
-            <button
-              key={day.date.toISOString()}
-              type="button"
-              data-calendar-day
-              aria-pressed={state === 'selected'}
-              aria-disabled={state === 'disabled' || undefined}
-              aria-label={day.date.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-              tabIndex={state === 'selected' || (state !== 'disabled' && index === 0) ? 0 : -1}
-              onClick={() => {
-                if (state !== 'disabled') onSelect(day.date);
-              }}
-              onKeyDown={(e) => handleGridKeyDown(e, index)}
-              className={dayCellVariants({ state })}
-            >
-              <Ripple />
-              {day.day}
-            </button>
-          );
-        })}
-      </section>
+      <div className="overflow-hidden px-3">
+        <section
+          key={gridKey}
+          className={cn('grid grid-cols-7', animClass)}
+          aria-label={`${MONTH_NAMES[viewMonth]} ${viewYear}`}
+          onAnimationEnd={() => setAnimClass('')}
+        >
+          {days.map((day, index) => {
+            if (!day.isCurrentMonth) {
+              return <span key={day.date.toISOString()} className="size-10" />;
+            }
+            const state = getDayState(day);
+            return (
+              <button
+                key={day.date.toISOString()}
+                type="button"
+                data-calendar-day
+                aria-pressed={state === 'selected'}
+                aria-disabled={state === 'disabled' || undefined}
+                aria-label={day.date.toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+                tabIndex={state === 'selected' || (state !== 'disabled' && index === 0) ? 0 : -1}
+                onClick={() => {
+                  if (state !== 'disabled') onSelect(day.date);
+                }}
+                onKeyDown={(e) => handleGridKeyDown(e, index)}
+                className={dayCellVariants({ state })}
+              >
+                <Ripple />
+                {day.day}
+              </button>
+            );
+          })}
+        </section>
+      </div>
     </>
   );
 };
@@ -449,8 +469,10 @@ const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, ma
   const [viewYear, setViewYear] = React.useState(initial.getFullYear());
   const [showMonthDropdown, setShowMonthDropdown] = React.useState(false);
   const [showYearDropdown, setShowYearDropdown] = React.useState(false);
+  const [slideDirection, setSlideDirection] = React.useState<SlideDirection>(null);
 
   const goPrevMonth = () => {
+    setSlideDirection('right');
     if (viewMonth === 0) {
       setViewMonth(11);
       setViewYear((y) => y - 1);
@@ -460,6 +482,7 @@ const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, ma
   };
 
   const goNextMonth = () => {
+    setSlideDirection('left');
     if (viewMonth === 11) {
       setViewMonth(0);
       setViewYear((y) => y + 1);
@@ -566,6 +589,7 @@ const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, ma
           onSelect={onSelect}
           onPrevMonth={goPrevMonth}
           onNextMonth={goNextMonth}
+          slideDirection={slideDirection}
         />
       </div>
 
@@ -871,6 +895,7 @@ const DatePickerModal = React.forwardRef<HTMLDivElement, DatePickerModalProps>(
     const initial = pendingDate ?? new Date();
     const [viewMonth, setViewMonth] = React.useState(initial.getMonth());
     const [viewYear, setViewYear] = React.useState(initial.getFullYear());
+    const [slideDirection, setSlideDirection] = React.useState<SlideDirection>(null);
 
     // Reset state when modal opens
     React.useEffect(() => {
@@ -881,6 +906,7 @@ const DatePickerModal = React.forwardRef<HTMLDivElement, DatePickerModalProps>(
         setViewYear(d.getFullYear());
         setView('calendar');
         setInputValue(selectedDate ? formatDateSlash(selectedDate) : '');
+        setSlideDirection(null);
       }
     }, [open, selectedDate]);
 
@@ -904,12 +930,8 @@ const DatePickerModal = React.forwardRef<HTMLDivElement, DatePickerModalProps>(
       onOpenChange(false);
     }, [onOpenChange]);
 
-    const handleClear = () => {
-      setPendingDate(null);
-      setInputValue('');
-    };
-
     const goPrevMonth = () => {
+      setSlideDirection('right');
       if (viewMonth === 0) {
         setViewMonth(11);
         setViewYear((y) => y - 1);
@@ -919,6 +941,7 @@ const DatePickerModal = React.forwardRef<HTMLDivElement, DatePickerModalProps>(
     };
 
     const goNextMonth = () => {
+      setSlideDirection('left');
       if (viewMonth === 11) {
         setViewMonth(0);
         setViewYear((y) => y + 1);
@@ -1073,21 +1096,13 @@ const DatePickerModal = React.forwardRef<HTMLDivElement, DatePickerModalProps>(
                 onSelect={handleDaySelect}
                 onPrevMonth={goPrevMonth}
                 onNextMonth={goNextMonth}
+                slideDirection={slideDirection}
               />
             </>
           )}
 
           {/* Footer */}
-          <div className="flex items-center px-3 pt-2 pb-3">
-            <button
-              type="button"
-              onClick={handleClear}
-              className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
-            >
-              <Ripple />
-              Clear
-            </button>
-            <div className="flex-1" />
+          <div className="flex items-center justify-end gap-2 px-3 pt-2 pb-3">
             <button
               type="button"
               onClick={handleCancel}
