@@ -1,7 +1,8 @@
 import { cva } from 'class-variance-authority';
-import { CalendarIcon, Check, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarIcon, Check, ChevronDown, ChevronLeft, ChevronRight, Pencil } from 'lucide-react';
 import { Ripple } from 'm3-ripple';
 import * as React from 'react';
+import { createPortal } from 'react-dom';
 
 import { cn } from '../../lib/utils';
 
@@ -24,14 +25,16 @@ const MONTH_NAMES = [
 
 const MONTH_NAMES_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 const WEEKDAYS = [
-  { key: 'sun', label: 'S', full: 'Sunday' },
-  { key: 'mon', label: 'M', full: 'Monday' },
-  { key: 'tue', label: 'T', full: 'Tuesday' },
-  { key: 'wed', label: 'W', full: 'Wednesday' },
-  { key: 'thu', label: 'T', full: 'Thursday' },
-  { key: 'fri', label: 'F', full: 'Friday' },
-  { key: 'sat', label: 'S', full: 'Saturday' },
+  { key: 'sun', label: 'S' },
+  { key: 'mon', label: 'M' },
+  { key: 'tue', label: 'T' },
+  { key: 'wed', label: 'W' },
+  { key: 'thu', label: 'T' },
+  { key: 'fri', label: 'F' },
+  { key: 'sat', label: 'S' },
 ];
 
 function getDaysInMonth(year: number, month: number): number {
@@ -46,11 +49,16 @@ function isSameDay(a: Date, b: Date): boolean {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
-function formatDate(date: Date): string {
+function formatDateSlash(date: Date): string {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
-  const y = date.getFullYear();
-  return `${m}/${d}/${y}`;
+  return `${m}/${d}/${date.getFullYear()}`;
+}
+
+function formatDateHeader(date: Date): string {
+  const weekday = WEEKDAY_NAMES[date.getDay()].slice(0, 3);
+  const month = MONTH_NAMES[date.getMonth()].slice(0, 3);
+  return `${weekday}, ${month} ${date.getDate()}`;
 }
 
 function parseDate(str: string): Date | null {
@@ -81,7 +89,6 @@ function getCalendarDays(year: number, month: number): CalendarDay[] {
   const firstDay = getFirstDayOfWeek(year, month);
   const days: CalendarDay[] = [];
 
-  // Previous month trailing days
   const prevMonth = month === 0 ? 11 : month - 1;
   const prevYear = month === 0 ? year - 1 : year;
   const prevMonthDays = getDaysInMonth(prevYear, prevMonth);
@@ -89,37 +96,20 @@ function getCalendarDays(year: number, month: number): CalendarDay[] {
   for (let i = firstDay - 1; i >= 0; i--) {
     const day = prevMonthDays - i;
     const date = new Date(prevYear, prevMonth, day);
-    days.push({
-      date,
-      day,
-      isCurrentMonth: false,
-      isToday: isSameDay(date, today),
-    });
+    days.push({ date, day, isCurrentMonth: false, isToday: isSameDay(date, today) });
   }
 
-  // Current month days
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day);
-    days.push({
-      date,
-      day,
-      isCurrentMonth: true,
-      isToday: isSameDay(date, today),
-    });
+    days.push({ date, day, isCurrentMonth: true, isToday: isSameDay(date, today) });
   }
 
-  // Next month leading days
   const nextMonth = month === 11 ? 0 : month + 1;
   const nextYear = month === 11 ? year + 1 : year;
-  const remaining = 42 - days.length; // 6 rows × 7 columns
+  const remaining = 42 - days.length;
   for (let day = 1; day <= remaining; day++) {
     const date = new Date(nextYear, nextMonth, day);
-    days.push({
-      date,
-      day,
-      isCurrentMonth: false,
-      isToday: isSameDay(date, today),
-    });
+    days.push({ date, day, isCurrentMonth: false, isToday: isSameDay(date, today) });
   }
 
   return days;
@@ -128,7 +118,7 @@ function getCalendarDays(year: number, month: number): CalendarDay[] {
 // ── CVA Variants ─────────────────────────────────────────────────────────────
 
 const datePickerContainerVariants = cva(
-  'w-[360px] rounded-2xl bg-surface-container-high shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]',
+  'w-[328px] rounded-[28px] bg-surface-container-high shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]',
 );
 
 const dayCellVariants = cva(
@@ -143,13 +133,24 @@ const dayCellVariants = cva(
         disabled: 'pointer-events-none text-foreground/38',
       },
     },
-    defaultVariants: {
-      state: 'default',
-    },
+    defaultVariants: { state: 'default' },
   },
 );
 
-// ── Sub-components ───────────────────────────────────────────────────────────
+const yearCellVariants = cva(
+  'relative flex h-9 cursor-pointer items-center justify-center rounded-full font-medium text-sm transition-colors duration-150',
+  {
+    variants: {
+      state: {
+        default: 'text-foreground hover:bg-foreground/8',
+        selected: 'bg-primary text-primary-foreground hover:bg-primary/90',
+      },
+    },
+    defaultVariants: { state: 'default' },
+  },
+);
+
+// ── Internal: Month List Dropdown (for docked picker) ────────────────────────
 
 interface MonthDropdownProps {
   month: number;
@@ -162,19 +163,17 @@ const MonthDropdown = ({ month, onSelect, onClose }: MonthDropdownProps) => {
 
   React.useEffect(() => {
     if (listRef.current) {
-      const selectedEl = listRef.current.querySelector('[data-selected]');
-      if (selectedEl) {
-        selectedEl.scrollIntoView({ block: 'center' });
-      }
+      const el = listRef.current.querySelector('[data-selected]');
+      el?.scrollIntoView({ block: 'center' });
     }
   }, []);
 
   React.useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
+    const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
 
   return (
@@ -202,14 +201,15 @@ const MonthDropdown = ({ month, onSelect, onClose }: MonthDropdownProps) => {
               : 'text-foreground hover:bg-foreground/8',
           )}
         >
-          {i === month && <Check className="size-5" />}
-          {i !== month && <span className="size-5" />}
+          {i === month ? <Check className="size-5" /> : <span className="size-5" />}
           {name}
         </button>
       ))}
     </div>
   );
 };
+
+// ── Internal: Year List Dropdown (for docked picker) ─────────────────────────
 
 interface YearDropdownProps {
   year: number;
@@ -220,25 +220,21 @@ interface YearDropdownProps {
 const YearDropdown = ({ year, onSelect, onClose }: YearDropdownProps) => {
   const listRef = React.useRef<HTMLDivElement>(null);
   const currentYear = new Date().getFullYear();
-  const startYear = currentYear - 100;
-  const endYear = currentYear + 100;
-  const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
+  const years = Array.from({ length: 201 }, (_, i) => currentYear - 100 + i);
 
   React.useEffect(() => {
     if (listRef.current) {
-      const selectedEl = listRef.current.querySelector('[data-selected]');
-      if (selectedEl) {
-        selectedEl.scrollIntoView({ block: 'center' });
-      }
+      const el = listRef.current.querySelector('[data-selected]');
+      el?.scrollIntoView({ block: 'center' });
     }
   }, []);
 
   React.useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
+    const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
 
   return (
@@ -266,8 +262,7 @@ const YearDropdown = ({ year, onSelect, onClose }: YearDropdownProps) => {
               : 'text-foreground hover:bg-foreground/8',
           )}
         >
-          {y === year && <Check className="size-5" />}
-          {y !== year && <span className="size-5" />}
+          {y === year ? <Check className="size-5" /> : <span className="size-5" />}
           {y}
         </button>
       ))}
@@ -275,46 +270,75 @@ const YearDropdown = ({ year, onSelect, onClose }: YearDropdownProps) => {
   );
 };
 
-// ── Calendar Panel ───────────────────────────────────────────────────────────
+// ── Internal: Year Grid (3-column, for modal picker) ─────────────────────────
 
-interface CalendarPanelProps {
-  value: Date | null;
-  onSelect: (date: Date) => void;
-  onCancel: () => void;
-  onConfirm: () => void;
-  minDate?: Date;
-  maxDate?: Date;
+interface YearGridProps {
+  year: number;
+  onSelect: (year: number) => void;
 }
 
-const CalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate }: CalendarPanelProps) => {
-  const initialDate = value ?? new Date();
-  const [viewMonth, setViewMonth] = React.useState(initialDate.getMonth());
-  const [viewYear, setViewYear] = React.useState(initialDate.getFullYear());
-  const [showMonthDropdown, setShowMonthDropdown] = React.useState(false);
-  const [showYearDropdown, setShowYearDropdown] = React.useState(false);
+const YearGrid = ({ year, onSelect }: YearGridProps) => {
+  const gridRef = React.useRef<HTMLDivElement>(null);
+  const currentYear = new Date().getFullYear();
+  const baseYear = Math.floor(year / 12) * 12 - 1;
+  const years = Array.from({ length: 15 }, (_, i) => baseYear + i);
 
+  React.useEffect(() => {
+    if (gridRef.current) {
+      const el = gridRef.current.querySelector('[data-selected]');
+      el?.scrollIntoView({ block: 'center' });
+    }
+  }, []);
+
+  return (
+    <div ref={gridRef} className="grid grid-cols-3 gap-y-1 px-3 py-4">
+      {years.map((y) => {
+        const isSelected = y === year;
+        const isCurrent = y === currentYear;
+        return (
+          <button
+            key={y}
+            type="button"
+            data-selected={isSelected || undefined}
+            onClick={() => onSelect(y)}
+            className={cn(
+              yearCellVariants({ state: isSelected ? 'selected' : 'default' }),
+              !isSelected && isCurrent && 'text-primary',
+            )}
+          >
+            <Ripple />
+            {y}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+// ── Internal: Shared Calendar Grid ───────────────────────────────────────────
+
+interface CalendarGridProps {
+  viewMonth: number;
+  viewYear: number;
+  value: Date | null;
+  minDate?: Date;
+  maxDate?: Date;
+  onSelect: (date: Date) => void;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
+}
+
+const CalendarGrid = ({
+  viewMonth,
+  viewYear,
+  value,
+  minDate,
+  maxDate,
+  onSelect,
+  onPrevMonth,
+  onNextMonth,
+}: CalendarGridProps) => {
   const days = getCalendarDays(viewYear, viewMonth);
-
-  const prevMonth = () => {
-    if (viewMonth === 0) {
-      setViewMonth(11);
-      setViewYear((y) => y - 1);
-    } else {
-      setViewMonth((m) => m - 1);
-    }
-  };
-
-  const nextMonth = () => {
-    if (viewMonth === 11) {
-      setViewMonth(0);
-      setViewYear((y) => y + 1);
-    } else {
-      setViewMonth((m) => m + 1);
-    }
-  };
-
-  const prevYear = () => setViewYear((y) => y - 1);
-  const nextYear = () => setViewYear((y) => y + 1);
 
   const isDateDisabled = (date: Date): boolean => {
     if (minDate && date < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())) return true;
@@ -332,7 +356,6 @@ const CalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate 
 
   const handleGridKeyDown = (e: React.KeyboardEvent, dayIndex: number) => {
     let newIndex = dayIndex;
-
     switch (e.key) {
       case 'ArrowLeft':
         e.preventDefault();
@@ -353,11 +376,10 @@ const CalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate 
       default:
         return;
     }
-
     if (newIndex < 0) {
-      prevMonth();
+      onPrevMonth();
     } else if (newIndex >= days.length) {
-      nextMonth();
+      onNextMonth();
     } else {
       const buttons = document.querySelectorAll('[data-calendar-day]');
       (buttons[newIndex] as HTMLButtonElement)?.focus();
@@ -365,20 +387,100 @@ const CalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate 
   };
 
   return (
-    <div className={datePickerContainerVariants()}>
+    <>
+      <div className="grid grid-cols-7 px-3">
+        {WEEKDAYS.map((weekday) => (
+          <div
+            key={weekday.key}
+            className="flex size-10 items-center justify-center font-medium text-foreground text-xs"
+            aria-hidden="true"
+          >
+            {weekday.label}
+          </div>
+        ))}
+      </div>
+      <section className="grid grid-cols-7 px-3" aria-label={`${MONTH_NAMES[viewMonth]} ${viewYear}`}>
+        {days.map((day, index) => {
+          const state = getDayState(day);
+          return (
+            <button
+              key={day.date.toISOString()}
+              type="button"
+              data-calendar-day
+              aria-pressed={state === 'selected'}
+              aria-disabled={state === 'disabled' || undefined}
+              aria-label={day.date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+              tabIndex={state === 'selected' || (state !== 'disabled' && index === 0) ? 0 : -1}
+              onClick={() => {
+                if (state !== 'disabled') onSelect(day.date);
+              }}
+              onKeyDown={(e) => handleGridKeyDown(e, index)}
+              className={dayCellVariants({ state })}
+            >
+              <Ripple />
+              {day.day}
+            </button>
+          );
+        })}
+      </section>
+    </>
+  );
+};
+
+// ── Internal: Docked Calendar Panel ──────────────────────────────────────────
+
+interface DockedCalendarPanelProps {
+  value: Date | null;
+  onSelect: (date: Date) => void;
+  onCancel: () => void;
+  onConfirm: () => void;
+  minDate?: Date;
+  maxDate?: Date;
+}
+
+const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate }: DockedCalendarPanelProps) => {
+  const initial = value ?? new Date();
+  const [viewMonth, setViewMonth] = React.useState(initial.getMonth());
+  const [viewYear, setViewYear] = React.useState(initial.getFullYear());
+  const [showMonthDropdown, setShowMonthDropdown] = React.useState(false);
+  const [showYearDropdown, setShowYearDropdown] = React.useState(false);
+
+  const goPrevMonth = () => {
+    if (viewMonth === 0) {
+      setViewMonth(11);
+      setViewYear((y) => y - 1);
+    } else {
+      setViewMonth((m) => m - 1);
+    }
+  };
+
+  const goNextMonth = () => {
+    if (viewMonth === 11) {
+      setViewMonth(0);
+      setViewYear((y) => y + 1);
+    } else {
+      setViewMonth((m) => m + 1);
+    }
+  };
+
+  return (
+    <div className="w-[328px] rounded-2xl bg-surface-container-high shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]">
       {/* Navigation header */}
       <div className="relative flex items-center gap-0.5 px-3 pt-5 pb-1">
-        {/* Month navigation */}
         <button
           type="button"
-          onClick={prevMonth}
+          onClick={goPrevMonth}
           className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
           aria-label="Previous month"
         >
           <Ripple />
           <ChevronLeft className="size-5" />
         </button>
-
         <button
           type="button"
           onClick={() => {
@@ -397,10 +499,9 @@ const CalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate 
           {MONTH_NAMES_SHORT[viewMonth]}
           <ChevronDown className={cn('size-4 transition-transform', showMonthDropdown && 'rotate-180')} />
         </button>
-
         <button
           type="button"
-          onClick={nextMonth}
+          onClick={goNextMonth}
           className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
           aria-label="Next month"
         >
@@ -410,17 +511,15 @@ const CalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate 
 
         <div className="flex-1" />
 
-        {/* Year navigation */}
         <button
           type="button"
-          onClick={prevYear}
+          onClick={() => setViewYear((y) => y - 1)}
           className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
           aria-label="Previous year"
         >
           <Ripple />
           <ChevronLeft className="size-5" />
         </button>
-
         <button
           type="button"
           onClick={() => {
@@ -439,10 +538,9 @@ const CalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate 
           {viewYear}
           <ChevronDown className={cn('size-4 transition-transform', showYearDropdown && 'rotate-180')} />
         </button>
-
         <button
           type="button"
-          onClick={nextYear}
+          onClick={() => setViewYear((y) => y + 1)}
           className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
           aria-label="Next year"
         >
@@ -451,61 +549,24 @@ const CalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate 
         </button>
       </div>
 
-      {/* Dropdown overlays */}
+      {/* Dropdowns / Calendar */}
       <div className="relative">
         {showMonthDropdown && (
           <MonthDropdown month={viewMonth} onSelect={setViewMonth} onClose={() => setShowMonthDropdown(false)} />
         )}
-
         {showYearDropdown && (
           <YearDropdown year={viewYear} onSelect={setViewYear} onClose={() => setShowYearDropdown(false)} />
         )}
-
-        {/* Weekday labels */}
-        <div className="grid grid-cols-7 px-3 pt-3">
-          {WEEKDAYS.map((weekday) => (
-            <div
-              key={weekday.key}
-              className="flex size-10 items-center justify-center font-medium text-foreground text-xs"
-              aria-hidden="true"
-            >
-              {weekday.label}
-            </div>
-          ))}
-        </div>
-
-        {/* Calendar grid */}
-        <section className="grid grid-cols-7 px-3" aria-label={`${MONTH_NAMES[viewMonth]} ${viewYear}`}>
-          {days.map((day, index) => {
-            const state = getDayState(day);
-            return (
-              <button
-                key={day.date.toISOString()}
-                type="button"
-                data-calendar-day
-                aria-pressed={state === 'selected'}
-                aria-disabled={state === 'disabled' || undefined}
-                aria-label={day.date.toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-                tabIndex={state === 'selected' || (state !== 'disabled' && index === 0) ? 0 : -1}
-                onClick={() => {
-                  if (state !== 'disabled') {
-                    onSelect(day.date);
-                  }
-                }}
-                onKeyDown={(e) => handleGridKeyDown(e, index)}
-                className={dayCellVariants({ state })}
-              >
-                <Ripple />
-                {day.day}
-              </button>
-            );
-          })}
-        </section>
+        <CalendarGrid
+          viewMonth={viewMonth}
+          viewYear={viewYear}
+          value={value}
+          minDate={minDate}
+          maxDate={maxDate}
+          onSelect={onSelect}
+          onPrevMonth={goPrevMonth}
+          onNextMonth={goNextMonth}
+        />
       </div>
 
       {/* Actions */}
@@ -531,30 +592,21 @@ const CalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, maxDate 
   );
 };
 
-// ── Main DatePicker ──────────────────────────────────────────────────────────
+// =============================================================================
+// PUBLIC: DatePicker (Docked)
+// =============================================================================
 
 export type DatePickerProps = {
-  /** The selected date (controlled) */
   value?: Date | null;
-  /** Default date for uncontrolled mode */
   defaultValue?: Date | null;
-  /** Callback when the date changes */
   onChange?: (date: Date | null) => void;
-  /** Label for the text field */
   label?: string;
-  /** Supporting text shown below the input */
   supportingText?: string;
-  /** Error state */
   error?: boolean;
-  /** Error text shown below the input */
   errorText?: string;
-  /** Whether the picker is disabled */
   disabled?: boolean;
-  /** Minimum selectable date */
   minDate?: Date;
-  /** Maximum selectable date */
   maxDate?: Date;
-  /** Additional class names for the root element */
   className?: string;
 };
 
@@ -580,25 +632,22 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     const selectedDate = isControlled ? controlledValue : internalValue;
 
     const [open, setOpen] = React.useState(false);
-    const [inputValue, setInputValue] = React.useState(selectedDate ? formatDate(selectedDate) : '');
+    const [inputValue, setInputValue] = React.useState(selectedDate ? formatDateSlash(selectedDate) : '');
     const [pendingDate, setPendingDate] = React.useState<Date | null>(selectedDate ?? null);
 
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
 
-    // Sync input value when controlled value changes
     React.useEffect(() => {
       if (isControlled) {
-        setInputValue(controlledValue ? formatDate(controlledValue) : '');
+        setInputValue(controlledValue ? formatDateSlash(controlledValue) : '');
       }
     }, [controlledValue, isControlled]);
 
     const updateDate = React.useCallback(
       (date: Date | null) => {
-        if (!isControlled) {
-          setInternalValue(date);
-        }
-        setInputValue(date ? formatDate(date) : '');
+        if (!isControlled) setInternalValue(date);
+        setInputValue(date ? formatDateSlash(date) : '');
         onChange?.(date);
       },
       [isControlled, onChange],
@@ -607,11 +656,8 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const raw = e.target.value;
       setInputValue(raw);
-
       const parsed = parseDate(raw);
-      if (parsed) {
-        updateDate(parsed);
-      }
+      if (parsed) updateDate(parsed);
     };
 
     const handleInputBlur = () => {
@@ -620,30 +666,19 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
         return;
       }
       const parsed = parseDate(inputValue);
-      if (parsed) {
-        updateDate(parsed);
-      } else {
-        setInputValue(selectedDate ? formatDate(selectedDate) : '');
-      }
+      if (parsed) updateDate(parsed);
+      else setInputValue(selectedDate ? formatDateSlash(selectedDate) : '');
     };
 
     const handleToggle = () => {
       if (disabled) return;
-      if (!open) {
-        setPendingDate(selectedDate ?? null);
-      }
+      if (!open) setPendingDate(selectedDate ?? null);
       setOpen(!open);
-    };
-
-    const handleCalendarSelect = (date: Date) => {
-      setPendingDate(date);
     };
 
     const handleConfirm = React.useCallback(() => {
       setPendingDate((current) => {
-        if (current) {
-          updateDate(current);
-        }
+        if (current) updateDate(current);
         return current;
       });
       setOpen(false);
@@ -654,38 +689,29 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
       setOpen(false);
     }, [selectedDate]);
 
-    // Close on outside click
     React.useEffect(() => {
       if (!open) return;
-
-      const handleClickOutside = (e: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-          handleCancel();
-        }
+      const handler = (e: MouseEvent) => {
+        if (containerRef.current && !containerRef.current.contains(e.target as Node)) handleCancel();
       };
-
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener('mousedown', handler);
+      return () => document.removeEventListener('mousedown', handler);
     }, [open, handleCancel]);
 
-    // Close on Escape
     React.useEffect(() => {
       if (!open) return;
-
-      const handleEscape = (e: KeyboardEvent) => {
+      const handler = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
           handleCancel();
           inputRef.current?.focus();
         }
       };
-
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', handler);
+      return () => document.removeEventListener('keydown', handler);
     }, [open, handleCancel]);
 
     const hasError = error || !!errorText;
     const displaySupportingText = hasError ? errorText : supportingText;
-
     const generatedId = React.useId();
     const inputId = `datepicker-${generatedId}`;
     const supportingTextId = `${inputId}-supporting`;
@@ -695,9 +721,8 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     const floating = focused || populated;
 
     return (
-      <div ref={ref} className={cn('inline-flex w-[360px] flex-col', disabled && 'pointer-events-none', className)}>
+      <div ref={ref} className={cn('inline-flex w-[328px] flex-col', disabled && 'pointer-events-none', className)}>
         <div ref={containerRef} className="relative">
-          {/* Input field - outlined text field following M3 spec */}
           <div
             data-focused={focused || open || undefined}
             data-error={hasError || undefined}
@@ -705,7 +730,6 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
             data-populated={populated || undefined}
             className="group/tf relative flex h-14 items-center rounded-[4px] text-base/6"
           >
-            {/* Floating label */}
             {label && (
               <label
                 htmlFor={inputId}
@@ -723,7 +747,6 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
               </label>
             )}
 
-            {/* Input */}
             <input
               ref={inputRef}
               id={inputId}
@@ -743,7 +766,6 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
               className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
             />
 
-            {/* Calendar icon button */}
             <button
               type="button"
               onClick={handleToggle}
@@ -756,7 +778,6 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
               <CalendarIcon className="size-5" />
             </button>
 
-            {/* Outlined border */}
             <fieldset
               className={cn(
                 'pointer-events-none absolute inset-0 m-0 rounded-[inherit] border border-outline p-0 px-3 transition-all duration-150',
@@ -779,12 +800,11 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
             </fieldset>
           </div>
 
-          {/* Calendar dropdown */}
           {open && (
             <div className="absolute top-[calc(100%+8px)] left-0 z-50">
-              <CalendarPanel
+              <DockedCalendarPanel
                 value={pendingDate}
-                onSelect={handleCalendarSelect}
+                onSelect={setPendingDate}
                 onCancel={handleCancel}
                 onConfirm={handleConfirm}
                 minDate={minDate}
@@ -794,7 +814,6 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
           )}
         </div>
 
-        {/* Supporting text */}
         {displaySupportingText && (
           <div id={supportingTextId} className={cn('px-4 pt-1 text-xs/4', disabled && 'opacity-38')}>
             <span className={cn('text-surface-variant-foreground', hasError && 'text-error')}>
@@ -808,4 +827,294 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
 );
 DatePicker.displayName = 'DatePicker';
 
-export { DatePicker, datePickerContainerVariants, dayCellVariants };
+// =============================================================================
+// PUBLIC: DatePickerModal
+// =============================================================================
+
+export type DatePickerModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  value?: Date | null;
+  defaultValue?: Date | null;
+  onChange?: (date: Date | null) => void;
+  headerLabel?: string;
+  minDate?: Date;
+  maxDate?: Date;
+  className?: string;
+};
+
+type ModalView = 'calendar' | 'year' | 'input';
+
+const DatePickerModal = React.forwardRef<HTMLDivElement, DatePickerModalProps>(
+  (
+    {
+      open,
+      onOpenChange,
+      value: controlledValue,
+      defaultValue,
+      onChange,
+      headerLabel = 'Select date',
+      minDate,
+      maxDate,
+      className,
+    },
+    ref,
+  ) => {
+    const isControlled = controlledValue !== undefined;
+    const [internalValue, setInternalValue] = React.useState<Date | null>(defaultValue ?? null);
+    const selectedDate = isControlled ? controlledValue : internalValue;
+
+    const [pendingDate, setPendingDate] = React.useState<Date | null>(selectedDate ?? null);
+    const [view, setView] = React.useState<ModalView>('calendar');
+    const [inputValue, setInputValue] = React.useState('');
+
+    const initial = pendingDate ?? new Date();
+    const [viewMonth, setViewMonth] = React.useState(initial.getMonth());
+    const [viewYear, setViewYear] = React.useState(initial.getFullYear());
+
+    // Reset state when modal opens
+    React.useEffect(() => {
+      if (open) {
+        const d = selectedDate ?? new Date();
+        setPendingDate(selectedDate ?? null);
+        setViewMonth(d.getMonth());
+        setViewYear(d.getFullYear());
+        setView('calendar');
+        setInputValue(selectedDate ? formatDateSlash(selectedDate) : '');
+      }
+    }, [open, selectedDate]);
+
+    const updateValue = (date: Date | null) => {
+      if (!isControlled) setInternalValue(date);
+      onChange?.(date);
+    };
+
+    const handleConfirm = () => {
+      if (view === 'input') {
+        const parsed = parseDate(inputValue);
+        if (parsed) updateValue(parsed);
+        else if (inputValue === '') updateValue(null);
+      } else {
+        updateValue(pendingDate);
+      }
+      onOpenChange(false);
+    };
+
+    const handleCancel = React.useCallback(() => {
+      onOpenChange(false);
+    }, [onOpenChange]);
+
+    const handleClear = () => {
+      setPendingDate(null);
+      setInputValue('');
+    };
+
+    const goPrevMonth = () => {
+      if (viewMonth === 0) {
+        setViewMonth(11);
+        setViewYear((y) => y - 1);
+      } else {
+        setViewMonth((m) => m - 1);
+      }
+    };
+
+    const goNextMonth = () => {
+      if (viewMonth === 11) {
+        setViewMonth(0);
+        setViewYear((y) => y + 1);
+      } else {
+        setViewMonth((m) => m + 1);
+      }
+    };
+
+    const handleDaySelect = (date: Date) => {
+      setPendingDate(date);
+      setInputValue(formatDateSlash(date));
+    };
+
+    const handleYearSelect = (year: number) => {
+      setViewYear(year);
+      setView('calendar');
+    };
+
+    // Close on Escape
+    React.useEffect(() => {
+      if (!open) return;
+      const handler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') handleCancel();
+      };
+      document.addEventListener('keydown', handler);
+      return () => document.removeEventListener('keydown', handler);
+    }, [open, handleCancel]);
+
+    if (!open) return null;
+
+    const formattedDate = pendingDate ? formatDateHeader(pendingDate) : 'Enter date';
+
+    return createPortal(
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        {/* Scrim */}
+        <div className="absolute inset-0 bg-scrim/32" onClick={handleCancel} aria-hidden="true" />
+
+        {/* Modal */}
+        <div
+          ref={ref}
+          role="dialog"
+          aria-modal="true"
+          aria-label={headerLabel}
+          className={cn(datePickerContainerVariants(), 'relative z-10', className)}
+        >
+          {/* Header */}
+          <div className="flex items-start justify-between px-6 pt-4 pb-0">
+            <div className="flex flex-col gap-3 pt-2">
+              <span className="text-sm text-surface-variant-foreground">{headerLabel}</span>
+              <span className="pb-4 font-normal text-3xl text-foreground">
+                {view === 'input' ? 'Enter date' : formattedDate}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setView(view === 'input' ? 'calendar' : 'input')}
+              className="relative mt-3 flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+              aria-label={view === 'input' ? 'Switch to calendar' : 'Switch to text input'}
+            >
+              <Ripple />
+              {view === 'input' ? <CalendarIcon className="size-5" /> : <Pencil className="size-5" />}
+            </button>
+          </div>
+
+          <div className="mx-6 border-outline-variant border-b" />
+
+          {/* Body */}
+          {view === 'input' ? (
+            /* Input view */
+            <div className="px-6 pt-4 pb-0">
+              <div className="relative flex h-14 items-center rounded-[4px]">
+                <input
+                  id="modal-date-input"
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="mm/dd/yyyy"
+                  className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
+                />
+                <fieldset className="pointer-events-none absolute inset-0 m-0 rounded-[inherit] border border-outline p-0 px-3">
+                  <legend className="invisible h-0 max-w-full overflow-hidden whitespace-nowrap px-1 text-xs/4">
+                    Date
+                  </legend>
+                </fieldset>
+                <label
+                  htmlFor="modal-date-input"
+                  className="pointer-events-none absolute -top-2 left-4 px-1 text-primary text-xs/4"
+                >
+                  Date
+                </label>
+              </div>
+            </div>
+          ) : view === 'year' ? (
+            /* Year grid view */
+            <>
+              <div className="flex items-center justify-between px-3 pt-4 pb-1">
+                <button
+                  type="button"
+                  onClick={() => setView('calendar')}
+                  className={cn(
+                    'relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8',
+                    'bg-foreground/8',
+                  )}
+                >
+                  <Ripple />
+                  {MONTH_NAMES[viewMonth]} {viewYear}
+                  <ChevronDown className="size-4 rotate-180 transition-transform" />
+                </button>
+              </div>
+              <YearGrid year={viewYear} onSelect={handleYearSelect} />
+            </>
+          ) : (
+            /* Calendar view */
+            <>
+              <div className="flex items-center justify-between px-3 pt-4 pb-1">
+                <button
+                  type="button"
+                  onClick={() => setView('year')}
+                  className="relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+                >
+                  <Ripple />
+                  {MONTH_NAMES[viewMonth]} {viewYear}
+                  <ChevronDown className="size-4 transition-transform" />
+                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={goPrevMonth}
+                    className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+                    aria-label="Previous month"
+                  >
+                    <Ripple />
+                    <ChevronLeft className="size-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goNextMonth}
+                    className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+                    aria-label="Next month"
+                  >
+                    <Ripple />
+                    <ChevronRight className="size-5" />
+                  </button>
+                </div>
+              </div>
+              <CalendarGrid
+                viewMonth={viewMonth}
+                viewYear={viewYear}
+                value={pendingDate}
+                minDate={minDate}
+                maxDate={maxDate}
+                onSelect={handleDaySelect}
+                onPrevMonth={goPrevMonth}
+                onNextMonth={goNextMonth}
+              />
+            </>
+          )}
+
+          {/* Footer */}
+          <div className="flex items-center px-3 pt-2 pb-3">
+            <button
+              type="button"
+              onClick={handleClear}
+              className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
+            >
+              <Ripple />
+              Clear
+            </button>
+            <div className="flex-1" />
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
+            >
+              <Ripple />
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirm}
+              className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
+            >
+              <Ripple />
+              OK
+            </button>
+          </div>
+        </div>
+      </div>,
+      document.body,
+    );
+  },
+);
+DatePickerModal.displayName = 'DatePickerModal';
+
+// =============================================================================
+// Exports
+// =============================================================================
+
+export { DatePicker, DatePickerModal, datePickerContainerVariants, dayCellVariants, yearCellVariants };
