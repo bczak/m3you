@@ -17,11 +17,7 @@ export type { ChipProps } from './components/ui/chip';
 export { Chip, chipVariants } from './components/ui/chip';
 export type { CircularProgressProps } from './components/ui/circular-progress';
 export { CircularProgress, circularProgressVariants } from './components/ui/circular-progress';
-export type {
-  DialogContentProps,
-  DialogHeaderProps,
-  FullScreenDialogHeaderProps,
-} from './components/ui/dialog';
+export type { DialogHeaderProps, FullScreenDialogHeaderProps } from './components/ui/dialog';
 export {
   Dialog,
   DialogBody,

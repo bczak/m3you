@@ -62,28 +62,26 @@ DialogOverlay.displayName = 'DialogOverlay';
 // DialogContent (Popup)
 // =============================================================================
 
-export interface DialogContentProps extends DialogPrimitive.Popup.Props {
-  showCloseButton?: boolean;
-}
-
-const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(({ className, children, ...props }, ref) => {
-  return (
-    <DialogPortal>
-      <DialogOverlay />
-      <DialogPrimitive.Popup
-        ref={ref}
-        className={cn(
-          'fixed top-1/2 left-1/2 z-50 w-full min-w-[280px] max-w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-[28px] bg-surface-container-high p-6 shadow-xl outline-none transition-all duration-200',
-          'data-[ending-style]:scale-95 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
-          className,
-        )}
-        {...props}
-      >
-        {children}
-      </DialogPrimitive.Popup>
-    </DialogPortal>
-  );
-});
+const DialogContent = React.forwardRef<HTMLDivElement, DialogPrimitive.Popup.Props>(
+  ({ className, children, ...props }, ref) => {
+    return (
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogPrimitive.Popup
+          ref={ref}
+          className={cn(
+            'fixed top-1/2 left-1/2 z-50 w-full min-w-[280px] max-w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-[28px] bg-surface-container-high p-6 shadow-xl outline-none transition-all duration-200',
+            'data-[ending-style]:scale-95 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </DialogPrimitive.Popup>
+      </DialogPortal>
+    );
+  },
+);
 DialogContent.displayName = 'DialogContent';
 
 // =============================================================================
