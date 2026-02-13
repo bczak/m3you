@@ -19,6 +19,8 @@ export type { ChipProps } from './components/ui/chip';
 export { Chip, chipVariants } from './components/ui/chip';
 export type { CircularProgressProps } from './components/ui/circular-progress';
 export { CircularProgress, circularProgressVariants } from './components/ui/circular-progress';
+export type { DividerProps } from './components/ui/divider';
+export { Divider, dividerVariants } from './components/ui/divider';
 export type { DatePickerModalProps, DatePickerProps } from './components/ui/date-picker';
 export {
   DatePicker,
