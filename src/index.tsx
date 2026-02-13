@@ -91,6 +91,14 @@ export type { TabProps, TabsProps } from './components/ui/tabs';
 export { Tab, Tabs, tabsVariants, tabVariants } from './components/ui/tabs';
 export type { TextFieldProps } from './components/ui/text-field';
 export { TextField, textFieldVariants } from './components/ui/text-field';
+export type { TimePickerProps } from './components/ui/time-picker';
+export {
+  clockNumberVariants,
+  periodButtonVariants,
+  TimePicker,
+  timeBoxVariants,
+  timePickerContainerVariants,
+} from './components/ui/time-picker';
 export type { ToolbarProps } from './components/ui/toolbar';
 export { Toolbar, toolbarVariants } from './components/ui/toolbar';
 export type { RichTooltipContentProps, TooltipContentProps } from './components/ui/tooltip';
