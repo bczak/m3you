@@ -205,6 +205,9 @@ const NavigationRailItem = React.forwardRef<HTMLButtonElement, NavigationRailIte
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+        onValueChange?.(value);
+      }
       props.onKeyDown?.(e);
     };
 
@@ -230,6 +233,7 @@ const NavigationRailItem = React.forwardRef<HTMLButtonElement, NavigationRailIte
         <button
           ref={ref}
           type="button"
+          aria-label={label}
           aria-current={isActive ? 'page' : undefined}
           disabled={disabled}
           className={cn(navigationRailItemVariants({ active: isActive, state, className }))}
