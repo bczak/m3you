@@ -1,35 +1,112 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { Ripple } from 'm3-ripple';
 import * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
-/**
- * Material Design 3 Slider Component
- *
- * M3 Specs:
- * - Track: 16dp height, fully rounded, split into active/inactive portions
- * - Handle: 4dp wide × 44dp tall capsule, centered vertically on track
- * - Gap: 6dp between handle and track ends
- * - Active track: primary color
- * - Inactive track: secondary-container color
- * - Handle: primary color
- * - Stop indicators (discrete): 4dp dots on track
- * - State layer: 40dp circular on handle for hover/ripple
- */
-
-const sliderVariants = cva('relative flex w-full touch-none select-none items-center', {
+const sliderVariants = cva('relative flex touch-none select-none', {
   variants: {
     size: {
-      sm: 'h-10',
-      md: 'h-12',
-      lg: 'h-14',
+      xs: '',
+      sm: '',
+      md: '',
+      lg: '',
+      xl: '',
+    },
+    orientation: {
+      horizontal: 'w-full items-center',
+      vertical: 'h-full flex-col justify-center',
     },
   },
   defaultVariants: {
     size: 'md',
+    orientation: 'horizontal',
   },
 });
+
+/**
+ * Per-size configuration for track, handle, gap, and inner radius.
+ * Inner radius is more squared than the outer fully-rounded ends.
+ */
+const SIZE_CONFIG = {
+  xs: {
+    touchTarget: 'h-8',
+    touchTargetV: 'w-8',
+    trackHeight: 8,
+    handleHeight: 24,
+    handleWidth: 3,
+    handlePressedWidth: 2,
+    gap: 3,
+    pressedGap: 1,
+    innerRadius: 2,
+    stateLayerSize: 'size-7',
+    tooltipSize: 'size-6 text-[10px]',
+    tooltipOffset: -20,
+    iconSize: 'size-4 text-[10px]',
+  },
+  sm: {
+    touchTarget: 'h-10',
+    touchTargetV: 'w-10',
+    trackHeight: 12,
+    handleHeight: 32,
+    handleWidth: 4,
+    handlePressedWidth: 2,
+    gap: 4,
+    pressedGap: 2,
+    innerRadius: 3,
+    stateLayerSize: 'size-8',
+    tooltipSize: 'size-7 text-xs',
+    tooltipOffset: -24,
+    iconSize: 'size-5',
+  },
+  md: {
+    touchTarget: 'h-12',
+    touchTargetV: 'w-12',
+    trackHeight: 16,
+    handleHeight: 44,
+    handleWidth: 4,
+    handlePressedWidth: 2,
+    gap: 6,
+    pressedGap: 2,
+    innerRadius: 4,
+    stateLayerSize: 'size-10',
+    tooltipSize: 'size-8 text-sm',
+    tooltipOffset: -28,
+    iconSize: 'size-5',
+  },
+  lg: {
+    touchTarget: 'h-14',
+    touchTargetV: 'w-14',
+    trackHeight: 24,
+    handleHeight: 52,
+    handleWidth: 4,
+    handlePressedWidth: 2,
+    gap: 8,
+    pressedGap: 3,
+    innerRadius: 6,
+    stateLayerSize: 'size-11',
+    tooltipSize: 'size-9 text-sm',
+    tooltipOffset: -32,
+    iconSize: 'size-6',
+  },
+  xl: {
+    touchTarget: 'h-16',
+    touchTargetV: 'w-16',
+    trackHeight: 36,
+    handleHeight: 60,
+    handleWidth: 6,
+    handlePressedWidth: 3,
+    gap: 10,
+    pressedGap: 4,
+    innerRadius: 8,
+    stateLayerSize: 'size-12',
+    tooltipSize: 'size-10 text-base',
+    tooltipOffset: -36,
+    iconSize: 'size-7',
+  },
+} as const;
+
+type SliderSize = keyof typeof SIZE_CONFIG;
 
 export type SliderProps = Omit<React.ComponentProps<'input'>, 'type' | 'size'> & {
   /** Current value (controlled). */
@@ -45,7 +122,15 @@ export type SliderProps = Omit<React.ComponentProps<'input'>, 'type' | 'size'> &
   /** Callback when value changes. */
   onValueChange?: (value: number) => void;
   /** Size variant. */
-  size?: VariantProps<typeof sliderVariants>['size'];
+  size?: SliderSize;
+  /** Orientation of the slider. */
+  orientation?: 'horizontal' | 'vertical';
+  /** Show value tooltip while dragging. */
+  showTooltip?: boolean;
+  /** Custom format function for the tooltip value. */
+  formatTooltip?: (value: number) => string;
+  /** Inset icon rendered inside the active track. */
+  icon?: React.ReactNode;
 };
 
 const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
@@ -59,6 +144,10 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
       step,
       disabled,
       size = 'md',
+      orientation = 'horizontal',
+      showTooltip = false,
+      formatTooltip,
+      icon,
       onValueChange,
       ...props
     },
@@ -80,6 +169,11 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
     const isDiscrete = step !== undefined && step > 0;
     const stopCount = isDiscrete ? Math.floor(range / step) + 1 : 0;
 
+    const config = SIZE_CONFIG[size];
+    const gapPx = isDragging ? config.pressedGap : config.gap;
+    const handleWidthPx = isDragging ? config.handlePressedWidth : config.handleWidth;
+    const isVertical = orientation === 'vertical';
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = Number(e.target.value);
       if (!isControlled) {
@@ -89,33 +183,80 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
       props.onChange?.(e);
     };
 
-    // Gap and handle shrink when pressed
-    const gapPx = isDragging ? 2 : 6;
-    const handleWidthPx = isDragging ? 2 : 4;
+    const tooltipLabel = formatTooltip ? formatTooltip(value) : String(value);
+
+    // Active/inactive track inner radius (squared near handle)
+    const innerR = config.innerRadius;
+    const trackR = config.trackHeight / 2; // outer radius = fully rounded
+
+    const activeTrackStyle = isVertical
+      ? {
+          height: `max(${clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
+          borderRadius: `0 0 ${trackR}px ${trackR}px`,
+          borderTopLeftRadius: `${innerR}px`,
+          borderTopRightRadius: `${innerR}px`,
+        }
+      : {
+          width: `max(${clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
+          borderRadius: `${trackR}px 0 0 ${trackR}px`,
+          borderTopRightRadius: `${innerR}px`,
+          borderBottomRightRadius: `${innerR}px`,
+        };
+
+    const inactiveTrackStyle = isVertical
+      ? {
+          height: `max(${100 - clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
+          borderRadius: `${trackR}px ${trackR}px 0 0`,
+          borderBottomLeftRadius: `${innerR}px`,
+          borderBottomRightRadius: `${innerR}px`,
+        }
+      : {
+          width: `max(${100 - clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
+          borderRadius: `0 ${trackR}px ${trackR}px 0`,
+          borderTopLeftRadius: `${innerR}px`,
+          borderBottomLeftRadius: `${innerR}px`,
+        };
 
     return (
       <div
-        className={cn(sliderVariants({ size }), disabled && 'pointer-events-none opacity-38', className)}
+        className={cn(
+          sliderVariants({ size, orientation }),
+          isVertical ? config.touchTargetV : config.touchTarget,
+          disabled && 'pointer-events-none opacity-38',
+          className,
+        )}
         onPointerDown={() => setIsDragging(true)}
         onPointerUp={() => setIsDragging(false)}
         onPointerLeave={() => setIsDragging(false)}
       >
         {/* Custom visual track */}
-        <div className="relative h-4 w-full">
-          {/* Active track (left of handle) — outer rounded, inner squared */}
+        <div
+          className={cn('relative', isVertical ? 'h-full' : 'w-full')}
+          style={isVertical ? { width: `${config.trackHeight}px` } : { height: `${config.trackHeight}px` }}
+        >
+          {/* Active track */}
           <div
-            className="absolute inset-y-0 left-0 rounded-r rounded-l-full bg-primary"
-            style={{
-              width: `max(${clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-            }}
-          />
+            className={cn('absolute bg-primary', isVertical ? 'inset-x-0 bottom-0' : 'inset-y-0 left-0')}
+            style={activeTrackStyle}
+          >
+            {/* Inset icon */}
+            {icon && (
+              <span
+                className={cn(
+                  'absolute flex items-center justify-center text-primary-foreground',
+                  config.iconSize,
+                  isVertical ? 'bottom-0.5 left-1/2 -translate-x-1/2' : 'top-1/2 left-0.5 -translate-y-1/2',
+                )}
+              >
+                {icon}
+              </span>
+            )}
+          </div>
 
-          {/* Inactive track (right of handle) — inner squared, outer rounded */}
+          {/* Inactive track */}
           <div
-            className="absolute inset-y-0 right-0 rounded-r-full rounded-l bg-secondary-container"
-            style={{
-              width: `max(${100 - clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-            }}
+            className={cn('absolute bg-secondary-container', isVertical ? 'inset-x-0 top-0' : 'inset-y-0 right-0')}
+            style={inactiveTrackStyle}
           />
 
           {/* Stop indicators for discrete slider */}
@@ -131,20 +272,45 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
                 <div
                   key={stopValue}
                   className={cn(
-                    'absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full',
+                    'absolute size-1 -translate-x-1/2 -translate-y-1/2 rounded-full',
+                    isVertical ? 'left-1/2' : 'top-1/2',
                     isActive ? 'bg-primary-foreground/40' : 'bg-outline/40',
                   )}
-                  style={{ left: `${stopPercent}%` }}
+                  style={isVertical ? { bottom: `${stopPercent}%` } : { left: `${stopPercent}%` }}
                 />
               );
             })}
 
-          {/* Handle (capsule shape) */}
-          <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ left: `${clampedPercent}%` }}>
-            {/* State layer for ripple (40dp) */}
+          {/* Handle */}
+          <div
+            className={cn(
+              'absolute',
+              isVertical ? 'left-1/2 -translate-x-1/2 translate-y-1/2' : 'top-1/2 -translate-x-1/2 -translate-y-1/2',
+            )}
+            style={isVertical ? { bottom: `${clampedPercent}%` } : { left: `${clampedPercent}%` }}
+          >
+            {/* Value tooltip */}
+            {showTooltip && isDragging && (
+              <div
+                className={cn(
+                  'pointer-events-none absolute left-1/2 flex -translate-x-1/2 items-center justify-center rounded-full bg-inverse-surface font-medium text-inverse-surface-foreground',
+                  config.tooltipSize,
+                )}
+                style={
+                  isVertical
+                    ? { left: config.tooltipOffset, top: '50%', transform: 'translateY(-50%)' }
+                    : { top: config.tooltipOffset }
+                }
+              >
+                {tooltipLabel}
+              </div>
+            )}
+
+            {/* State layer for ripple */}
             <span
               className={cn(
-                'pointer-events-none absolute top-1/2 left-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full',
+                'pointer-events-none absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full',
+                config.stateLayerSize,
                 !disabled && 'group-hover:bg-primary/8',
               )}
             >
@@ -153,8 +319,12 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
 
             {/* Visual handle capsule */}
             <div
-              className="relative h-11 rounded-full bg-primary transition-[width] duration-100"
-              style={{ width: `${handleWidthPx}px` }}
+              className="relative rounded-full bg-primary transition-[width,height] duration-100"
+              style={
+                isVertical
+                  ? { height: `${handleWidthPx}px`, width: `${config.handleHeight}px` }
+                  : { width: `${handleWidthPx}px`, height: `${config.handleHeight}px` }
+              }
             />
           </div>
         </div>
@@ -168,8 +338,14 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
           step={step}
           value={value}
           disabled={disabled}
+          aria-orientation={orientation}
           onChange={handleChange}
-          className="absolute inset-0 cursor-pointer opacity-0"
+          className={cn('absolute cursor-pointer opacity-0', isVertical ? 'slider-vertical inset-0' : 'inset-0')}
+          style={
+            isVertical
+              ? { writingMode: 'vertical-lr', direction: 'rtl', WebkitAppearance: 'slider-vertical' as never }
+              : undefined
+          }
           {...props}
         />
       </div>
