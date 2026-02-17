@@ -1,12 +1,7 @@
-import { afterEach, expect, test } from '@rstest/core';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { expect, test } from '@rstest/core';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { NavigationBar, NavigationBarItem } from '../src/components/ui/navigation-bar';
-
-// Cleanup after each test to prevent DOM pollution
-afterEach(() => {
-  cleanup();
-});
 
 // Mock icon component for testing
 const MockIcon = () => <svg data-testid="mock-icon" />;

@@ -1,5 +1,5 @@
-import { afterEach, expect, test } from '@rstest/core';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { expect, test } from '@rstest/core';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import {
   NavigationRail,
@@ -7,11 +7,6 @@ import {
   NavigationRailMenuButton,
   NavigationRailSection,
 } from '../src/components/ui/navigation-rail';
-
-// Cleanup after each test to prevent DOM pollution
-afterEach(() => {
-  cleanup();
-});
 
 // Mock icon components for testing
 const MockIcon = () => <svg data-testid="mock-icon" />;

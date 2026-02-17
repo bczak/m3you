@@ -1,11 +1,7 @@
-import { afterEach, expect, test } from '@rstest/core';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { expect, test } from '@rstest/core';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { TimePicker } from '../src/components/ui/time-picker';
-
-afterEach(() => {
-  cleanup();
-});
 
 // Helper to render a controlled TimePicker
 const ControlledTimePicker = ({
