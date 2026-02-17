@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, fn } from 'storybook/test';
+import { expect, fn, waitFor } from 'storybook/test';
 import { Snackbar, SnackbarHost, snackbar } from '../src/components/ui/snackbar';
 
 const meta = {
@@ -283,7 +283,7 @@ export const LongerActionClosable: Story = {
   },
   play: async ({ args, canvas, userEvent }) => {
     const closeButton = canvas.getByRole('button', { name: /dismiss/i });
-    await expect(closeButton).toBeVisible();
+    await waitFor(() => expect(closeButton).toBeVisible());
     await userEvent.click(closeButton);
     await expect(args.onClose).toHaveBeenCalledOnce();
   },
@@ -315,10 +315,10 @@ export const ImperativeSnackbar: Story = {
     await userEvent.click(trigger);
 
     const toast = await canvas.findByText('File saved successfully');
-    await expect(toast).toBeVisible();
+    await waitFor(() => expect(toast).toBeVisible());
 
     const actionButton = canvas.getByRole('button', { name: /view/i });
-    await expect(actionButton).toBeVisible();
+    await waitFor(() => expect(actionButton).toBeVisible());
   },
 };
 

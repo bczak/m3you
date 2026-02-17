@@ -28,7 +28,8 @@
     "lint": "biome lint --write",
     "storybook": "storybook dev -p 6006",
     "test": "rstest",
-    "test:watch": "rstest --watch"
+    "test:watch": "rstest --watch",
+    "chromatic": "npx chromatic --project-token=chpt_2f2ae18713c56d7"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.13",
