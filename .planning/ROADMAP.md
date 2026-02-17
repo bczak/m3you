@@ -31,7 +31,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. rstest.setup.ts contains a global `afterEach(cleanup)` — no individual test file needs its own cleanup registration
   4. Class assertions in button.test.tsx match the current CVA output (elevated shadow class and outlined border-opacity class are correct)
   5. Navigation bar and rail tests use computed accessible name queries (`getByRole` with `name:`) and include Enter/Space keyboard handlers
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Centralise global test infrastructure (animate polyfill + afterEach cleanup) into rstest.setup.ts
+- [ ] 01-02-PLAN.md — Fix button.test.tsx class assertions and NavigationBarItem aria-label + keyboard handler
+- [ ] 01-03-PLAN.md — Fix NavigationRailItem collapsed branch aria-label and keyboard handler
 
 ### Phase 2: Accessibility Fixes and Stack Setup
 **Goal**: Component-level ARIA gaps are fixed and the full test toolchain (user-event, vitest-axe, jsdom, two-project config) is operational
@@ -101,7 +106,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation Repair | 0/TBD | Not started | - |
+| 1. Foundation Repair | 0/3 | Not started | - |
 | 2. Accessibility Fixes and Stack Setup | 0/TBD | Not started | - |
 | 3. Tier 1 and Tier 2 Component Tests | 0/TBD | Not started | - |
 | 4. Tier 3 Compound Component Tests | 0/TBD | Not started | - |
