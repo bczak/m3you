@@ -14,6 +14,128 @@ const searchBarVariants = cva(
   'relative flex h-14 w-full items-center rounded-full bg-surface-container-high text-base',
 );
 
+const searchViewVariants = cva('z-50 flex flex-col bg-surface-container-high', {
+  variants: {
+    /** fullScreen: mobile full-screen overlay; docked: desktop panel below bar */
+    mode: {
+      fullScreen: 'fixed inset-0',
+      docked: 'rounded-[28px] shadow-xl',
+    },
+  },
+  defaultVariants: {
+    mode: 'docked',
+  },
+});
+
+// =============================================================================
+// SearchView
+// =============================================================================
+
+export type SearchViewProps = Omit<React.ComponentProps<'div'>, 'onChange'> & {
+  /** Placeholder text shown when no query is entered */
+  placeholder?: string;
+  /** The search query value (controlled) */
+  value?: string;
+  /** Default value for uncontrolled mode */
+  defaultValue?: string;
+  /** Called when the search query changes */
+  onValueChange?: (value: string) => void;
+  /** Called when search is submitted (Enter key) */
+  onSearch?: (query: string) => void;
+  /** Called when the back button is pressed */
+  onBack?: () => void;
+  /** Display mode: fullScreen (mobile) or docked (desktop panel) */
+  mode?: 'fullScreen' | 'docked';
+  /** Whether to auto-focus the input on mount */
+  autoFocus?: boolean;
+  /** Content rendered in the search view body (suggestions, results, etc.) */
+  children?: React.ReactNode;
+};
+
+const SearchView = React.forwardRef<HTMLDivElement, SearchViewProps>(
+  (
+    {
+      className,
+      placeholder = 'Search',
+      value,
+      defaultValue,
+      onValueChange,
+      onSearch,
+      onBack,
+      mode = 'docked',
+      autoFocus = true,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const [internalValue, setInternalValue] = React.useState(defaultValue ?? '');
+    const inputRef = React.useRef<HTMLInputElement>(null);
+
+    const isControlled = value !== undefined;
+    const currentValue = isControlled ? value : internalValue;
+
+    const updateValue = React.useCallback(
+      (next: string) => {
+        if (!isControlled) setInternalValue(next);
+        onValueChange?.(next);
+      },
+      [isControlled, onValueChange],
+    );
+
+    const handleClear = () => {
+      updateValue('');
+      inputRef.current?.focus();
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') onSearch?.(currentValue);
+      if (e.key === 'Escape') onBack?.();
+    };
+
+    React.useEffect(() => {
+      if (autoFocus) {
+        requestAnimationFrame(() => inputRef.current?.focus());
+      }
+    }, [autoFocus]);
+
+    return (
+      <search ref={ref} aria-label="Search" className={cn(searchViewVariants({ mode }), className)} {...props}>
+        {/* Header */}
+        <div className="flex h-[72px] shrink-0 items-center gap-1 px-2 md:h-14">
+          <IconButton variant="standard" size="sm" onClick={onBack} aria-label="Close search">
+            <ArrowLeft />
+          </IconButton>
+
+          <input
+            ref={inputRef}
+            type="text"
+            value={currentValue}
+            onChange={(e) => updateValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            className="min-w-0 flex-1 bg-transparent text-base text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
+            aria-label="Search input"
+          />
+
+          {currentValue && (
+            <IconButton variant="standard" size="sm" onClick={handleClear} aria-label="Clear search">
+              <X />
+            </IconButton>
+          )}
+        </div>
+
+        {/* Divider */}
+        <hr className="shrink-0 border-outline-variant" />
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto">{children}</div>
+      </search>
+    );
+  },
+);
+SearchView.displayName = 'SearchView';
+
 // =============================================================================
 // SearchBar
 // =============================================================================
@@ -104,18 +226,6 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
       inputRef.current?.focus();
     };
 
-    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') onSearch?.(currentValue);
-      if (e.key === 'Escape') updateOpen(false);
-    };
-
-    // Focus input when view opens
-    React.useEffect(() => {
-      if (isOpen) {
-        requestAnimationFrame(() => inputRef.current?.focus());
-      }
-    }, [isOpen]);
-
     return (
       <search ref={containerRef} className="relative">
         {/* ── Search Bar (collapsed) ──────────────────────────────────── */}
@@ -187,47 +297,21 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
             {/* Backdrop — desktop only (docked mode click-away) */}
             <div className="hidden md:fixed md:inset-0 md:z-40 md:block" onClick={handleBack} aria-hidden="true" />
 
-            <div
-              role="dialog"
-              aria-label="Search"
+            <SearchView
+              value={currentValue}
+              onValueChange={updateValue}
+              onSearch={onSearch}
+              onBack={handleBack}
+              placeholder={placeholder}
               className={cn(
                 // Mobile: full-screen
-                'fixed inset-0 z-50 flex flex-col bg-surface-container-high',
+                'fixed inset-0 z-50',
                 // Desktop (md+): docked panel below bar
-                'md:absolute md:inset-auto md:top-0 md:right-0 md:left-0 md:max-h-[min(70vh,600px)] md:rounded-[28px] md:shadow-xl',
+                'md:absolute md:inset-auto md:top-0 md:right-0 md:left-0 md:max-h-[min(70vh,600px)]',
               )}
             >
-              {/* Header */}
-              <div className="flex h-[72px] shrink-0 items-center gap-1 px-2 md:h-14">
-                <IconButton variant="standard" size="sm" onClick={handleBack} aria-label="Close search">
-                  <ArrowLeft />
-                </IconButton>
-
-                {/* Input */}
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={currentValue}
-                  onChange={(e) => updateValue(e.target.value)}
-                  onKeyDown={handleInputKeyDown}
-                  placeholder={placeholder}
-                  className="min-w-0 flex-1 bg-transparent text-base text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
-                  aria-label="Search input"
-                />
-
-                {currentValue && (
-                  <IconButton variant="standard" size="sm" onClick={handleClear} aria-label="Clear search">
-                    <X />
-                  </IconButton>
-                )}
-              </div>
-
-              {/* Divider */}
-              <hr className="shrink-0 border-outline-variant" />
-
-              {/* Content */}
-              <div className="flex-1 overflow-y-auto">{children}</div>
-            </div>
+              {children}
+            </SearchView>
           </>
         )}
       </search>
@@ -273,4 +357,4 @@ const SearchSuggestionItem = React.forwardRef<HTMLButtonElement, SearchSuggestio
 );
 SearchSuggestionItem.displayName = 'SearchSuggestionItem';
 
-export { SearchBar, searchBarVariants, SearchSuggestionItem };
+export { SearchBar, searchBarVariants, SearchSuggestionItem, SearchView, searchViewVariants };

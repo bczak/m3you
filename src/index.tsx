@@ -117,8 +117,14 @@ export {
   radioInnerVariants,
   radioOuterVariants,
 } from './components/ui/radio-button';
-export type { SearchBarProps, SearchSuggestionItemProps } from './components/ui/search';
-export { SearchBar, SearchSuggestionItem, searchBarVariants } from './components/ui/search';
+export type { SearchBarProps, SearchSuggestionItemProps, SearchViewProps } from './components/ui/search';
+export {
+  SearchBar,
+  SearchSuggestionItem,
+  SearchView,
+  searchBarVariants,
+  searchViewVariants,
+} from './components/ui/search';
 export type { SnackbarHostProps, SnackbarProps } from './components/ui/snackbar';
 export { Snackbar, SnackbarHost, snackbar, snackbarVariants } from './components/ui/snackbar';
 export type { SwitchProps } from './components/ui/switch';

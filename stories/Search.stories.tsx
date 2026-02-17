@@ -1,7 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Clock, Mic, Search, TrendingUp } from 'lucide-react';
 import * as React from 'react';
-import { SearchBar, SearchSuggestionItem } from '../src/components/ui/search';
+import { SearchBar, SearchSuggestionItem, SearchView } from '../src/components/ui/search';
+
+// =============================================================================
+// SearchBar Stories
+// =============================================================================
 
 const meta = {
   title: 'Components/SearchBar',
@@ -126,6 +130,104 @@ export const WithFilteredSuggestions: Story = {
   },
 };
 
+// =============================================================================
+// SearchView Stories
+// =============================================================================
+
+export const SearchViewDocked: Story = {
+  name: 'Search View (Docked)',
+  render: () => {
+    const [value, setValue] = React.useState('');
+
+    return (
+      <div className="w-[360px]">
+        <SearchView
+          value={value}
+          onValueChange={setValue}
+          placeholder="Search"
+          mode="docked"
+          autoFocus={false}
+          onBack={() => alert('Back pressed')}
+        >
+          <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('recent search 1')}>
+            recent search 1
+          </SearchSuggestionItem>
+          <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('recent search 2')}>
+            recent search 2
+          </SearchSuggestionItem>
+          <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('recent search 3')}>
+            recent search 3
+          </SearchSuggestionItem>
+          <SearchSuggestionItem icon={<TrendingUp />} onClick={() => setValue('trending topic')}>
+            trending topic
+          </SearchSuggestionItem>
+        </SearchView>
+      </div>
+    );
+  },
+};
+
+export const SearchViewWithQuery: Story = {
+  name: 'Search View (With Query)',
+  render: () => {
+    const [value, setValue] = React.useState('shoes');
+
+    const suggestions = ['shoes for men', 'shoes for women', 'shoes on sale', 'shoes nike'];
+    const filtered = value ? suggestions.filter((s) => s.toLowerCase().includes(value.toLowerCase())) : suggestions;
+
+    return (
+      <div className="w-[360px]">
+        <SearchView
+          value={value}
+          onValueChange={setValue}
+          placeholder="Search"
+          mode="docked"
+          autoFocus={false}
+          onBack={() => alert('Back pressed')}
+        >
+          {filtered.map((suggestion) => (
+            <SearchSuggestionItem key={suggestion} icon={<Search />} onClick={() => setValue(suggestion)}>
+              {suggestion}
+            </SearchSuggestionItem>
+          ))}
+        </SearchView>
+      </div>
+    );
+  },
+};
+
+export const SearchViewFullScreen: Story = {
+  name: 'Search View (Full Screen)',
+  parameters: { layout: 'fullscreen' },
+  render: () => {
+    const [value, setValue] = React.useState('');
+
+    return (
+      <SearchView
+        value={value}
+        onValueChange={setValue}
+        placeholder="Search"
+        mode="fullScreen"
+        autoFocus={false}
+        onBack={() => alert('Back pressed')}
+      >
+        <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('shoes')}>
+          shoes
+        </SearchSuggestionItem>
+        <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('dresses')}>
+          dresses
+        </SearchSuggestionItem>
+        <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('summer collection')}>
+          summer collection
+        </SearchSuggestionItem>
+        <SearchSuggestionItem icon={<TrendingUp />} onClick={() => setValue('trending fashion')}>
+          trending fashion
+        </SearchSuggestionItem>
+      </SearchView>
+    );
+  },
+};
+
 // ── Full Showcase ────────────────────────────────────────────────────────────
 
 export const Showcase: Story = {
@@ -158,13 +260,30 @@ export const Showcase: Story = {
       );
     };
 
+    const DockedViewExample = () => {
+      const [value, setValue] = React.useState('');
+      return (
+        <SearchView value={value} onValueChange={setValue} placeholder="Search" mode="docked" autoFocus={false}>
+          <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('recent search 1')}>
+            recent search 1
+          </SearchSuggestionItem>
+          <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('recent search 2')}>
+            recent search 2
+          </SearchSuggestionItem>
+          <SearchSuggestionItem icon={<TrendingUp />} onClick={() => setValue('trending topic')}>
+            trending topic
+          </SearchSuggestionItem>
+        </SearchView>
+      );
+    };
+
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">SearchBar</h2>
+        <h2 className="mb-8 text-center text-foreground/60 text-sm">Search</h2>
         <div className="mx-auto max-w-md space-y-10">
           {/* Inline search bar */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Inline (no view)</h3>
+            <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Search Bar (inline)</h3>
             <div className="space-y-4">
               <div className="space-y-2">
                 <span className="text-foreground/40 text-xs">Default</span>
@@ -179,10 +298,19 @@ export const Showcase: Story = {
 
           {/* Expandable search bar */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Expandable (with search view)</h3>
+            <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Search Bar (expandable)</h3>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Click to expand</span>
+              <span className="text-foreground/40 text-xs">Click to expand into search view</span>
               <ExpandableExample />
+            </div>
+          </div>
+
+          {/* Search View (docked) */}
+          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+            <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Search View (docked)</h3>
+            <div className="space-y-2">
+              <span className="text-foreground/40 text-xs">Standalone docked search view</span>
+              <DockedViewExample />
             </div>
           </div>
         </div>
