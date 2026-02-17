@@ -55,19 +55,19 @@ export const Default: Story = {
       console.log(selected);
       return (
         <Toolbar>
-          <IconButton variant="tonal" size="sm" morph selected={selected.share} onClick={() => toggle('share')}>
+          <IconButton variant="standard" size="sm" morph selected={selected.share} onClick={() => toggle('share')}>
             <Share2Icon />
           </IconButton>
-          <IconButton variant="tonal" size="sm" morph selected={selected.pen} onClick={() => toggle('pen')}>
+          <IconButton variant="standard" size="sm" morph selected={selected.pen} onClick={() => toggle('pen')}>
             <PenIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm" morph selected={selected.mic} onClick={() => toggle('mic')}>
+          <IconButton variant="standard" size="sm" morph selected={selected.mic} onClick={() => toggle('mic')}>
             <MicIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm" morph selected={selected.image} onClick={() => toggle('image')}>
+          <IconButton variant="standard" size="sm" morph selected={selected.image} onClick={() => toggle('image')}>
             <ImageIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm" morph selected={selected.more} onClick={() => toggle('more')}>
+          <IconButton variant="standard" size="sm" morph selected={selected.more} onClick={() => toggle('more')}>
             <MoreVerticalIcon />
           </IconButton>
         </Toolbar>
@@ -86,19 +86,19 @@ export const FloatingVariants: Story = {
       {/* Row 1: Standard toolbar + square FAB */}
       <div className="flex items-center gap-2">
         <Toolbar type="floating" color="standard">
-          <IconButton variant="tonal" morph>
+          <IconButton variant="standard" morph>
             <Share2Icon />
           </IconButton>
-          <IconButton variant="tonal">
+          <IconButton variant="standard">
             <MessageSquareIcon />
           </IconButton>
-          <IconButton variant="tonal">
+          <IconButton variant="standard">
             <DownloadIcon />
           </IconButton>
-          <IconButton variant="tonal">
+          <IconButton variant="standard">
             <PenIcon />
           </IconButton>
-          <IconButton variant="tonal">
+          <IconButton variant="standard">
             <MoreVerticalIcon />
           </IconButton>
         </Toolbar>
@@ -110,19 +110,19 @@ export const FloatingVariants: Story = {
       {/* Row 2: Email actions toolbar + undo FAB */}
       <div className="flex items-center gap-2">
         <Toolbar type="floating" color="vibrant">
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <ArchiveIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <Trash2Icon />
           </IconButton>
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <MailIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <ClockIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <MoreVerticalIcon />
           </IconButton>
         </Toolbar>
@@ -134,16 +134,16 @@ export const FloatingVariants: Story = {
       {/* Row 3: Meeting toolbar with selected state + end call FAB */}
       <div className="flex items-center gap-2">
         <Toolbar type="floating" color="vibrant">
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <Share2Icon />
           </IconButton>
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <MessageSquareIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm" selected>
+          <IconButton variant="standard" size="sm" selected>
             <HandIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <MoreVerticalIcon />
           </IconButton>
         </Toolbar>
@@ -159,14 +159,14 @@ export const FloatingVariants: Story = {
 
       {/* Row 4: Tonal text buttons toolbar */}
       <Toolbar type="floating" color="vibrant">
-        <Button variant="tonal" size="sm" selected>
+        <Button variant="standard" size="sm" selected>
           <ImageIcon />
           Photos
         </Button>
-        <Button variant="tonal" size="sm" selected={false}>
+        <Button variant="standard" size="sm" selected={false}>
           Memories
         </Button>
-        <Button variant="tonal" size="sm" selected={false}>
+        <Button variant="standard" size="sm" selected={false}>
           Library
         </Button>
       </Toolbar>
@@ -174,19 +174,19 @@ export const FloatingVariants: Story = {
       {/* Row 5: Toolbar with embedded circular FAB */}
       <div className="flex items-center gap-2">
         <Toolbar type="floating" color="vibrant">
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <Share2Icon />
           </IconButton>
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <MessageSquareIcon />
           </IconButton>
           <IconButton variant="filled" size="sm" shape="round">
             <PlusIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <MoreVerticalIcon />
           </IconButton>
-          <IconButton variant="tonal" size="sm">
+          <IconButton variant="standard" size="sm">
             <ImageIcon />
           </IconButton>
         </Toolbar>
@@ -206,13 +206,13 @@ export const Types: Story = {
           <h3 className="text-center text-foreground/50 text-xs">Floating (default)</h3>
           <div className="flex justify-center">
             <Toolbar type="floating">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
             </Toolbar>
@@ -222,13 +222,13 @@ export const Types: Story = {
         <div className="space-y-3">
           <h3 className="text-center text-foreground/50 text-xs">Docked (full-width, replaces bottom app bar)</h3>
           <Toolbar type="docked">
-            <IconButton variant="text" size="sm">
+            <IconButton variant="standard" size="sm">
               <Share2Icon />
             </IconButton>
-            <IconButton variant="text" size="sm">
+            <IconButton variant="standard" size="sm">
               <MessageSquareIcon />
             </IconButton>
-            <IconButton variant="text" size="sm">
+            <IconButton variant="standard" size="sm">
               <DownloadIcon />
             </IconButton>
           </Toolbar>
@@ -251,13 +251,13 @@ export const Colors: Story = {
           <div className="flex flex-wrap items-center justify-center gap-8">
             <div className="flex flex-col items-center gap-2">
               <Toolbar type="floating" color="standard">
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <Share2Icon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <MessageSquareIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <DownloadIcon />
                 </IconButton>
               </Toolbar>
@@ -265,13 +265,13 @@ export const Colors: Story = {
             </div>
             <div className="flex flex-col items-center gap-2">
               <Toolbar type="floating" color="vibrant">
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <Share2Icon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <MessageSquareIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <DownloadIcon />
                 </IconButton>
               </Toolbar>
@@ -286,13 +286,13 @@ export const Colors: Story = {
           <div className="space-y-6">
             <div className="space-y-2">
               <Toolbar type="docked" color="standard">
-                <IconButton variant="text" size="sm">
+                <IconButton variant="standard" size="sm">
                   <Share2Icon />
                 </IconButton>
-                <IconButton variant="text" size="sm">
+                <IconButton variant="standard" size="sm">
                   <MessageSquareIcon />
                 </IconButton>
-                <IconButton variant="text" size="sm">
+                <IconButton variant="standard" size="sm">
                   <DownloadIcon />
                 </IconButton>
               </Toolbar>
@@ -300,13 +300,13 @@ export const Colors: Story = {
             </div>
             <div className="space-y-2">
               <Toolbar type="docked" color="vibrant">
-                <IconButton variant="text" size="sm">
+                <IconButton variant="standard" size="sm">
                   <Share2Icon />
                 </IconButton>
-                <IconButton variant="text" size="sm">
+                <IconButton variant="standard" size="sm">
                   <MessageSquareIcon />
                 </IconButton>
-                <IconButton variant="text" size="sm">
+                <IconButton variant="standard" size="sm">
                   <DownloadIcon />
                 </IconButton>
               </Toolbar>
@@ -329,13 +329,13 @@ export const Layouts: Story = {
         <div className="flex flex-wrap items-start justify-center gap-12">
           <div className="flex flex-col items-center gap-3">
             <Toolbar type="floating" layout="horizontal">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
             </Toolbar>
@@ -344,13 +344,13 @@ export const Layouts: Story = {
 
           <div className="flex flex-col items-center gap-3">
             <Toolbar type="floating" layout="vertical">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
             </Toolbar>
@@ -359,13 +359,13 @@ export const Layouts: Story = {
 
           <div className="flex flex-col items-center gap-3">
             <Toolbar type="floating" color="vibrant" layout="horizontal">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
             </Toolbar>
@@ -374,13 +374,13 @@ export const Layouts: Story = {
 
           <div className="flex flex-col items-center gap-3">
             <Toolbar type="floating" color="vibrant" layout="vertical">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
             </Toolbar>
@@ -404,19 +404,19 @@ export const WithFAB: Story = {
           <h3 className="text-center text-foreground/50 text-xs">Floating with embedded primary action</h3>
           <div className="flex justify-center">
             <Toolbar type="floating" color="standard">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <PenIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
               <IconButton variant="filled" size="sm" shape="round">
@@ -431,22 +431,22 @@ export const WithFAB: Story = {
           <h3 className="text-center text-foreground/50 text-xs">Floating toolbar paired with separate FAB</h3>
           <div className="flex items-center justify-center gap-2">
             <Toolbar type="floating" color="vibrant">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ArchiveIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Trash2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MailIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ClockIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <StarIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
             </Toolbar>
@@ -460,19 +460,19 @@ export const WithFAB: Story = {
         <div className="space-y-3">
           <h3 className="text-center text-foreground/50 text-xs">Docked with embedded primary action</h3>
           <Toolbar type="docked" color="standard">
-            <IconButton variant="text" size="sm">
+            <IconButton variant="standard" size="sm">
               <ArrowLeftIcon />
             </IconButton>
-            <IconButton variant="text" size="sm">
+            <IconButton variant="standard" size="sm">
               <ArrowRightIcon />
             </IconButton>
             <IconButton variant="filled" size="sm" shape="round">
               <PlusIcon />
             </IconButton>
-            <IconButton variant="text" size="sm">
+            <IconButton variant="standard" size="sm">
               <ImageIcon />
             </IconButton>
-            <IconButton variant="text" size="sm">
+            <IconButton variant="standard" size="sm">
               <MoreVerticalIcon />
             </IconButton>
           </Toolbar>
@@ -498,22 +498,22 @@ export const TextFormatting: Story = {
             {/* Standard */}
             <div className="flex flex-col items-center gap-3">
               <Toolbar type="floating" color="standard">
-                <IconButton variant="tonal" size="sm" selected={bold} onClick={() => setBold(!bold)}>
+                <IconButton variant="standard" size="sm" selected={bold} onClick={() => setBold(!bold)}>
                   <BoldIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm" selected={italic} onClick={() => setItalic(!italic)}>
+                <IconButton variant="standard" size="sm" selected={italic} onClick={() => setItalic(!italic)}>
                   <ItalicIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm" selected={underline} onClick={() => setUnderline(!underline)}>
+                <IconButton variant="standard" size="sm" selected={underline} onClick={() => setUnderline(!underline)}>
                   <UnderlineIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <TypeIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <PaintbrushIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <MoreVerticalIcon />
                 </IconButton>
               </Toolbar>
@@ -523,22 +523,22 @@ export const TextFormatting: Story = {
             {/* Vibrant */}
             <div className="flex flex-col items-center gap-3">
               <Toolbar type="floating" color="vibrant">
-                <IconButton variant="tonal" size="sm" selected={bold} onClick={() => setBold(!bold)}>
+                <IconButton variant="standard" size="sm" selected={bold} onClick={() => setBold(!bold)}>
                   <BoldIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm" selected={italic} onClick={() => setItalic(!italic)}>
+                <IconButton variant="standard" size="sm" selected={italic} onClick={() => setItalic(!italic)}>
                   <ItalicIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm" selected={underline} onClick={() => setUnderline(!underline)}>
+                <IconButton variant="standard" size="sm" selected={underline} onClick={() => setUnderline(!underline)}>
                   <UnderlineIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <TypeIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <PaintbrushIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <MoreVerticalIcon />
                 </IconButton>
               </Toolbar>
@@ -548,22 +548,22 @@ export const TextFormatting: Story = {
             {/* Vertical */}
             <div className="flex flex-col items-center gap-3">
               <Toolbar type="floating" color="standard" layout="vertical">
-                <IconButton variant="tonal" size="sm" selected={bold} onClick={() => setBold(!bold)}>
+                <IconButton variant="standard" size="sm" selected={bold} onClick={() => setBold(!bold)}>
                   <BoldIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm" selected={italic} onClick={() => setItalic(!italic)}>
+                <IconButton variant="standard" size="sm" selected={italic} onClick={() => setItalic(!italic)}>
                   <ItalicIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm" selected={underline} onClick={() => setUnderline(!underline)}>
+                <IconButton variant="standard" size="sm" selected={underline} onClick={() => setUnderline(!underline)}>
                   <UnderlineIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <TypeIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <PaintbrushIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <MoreVerticalIcon />
                 </IconButton>
               </Toolbar>
@@ -583,19 +583,19 @@ export const MediaControls: Story = {
   render: () => (
     <div className="flex flex-col items-center gap-6">
       <Toolbar type="floating" color="standard">
-        <IconButton variant="tonal" size="sm">
+        <IconButton variant="standard" size="sm">
           <CameraOffIcon />
         </IconButton>
-        <IconButton variant="tonal" size="sm">
+        <IconButton variant="standard" size="sm">
           <MicIcon />
         </IconButton>
-        <IconButton variant="tonal" size="sm" selected>
+        <IconButton variant="standard" size="sm" selected>
           <HandIcon />
         </IconButton>
-        <IconButton variant="tonal" size="sm">
+        <IconButton variant="standard" size="sm">
           <PenIcon />
         </IconButton>
-        <IconButton variant="tonal" size="sm">
+        <IconButton variant="standard" size="sm">
           <MoreVerticalIcon />
         </IconButton>
       </Toolbar>
@@ -612,27 +612,27 @@ export const TonalToggleable: Story = {
       return (
         <div className="flex flex-col items-center gap-6">
           <Toolbar type="floating" color="standard">
-            <Button variant="tonal" size="sm" selected={active === 'photos'} onClick={() => setActive('photos')}>
+            <Button variant="standard" size="sm" selected={active === 'photos'} onClick={() => setActive('photos')}>
               {active === 'photos' && <ImageIcon />}
               Photos
             </Button>
-            <Button variant="tonal" size="sm" selected={active === 'memories'} onClick={() => setActive('memories')}>
+            <Button variant="standard" size="sm" selected={active === 'memories'} onClick={() => setActive('memories')}>
               Memories
             </Button>
-            <Button variant="tonal" size="sm" selected={active === 'library'} onClick={() => setActive('library')}>
+            <Button variant="standard" size="sm" selected={active === 'library'} onClick={() => setActive('library')}>
               Library
             </Button>
           </Toolbar>
 
           <Toolbar type="floating" color="vibrant">
-            <Button variant="tonal" size="sm" selected={active === 'photos'} onClick={() => setActive('photos')}>
+            <Button variant="standard" size="sm" selected={active === 'photos'} onClick={() => setActive('photos')}>
               {active === 'photos' && <ImageIcon />}
               Photos
             </Button>
-            <Button variant="tonal" size="sm" selected={active === 'memories'} onClick={() => setActive('memories')}>
+            <Button variant="standard" size="sm" selected={active === 'memories'} onClick={() => setActive('memories')}>
               Memories
             </Button>
-            <Button variant="tonal" size="sm" selected={active === 'library'} onClick={() => setActive('library')}>
+            <Button variant="standard" size="sm" selected={active === 'library'} onClick={() => setActive('library')}>
               Library
             </Button>
           </Toolbar>
@@ -656,36 +656,36 @@ export const BuildingBlocks: Story = {
           <h3 className="mb-4 text-center text-foreground/50 text-xs">Tonal icon buttons</h3>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Toolbar type="floating" color="standard">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <PenIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
             </Toolbar>
             <Toolbar type="floating" color="vibrant">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <PenIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
             </Toolbar>
@@ -738,36 +738,36 @@ export const BuildingBlocks: Story = {
           <h3 className="mb-4 text-center text-foreground/50 text-xs">Mixed variants (with selected state)</h3>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Toolbar type="floating" color="standard">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm" selected>
+              <IconButton variant="standard" size="sm" selected>
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm" selected>
+              <IconButton variant="standard" size="sm" selected>
                 <PenIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
             </Toolbar>
             <Toolbar type="floating" color="vibrant">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm" selected>
+              <IconButton variant="standard" size="sm" selected>
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm" selected>
+              <IconButton variant="standard" size="sm" selected>
                 <PenIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
             </Toolbar>
@@ -779,26 +779,26 @@ export const BuildingBlocks: Story = {
           <h3 className="mb-4 text-center text-foreground/50 text-xs">Tonal text buttons (toggleable)</h3>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Toolbar type="floating" color="standard">
-              <Button variant="tonal" size="sm" selected>
+              <Button variant="standard" size="sm" selected>
                 <ImageIcon />
                 Photos
               </Button>
-              <Button variant="tonal" size="sm" selected={false}>
+              <Button variant="standard" size="sm" selected={false}>
                 Memories
               </Button>
-              <Button variant="tonal" size="sm" selected={false}>
+              <Button variant="standard" size="sm" selected={false}>
                 Library
               </Button>
             </Toolbar>
             <Toolbar type="floating" color="vibrant">
-              <Button variant="tonal" size="sm" selected>
+              <Button variant="standard" size="sm" selected>
                 <ImageIcon />
                 Photos
               </Button>
-              <Button variant="tonal" size="sm" selected={false}>
+              <Button variant="standard" size="sm" selected={false}>
                 Memories
               </Button>
-              <Button variant="tonal" size="sm" selected={false}>
+              <Button variant="standard" size="sm" selected={false}>
                 Library
               </Button>
             </Toolbar>
@@ -822,19 +822,19 @@ export const CompleteShowcase: Story = {
           <div className="flex flex-wrap items-start gap-6">
             {/* Standard horizontal */}
             <Toolbar type="floating" color="standard">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Share2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MessageSquareIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <DownloadIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <PenIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
               <IconButton variant="filled" size="sm" shape="round">
@@ -844,57 +844,57 @@ export const CompleteShowcase: Story = {
 
             {/* Vibrant horizontal */}
             <Toolbar type="floating" color="vibrant">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ArchiveIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Trash2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MailIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ClockIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <StarIcon />
               </IconButton>
             </Toolbar>
 
             {/* Standard vertical */}
             <Toolbar type="floating" color="standard" layout="vertical">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Undo2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Redo2Icon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <PlusIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <TypeIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
             </Toolbar>
 
             {/* Vibrant vertical */}
             <Toolbar type="floating" color="vibrant" layout="vertical">
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <BoldIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ItalicIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <UnderlineIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <TypeIcon />
               </IconButton>
-              <IconButton variant="tonal" size="sm">
+              <IconButton variant="standard" size="sm">
                 <PaintbrushIcon />
               </IconButton>
             </Toolbar>
@@ -907,22 +907,22 @@ export const CompleteShowcase: Story = {
           <div className="flex flex-wrap items-center gap-6">
             <div className="flex items-center gap-2">
               <Toolbar type="floating" color="vibrant">
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <ArchiveIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <Trash2Icon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <MailIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <ClockIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <StarIcon />
                 </IconButton>
-                <IconButton variant="tonal" size="sm">
+                <IconButton variant="standard" size="sm">
                   <MoreVerticalIcon />
                 </IconButton>
               </Toolbar>
@@ -938,36 +938,36 @@ export const CompleteShowcase: Story = {
           <h3 className="font-medium text-foreground/60 text-sm">Docked Toolbars</h3>
           <div className="space-y-4">
             <Toolbar type="docked" color="standard">
-              <IconButton variant="text" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ArrowLeftIcon />
               </IconButton>
-              <IconButton variant="text" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ArrowRightIcon />
               </IconButton>
               <IconButton variant="filled" size="sm" shape="round">
                 <PlusIcon />
               </IconButton>
-              <IconButton variant="text" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ImageIcon />
               </IconButton>
-              <IconButton variant="text" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MoreVerticalIcon />
               </IconButton>
             </Toolbar>
             <Toolbar type="docked" color="vibrant">
-              <IconButton variant="text" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ArchiveIcon />
               </IconButton>
-              <IconButton variant="text" size="sm">
+              <IconButton variant="standard" size="sm">
                 <Trash2Icon />
               </IconButton>
-              <IconButton variant="text" size="sm">
+              <IconButton variant="standard" size="sm">
                 <MailIcon />
               </IconButton>
-              <IconButton variant="text" size="sm">
+              <IconButton variant="standard" size="sm">
                 <ClockIcon />
               </IconButton>
-              <IconButton variant="text" size="sm">
+              <IconButton variant="standard" size="sm">
                 <StarIcon />
               </IconButton>
             </Toolbar>
@@ -979,14 +979,14 @@ export const CompleteShowcase: Story = {
           <h3 className="font-medium text-foreground/60 text-sm">Tonal Text Buttons</h3>
           <div className="flex flex-wrap gap-6">
             <Toolbar type="floating" color="standard">
-              <Button variant="tonal" size="sm" selected>
+              <Button variant="standard" size="sm" selected>
                 <ImageIcon />
                 Photos
               </Button>
-              <Button variant="tonal" size="sm" selected={false}>
+              <Button variant="standard" size="sm" selected={false}>
                 Memories
               </Button>
-              <Button variant="tonal" size="sm" selected={false}>
+              <Button variant="standard" size="sm" selected={false}>
                 Library
               </Button>
             </Toolbar>

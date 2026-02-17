@@ -9,6 +9,8 @@ const iconButtonVariants = cva(
   {
     variants: {
       variant: {
+        standard:
+          'bg-transparent text-surface-variant-foreground hover:bg-surface-foreground/8 active:bg-surface-foreground/12',
         filled:
           'bg-primary text-primary-foreground hover:bg-primary hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)] disabled:bg-muted disabled:text-muted-foreground',
         elevated: 'bg-surface-container text-foreground hover:bg-surface-container shadow-lg',
@@ -85,6 +87,12 @@ const iconButtonVariants = cva(
       { morph: true, shape: 'square', size: 'xl', class: 'active:rounded-xl' },
       // Selected: false (unselected state) - secondary bg for filled
       { selected: false, variant: 'filled', class: 'bg-secondary/70 hover:bg-secondary/70 text-secondary-foreground' },
+      // Selected states for standard variant
+      {
+        selected: true,
+        variant: 'standard',
+        class: 'bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80',
+      },
       // Selected states for elevated variant
       { selected: true, variant: 'elevated', class: 'bg-primary hover:bg-primary text-primary-foreground shadow-xl' },
       // Selected states for tonal variant
