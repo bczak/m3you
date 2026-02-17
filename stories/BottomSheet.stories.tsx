@@ -30,7 +30,8 @@ export const Default: Story = {
           <div className="flex flex-col gap-4">
             <h3 className="text-lg text-surface-foreground">Bottom Sheet</h3>
             <p className="text-sm text-surface-variant-foreground">
-              Bottom sheets are surfaces containing supplementary content, anchored to the bottom of the screen.
+              Bottom sheets are surfaces containing supplementary content, anchored to the bottom of the screen. Drag
+              down to dismiss.
             </p>
           </div>
         </BottomSheetBody>
@@ -58,6 +59,53 @@ export const WithListContent: Story = {
                 {item}
               </button>
             ))}
+          </div>
+        </BottomSheetBody>
+      </BottomSheetContent>
+    </BottomSheet>
+  ),
+};
+
+// Expandable bottom sheet with snap points (half → full height)
+export const Expandable: Story = {
+  render: () => (
+    <BottomSheet snapPoints={[0.5, 1]} defaultSnapPoint={0.5}>
+      <BottomSheetTrigger render={<Button variant="filled">Expandable Sheet</Button>} />
+      <BottomSheetContent>
+        <BottomSheetBody>
+          <div className="flex flex-col gap-4">
+            <h3 className="text-lg text-surface-foreground">Expandable</h3>
+            <p className="text-sm text-surface-variant-foreground">
+              This bottom sheet opens at 50% height and can be dragged up to full height.
+            </p>
+            <p className="text-sm text-surface-variant-foreground">
+              Drag up to expand to full screen, or drag down to collapse back to half height.
+            </p>
+            <div className="h-[600px] text-sm text-surface-variant-foreground">
+              Scroll through this tall content area. The bottom sheet expands from 50% to full height as you drag up.
+            </div>
+          </div>
+        </BottomSheetBody>
+      </BottomSheetContent>
+    </BottomSheet>
+  ),
+};
+
+// Snap points with pixel values
+export const CustomSnapPoints: Story = {
+  render: () => (
+    <BottomSheet snapPoints={['200px', '400px', 1]} defaultSnapPoint="200px">
+      <BottomSheetTrigger render={<Button variant="filled">Custom Snap Points</Button>} />
+      <BottomSheetContent>
+        <BottomSheetBody>
+          <div className="flex flex-col gap-4">
+            <h3 className="text-lg text-surface-foreground">Custom Snap Points</h3>
+            <p className="text-sm text-surface-variant-foreground">
+              This sheet has 3 snap points: 200px, 400px, and full height. Drag to snap between them.
+            </p>
+            <div className="h-[800px] text-sm text-surface-variant-foreground">
+              Tall scrollable content. Drag up through 200px → 400px → full height snap points.
+            </div>
           </div>
         </BottomSheetBody>
       </BottomSheetContent>
@@ -120,6 +168,23 @@ export const Showcase: Story = {
                   Modal bottom sheets display a scrim behind the sheet and require dismissal before interacting with the
                   main content.
                 </p>
+              </BottomSheetBody>
+            </BottomSheetContent>
+          </BottomSheet>
+        </div>
+
+        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
+          <h3 className="mb-4 text-foreground/60 text-xs">Expandable (Half → Full)</h3>
+          <BottomSheet snapPoints={[0.5, 1]} defaultSnapPoint={0.5}>
+            <BottomSheetTrigger render={<Button variant="outlined">Expandable</Button>} />
+            <BottomSheetContent>
+              <BottomSheetBody>
+                <p className="text-sm text-surface-variant-foreground">
+                  Drag up to expand to full height, or down to collapse.
+                </p>
+                <div className="mt-2 h-[400px] text-sm text-surface-variant-foreground">
+                  Tall scrollable content area. Drag up to expand, down to collapse.
+                </div>
               </BottomSheetBody>
             </BottomSheetContent>
           </BottomSheet>

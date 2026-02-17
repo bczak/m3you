@@ -347,3 +347,53 @@
   transform: rotate(-90deg);
   transform-origin: center;
 }
+
+/* =============================================================================
+   Bottom Sheet — CSS variable-based transforms for Base UI Drawer
+   Uses --drawer-snap-point-offset and --drawer-swipe-movement-y for drag/snap
+   ============================================================================= */
+
+[data-slot="bottom-sheet-content"] {
+  transform: translateY(calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px)));
+  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-slot="bottom-sheet-content"][data-starting-style],
+[data-slot="bottom-sheet-content"][data-ending-style] {
+  transform: translateY(100%);
+}
+
+[data-slot="bottom-sheet-content"][data-swiping] {
+  transition: none;
+}
+
+/* =============================================================================
+   Side Sheet — CSS variable-based transforms for Base UI Drawer
+   Uses --drawer-swipe-movement-x for drag
+   ============================================================================= */
+
+/* Right side sheet */
+[data-slot="side-sheet-content"][data-swipe-direction="right"] {
+  transform: translateX(var(--drawer-swipe-movement-x, 0px));
+  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-slot="side-sheet-content"][data-swipe-direction="right"][data-starting-style],
+[data-slot="side-sheet-content"][data-swipe-direction="right"][data-ending-style] {
+  transform: translateX(100%);
+}
+
+/* Left side sheet */
+[data-slot="side-sheet-content"][data-swipe-direction="left"] {
+  transform: translateX(var(--drawer-swipe-movement-x, 0px));
+  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-slot="side-sheet-content"][data-swipe-direction="left"][data-starting-style],
+[data-slot="side-sheet-content"][data-swipe-direction="left"][data-ending-style] {
+  transform: translateX(-100%);
+}
+
+[data-slot="side-sheet-content"][data-swiping] {
+  transition: none;
+}

@@ -60,7 +60,6 @@ function BottomSheetContent({ className, children, showDragHandle = true, ...pro
         className={cn(
           'fixed right-0 bottom-0 left-0 z-50 mx-auto flex max-w-[640px] flex-col rounded-t-[28px] bg-surface-container-low outline-none',
           'mt-[72px] sm:mx-14 sm:mt-14',
-          'transition-transform duration-300 data-[ending-style]:translate-y-full data-[starting-style]:translate-y-full',
           className,
         )}
         {...props}

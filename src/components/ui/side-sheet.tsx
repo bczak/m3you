@@ -10,25 +10,22 @@ import { IconButton } from './icon-button';
 // Side Sheet Variants
 // =============================================================================
 
-const sideSheetContentVariants = cva(
-  'fixed top-0 z-50 flex h-full max-w-[400px] flex-col outline-none transition-transform duration-300',
-  {
-    variants: {
-      variant: {
-        standard: 'bg-surface',
-        modal: 'bg-surface-container-low',
-      },
-      side: {
-        right: 'right-0 data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full',
-        left: 'left-0 data-[ending-style]:-translate-x-full data-[starting-style]:-translate-x-full',
-      },
+const sideSheetContentVariants = cva('fixed top-0 z-50 flex h-full max-w-[400px] flex-col outline-none', {
+  variants: {
+    variant: {
+      standard: 'bg-surface',
+      modal: 'bg-surface-container-low',
     },
-    defaultVariants: {
-      variant: 'modal',
-      side: 'right',
+    side: {
+      right: 'right-0',
+      left: 'left-0',
     },
   },
-);
+  defaultVariants: {
+    variant: 'modal',
+    side: 'right',
+  },
+});
 
 // =============================================================================
 // SideSheet (Root)
