@@ -127,6 +127,9 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+        onValueChange?.(value);
+      }
       props.onKeyDown?.(e);
     };
 
@@ -156,6 +159,7 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemP
       <button
         ref={ref}
         type="button"
+        aria-label={label}
         aria-current={isActive ? 'page' : undefined}
         disabled={disabled}
         className={cn(navigationBarItemVariants({ active: isActive, orientation, className }))}
