@@ -141,6 +141,8 @@ export {
   SideSheetTrigger,
   sideSheetContentVariants,
 } from './components/ui/side-sheet';
+export type { SliderProps } from './components/ui/slider';
+export { Slider, sliderVariants } from './components/ui/slider';
 export type { SnackbarHostProps, SnackbarProps } from './components/ui/snackbar';
 export { Snackbar, SnackbarHost, snackbar, snackbarVariants } from './components/ui/snackbar';
 export type { SwitchProps } from './components/ui/switch';
