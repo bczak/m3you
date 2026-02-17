@@ -48,7 +48,11 @@ Plans:
   3. Card interactive variant responds to Enter and Space key events and has `tabIndex={0}`
   4. `@testing-library/user-event` v14 is importable in any test file
   5. `vitest-axe` and `jsdom` are installed; `bun run test` runs both happy-dom (unit) and jsdom (a11y) project configs without errors
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Install test tooling (jsdom, vitest-axe, user-event) and create two-project Rstest config
+- [ ] 02-02-PLAN.md — Add ARIA attributes to IconButton and Badge, write tests for all three a11y requirements
 
 ### Phase 3: Tier 1 and Tier 2 Component Tests
 **Goal**: All 9 presentational and stateful components have test files covering rendering, variants, ARIA attributes, and keyboard interaction
@@ -107,7 +111,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation Repair | 3/3 | Complete | 2026-02-17 |
-| 2. Accessibility Fixes and Stack Setup | 0/TBD | Not started | - |
+| 2. Accessibility Fixes and Stack Setup | 0/2 | Planning complete | - |
 | 3. Tier 1 and Tier 2 Component Tests | 0/TBD | Not started | - |
 | 4. Tier 3 Compound Component Tests | 0/TBD | Not started | - |
 | 5. Tier 4 Portal and Complex Component Tests | 0/TBD | Not started | - |
