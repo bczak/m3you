@@ -3,14 +3,15 @@ name: Deploy Storybook to GitHub Pages
 on:
   push:
     branches:
-      - 'development'
-      - 'claude/**'
+      - "development"
+      - "claude/**"
 
 permissions:
   contents: write
 
 jobs:
   build-and-deploy:
+    environment: development
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,7 +50,7 @@ jobs:
         id: build-bun
         run: |
           bun install
-          bun run build:storybook
+          bun run build-storybook
           echo "publish_dir=./storybook-static" >> $GITHUB_OUTPUT
 
       - name: Build with pnpm

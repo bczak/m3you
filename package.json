@@ -29,7 +29,7 @@
     "storybook": "storybook dev -p 6006",
     "test": "rstest",
     "test:watch": "rstest --watch",
-    "chromatic": "npx chromatic --project-token=chpt_2f2ae18713c56d7"
+    "chromatic": "npx chromatic"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.13",
@@ -42,7 +42,7 @@
     "@rspress/plugin-preview": "^2.0.1",
     "@rstest/adapter-rslib": "^0.2.0",
     "@rstest/core": "^0.8.1",
-    "@storybook/addon-a11y": "^10.2.3",
+    "@storybook/addon-a11y": "^10.2.9",
     "@storybook/addon-docs": "^10.2.3",
     "@storybook/addon-onboarding": "^10.2.3",
     "@storybook/react": "^10.2.3",
