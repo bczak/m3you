@@ -140,7 +140,7 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
               {currentValue || placeholder}
             </span>
             {trailingIcon && (
-              <span className="flex shrink-0 items-center pr-2 text-surface-variant-foreground [&_svg]:size-6">
+              <span className="mr-1 flex size-12 shrink-0 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8 [&_svg]:size-6">
                 {trailingIcon}
               </span>
             )}
@@ -163,7 +163,7 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
               aria-label={placeholder}
             />
             {trailingIcon && !currentValue && (
-              <span className="flex shrink-0 items-center pr-2 text-surface-variant-foreground [&_svg]:size-6">
+              <span className="mr-1 flex size-12 shrink-0 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8 [&_svg]:size-6">
                 {trailingIcon}
               </span>
             )}
