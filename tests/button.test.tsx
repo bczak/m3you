@@ -23,7 +23,7 @@ test('applies elevated variant classes correctly', async () => {
   const button = screen.getByRole('button', { name: 'Elevated' });
   expect(button).toHaveClass('bg-surface-container');
   expect(button).toHaveClass('text-foreground');
-  expect(button).toHaveClass('shadow-md');
+  expect(button).toHaveClass('shadow-lg');
 });
 
 test('applies tonal variant classes correctly', async () => {
@@ -37,7 +37,7 @@ test('applies outlined variant classes correctly', async () => {
   render(<Button variant="outlined">Outlined</Button>);
   const button = screen.getByRole('button', { name: 'Outlined' });
   expect(button).toHaveClass('border');
-  expect(button).toHaveClass('border-outline');
+  expect(button).toHaveClass('border-outline/40');
   expect(button).toHaveClass('bg-transparent');
 });
 
