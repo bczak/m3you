@@ -13,9 +13,15 @@ const getAbsolutePath = (value: string): string => {
 
 const config: StorybookConfig = {
   stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  addons: ['@storybook/addon-docs', '@storybook/addon-onboarding', {
-    name: getAbsolutePath('storybook-addon-rslib'),
-  }, getAbsolutePath("@storybook/addon-a11y"), getAbsolutePath("@chromatic-com/storybook")],
+  addons: [
+    '@storybook/addon-docs',
+    '@storybook/addon-onboarding',
+    {
+      name: getAbsolutePath('storybook-addon-rslib'),
+    },
+    getAbsolutePath('@storybook/addon-a11y'),
+    getAbsolutePath('@chromatic-com/storybook'),
+  ],
   framework: {
     name: getAbsolutePath('storybook-react-rsbuild'),
     options: {},
