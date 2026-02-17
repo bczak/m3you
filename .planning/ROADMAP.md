@@ -12,7 +12,7 @@ This milestone retrofits test coverage and fixes accessibility gaps across M3-Li
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation Repair** - Fix 8 pre-existing test failures and harden global test setup
+- [x] **Phase 1: Foundation Repair** - Fix 8 pre-existing test failures and harden global test setup (completed 2026-02-17)
 - [ ] **Phase 2: Accessibility Fixes and Stack Setup** - Fix component-level ARIA gaps and install tooling needed for keyboard and axe tests
 - [ ] **Phase 3: Tier 1 and Tier 2 Component Tests** - Tests for 9 presentational and stateful components
 - [ ] **Phase 4: Tier 3 Compound Component Tests** - Tests for FABMenu and Snackbar
@@ -34,9 +34,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Centralise global test infrastructure (animate polyfill + afterEach cleanup) into rstest.setup.ts
-- [ ] 01-02-PLAN.md — Fix button.test.tsx class assertions and NavigationBarItem aria-label + keyboard handler
-- [ ] 01-03-PLAN.md — Fix NavigationRailItem collapsed branch aria-label and keyboard handler
+- [x] 01-01-PLAN.md — Centralise global test infrastructure (animate polyfill + afterEach cleanup) into rstest.setup.ts
+- [x] 01-02-PLAN.md — Fix button.test.tsx class assertions and NavigationBarItem aria-label + keyboard handler
+- [x] 01-03-PLAN.md — Fix NavigationRailItem collapsed branch aria-label and keyboard handler
 
 ### Phase 2: Accessibility Fixes and Stack Setup
 **Goal**: Component-level ARIA gaps are fixed and the full test toolchain (user-event, vitest-axe, jsdom, two-project config) is operational
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation Repair | 0/3 | Not started | - |
+| 1. Foundation Repair | 3/3 | Complete | 2026-02-17 |
 | 2. Accessibility Fixes and Stack Setup | 0/TBD | Not started | - |
 | 3. Tier 1 and Tier 2 Component Tests | 0/TBD | Not started | - |
 | 4. Tier 3 Compound Component Tests | 0/TBD | Not started | - |
