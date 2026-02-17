@@ -4,6 +4,7 @@ import { Ripple } from 'm3-ripple';
 import * as React from 'react';
 
 import { cn } from '../../lib/utils';
+import { IconButton, iconButtonVariants } from './icon-button';
 
 // =============================================================================
 // Variants
@@ -140,7 +141,12 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
               {currentValue || placeholder}
             </span>
             {trailingIcon && (
-              <span className="mr-1 flex size-12 shrink-0 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8 [&_svg]:size-6">
+              <span
+                className={cn(
+                  iconButtonVariants({ variant: 'standard', size: 'sm', shape: 'round' }),
+                  'pointer-events-none mr-1',
+                )}
+              >
                 {trailingIcon}
               </span>
             )}
@@ -163,20 +169,14 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
               aria-label={placeholder}
             />
             {trailingIcon && !currentValue && (
-              <span className="mr-1 flex size-12 shrink-0 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8 [&_svg]:size-6">
+              <IconButton variant="standard" size="sm" className="mr-1" tabIndex={-1} aria-hidden="true">
                 {trailingIcon}
-              </span>
+              </IconButton>
             )}
             {currentValue && (
-              <button
-                type="button"
-                onClick={handleClear}
-                className="relative mr-2 flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/8"
-                aria-label="Clear search"
-              >
-                <Ripple />
-                <X className="size-5" />
-              </button>
+              <IconButton variant="standard" size="sm" className="mr-1" onClick={handleClear} aria-label="Clear search">
+                <X />
+              </IconButton>
             )}
           </div>
         )}
@@ -199,16 +199,9 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
             >
               {/* Header */}
               <div className="flex h-[72px] shrink-0 items-center gap-1 px-2 md:h-14">
-                {/* Back button */}
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="relative flex size-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/8"
-                  aria-label="Close search"
-                >
-                  <Ripple />
-                  <ArrowLeft className="size-6" />
-                </button>
+                <IconButton variant="standard" size="sm" onClick={handleBack} aria-label="Close search">
+                  <ArrowLeft />
+                </IconButton>
 
                 {/* Input */}
                 <input
@@ -222,17 +215,10 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
                   aria-label="Search input"
                 />
 
-                {/* Clear button */}
                 {currentValue && (
-                  <button
-                    type="button"
-                    onClick={handleClear}
-                    className="relative flex size-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/8"
-                    aria-label="Clear search"
-                  >
-                    <Ripple />
-                    <X className="size-6" />
-                  </button>
+                  <IconButton variant="standard" size="sm" onClick={handleClear} aria-label="Clear search">
+                    <X />
+                  </IconButton>
                 )}
               </div>
 
