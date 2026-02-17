@@ -97,11 +97,12 @@ const RadioButton = React.forwardRef<HTMLInputElement, RadioButtonProps>(
 
         {/* Visual radio button (20dp outer circle) */}
         <span
+          data-outer
           aria-hidden="true"
           className={cn('pointer-events-none', radioOuterVariants({ variant, selected: checked }))}
         >
           {/* Inner dot (10dp when selected) */}
-          <span className={radioInnerVariants({ variant, selected: checked })} />
+          <span data-inner className={radioInnerVariants({ variant, selected: checked })} />
         </span>
 
         {/* Hidden native input for accessibility */}
