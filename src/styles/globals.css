@@ -81,6 +81,7 @@
   --animate-snackbar-slide-up: snackbar-slide-up 300ms cubic-bezier(0, 0, 0, 1);
   --animate-calendar-slide-left: calendar-slide-left 200ms cubic-bezier(0.2, 0, 0, 1);
   --animate-calendar-slide-right: calendar-slide-right 200ms cubic-bezier(0.2, 0, 0, 1);
+  --animate-menu-in: menu-in 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 @keyframes calendar-slide-left {
@@ -102,6 +103,13 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
 }
 
@@ -197,6 +205,85 @@
 /* Selected middle buttons with morph: active state -> squared (first/last don't morph) */
 [data-connected-group][data-morph] > *[data-selected]:not(:first-child):not(:last-child):active {
   border-radius: var(--square-radius);
+}
+
+/* =============================================================================
+   MenuGroup — Vertical connected shape rules
+   Items inside a menu group share corners: first/last keep outer rounded,
+   middle items get squared corners. Selected items get full pill shape.
+   ============================================================================= */
+
+[data-menu-group] {
+  --menu-square: 0.5rem; /* 8px — squared inner corners */
+  --menu-round: 1rem; /* 16px — round selected override */
+}
+
+/* First item: bottom (inner) side squared, top keeps item default */
+[data-menu-group] > [role="menuitem"]:first-child:not(:last-child):not([data-selected]) {
+  border-bottom-left-radius: var(--menu-square);
+  border-bottom-right-radius: var(--menu-square);
+}
+
+/* Last item: top (inner) side squared, bottom keeps item default */
+[data-menu-group] > [role="menuitem"]:last-child:not(:first-child):not([data-selected]) {
+  border-top-left-radius: var(--menu-square);
+  border-top-right-radius: var(--menu-square);
+}
+
+/* Middle items: all corners squared */
+[data-menu-group] > [role="menuitem"]:not(:first-child):not(:last-child):not([data-selected]) {
+  border-radius: var(--menu-square);
+}
+
+/* Selected items -> full round (overrides all above) */
+[data-menu-group] > [role="menuitem"][data-selected] {
+  border-radius: var(--menu-round);
+}
+
+/* Morph transition for smooth corner animations */
+[data-menu-group] > [role="menuitem"] {
+  transition:
+    border-radius 200ms cubic-bezier(0.2, 0, 0, 1),
+    background-color 150ms cubic-bezier(0.2, 0, 0, 1),
+    color 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Morph on press: selected middle items squish to squared (first/last don't morph) */
+[data-menu-group] > [role="menuitem"][data-selected]:not(:first-child):not(:last-child):active {
+  border-radius: var(--menu-square);
+}
+
+/* =============================================================================
+   MenuGrouped — Connected group container shape rules
+   Group boxes within a grouped menu share corners vertically,
+   matching ConnectedButtonGroup vertical orientation.
+   ============================================================================= */
+
+[data-menu-grouped] {
+  --group-round: 1.125rem; /* 18px — outer corners */
+  --group-square: 0.5rem; /* 8px — inner corners */
+}
+
+/* All groups: base outer radius */
+[data-menu-grouped] [data-menu-group] {
+  border-radius: var(--group-round);
+}
+
+/* First group: bottom (inner) side squared, top keeps round */
+[data-menu-grouped] > :first-child:not(:last-child) > [data-menu-group] {
+  border-bottom-left-radius: var(--group-square);
+  border-bottom-right-radius: var(--group-square);
+}
+
+/* Last group: top (inner) side squared, bottom keeps round */
+[data-menu-grouped] > :last-child:not(:first-child) > [data-menu-group] {
+  border-top-left-radius: var(--group-square);
+  border-top-right-radius: var(--group-square);
+}
+
+/* Middle groups: all corners squared */
+[data-menu-grouped] > :not(:first-child):not(:last-child) > [data-menu-group] {
+  border-radius: var(--group-square);
 }
 
 /* =============================================================================

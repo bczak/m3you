@@ -23,16 +23,14 @@ const dividerVariants = cva('shrink-0 border-outline-variant', {
 
 export type DividerProps = React.ComponentProps<'hr'> & VariantProps<typeof dividerVariants>;
 
-const Divider = React.forwardRef<HTMLHRElement, DividerProps>(
-  ({ className, variant, orientation, ...props }, ref) => (
-    <hr
-      ref={ref}
-      aria-orientation={orientation === 'vertical' ? 'vertical' : undefined}
-      className={cn(dividerVariants({ variant, orientation }), className)}
-      {...props}
-    />
-  ),
-);
+const Divider = React.forwardRef<HTMLHRElement, DividerProps>(({ className, variant, orientation, ...props }, ref) => (
+  <hr
+    ref={ref}
+    aria-orientation={orientation === 'vertical' ? 'vertical' : undefined}
+    className={cn(dividerVariants({ variant, orientation }), className)}
+    {...props}
+  />
+));
 Divider.displayName = 'Divider';
 
 export { Divider, dividerVariants };

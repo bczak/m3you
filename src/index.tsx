@@ -19,8 +19,6 @@ export type { ChipProps } from './components/ui/chip';
 export { Chip, chipVariants } from './components/ui/chip';
 export type { CircularProgressProps } from './components/ui/circular-progress';
 export { CircularProgress, circularProgressVariants } from './components/ui/circular-progress';
-export type { DividerProps } from './components/ui/divider';
-export { Divider, dividerVariants } from './components/ui/divider';
 export type { DatePickerModalProps, DatePickerProps } from './components/ui/date-picker';
 export {
   DatePicker,
@@ -51,6 +49,8 @@ export {
   FullScreenDialogHeader,
   FullScreenDialogTrigger,
 } from './components/ui/dialog';
+export type { DividerProps } from './components/ui/divider';
+export { Divider, dividerVariants } from './components/ui/divider';
 export type { ExtendedFABProps } from './components/ui/extended-fab';
 export { ExtendedFAB } from './components/ui/extended-fab';
 export type {
@@ -64,6 +64,30 @@ export type { IconButtonProps } from './components/ui/icon-button';
 export { IconButton, iconButtonVariants } from './components/ui/icon-button';
 export type { LinearProgressProps } from './components/ui/linear-progress';
 export { LinearProgress, linearProgressVariants } from './components/ui/linear-progress';
+export type {
+  MenuContentProps,
+  MenuDividerProps,
+  MenuGroupProps,
+  MenuItemProps,
+  MenuLabelProps,
+  MenuProps,
+  MenuSubContentProps,
+  MenuSubProps,
+  MenuSubTriggerProps,
+  MenuTriggerProps,
+} from './components/ui/menu';
+export {
+  Menu,
+  MenuContent,
+  MenuDivider,
+  MenuGroup,
+  MenuItem,
+  MenuLabel,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
+  MenuTrigger,
+} from './components/ui/menu';
 export type { NavigationBarItemProps, NavigationBarProps } from './components/ui/navigation-bar';
 export {
   NavigationBar,
