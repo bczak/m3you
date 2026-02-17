@@ -234,7 +234,6 @@ export const WithIcon: Story = {
         <h2 className="mb-2 text-center text-foreground/60 text-sm">Inset Icon</h2>
         <p className="mb-8 text-center text-foreground/40 text-xs">Icon rendered inside the active track</p>
         <div className="mx-auto max-w-2xl space-y-8">
-          <IconSlider size="sm" label="Small" />
           <IconSlider size="md" label="Medium" />
           <IconSlider size="lg" label="Large" />
           <IconSlider size="xl" label="XLarge" />

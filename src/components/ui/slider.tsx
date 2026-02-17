@@ -41,7 +41,7 @@ const SIZE_CONFIG = {
     innerRadius: 2,
     stateLayerSize: 'size-7',
     tooltipSize: 'size-6 text-[10px]',
-    tooltipOffset: -20,
+    tooltipOffset: -24,
     iconSize: 'size-4 text-[10px]',
   },
   sm: {
@@ -56,7 +56,7 @@ const SIZE_CONFIG = {
     innerRadius: 3,
     stateLayerSize: 'size-8',
     tooltipSize: 'size-7 text-xs',
-    tooltipOffset: -24,
+    tooltipOffset: -28,
     iconSize: 'size-5',
   },
   md: {
@@ -71,7 +71,7 @@ const SIZE_CONFIG = {
     innerRadius: 4,
     stateLayerSize: 'size-10',
     tooltipSize: 'size-8 text-sm',
-    tooltipOffset: -28,
+    tooltipOffset: -32,
     iconSize: 'size-5',
   },
   lg: {
@@ -86,7 +86,7 @@ const SIZE_CONFIG = {
     innerRadius: 6,
     stateLayerSize: 'size-11',
     tooltipSize: 'size-9 text-sm',
-    tooltipOffset: -32,
+    tooltipOffset: -36,
     iconSize: 'size-6',
   },
   xl: {
@@ -101,7 +101,7 @@ const SIZE_CONFIG = {
     innerRadius: 8,
     stateLayerSize: 'size-12',
     tooltipSize: 'size-10 text-base',
-    tooltipOffset: -36,
+    tooltipOffset: -40,
     iconSize: 'size-7',
   },
 } as const;
@@ -239,8 +239,8 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
             className={cn('absolute bg-primary', isVertical ? 'inset-x-0 bottom-0' : 'inset-y-0 left-0')}
             style={activeTrackStyle}
           >
-            {/* Inset icon */}
-            {icon && (
+            {/* Inset icon — M3 spec: only for md, lg, xl sizes */}
+            {icon && size !== 'xs' && size !== 'sm' && (
               <span
                 className={cn(
                   'absolute flex items-center justify-center text-primary-foreground',
