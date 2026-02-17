@@ -64,12 +64,22 @@ export type RadioButtonProps = Omit<React.ComponentProps<'input'>, 'type'> & {
 };
 
 const RadioButton = React.forwardRef<HTMLInputElement, RadioButtonProps>(
-  ({ className, variant = 'primary', disabled, checked = false, onValueChange, ...props }, ref) => {
+  (
+    { className, variant = 'primary', disabled, checked: checkedProp, defaultChecked = false, onValueChange, ...props },
+    ref,
+  ) => {
+    const isControlled = checkedProp !== undefined;
+    const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
+    const checked = isControlled ? checkedProp : internalChecked;
+
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!isControlled) {
+        setInternalChecked(e.target.checked);
+      }
       if (e.target.checked) {
         onValueChange?.(e.target.value);
       }
@@ -109,7 +119,8 @@ const RadioButton = React.forwardRef<HTMLInputElement, RadioButtonProps>(
         <input
           ref={inputRef}
           type="radio"
-          checked={checked}
+          checked={isControlled ? checked : undefined}
+          defaultChecked={isControlled ? undefined : defaultChecked}
           disabled={disabled}
           onChange={handleChange}
           className="sr-only"
@@ -215,6 +226,14 @@ const RadioGroupItem = React.forwardRef<HTMLInputElement, RadioGroupItemProps>(
       throw new Error('RadioGroupItem must be used within a RadioGroup');
     }
 
+    const handleValueChange = React.useCallback(
+      (v: string) => {
+        group.onValueChange(v);
+        onValueChange?.(v);
+      },
+      [group.onValueChange, onValueChange],
+    );
+
     return (
       <RadioButton
         ref={ref}
@@ -223,7 +242,7 @@ const RadioGroupItem = React.forwardRef<HTMLInputElement, RadioGroupItemProps>(
         checked={group.value === value}
         variant={variant ?? group.variant}
         disabled={disabled ?? group.disabled}
-        onValueChange={group.onValueChange}
+        onValueChange={handleValueChange}
         {...props}
       />
     );

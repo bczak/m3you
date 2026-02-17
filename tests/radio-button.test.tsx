@@ -194,6 +194,24 @@ test('calls onValueChange with value when selected', async () => {
 });
 
 // =============================================================================
+// RadioButton — Uncontrolled mode
+// =============================================================================
+
+test('works as uncontrolled when checked prop is not provided', async () => {
+  render(<RadioButton value="uncontrolled" data-testid="radio" />);
+  const input = screen.getByRole('radio');
+  expect(input).not.toBeChecked();
+  fireEvent.click(input);
+  expect(input).toBeChecked();
+});
+
+test('uses defaultChecked for initial uncontrolled state', async () => {
+  render(<RadioButton defaultChecked data-testid="radio" />);
+  const input = screen.getByRole('radio');
+  expect(input).toBeChecked();
+});
+
+// =============================================================================
 // RadioButton — Ref forwarding
 // =============================================================================
 
@@ -313,6 +331,31 @@ test('calls onValueChange when an item is clicked', async () => {
   const radios = screen.getAllByRole('radio');
   fireEvent.click(radios[1]);
   expect(selectedValue).toBe('b');
+});
+
+test('calls both group and item-level onValueChange', async () => {
+  let groupValue = '';
+  let itemValue = '';
+  render(
+    <RadioGroup
+      value="a"
+      onValueChange={(v) => {
+        groupValue = v;
+      }}
+    >
+      <RadioGroupItem value="a" />
+      <RadioGroupItem
+        value="b"
+        onValueChange={(v) => {
+          itemValue = v;
+        }}
+      />
+    </RadioGroup>,
+  );
+  const radios = screen.getAllByRole('radio');
+  fireEvent.click(radios[1]);
+  expect(groupValue).toBe('b');
+  expect(itemValue).toBe('b');
 });
 
 test('updates selection in uncontrolled mode on click', async () => {
