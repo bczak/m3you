@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 ## Current Position
 
 Phase: 1 of 6 (Foundation Repair)
-Plan: 1 of TBD in current phase
+Plan: 3 of TBD in current phase
 Status: In progress
-Last activity: 2026-02-17 — Plan 01-01 complete (test infrastructure centralised)
+Last activity: 2026-02-17 — Plan 01-03 complete (NavigationRailItem aria-label + keyboard handler)
 
-Progress: [█░░░░░░░░░] ~5%
+Progress: [██░░░░░░░░] ~15%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 1 min
-- Total execution time: ~1 min
+- Total plans completed: 3
+- Average duration: ~2 min
+- Total execution time: ~5 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-repair | 1 | ~1 min | ~1 min |
+| 01-foundation-repair | 3 | ~5 min | ~2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (1 min)
-- Trend: —
+- Last 5 plans: 01-01 (1 min), 01-02 (~2 min), 01-03 (2 min)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -48,6 +48,8 @@ Recent decisions affecting current work:
 - [01-01]: Centralise Element.prototype.animate polyfill to rstest.setup.ts so all test files benefit automatically
 - [01-01]: Centralise afterEach(cleanup) to rstest.setup.ts so new test files cannot accidentally omit it
 - [01-01]: Polyfill placed at top-level (not inside beforeAll) — top-level code in setupFiles runs before any test
+- [Phase 01-foundation-repair]: aria-label placed before aria-current in prop order on collapsed button for NavigationRailItem — consistent ordering with expanded branch and NavigationBarItem
+- [Phase 01-foundation-repair]: handleKeyDown pattern (Enter/Space -> onValueChange -> forward event) mirrors NavigationBarItem for consistent keyboard contract across all navigation components
 
 ### Pending Todos
 
@@ -62,5 +64,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 01-01-PLAN.md — test infrastructure centralised in rstest.setup.ts
+Stopped at: Completed 01-03-PLAN.md — NavigationRailItem aria-label and Enter/Space handler added; all 276 tests passing
 Resume file: None
