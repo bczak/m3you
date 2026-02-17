@@ -89,10 +89,9 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
       props.onChange?.(e);
     };
 
-    // Track gap around handle (6dp each side = 12dp total gap)
-    const gapPx = 6;
-    // Handle width
-    const handleWidth = 4;
+    // Gap and handle shrink when pressed
+    const gapPx = isDragging ? 2 : 6;
+    const handleWidthPx = isDragging ? 2 : 4;
 
     return (
       <div
@@ -103,25 +102,19 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
       >
         {/* Custom visual track */}
         <div className="relative h-4 w-full">
-          {/* Active track (left of handle) */}
+          {/* Active track (left of handle) — outer rounded, inner squared */}
           <div
-            className={cn(
-              'absolute inset-y-0 left-0 rounded-full bg-primary transition-[width] duration-100 ease-out',
-              isDragging && 'duration-0',
-            )}
+            className="absolute inset-y-0 left-0 rounded-r rounded-l-full bg-primary"
             style={{
-              width: `max(${clampedPercent}% - ${gapPx + handleWidth / 2}px, 0px)`,
+              width: `max(${clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
             }}
           />
 
-          {/* Inactive track (right of handle) */}
+          {/* Inactive track (right of handle) — inner squared, outer rounded */}
           <div
-            className={cn(
-              'absolute inset-y-0 right-0 rounded-full bg-secondary-container transition-[width] duration-100 ease-out',
-              isDragging && 'duration-0',
-            )}
+            className="absolute inset-y-0 right-0 rounded-r-full rounded-l bg-secondary-container"
             style={{
-              width: `max(${100 - clampedPercent}% - ${gapPx + handleWidth / 2}px, 0px)`,
+              width: `max(${100 - clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
             }}
           />
 
@@ -147,10 +140,7 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
             })}
 
           {/* Handle (capsule shape) */}
-          <div
-            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 transition-[left] duration-100 ease-out"
-            style={{ left: `${clampedPercent}%` }}
-          >
+          <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ left: `${clampedPercent}%` }}>
             {/* State layer for ripple (40dp) */}
             <span
               className={cn(
@@ -163,10 +153,8 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
 
             {/* Visual handle capsule */}
             <div
-              className={cn(
-                'relative h-11 w-1 rounded-full bg-primary transition-[width,height] duration-200',
-                isDragging && 'h-11 w-1',
-              )}
+              className="relative h-11 rounded-full bg-primary transition-[width] duration-100"
+              style={{ width: `${handleWidthPx}px` }}
             />
           </div>
         </div>
