@@ -99,19 +99,21 @@ function SideSheetContent({ className, children, ...props }: SideSheetContentPro
           )}
         />
       )}
-      <DrawerPrimitive.Popup
-        data-slot="side-sheet-content"
-        className={cn(sideSheetContentVariants({ variant, side }), className)}
-        {...props}
-      >
-        {variant === 'standard' && side === 'left' && (
-          <div className="absolute top-0 right-0 bottom-0 border-outline-variant border-r" />
-        )}
-        {variant === 'standard' && side === 'right' && (
-          <div className="absolute top-0 bottom-0 left-0 border-outline-variant border-l" />
-        )}
-        {children}
-      </DrawerPrimitive.Popup>
+      <DrawerPrimitive.Viewport data-slot="side-sheet-viewport" className="fixed inset-0 z-50">
+        <DrawerPrimitive.Popup
+          data-slot="side-sheet-content"
+          className={cn(sideSheetContentVariants({ variant, side }), className)}
+          {...props}
+        >
+          {variant === 'standard' && side === 'left' && (
+            <div className="absolute top-0 right-0 bottom-0 border-outline-variant border-r" />
+          )}
+          {variant === 'standard' && side === 'right' && (
+            <div className="absolute top-0 bottom-0 left-0 border-outline-variant border-l" />
+          )}
+          {children}
+        </DrawerPrimitive.Popup>
+      </DrawerPrimitive.Viewport>
     </DrawerPrimitive.Portal>
   );
 }

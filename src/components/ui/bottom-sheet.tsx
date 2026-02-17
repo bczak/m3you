@@ -35,7 +35,8 @@ function BottomSheetClose({ ...props }: DrawerPrimitive.Close.Props) {
 }
 
 // =============================================================================
-// BottomSheetContent (Portal + Backdrop + Popup)
+// BottomSheetContent (Portal + Backdrop + Viewport + Popup)
+// Viewport is required — it provides all swipe/drag logic to the Popup.
 // =============================================================================
 
 export interface BottomSheetContentProps extends DrawerPrimitive.Popup.Props {
@@ -55,22 +56,24 @@ function BottomSheetContent({ className, children, showDragHandle = true, ...pro
           'data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
         )}
       />
-      <DrawerPrimitive.Popup
-        data-slot="bottom-sheet-content"
-        className={cn(
-          'fixed right-0 bottom-0 left-0 z-50 mx-auto flex max-w-[640px] flex-col rounded-t-[28px] bg-surface-container-low outline-none',
-          'mt-[72px] sm:mx-14 sm:mt-14',
-          className,
-        )}
-        {...props}
-      >
-        {showDragHandle && (
-          <div data-slot="bottom-sheet-drag-handle" className="flex justify-center pt-[22px] pb-[22px]">
-            <div className="h-1 w-8 rounded-full bg-surface-variant-foreground/40" />
-          </div>
-        )}
-        {children}
-      </DrawerPrimitive.Popup>
+      <DrawerPrimitive.Viewport data-slot="bottom-sheet-viewport" className="fixed inset-0 z-50">
+        <DrawerPrimitive.Popup
+          data-slot="bottom-sheet-content"
+          className={cn(
+            'absolute right-0 bottom-0 left-0 mx-auto flex max-w-[640px] flex-col rounded-t-[28px] bg-surface-container-low outline-none',
+            'mt-[72px] sm:mx-14 sm:mt-14',
+            className,
+          )}
+          {...props}
+        >
+          {showDragHandle && (
+            <div data-slot="bottom-sheet-drag-handle" className="flex justify-center pt-[22px] pb-[22px]">
+              <div className="h-1 w-8 rounded-full bg-surface-variant-foreground/40" />
+            </div>
+          )}
+          {children}
+        </DrawerPrimitive.Popup>
+      </DrawerPrimitive.Viewport>
     </DrawerPrimitive.Portal>
   );
 }
