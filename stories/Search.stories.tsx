@@ -48,25 +48,6 @@ export const WithTrailingIcon: Story = {
   },
 };
 
-// ── With Avatar ──────────────────────────────────────────────────────────────
-
-const Avatar = () => (
-  <div className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm">
-    A
-  </div>
-);
-
-export const WithAvatar: Story = {
-  render: () => {
-    const [value, setValue] = React.useState('');
-    return (
-      <div className="w-[360px]">
-        <SearchBar value={value} onValueChange={setValue} placeholder="Search in emails" trailingIcon={<Avatar />} />
-      </div>
-    );
-  },
-};
-
 // ── Expandable with Suggestions ──────────────────────────────────────────────
 
 export const ExpandableWithSuggestions: Story = {
@@ -75,7 +56,7 @@ export const ExpandableWithSuggestions: Story = {
 
     return (
       <div className="w-[360px]">
-        <SearchBar value={value} onValueChange={setValue} placeholder="Search" trailingIcon={<Avatar />}>
+        <SearchBar value={value} onValueChange={setValue} placeholder="Search" trailingIcon={<Mic />}>
           <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('recent search 1')}>
             recent search 1
           </SearchSuggestionItem>
@@ -246,7 +227,7 @@ export const Showcase: Story = {
     const ExpandableExample = () => {
       const [value, setValue] = React.useState('');
       return (
-        <SearchBar value={value} onValueChange={setValue} placeholder="Search in emails" trailingIcon={<Avatar />}>
+        <SearchBar value={value} onValueChange={setValue} placeholder="Search" trailingIcon={<Mic />}>
           <SearchSuggestionItem icon={<Clock />} onClick={() => setValue('shoes')}>
             shoes
           </SearchSuggestionItem>
