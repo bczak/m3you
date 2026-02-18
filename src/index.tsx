@@ -1,5 +1,7 @@
 // Components
 
+export type { AppBarProps } from './components/ui/app-bar';
+export { AppBar, appBarVariants } from './components/ui/app-bar';
 export type { BadgeAnchorProps, BadgeProps } from './components/ui/badge';
 export { Badge, BadgeAnchor, badgeVariants } from './components/ui/badge';
 export type { BottomSheetContentProps, BottomSheetProps } from './components/ui/bottom-sheet';

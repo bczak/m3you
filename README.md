@@ -1,64 +1,80 @@
 # m3you
 
-A Material Design 3 (M3) component library for React, built with Tailwind CSS v4 and class-variance-authority (CVA).
+Material Design 3 component library for React, built with Tailwind CSS v4.
 
 ## Installation
 
 ```bash
+npm install m3you
+# or
 bun add m3you
 ```
 
+### Peer dependencies
+
+m3you requires React 18+ and Tailwind CSS 4+:
+
+```bash
+npm install react react-dom tailwindcss
+```
+
+## Setup
+
+Import the stylesheet in your app entry point:
+
 ```tsx
 import 'm3you/styles.css';
-import { Button } from 'm3you';
+```
+
+## Usage
+
+```tsx
+import { Button, Card, TextField } from 'm3you';
+
+function App() {
+  return (
+    <Card>
+      <TextField label="Name" />
+      <Button variant="filled">Submit</Button>
+    </Card>
+  );
+}
 ```
 
 ## Components
 
-### Implemented
+| Category | Components |
+|---|---|
+| **Actions** | Button, ButtonGroup, ConnectedButtonGroup, IconButton, ExtendedFAB, FABMenu |
+| **Communication** | Badge, Snackbar, CircularProgress, LinearProgress |
+| **Containment** | Card, Dialog, BottomSheet, SideSheet, Tooltip, RichTooltip, Divider, Toolbar |
+| **Navigation** | NavigationBar, NavigationRail, Tabs, AppBar, SearchBar, SearchView |
+| **Selection** | Checkbox, Chip, Switch, RadioButton, Slider, DatePicker, TimePicker |
+| **Text Input** | TextField (filled, outlined) |
+| **Menu** | Menu with sub-menus, groups, dividers |
 
-| Category | Component | Variants / Notes |
-|---|---|---|
-| **Actions** | Button | filled, elevated, tonal, outlined, text |
-| | ButtonGroup | grouped buttons |
-| | ConnectedButtonGroup | connected segmented buttons |
-| | IconButton | filled, elevated, tonal, outlined, text |
-| | ExtendedFAB | FAB with icon + label |
-| | FABMenu | FAB with expandable menu |
-| **Communication** | Badge | small, large; with BadgeAnchor |
-| | Snackbar | single-line, multi-line, closable; imperative API |
-| | CircularProgress | determinate, indeterminate |
-| | LinearProgress | determinate, indeterminate, buffer |
-| **Navigation** | NavigationBar | with NavigationBarItem |
-| | NavigationRail | with NavigationRailItem, sections, menu button |
-| **Selection** | Checkbox | with indeterminate state |
-| | Chip | assist, filter, input, suggestion |
-| | Switch | with icon support |
-| **Text Input** | TextField | filled, outlined; leading/trailing icons, supporting text, error state |
+## Theming
 
-### Roadmap
+m3you uses M3 design tokens as CSS custom properties. Generate a custom theme from any seed color:
 
-| Category | Component | Status |
-|---|---|---|
-| **Actions** | Segmented Button | Planned |
-| **Containment** | Card | Planned |
-| | Dialog | Planned |
-| | Bottom Sheet | Planned |
-| | Side Sheet | Planned |
-| | Carousel | Planned |
-| | Tooltip | Planned |
-| | List | Planned |
-| | Divider | Planned |
-| **Navigation** | Navigation Drawer | Planned |
-| | Tabs | Planned |
-| | Bottom App Bar | Planned |
-| | Top App Bar | Planned |
-| | Search | Planned |
-| **Selection** | Radio Button | Planned |
-| | Slider | Planned |
-| **Text Input** | Date Picker | Planned |
-| | Time Picker | Planned |
-| | Menu | Planned |
+```tsx
+import { generateM3Theme, applyM3Theme } from 'm3you';
+
+const theme = generateM3Theme('#6750A4');
+applyM3Theme(theme);
+```
+
+Or override CSS custom properties directly:
+
+```css
+:root {
+  --color-primary: #6750a4;
+  --color-on-primary: #ffffff;
+  /* ... */
+}
+```
+
+Dark mode is supported via `prefers-color-scheme: dark`, or by adding `.dark` / `.light` classes to the root element.
 
 ## Development
 
@@ -76,12 +92,10 @@ bun run format         # Format with Biome
 - **React** with TypeScript
 - **Tailwind CSS v4** for styling
 - **class-variance-authority** for variant management
+- **Base UI** for accessible primitives (dialogs, menus, tooltips, drawers)
 - **m3-ripple** for Material ripple effects
-- **Rslib** for bundling
-- **Rstest** for testing
-- **Storybook** for component development
-- **Biome** for linting and formatting
+- **Rslib** for bundling (unbundled ESM + DTS)
 
 ## License
 
-MIT
+[MIT](LICENSE)
