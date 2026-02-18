@@ -95,6 +95,10 @@ export {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
+  menuContainerVariants,
+  menuIconVariants,
+  menuItemVariants,
+  menuLabelVariants,
 } from './components/ui/menu';
 export type { NavigationBarItemProps, NavigationBarProps } from './components/ui/navigation-bar';
 export {

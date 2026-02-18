@@ -1,153 +1,117 @@
+import { Menu as BaseMenu } from '@base-ui/react/menu';
+import { cva } from 'class-variance-authority';
 import { Check, ChevronRight } from 'lucide-react';
 import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
 import { cn } from '../../lib/utils';
 
 // =============================================================================
-// Utilities
+// CVA Variants
 // =============================================================================
 
-/**
- * Collect menu items at the current menu level only (skip nested [role="menu"]).
- */
-function getMenuItems(container: HTMLElement): HTMLElement[] {
-  const items: HTMLElement[] = [];
-  const walk = (node: HTMLElement) => {
-    for (const child of Array.from(node.children)) {
-      const el = child as HTMLElement;
-      // Skip nested submenus
-      if (el.getAttribute('role') === 'menu') continue;
-      if (el.getAttribute('role') === 'menuitem' && el.getAttribute('aria-disabled') !== 'true') {
-        items.push(el);
-      }
-      if (el.children.length > 0) {
-        walk(el);
-      }
-    }
-  };
-  walk(container);
-  return items;
-}
+const menuContainerVariants = cva('', {
+  variants: {
+    color: {
+      standard: 'bg-surface-container-low text-surface-foreground',
+      vibrant: 'bg-tertiary-container text-tertiary-container-foreground',
+    },
+  },
+  defaultVariants: { color: 'standard' },
+});
+
+const menuItemVariants = cva(
+  'relative flex h-12 w-full cursor-pointer select-none items-center gap-3 overflow-hidden rounded-xl px-3 text-sm outline-none transition-colors',
+  {
+    variants: {
+      color: { standard: '', vibrant: '' },
+      selected: { true: '', false: '' },
+      disabled: { true: 'pointer-events-none opacity-[0.38]', false: '' },
+    },
+    compoundVariants: [
+      {
+        color: 'standard',
+        selected: false,
+        className: 'text-surface-foreground hover:bg-surface-foreground/8 focus-visible:bg-surface-foreground/12',
+      },
+      {
+        color: 'vibrant',
+        selected: false,
+        className:
+          'text-tertiary-container-foreground hover:bg-tertiary-container-foreground/8 focus-visible:bg-tertiary-container-foreground/12',
+      },
+      {
+        color: 'standard',
+        selected: true,
+        className:
+          'bg-tertiary-container text-tertiary-container-foreground hover:bg-tertiary-container/80 focus-visible:bg-tertiary-container/70',
+      },
+      {
+        color: 'vibrant',
+        selected: true,
+        className: 'bg-tertiary text-tertiary-foreground hover:bg-tertiary/90 focus-visible:bg-tertiary/80',
+      },
+    ],
+    defaultVariants: { color: 'standard', selected: false, disabled: false },
+  },
+);
+
+const menuIconVariants = cva('', {
+  variants: {
+    color: {
+      standard: 'text-surface-variant-foreground',
+      vibrant: 'text-tertiary-container-foreground',
+    },
+    selected: { true: '', false: '' },
+  },
+  compoundVariants: [{ selected: true, className: '' }],
+  defaultVariants: { color: 'standard', selected: false },
+});
+
+const menuLabelVariants = cva('flex h-8 items-center px-3 font-medium text-xs', {
+  variants: {
+    color: {
+      standard: 'text-surface-variant-foreground',
+      vibrant: 'text-tertiary-container-foreground/70',
+    },
+  },
+  defaultVariants: { color: 'standard' },
+});
 
 // =============================================================================
-// Context
+// Color Context (styling only — Base UI handles all behavior)
 // =============================================================================
 
-interface MenuContextValue {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  color: 'standard' | 'vibrant';
-  menuId: string;
-  triggerRef: React.RefObject<HTMLButtonElement | null>;
-  contentRef: React.RefObject<HTMLDivElement | null>;
-  closeMenu: () => void;
-}
+type MenuColor = 'standard' | 'vibrant';
 
-const MenuContext = React.createContext<MenuContextValue | null>(null);
+const MenuColorContext = React.createContext<MenuColor>('standard');
 
-function useMenu() {
-  const ctx = React.useContext(MenuContext);
-  if (!ctx) throw new Error('Menu components must be used within <Menu>');
-  return ctx;
-}
-
-interface SubMenuContextValue {
-  subOpen: boolean;
-  setSubOpen: (open: boolean) => void;
-  subMenuId: string;
-  subTriggerRef: React.RefObject<HTMLButtonElement | null>;
-  subContentRef: React.RefObject<HTMLDivElement | null>;
-  cancelClose: () => void;
-  scheduleClose: () => void;
-}
-
-const SubMenuContext = React.createContext<SubMenuContextValue | null>(null);
-
-function useSubMenu() {
-  const ctx = React.useContext(SubMenuContext);
-  if (!ctx) throw new Error('MenuSub components must be used within <MenuSub>');
-  return ctx;
+function useMenuColor() {
+  return React.useContext(MenuColorContext);
 }
 
 // =============================================================================
 // Menu (Root)
 // =============================================================================
 
-export interface MenuProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface MenuProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  color?: 'standard' | 'vibrant';
+  color?: MenuColor;
+  children?: React.ReactNode;
+  className?: string;
 }
 
-const Menu = React.forwardRef<HTMLDivElement, MenuProps>(
-  (
-    { open: controlledOpen, defaultOpen = false, onOpenChange, color = 'standard', children, className, ...props },
-    ref,
-  ) => {
-    const [internalOpen, setInternalOpen] = React.useState(defaultOpen);
-    const isControlled = controlledOpen !== undefined;
-    const open = isControlled ? controlledOpen : internalOpen;
-    const menuId = React.useId();
-    const triggerRef = React.useRef<HTMLButtonElement>(null);
-    const contentRef = React.useRef<HTMLDivElement>(null);
-
-    const setOpen = React.useCallback(
-      (value: boolean) => {
-        if (!isControlled) setInternalOpen(value);
-        onOpenChange?.(value);
-      },
-      [isControlled, onOpenChange],
-    );
-
-    const closeMenu = React.useCallback(() => {
-      setOpen(false);
-      requestAnimationFrame(() => {
-        triggerRef.current?.focus();
-      });
-    }, [setOpen]);
-
-    // Click outside to close
-    React.useEffect(() => {
-      if (!open) return;
-      const handlePointerDown = (e: PointerEvent) => {
-        const target = e.target as Node;
-        // Check if click is inside trigger, main content, or any portalled submenu
-        const isInsideTrigger = triggerRef.current?.contains(target);
-        const isInsideContent = contentRef.current?.contains(target);
-        const isInsideSubmenu = (target as HTMLElement).closest?.('[role="menu"]') != null;
-        if (!isInsideTrigger && !isInsideContent && !isInsideSubmenu) {
-          closeMenu();
-        }
-      };
-      document.addEventListener('pointerdown', handlePointerDown);
-      return () => document.removeEventListener('pointerdown', handlePointerDown);
-    }, [open, closeMenu]);
-
-    // Escape to close
-    React.useEffect(() => {
-      if (!open) return;
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-          e.preventDefault();
-          closeMenu();
-        }
-      };
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [open, closeMenu]);
-
-    return (
-      <MenuContext.Provider value={{ open, setOpen, color, menuId, triggerRef, contentRef, closeMenu }}>
-        <div ref={ref} className={cn('relative inline-flex', className)} {...props}>
-          {children}
-        </div>
-      </MenuContext.Provider>
-    );
-  },
-);
+function Menu({ open, defaultOpen, onOpenChange, color = 'standard', children }: MenuProps) {
+  return (
+    <MenuColorContext.Provider value={color}>
+      <BaseMenu.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+        {children}
+      </BaseMenu.Root>
+    </MenuColorContext.Provider>
+  );
+}
 Menu.displayName = 'Menu';
 
 // =============================================================================
@@ -158,78 +122,17 @@ export interface MenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonE
   asChild?: boolean;
 }
 
-const MenuTrigger = React.forwardRef<HTMLButtonElement, MenuTriggerProps>(
-  ({ asChild, children, onClick, ...props }, ref) => {
-    const { open, setOpen, menuId, triggerRef } = useMenu();
+const MenuTrigger = React.forwardRef<HTMLButtonElement, MenuTriggerProps>(({ asChild, children, ...props }, ref) => {
+  if (asChild && React.isValidElement(children)) {
+    return <BaseMenu.Trigger ref={ref} render={children as React.ReactElement<Record<string, unknown>>} {...props} />;
+  }
 
-    const mergedRef = React.useCallback(
-      (node: HTMLButtonElement | null) => {
-        (triggerRef as React.RefObject<HTMLButtonElement | null>).current = node;
-        if (typeof ref === 'function') ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref, triggerRef],
-    );
-
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      onClick?.(e);
-      setOpen(!open);
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        if (!open) setOpen(true);
-      }
-    };
-
-    if (asChild && React.isValidElement(children)) {
-      return React.cloneElement(
-        children as React.ReactElement<{
-          ref?: React.Ref<HTMLButtonElement>;
-          onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-          onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
-          'aria-expanded'?: boolean;
-          'aria-haspopup'?: string;
-          'aria-controls'?: string;
-        }>,
-        {
-          ref: mergedRef,
-          onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
-            handleClick(e);
-            (
-              children as React.ReactElement<{ onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void }>
-            ).props.onClick?.(e);
-          },
-          onKeyDown: (e: React.KeyboardEvent<HTMLButtonElement>) => {
-            handleKeyDown(e);
-            (
-              children as React.ReactElement<{ onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void }>
-            ).props.onKeyDown?.(e);
-          },
-          'aria-expanded': open,
-          'aria-haspopup': 'menu',
-          'aria-controls': open ? menuId : undefined,
-        },
-      );
-    }
-
-    return (
-      <button
-        ref={mergedRef}
-        type="button"
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        aria-expanded={open}
-        aria-haspopup="menu"
-        aria-controls={open ? menuId : undefined}
-        {...props}
-      >
-        {children}
-      </button>
-    );
-  },
-);
+  return (
+    <BaseMenu.Trigger ref={ref} {...props}>
+      {children}
+    </BaseMenu.Trigger>
+  );
+});
 MenuTrigger.displayName = 'MenuTrigger';
 
 // =============================================================================
@@ -244,120 +147,27 @@ export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const MenuContent = React.forwardRef<HTMLDivElement, MenuContentProps>(
   ({ className, side = 'bottom', align = 'start', grouped = false, children, ...props }, ref) => {
-    const { open, color, menuId, contentRef, closeMenu } = useMenu();
-
-    const mergedRef = React.useCallback(
-      (node: HTMLDivElement | null) => {
-        (contentRef as React.RefObject<HTMLDivElement | null>).current = node;
-        if (typeof ref === 'function') ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref, contentRef],
-    );
-
-    // Focus first item when opened
-    React.useEffect(() => {
-      if (open && contentRef.current) {
-        requestAnimationFrame(() => {
-          const firstItem = contentRef.current?.querySelector<HTMLElement>(
-            '[role="menuitem"]:not([aria-disabled="true"])',
-          );
-          firstItem?.focus();
-        });
-      }
-    }, [open, contentRef]);
-
-    // Keyboard navigation + typeahead
-    const searchBufferRef = React.useRef('');
-    const searchTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const container = contentRef.current;
-      if (!container) return;
-
-      const items = getMenuItems(container);
-      const currentIndex = items.indexOf(document.activeElement as HTMLElement);
-
-      switch (e.key) {
-        case 'ArrowDown': {
-          e.preventDefault();
-          e.stopPropagation();
-          const next = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
-          items[next]?.focus();
-          break;
-        }
-        case 'ArrowUp': {
-          e.preventDefault();
-          e.stopPropagation();
-          const prev = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
-          items[prev]?.focus();
-          break;
-        }
-        case 'Home': {
-          e.preventDefault();
-          e.stopPropagation();
-          items[0]?.focus();
-          break;
-        }
-        case 'End': {
-          e.preventDefault();
-          e.stopPropagation();
-          items[items.length - 1]?.focus();
-          break;
-        }
-        case 'Tab': {
-          e.preventDefault();
-          closeMenu();
-          break;
-        }
-        default: {
-          // Typeahead: single printable character
-          if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-            searchBufferRef.current += e.key.toLowerCase();
-            if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-            searchTimeoutRef.current = setTimeout(() => {
-              searchBufferRef.current = '';
-            }, 500);
-            const match = items.find((item) => {
-              const text = item.textContent?.toLowerCase() ?? '';
-              return text.startsWith(searchBufferRef.current);
-            });
-            if (match) match.focus();
-          }
-        }
-      }
-    };
-
-    if (!open) return null;
-
-    const sideClasses = side === 'top' ? 'bottom-full mb-1' : 'top-full mt-1';
-    const alignClasses = align === 'end' ? 'right-0' : align === 'center' ? 'left-1/2 -translate-x-1/2' : 'left-0';
-    const colorClasses =
-      color === 'vibrant'
-        ? 'bg-tertiary-container text-tertiary-container-foreground'
-        : 'bg-surface-container-low text-surface-foreground';
+    const color = useMenuColor();
 
     return (
-      <div
-        ref={mergedRef}
-        id={menuId}
-        role="menu"
-        tabIndex={-1}
-        data-menu-grouped={grouped || undefined}
-        className={cn(
-          'absolute z-50 flex min-w-28 max-w-70 flex-col outline-none',
-          'animate-menu-in',
-          sideClasses,
-          alignClasses,
-          grouped ? 'gap-1' : 'overflow-y-auto rounded-2xl p-1 shadow-md',
-          !grouped && colorClasses,
-          className,
-        )}
-        onKeyDown={handleKeyDown}
-        {...props}
-      >
-        {children}
-      </div>
+      <BaseMenu.Portal>
+        <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
+          <BaseMenu.Popup
+            ref={ref}
+            data-menu-grouped={grouped || undefined}
+            className={cn(
+              'flex min-w-28 max-w-70 flex-col outline-none',
+              'animate-menu-in',
+              grouped ? 'gap-1' : 'overflow-y-auto rounded-2xl p-1 shadow-md',
+              !grouped && menuContainerVariants({ color }),
+              className,
+            )}
+            {...props}
+          >
+            {children}
+          </BaseMenu.Popup>
+        </BaseMenu.Positioner>
+      </BaseMenu.Portal>
     );
   },
 );
@@ -367,7 +177,7 @@ MenuContent.displayName = 'MenuContent';
 // MenuItem
 // =============================================================================
 
-export interface MenuItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface MenuItemProps extends React.ComponentPropsWithoutRef<'div'> {
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
   trailingText?: React.ReactNode;
@@ -376,9 +186,10 @@ export interface MenuItemProps extends React.ButtonHTMLAttributes<HTMLButtonElem
   selected?: boolean;
   disabled?: boolean;
   closeOnSelect?: boolean;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
-const MenuItem = React.forwardRef<HTMLButtonElement, MenuItemProps>(
+const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
   (
     {
       leadingIcon,
@@ -396,68 +207,20 @@ const MenuItem = React.forwardRef<HTMLButtonElement, MenuItemProps>(
     },
     ref,
   ) => {
-    const { color, closeMenu } = useMenu();
-
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (disabled) return;
-      onClick?.(e);
-      if (closeOnSelect) closeMenu();
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleClick(e as unknown as React.MouseEvent<HTMLButtonElement>);
-      }
-    };
-
-    const isVibrant = color === 'vibrant';
-
-    // Color classes based on color scheme and selected state
-    const colorClasses = selected
-      ? isVibrant
-        ? 'bg-tertiary text-tertiary-foreground'
-        : 'bg-tertiary-container text-tertiary-container-foreground'
-      : isVibrant
-        ? 'text-tertiary-container-foreground'
-        : 'text-surface-foreground';
-
-    // Hover/focus classes
-    const stateClasses = selected
-      ? isVibrant
-        ? 'hover:bg-tertiary/90 focus-visible:bg-tertiary/80'
-        : 'hover:bg-tertiary-container/80 focus-visible:bg-tertiary-container/70'
-      : isVibrant
-        ? 'hover:bg-tertiary-container-foreground/8 focus-visible:bg-tertiary-container-foreground/12'
-        : 'hover:bg-surface-foreground/8 focus-visible:bg-surface-foreground/12';
-
-    // Icon color for non-selected items
-    const iconClasses = selected
-      ? ''
-      : isVibrant
-        ? 'text-tertiary-container-foreground'
-        : 'text-surface-variant-foreground';
+    const color = useMenuColor();
+    const iconClasses = menuIconVariants({ color, selected });
 
     return (
-      <button
+      <BaseMenu.Item
         ref={ref}
-        type="button"
-        role="menuitem"
-        tabIndex={-1}
-        aria-disabled={disabled || undefined}
+        disabled={disabled}
+        closeOnClick={closeOnSelect}
+        onClick={onClick}
         data-selected={selected || undefined}
-        className={cn(
-          'relative flex h-12 w-full cursor-pointer select-none items-center gap-3 overflow-hidden rounded-xl px-3 text-sm outline-none transition-colors',
-          colorClasses,
-          stateClasses,
-          disabled && 'pointer-events-none opacity-[0.38]',
-          className,
-        )}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
+        className={cn(menuItemVariants({ color, selected, disabled }), className)}
         {...props}
       >
-        <Ripple />
+        <Ripple hoverOpacity={0} />
         {selected && !leadingIcon && <Check className="size-5 shrink-0" aria-hidden="true" />}
         {leadingIcon && (
           <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
@@ -475,7 +238,7 @@ const MenuItem = React.forwardRef<HTMLButtonElement, MenuItemProps>(
             {trailingIcon}
           </span>
         )}
-      </button>
+      </BaseMenu.Item>
     );
   },
 );
@@ -485,10 +248,10 @@ MenuItem.displayName = 'MenuItem';
 // MenuDivider
 // =============================================================================
 
-export type MenuDividerProps = React.ComponentProps<'hr'>;
+export type MenuDividerProps = React.ComponentProps<'div'>;
 
-const MenuDivider = React.forwardRef<HTMLHRElement, MenuDividerProps>(({ className, ...props }, ref) => (
-  <hr ref={ref} className={cn('my-1 border-outline-variant', className)} {...props} />
+const MenuDivider = React.forwardRef<HTMLDivElement, MenuDividerProps>(({ className, ...props }, ref) => (
+  <BaseMenu.Separator ref={ref} className={cn('my-1 border-outline-variant border-t', className)} {...props} />
 ));
 MenuDivider.displayName = 'MenuDivider';
 
@@ -499,19 +262,11 @@ MenuDivider.displayName = 'MenuDivider';
 export type MenuLabelProps = React.HTMLAttributes<HTMLDivElement>;
 
 const MenuLabel = React.forwardRef<HTMLDivElement, MenuLabelProps>(({ className, children, ...props }, ref) => {
-  const { color } = useMenu();
+  const color = useMenuColor();
   return (
-    <div
-      ref={ref}
-      className={cn(
-        'flex h-8 items-center px-3 font-medium text-xs',
-        color === 'vibrant' ? 'text-tertiary-container-foreground/70' : 'text-surface-variant-foreground',
-        className,
-      )}
-      {...props}
-    >
+    <BaseMenu.GroupLabel ref={ref} className={cn(menuLabelVariants({ color }), className)} {...props}>
       {children}
-    </div>
+    </BaseMenu.GroupLabel>
   );
 });
 MenuLabel.displayName = 'MenuLabel';
@@ -525,23 +280,18 @@ export interface MenuGroupProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const MenuGroup = React.forwardRef<HTMLDivElement, MenuGroupProps>(({ className, label, children, ...props }, ref) => {
-  const { color } = useMenu();
-  const colorClasses =
-    color === 'vibrant'
-      ? 'bg-tertiary-container text-tertiary-container-foreground'
-      : 'bg-surface-container-low text-surface-foreground';
-
-  const labelColorClasses =
-    color === 'vibrant' ? 'text-tertiary-container-foreground/70' : 'text-surface-variant-foreground';
+  const color = useMenuColor();
 
   return (
-    // biome-ignore lint/a11y/useSemanticElements: fieldset adds unwanted border styling; div[role=group] is more appropriate in menu context
-    <div ref={ref} role="group" aria-label={label} className={cn('flex flex-col', className)} {...props}>
-      {label && <div className={cn('flex h-8 items-center px-3 font-medium text-xs', labelColorClasses)}>{label}</div>}
-      <div data-menu-group="" className={cn('flex flex-col rounded-2xl p-1 shadow-md', colorClasses)}>
+    <BaseMenu.Group ref={ref} className={cn('flex flex-col', className)} {...props}>
+      {label && <div className={menuLabelVariants({ color })}>{label}</div>}
+      <div
+        data-menu-group=""
+        className={cn('flex flex-col rounded-2xl p-1 shadow-md', menuContainerVariants({ color }))}
+      >
         {children}
       </div>
-    </div>
+    </BaseMenu.Group>
   );
 });
 MenuGroup.displayName = 'MenuGroup';
@@ -550,51 +300,13 @@ MenuGroup.displayName = 'MenuGroup';
 // MenuSub (Submenu Root)
 // =============================================================================
 
-export type MenuSubProps = React.HTMLAttributes<HTMLDivElement>;
+export interface MenuSubProps {
+  children?: React.ReactNode;
+}
 
-const MenuSub = React.forwardRef<HTMLDivElement, MenuSubProps>(({ className, children, ...props }, ref) => {
-  const [subOpen, setSubOpen] = React.useState(false);
-  const subMenuId = React.useId();
-  const subTriggerRef = React.useRef<HTMLButtonElement>(null);
-  const subContentRef = React.useRef<HTMLDivElement>(null);
-  const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const cancelClose = React.useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-  }, []);
-
-  const scheduleClose = React.useCallback(() => {
-    cancelClose();
-    closeTimeoutRef.current = setTimeout(() => {
-      setSubOpen(false);
-    }, 150);
-  }, [cancelClose]);
-
-  const handleMouseEnter = () => {
-    cancelClose();
-    setSubOpen(true);
-  };
-
-  return (
-    <SubMenuContext.Provider
-      value={{ subOpen, setSubOpen, subMenuId, subTriggerRef, subContentRef, cancelClose, scheduleClose }}
-    >
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: submenu hover interaction requires mouse events on container */}
-      <div
-        ref={ref}
-        className={cn('relative', className)}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={scheduleClose}
-        {...props}
-      >
-        {children}
-      </div>
-    </SubMenuContext.Provider>
-  );
-});
+function MenuSub({ children }: MenuSubProps) {
+  return <BaseMenu.Root>{children}</BaseMenu.Root>;
+}
 MenuSub.displayName = 'MenuSub';
 
 // =============================================================================
@@ -603,42 +315,36 @@ MenuSub.displayName = 'MenuSub';
 
 export interface MenuSubTriggerProps extends Omit<MenuItemProps, 'trailingIcon' | 'closeOnSelect'> {}
 
-const MenuSubTrigger = React.forwardRef<HTMLButtonElement, MenuSubTriggerProps>(
-  ({ children, onKeyDown, ...props }, ref) => {
-    const { subOpen, setSubOpen, subMenuId, subTriggerRef } = useSubMenu();
-
-    const mergedRef = React.useCallback(
-      (node: HTMLButtonElement | null) => {
-        (subTriggerRef as React.RefObject<HTMLButtonElement | null>).current = node;
-        if (typeof ref === 'function') ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref, subTriggerRef],
-    );
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        e.stopPropagation();
-        setSubOpen(true);
-      }
-      onKeyDown?.(e);
-    };
+const MenuSubTrigger = React.forwardRef<HTMLDivElement, MenuSubTriggerProps>(
+  ({ children, className, leadingIcon, badge, trailingText, supportingText, selected, disabled, ...props }, ref) => {
+    const color = useMenuColor();
+    const iconClasses = menuIconVariants({ color, selected });
 
     return (
-      <MenuItem
-        ref={mergedRef}
-        closeOnSelect={false}
-        trailingIcon={<ChevronRight className="size-5" />}
-        aria-haspopup="menu"
-        aria-expanded={subOpen}
-        aria-controls={subOpen ? subMenuId : undefined}
-        onKeyDown={handleKeyDown}
-        onClick={() => setSubOpen(true)}
+      <BaseMenu.SubmenuTrigger
+        ref={ref}
+        disabled={disabled}
+        data-selected={selected || undefined}
+        className={cn(menuItemVariants({ color, selected, disabled }), className)}
         {...props}
       >
-        {children}
-      </MenuItem>
+        <Ripple hoverOpacity={0} />
+        {selected && !leadingIcon && <Check className="size-5 shrink-0" aria-hidden="true" />}
+        {leadingIcon && (
+          <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
+            {leadingIcon}
+          </span>
+        )}
+        <span className="flex min-w-0 flex-1 flex-col items-start">
+          <span className="truncate">{children}</span>
+          {supportingText && <span className="truncate text-xs opacity-70">{supportingText}</span>}
+        </span>
+        {badge && <span className="shrink-0">{badge}</span>}
+        {trailingText && <span className={cn('shrink-0 text-xs', iconClasses)}>{trailingText}</span>}
+        <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
+          <ChevronRight className="size-5" />
+        </span>
+      </BaseMenu.SubmenuTrigger>
     );
   },
 );
@@ -652,129 +358,25 @@ export type MenuSubContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 const MenuSubContent = React.forwardRef<HTMLDivElement, MenuSubContentProps>(
   ({ className, children, ...props }, ref) => {
-    const { color } = useMenu();
-    const { subOpen, setSubOpen, subMenuId, subTriggerRef, subContentRef, cancelClose, scheduleClose } = useSubMenu();
+    const color = useMenuColor();
 
-    const mergedRef = React.useCallback(
-      (node: HTMLDivElement | null) => {
-        (subContentRef as React.RefObject<HTMLDivElement | null>).current = node;
-        if (typeof ref === 'function') ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref, subContentRef],
-    );
-
-    const [position, setPosition] = React.useState<{ top: number; left: number }>({ top: 0, left: 0 });
-
-    // Calculate position from trigger bounding rect
-    React.useEffect(() => {
-      if (subOpen && subTriggerRef.current) {
-        const rect = subTriggerRef.current.getBoundingClientRect();
-        let top = rect.top;
-        let left = rect.right + 4;
-
-        // Flip to left side if overflowing viewport right edge
-        if (left + 200 > window.innerWidth) {
-          left = rect.left - 200 - 4;
-        }
-
-        // Prevent overflowing viewport bottom
-        const estimatedHeight = 200;
-        if (top + estimatedHeight > window.innerHeight) {
-          top = Math.max(8, window.innerHeight - estimatedHeight);
-        }
-
-        setPosition({ top, left });
-      }
-    }, [subOpen, subTriggerRef]);
-
-    // Focus first item when submenu opens
-    React.useEffect(() => {
-      if (subOpen && subContentRef.current) {
-        requestAnimationFrame(() => {
-          const firstItem = subContentRef.current?.querySelector<HTMLElement>(
-            '[role="menuitem"]:not([aria-disabled="true"])',
-          );
-          firstItem?.focus();
-        });
-      }
-    }, [subOpen, subContentRef]);
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const container = subContentRef.current;
-      if (!container) return;
-
-      if (e.key === 'ArrowLeft' || e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        setSubOpen(false);
-        requestAnimationFrame(() => {
-          subTriggerRef.current?.focus();
-        });
-        return;
-      }
-
-      const items = getMenuItems(container);
-      const currentIndex = items.indexOf(document.activeElement as HTMLElement);
-
-      switch (e.key) {
-        case 'ArrowDown': {
-          e.preventDefault();
-          e.stopPropagation();
-          const next = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
-          items[next]?.focus();
-          break;
-        }
-        case 'ArrowUp': {
-          e.preventDefault();
-          e.stopPropagation();
-          const prev = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
-          items[prev]?.focus();
-          break;
-        }
-        case 'Home': {
-          e.preventDefault();
-          e.stopPropagation();
-          items[0]?.focus();
-          break;
-        }
-        case 'End': {
-          e.preventDefault();
-          e.stopPropagation();
-          items[items.length - 1]?.focus();
-          break;
-        }
-      }
-    };
-
-    if (!subOpen) return null;
-
-    const colorClasses =
-      color === 'vibrant'
-        ? 'bg-tertiary-container text-tertiary-container-foreground'
-        : 'bg-surface-container-low text-surface-foreground';
-
-    return ReactDOM.createPortal(
-      <div
-        ref={mergedRef}
-        id={subMenuId}
-        role="menu"
-        tabIndex={-1}
-        style={{ top: position.top, left: position.left }}
-        className={cn(
-          'fixed z-50 flex min-w-28 max-w-70 flex-col rounded-2xl p-1 shadow-md outline-none',
-          'animate-menu-in',
-          colorClasses,
-          className,
-        )}
-        onKeyDown={handleKeyDown}
-        onMouseEnter={cancelClose}
-        onMouseLeave={scheduleClose}
-        {...props}
-      >
-        {children}
-      </div>,
-      document.body,
+    return (
+      <BaseMenu.Portal>
+        <BaseMenu.Positioner sideOffset={4}>
+          <BaseMenu.Popup
+            ref={ref}
+            className={cn(
+              'flex min-w-28 max-w-70 flex-col rounded-2xl p-1 shadow-md outline-none',
+              'animate-menu-in',
+              menuContainerVariants({ color }),
+              className,
+            )}
+            {...props}
+          >
+            {children}
+          </BaseMenu.Popup>
+        </BaseMenu.Positioner>
+      </BaseMenu.Portal>
     );
   },
 );
@@ -786,11 +388,15 @@ MenuSubContent.displayName = 'MenuSubContent';
 
 export {
   Menu,
+  menuContainerVariants,
   MenuContent,
   MenuDivider,
   MenuGroup,
+  menuIconVariants,
   MenuItem,
+  menuItemVariants,
   MenuLabel,
+  menuLabelVariants,
   MenuSub,
   MenuSubContent,
   MenuSubTrigger,
