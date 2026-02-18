@@ -1,5 +1,5 @@
 import { DrawerPreview as DrawerPrimitive } from '@base-ui/react/drawer';
-import type * as React from 'react';
+import * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
@@ -14,8 +14,17 @@ export interface BottomSheetProps extends Omit<DrawerPrimitive.Root.Props, 'swip
   modal?: boolean | 'trap-focus';
 }
 
-function BottomSheet({ modal = true, ...props }: BottomSheetProps) {
-  return <DrawerPrimitive.Root data-slot="bottom-sheet" modal={modal} swipeDirection="down" {...props} />;
+const BottomSheetContext = React.createContext<{ isModal: boolean }>({ isModal: true });
+
+function BottomSheet({ modal = true, children, ...props }: BottomSheetProps) {
+  const isModal = modal !== false;
+  return (
+    <BottomSheetContext.Provider value={{ isModal }}>
+      <DrawerPrimitive.Root data-slot="bottom-sheet" modal={modal} swipeDirection="down" {...props}>
+        {children}
+      </DrawerPrimitive.Root>
+    </BottomSheetContext.Provider>
+  );
 }
 
 // =============================================================================
@@ -47,15 +56,19 @@ export interface BottomSheetContentProps extends DrawerPrimitive.Popup.Props {
 }
 
 function BottomSheetContent({ className, children, showDragHandle = true, ...props }: BottomSheetContentProps) {
+  const { isModal } = React.useContext(BottomSheetContext);
+
   return (
     <DrawerPrimitive.Portal>
-      <DrawerPrimitive.Backdrop
-        data-slot="bottom-sheet-backdrop"
-        className={cn(
-          'fixed inset-0 z-50 bg-scrim/32 transition-opacity duration-200',
-          'data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
-        )}
-      />
+      {isModal && (
+        <DrawerPrimitive.Backdrop
+          data-slot="bottom-sheet-backdrop"
+          className={cn(
+            'fixed inset-0 z-50 bg-scrim/32 transition-opacity duration-200',
+            'data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
+          )}
+        />
+      )}
       <DrawerPrimitive.Viewport data-slot="bottom-sheet-viewport" className="fixed inset-0 z-50">
         <DrawerPrimitive.Popup
           data-slot="bottom-sheet-content"

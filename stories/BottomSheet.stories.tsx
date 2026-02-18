@@ -51,13 +51,9 @@ export const WithListContent: Story = {
             <h3 className="mb-4 text-lg text-surface-foreground">Share via</h3>
             <Divider className="mb-2" />
             {['Email', 'Messages', 'WhatsApp', 'Telegram', 'Copy Link'].map((item) => (
-              <button
-                key={item}
-                type="button"
-                className="rounded-lg px-2 py-3 text-left text-sm text-surface-foreground hover:bg-surface-container"
-              >
+              <Button key={item} variant="text" size="sm" className="justify-start">
                 {item}
-              </button>
+              </Button>
             ))}
           </div>
         </BottomSheetBody>
