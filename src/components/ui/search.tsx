@@ -293,6 +293,8 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
             <div className="hidden md:fixed md:inset-0 md:z-40 md:block" onClick={handleBack} aria-hidden="true" />
 
             <SearchView
+              role="dialog"
+              aria-modal="true"
               value={currentValue}
               onValueChange={updateValue}
               onSearch={onSearch}
