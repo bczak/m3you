@@ -14,14 +14,14 @@ test('renders small badge (dot) by default when no count provided', async () => 
   const badge = screen.getByTestId('badge');
   expect(badge).toBeInTheDocument();
   expect(badge).toHaveClass('size-1.5');
-  expect(badge).toHaveClass('rounded-[3px]');
+  expect(badge).toHaveClass('rounded-full');
 });
 
 test('renders small badge with size="small" prop', async () => {
   render(<Badge size="small" data-testid="badge" />);
   const badge = screen.getByTestId('badge');
   expect(badge).toHaveClass('size-1.5');
-  expect(badge).toHaveClass('rounded-[3px]');
+  expect(badge).toHaveClass('rounded-full');
 });
 
 test('renders large badge when count is provided', async () => {

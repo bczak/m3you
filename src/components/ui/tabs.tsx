@@ -51,26 +51,33 @@ const useTabs = () => {
   return context;
 };
 
-const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
-  ({ className, variant = 'primary', fullWidth = true, value, onValueChange, children, ...props }, ref) => {
-    const resolvedVariant = variant ?? 'primary';
-    const resolvedFullWidth = fullWidth ?? true;
+const Tabs = ({
+  className,
+  variant = 'primary',
+  fullWidth = true,
+  value,
+  onValueChange,
+  children,
+  ref,
+  ...props
+}: TabsProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const resolvedVariant = variant ?? 'primary';
+  const resolvedFullWidth = fullWidth ?? true;
 
-    return (
-      <TabsContext.Provider value={{ value, onValueChange, variant: resolvedVariant, fullWidth: resolvedFullWidth }}>
-        <div
-          ref={ref}
-          role="tablist"
-          aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Tabs')}
-          className={cn(tabsVariants({ variant, fullWidth, className }))}
-          {...props}
-        >
-          {children}
-        </div>
-      </TabsContext.Provider>
-    );
-  },
-);
+  return (
+    <TabsContext.Provider value={{ value, onValueChange, variant: resolvedVariant, fullWidth: resolvedFullWidth }}>
+      <div
+        ref={ref}
+        role="tablist"
+        aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Tabs')}
+        className={cn(tabsVariants({ variant, fullWidth, className }))}
+        {...props}
+      >
+        {children}
+      </div>
+    </TabsContext.Provider>
+  );
+};
 Tabs.displayName = 'Tabs';
 
 /* =============================================================================
@@ -132,105 +139,112 @@ export type TabProps = Omit<React.ComponentProps<'button'>, 'value'> &
     badge?: React.ReactNode;
   };
 
-const Tab = React.forwardRef<HTMLButtonElement, TabProps>(
-  ({ className, value, icon, badge, disabled, children, ...props }, ref) => {
-    const { value: selectedValue, onValueChange, variant, fullWidth } = useTabs();
-    const isActive = selectedValue === value;
-    const hasIcon = !!icon;
+const Tab = ({
+  className,
+  value,
+  icon,
+  badge,
+  disabled,
+  children,
+  ref,
+  ...props
+}: TabProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  const { value: selectedValue, onValueChange, variant, fullWidth } = useTabs();
+  const isActive = selectedValue === value;
+  const hasIcon = !!icon;
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (!disabled) {
-        onValueChange?.(value);
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!disabled) {
+      onValueChange?.(value);
+    }
+    props.onClick?.(e);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    const tablist = e.currentTarget.closest('[role="tablist"]');
+    if (!tablist) return;
+
+    const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'));
+    const currentIndex = tabs.indexOf(e.currentTarget);
+
+    let newIndex = -1;
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      newIndex = (currentIndex + 1) % tabs.length;
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      newIndex = 0;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      newIndex = tabs.length - 1;
+    }
+
+    if (newIndex >= 0) {
+      tabs[newIndex].focus();
+      const newValue = tabs[newIndex].getAttribute('data-value');
+      if (newValue) {
+        onValueChange?.(newValue);
       }
-      props.onClick?.(e);
-    };
+    }
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      const tablist = e.currentTarget.closest('[role="tablist"]');
-      if (!tablist) return;
+    props.onKeyDown?.(e);
+  };
 
-      const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'));
-      const currentIndex = tabs.indexOf(e.currentTarget);
+  return (
+    <button
+      ref={ref}
+      type="button"
+      role="tab"
+      aria-selected={isActive}
+      tabIndex={isActive ? 0 : -1}
+      disabled={disabled}
+      data-value={value}
+      className={cn(tabVariants({ variant, active: isActive, hasIcon, fullWidth, className }))}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      {...props}
+    >
+      <Ripple />
 
-      let newIndex = -1;
-
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        newIndex = (currentIndex + 1) % tabs.length;
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-      } else if (e.key === 'Home') {
-        e.preventDefault();
-        newIndex = 0;
-      } else if (e.key === 'End') {
-        e.preventDefault();
-        newIndex = tabs.length - 1;
-      }
-
-      if (newIndex >= 0) {
-        tabs[newIndex].focus();
-        const newValue = tabs[newIndex].getAttribute('data-value');
-        if (newValue) {
-          onValueChange?.(newValue);
-        }
-      }
-
-      props.onKeyDown?.(e);
-    };
-
-    return (
-      <button
-        ref={ref}
-        type="button"
-        role="tab"
-        aria-selected={isActive}
-        tabIndex={isActive ? 0 : -1}
-        disabled={disabled}
-        data-value={value}
-        className={cn(tabVariants({ variant, active: isActive, hasIcon, fullWidth, className }))}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        {...props}
-      >
-        <Ripple />
-
-        {/* Primary tab with icon */}
-        {variant === 'primary' && icon && (
-          <span className="relative flex items-center justify-center">
-            {icon}
-            {badge && (
-              <span className="absolute -top-1 -right-1.5 z-10 flex min-w-4 items-center justify-center">{badge}</span>
-            )}
-          </span>
-        )}
-
-        {/* Label */}
-        <span className="relative font-medium text-sm leading-tight tracking-wider">
-          {children}
-          {/* Badge on label when no icon (primary) or secondary */}
-          {!icon && badge && (
-            <span className="absolute -top-2 -right-4 z-10 flex min-w-4 items-center justify-center">{badge}</span>
+      {/* Primary tab with icon */}
+      {variant === 'primary' && icon && (
+        <span className="relative flex items-center justify-center">
+          {icon}
+          {badge && (
+            <span className="absolute -top-1 -right-1.5 z-10 flex min-w-4 items-center justify-center">{badge}</span>
           )}
         </span>
+      )}
 
-        {/* Active indicator */}
-        <span
-          className={cn(
-            'absolute bottom-0 h-[3px] rounded-t-sm transition-all duration-200',
-            variant === 'primary'
-              ? isActive
-                ? 'left-1/2 w-1/2 -translate-x-1/2 bg-primary'
-                : 'left-1/2 w-0 -translate-x-1/2 bg-transparent'
-              : isActive
-                ? 'inset-x-0 bg-primary'
-                : 'inset-x-0 bg-transparent',
-          )}
-        />
-      </button>
-    );
-  },
-);
+      {/* Label */}
+      <span className="relative font-medium text-sm leading-tight tracking-wider">
+        {children}
+        {/* Badge on label when no icon (primary) or secondary */}
+        {!icon && badge && (
+          <span className="absolute -top-2 -right-4 z-10 flex min-w-4 items-center justify-center">{badge}</span>
+        )}
+      </span>
+
+      {/* Active indicator */}
+      <span
+        className={cn(
+          'absolute bottom-0 h-[3px] rounded-t-sm transition-all duration-200',
+          variant === 'primary'
+            ? isActive
+              ? 'left-1/2 w-1/2 -translate-x-1/2 bg-primary'
+              : 'left-1/2 w-0 -translate-x-1/2 bg-transparent'
+            : isActive
+              ? 'inset-x-0 bg-primary'
+              : 'inset-x-0 bg-transparent',
+        )}
+      />
+    </button>
+  );
+};
 Tab.displayName = 'Tab';
 
 export { Tabs, tabsVariants, Tab, tabVariants };

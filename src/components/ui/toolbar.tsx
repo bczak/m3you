@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
@@ -38,21 +38,27 @@ const toolbarVariants = cva('flex items-center', {
 
 export type ToolbarProps = React.ComponentProps<'div'> & VariantProps<typeof toolbarVariants>;
 
-const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
-  ({ className, type = 'floating', color = 'standard', layout = 'horizontal', children, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        role="toolbar"
-        aria-orientation={layout === 'vertical' ? 'vertical' : 'horizontal'}
-        className={cn(toolbarVariants({ type, color, layout, className }))}
-        {...props}
-      >
-        {children}
-      </div>
-    );
-  },
-);
+const Toolbar = ({
+  className,
+  type = 'floating',
+  color = 'standard',
+  layout = 'horizontal',
+  children,
+  ref,
+  ...props
+}: ToolbarProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  return (
+    <div
+      ref={ref}
+      role="toolbar"
+      aria-orientation={layout === 'vertical' ? 'vertical' : 'horizontal'}
+      className={cn(toolbarVariants({ type, color, layout, className }))}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
 Toolbar.displayName = 'Toolbar';
 
 export { Toolbar, toolbarVariants };

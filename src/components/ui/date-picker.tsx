@@ -637,218 +637,214 @@ export type DatePickerProps = {
   className?: string;
 };
 
-const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
-  (
-    {
-      value: controlledValue,
-      defaultValue,
-      onChange,
-      label = 'Date',
-      supportingText = 'MM/DD/YYYY',
-      error = false,
-      errorText,
-      disabled = false,
-      minDate,
-      maxDate,
-      className,
+const DatePicker = ({
+  value: controlledValue,
+  defaultValue,
+  onChange,
+  label = 'Date',
+  supportingText = 'MM/DD/YYYY',
+  error = false,
+  errorText,
+  disabled = false,
+  minDate,
+  maxDate,
+  className,
+  ref,
+}: DatePickerProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const isControlled = controlledValue !== undefined;
+  const [internalValue, setInternalValue] = React.useState<Date | null>(defaultValue ?? null);
+  const selectedDate = isControlled ? controlledValue : internalValue;
+
+  const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState(selectedDate ? formatDateSlash(selectedDate) : '');
+  const [pendingDate, setPendingDate] = React.useState<Date | null>(selectedDate ?? null);
+
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (isControlled) {
+      setInputValue(controlledValue ? formatDateSlash(controlledValue) : '');
+    }
+  }, [controlledValue, isControlled]);
+
+  const updateDate = React.useCallback(
+    (date: Date | null) => {
+      if (!isControlled) setInternalValue(date);
+      setInputValue(date ? formatDateSlash(date) : '');
+      onChange?.(date);
     },
-    ref,
-  ) => {
-    const isControlled = controlledValue !== undefined;
-    const [internalValue, setInternalValue] = React.useState<Date | null>(defaultValue ?? null);
-    const selectedDate = isControlled ? controlledValue : internalValue;
+    [isControlled, onChange],
+  );
 
-    const [open, setOpen] = React.useState(false);
-    const [inputValue, setInputValue] = React.useState(selectedDate ? formatDateSlash(selectedDate) : '');
-    const [pendingDate, setPendingDate] = React.useState<Date | null>(selectedDate ?? null);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    setInputValue(raw);
+    const parsed = parseDate(raw);
+    if (parsed) updateDate(parsed);
+  };
 
-    const containerRef = React.useRef<HTMLDivElement>(null);
-    const inputRef = React.useRef<HTMLInputElement>(null);
+  const handleInputBlur = () => {
+    if (inputValue === '') {
+      updateDate(null);
+      return;
+    }
+    const parsed = parseDate(inputValue);
+    if (parsed) updateDate(parsed);
+    else setInputValue(selectedDate ? formatDateSlash(selectedDate) : '');
+  };
 
-    React.useEffect(() => {
-      if (isControlled) {
-        setInputValue(controlledValue ? formatDateSlash(controlledValue) : '');
+  const handleToggle = () => {
+    if (disabled) return;
+    if (!open) setPendingDate(selectedDate ?? null);
+    setOpen(!open);
+  };
+
+  const handleConfirm = React.useCallback(() => {
+    updateDate(pendingDate);
+    setOpen(false);
+  }, [pendingDate, updateDate]);
+
+  const handleCancel = React.useCallback(() => {
+    setPendingDate(selectedDate ?? null);
+    setOpen(false);
+  }, [selectedDate]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) handleCancel();
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open, handleCancel]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleCancel();
+        inputRef.current?.focus();
       }
-    }, [controlledValue, isControlled]);
-
-    const updateDate = React.useCallback(
-      (date: Date | null) => {
-        if (!isControlled) setInternalValue(date);
-        setInputValue(date ? formatDateSlash(date) : '');
-        onChange?.(date);
-      },
-      [isControlled, onChange],
-    );
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const raw = e.target.value;
-      setInputValue(raw);
-      const parsed = parseDate(raw);
-      if (parsed) updateDate(parsed);
     };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [open, handleCancel]);
 
-    const handleInputBlur = () => {
-      if (inputValue === '') {
-        updateDate(null);
-        return;
-      }
-      const parsed = parseDate(inputValue);
-      if (parsed) updateDate(parsed);
-      else setInputValue(selectedDate ? formatDateSlash(selectedDate) : '');
-    };
+  const hasError = error || !!errorText;
+  const displaySupportingText = hasError ? errorText : supportingText;
+  const generatedId = React.useId();
+  const inputId = `datepicker-${generatedId}`;
+  const supportingTextId = `${inputId}-supporting`;
 
-    const handleToggle = () => {
-      if (disabled) return;
-      if (!open) setPendingDate(selectedDate ?? null);
-      setOpen(!open);
-    };
+  const [focused, setFocused] = React.useState(false);
+  const populated = inputValue.length > 0;
+  const floating = focused || populated;
 
-    const handleConfirm = React.useCallback(() => {
-      updateDate(pendingDate);
-      setOpen(false);
-    }, [pendingDate, updateDate]);
+  return (
+    <div ref={ref} className={cn('inline-flex w-[328px] flex-col', disabled && 'pointer-events-none', className)}>
+      <div ref={containerRef} className="relative">
+        <div
+          data-focused={focused || open || undefined}
+          data-error={hasError || undefined}
+          data-disabled={disabled || undefined}
+          data-populated={populated || undefined}
+          className="group/tf relative flex h-14 items-center rounded-[4px] text-base/6"
+        >
+          {label && (
+            <label
+              htmlFor={inputId}
+              className={cn(
+                'pointer-events-none absolute z-10 origin-top-left transition-all duration-150 [transition-timing-function:cubic-bezier(0.2,0,0,1)]',
+                !floating && 'top-1/2 left-4 -translate-y-1/2 text-base/6 text-surface-variant-foreground',
+                floating && '-top-2 left-4 px-1 text-xs/4',
+                floating && (focused || open) && !hasError && 'text-primary',
+                floating && !(focused || open) && 'text-surface-variant-foreground',
+                hasError && floating && 'text-error',
+                disabled && 'opacity-38',
+              )}
+            >
+              {label}
+            </label>
+          )}
 
-    const handleCancel = React.useCallback(() => {
-      setPendingDate(selectedDate ?? null);
-      setOpen(false);
-    }, [selectedDate]);
+          <input
+            ref={inputRef}
+            id={inputId}
+            type="text"
+            disabled={disabled}
+            value={inputValue}
+            onChange={handleInputChange}
+            onFocus={() => setFocused(true)}
+            onBlur={() => {
+              setFocused(false);
+              handleInputBlur();
+            }}
+            placeholder={floating ? 'mm/dd/yyyy' : undefined}
+            aria-invalid={hasError || undefined}
+            aria-describedby={displaySupportingText ? supportingTextId : undefined}
+            aria-haspopup="dialog"
+            className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
+          />
 
-    React.useEffect(() => {
-      if (!open) return;
-      const handler = (e: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(e.target as Node)) handleCancel();
-      };
-      document.addEventListener('mousedown', handler);
-      return () => document.removeEventListener('mousedown', handler);
-    }, [open, handleCancel]);
+          <button
+            type="button"
+            onClick={handleToggle}
+            disabled={disabled}
+            aria-label={open ? 'Close calendar' : 'Open calendar'}
+            tabIndex={-1}
+            className="relative mr-1 flex size-10 shrink-0 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+          >
+            <Ripple />
+            <CalendarIcon className="size-5" />
+          </button>
 
-    React.useEffect(() => {
-      if (!open) return;
-      const handler = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-          handleCancel();
-          inputRef.current?.focus();
-        }
-      };
-      document.addEventListener('keydown', handler);
-      return () => document.removeEventListener('keydown', handler);
-    }, [open, handleCancel]);
-
-    const hasError = error || !!errorText;
-    const displaySupportingText = hasError ? errorText : supportingText;
-    const generatedId = React.useId();
-    const inputId = `datepicker-${generatedId}`;
-    const supportingTextId = `${inputId}-supporting`;
-
-    const [focused, setFocused] = React.useState(false);
-    const populated = inputValue.length > 0;
-    const floating = focused || populated;
-
-    return (
-      <div ref={ref} className={cn('inline-flex w-[328px] flex-col', disabled && 'pointer-events-none', className)}>
-        <div ref={containerRef} className="relative">
-          <div
-            data-focused={focused || open || undefined}
-            data-error={hasError || undefined}
-            data-disabled={disabled || undefined}
-            data-populated={populated || undefined}
-            className="group/tf relative flex h-14 items-center rounded-[4px] text-base/6"
+          <fieldset
+            className={cn(
+              'pointer-events-none absolute inset-0 m-0 rounded-[inherit] border border-outline p-0 px-3 transition-all duration-150',
+              (focused || open) && !hasError && 'border-2 border-primary',
+              hasError && 'border-2 border-error',
+              disabled && 'border-outline/38',
+            )}
           >
             {label && (
-              <label
-                htmlFor={inputId}
+              <legend
                 className={cn(
-                  'pointer-events-none absolute z-10 origin-top-left transition-all duration-150 [transition-timing-function:cubic-bezier(0.2,0,0,1)]',
-                  !floating && 'top-1/2 left-4 -translate-y-1/2 text-base/6 text-surface-variant-foreground',
-                  floating && '-top-2 left-4 px-1 text-xs/4',
-                  floating && (focused || open) && !hasError && 'text-primary',
-                  floating && !(focused || open) && 'text-surface-variant-foreground',
-                  hasError && floating && 'text-error',
-                  disabled && 'opacity-38',
+                  'invisible h-0 overflow-hidden whitespace-nowrap text-xs/4 transition-all duration-150',
+                  !floating && 'max-w-[0.01px] px-0',
+                  floating && 'max-w-full px-1',
                 )}
               >
                 {label}
-              </label>
+              </legend>
             )}
-
-            <input
-              ref={inputRef}
-              id={inputId}
-              type="text"
-              disabled={disabled}
-              value={inputValue}
-              onChange={handleInputChange}
-              onFocus={() => setFocused(true)}
-              onBlur={() => {
-                setFocused(false);
-                handleInputBlur();
-              }}
-              placeholder={floating ? 'mm/dd/yyyy' : undefined}
-              aria-invalid={hasError || undefined}
-              aria-describedby={displaySupportingText ? supportingTextId : undefined}
-              aria-haspopup="dialog"
-              className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
-            />
-
-            <button
-              type="button"
-              onClick={handleToggle}
-              disabled={disabled}
-              aria-label={open ? 'Close calendar' : 'Open calendar'}
-              tabIndex={-1}
-              className="relative mr-1 flex size-10 shrink-0 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
-            >
-              <Ripple />
-              <CalendarIcon className="size-5" />
-            </button>
-
-            <fieldset
-              className={cn(
-                'pointer-events-none absolute inset-0 m-0 rounded-[inherit] border border-outline p-0 px-3 transition-all duration-150',
-                (focused || open) && !hasError && 'border-2 border-primary',
-                hasError && 'border-2 border-error',
-                disabled && 'border-outline/38',
-              )}
-            >
-              {label && (
-                <legend
-                  className={cn(
-                    'invisible h-0 overflow-hidden whitespace-nowrap text-xs/4 transition-all duration-150',
-                    !floating && 'max-w-[0.01px] px-0',
-                    floating && 'max-w-full px-1',
-                  )}
-                >
-                  {label}
-                </legend>
-              )}
-            </fieldset>
-          </div>
-
-          {open && (
-            <div className="absolute top-[calc(100%+8px)] left-0 z-50">
-              <DockedCalendarPanel
-                value={pendingDate}
-                onSelect={setPendingDate}
-                onCancel={handleCancel}
-                onConfirm={handleConfirm}
-                minDate={minDate}
-                maxDate={maxDate}
-              />
-            </div>
-          )}
+          </fieldset>
         </div>
 
-        {displaySupportingText && (
-          <div id={supportingTextId} className={cn('px-4 pt-1 text-xs/4', disabled && 'opacity-38')}>
-            <span className={cn('text-surface-variant-foreground', hasError && 'text-error')}>
-              {displaySupportingText}
-            </span>
+        {open && (
+          <div className="absolute top-[calc(100%+8px)] left-0 z-50">
+            <DockedCalendarPanel
+              value={pendingDate}
+              onSelect={setPendingDate}
+              onCancel={handleCancel}
+              onConfirm={handleConfirm}
+              minDate={minDate}
+              maxDate={maxDate}
+            />
           </div>
         )}
       </div>
-    );
-  },
-);
+
+      {displaySupportingText && (
+        <div id={supportingTextId} className={cn('px-4 pt-1 text-xs/4', disabled && 'opacity-38')}>
+          <span className={cn('text-surface-variant-foreground', hasError && 'text-error')}>
+            {displaySupportingText}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
 DatePicker.displayName = 'DatePicker';
 
 // =============================================================================
@@ -869,269 +865,265 @@ export type DatePickerModalProps = {
 
 type ModalView = 'calendar' | 'year' | 'input';
 
-const DatePickerModal = React.forwardRef<HTMLDivElement, DatePickerModalProps>(
-  (
-    {
-      open,
-      onOpenChange,
-      value: controlledValue,
-      defaultValue,
-      onChange,
-      headerLabel = 'Select date',
-      minDate,
-      maxDate,
-      className,
-    },
-    ref,
-  ) => {
-    const isControlled = controlledValue !== undefined;
-    const [internalValue, setInternalValue] = React.useState<Date | null>(defaultValue ?? null);
-    const selectedDate = isControlled ? controlledValue : internalValue;
+const DatePickerModal = ({
+  open,
+  onOpenChange,
+  value: controlledValue,
+  defaultValue,
+  onChange,
+  headerLabel = 'Select date',
+  minDate,
+  maxDate,
+  className,
+  ref,
+}: DatePickerModalProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const isControlled = controlledValue !== undefined;
+  const [internalValue, setInternalValue] = React.useState<Date | null>(defaultValue ?? null);
+  const selectedDate = isControlled ? controlledValue : internalValue;
 
-    const [pendingDate, setPendingDate] = React.useState<Date | null>(selectedDate ?? null);
-    const [view, setView] = React.useState<ModalView>('calendar');
-    const [inputValue, setInputValue] = React.useState('');
+  const [pendingDate, setPendingDate] = React.useState<Date | null>(selectedDate ?? null);
+  const [view, setView] = React.useState<ModalView>('calendar');
+  const [inputValue, setInputValue] = React.useState('');
 
-    const initial = pendingDate ?? new Date();
-    const [viewMonth, setViewMonth] = React.useState(initial.getMonth());
-    const [viewYear, setViewYear] = React.useState(initial.getFullYear());
-    const [slideDirection, setSlideDirection] = React.useState<SlideDirection>(null);
+  const initial = pendingDate ?? new Date();
+  const [viewMonth, setViewMonth] = React.useState(initial.getMonth());
+  const [viewYear, setViewYear] = React.useState(initial.getFullYear());
+  const [slideDirection, setSlideDirection] = React.useState<SlideDirection>(null);
 
-    // Reset state when modal opens
-    React.useEffect(() => {
-      if (open) {
-        const d = selectedDate ?? new Date();
-        setPendingDate(selectedDate ?? null);
-        setViewMonth(d.getMonth());
-        setViewYear(d.getFullYear());
-        setView('calendar');
-        setInputValue(selectedDate ? formatDateSlash(selectedDate) : '');
-        setSlideDirection(null);
-      }
-    }, [open, selectedDate]);
-
-    const updateValue = (date: Date | null) => {
-      if (!isControlled) setInternalValue(date);
-      onChange?.(date);
-    };
-
-    const isOutOfRange = (date: Date): boolean => {
-      if (minDate && date < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())) return true;
-      if (maxDate && date > new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate())) return true;
-      return false;
-    };
-
-    const handleConfirm = () => {
-      if (view === 'input') {
-        const parsed = parseDate(inputValue);
-        if (parsed && !isOutOfRange(parsed)) updateValue(parsed);
-        else if (inputValue === '') updateValue(null);
-      } else {
-        updateValue(pendingDate);
-      }
-      onOpenChange(false);
-    };
-
-    const handleCancel = React.useCallback(() => {
-      onOpenChange(false);
-    }, [onOpenChange]);
-
-    const goPrevMonth = () => {
-      setSlideDirection('right');
-      if (viewMonth === 0) {
-        setViewMonth(11);
-        setViewYear((y) => y - 1);
-      } else {
-        setViewMonth((m) => m - 1);
-      }
-    };
-
-    const goNextMonth = () => {
-      setSlideDirection('left');
-      if (viewMonth === 11) {
-        setViewMonth(0);
-        setViewYear((y) => y + 1);
-      } else {
-        setViewMonth((m) => m + 1);
-      }
-    };
-
-    const handleDaySelect = (date: Date) => {
-      setPendingDate(date);
-      setInputValue(formatDateSlash(date));
-    };
-
-    const handleYearSelect = (year: number) => {
-      setViewYear(year);
+  // Reset state when modal opens
+  React.useEffect(() => {
+    if (open) {
+      const d = selectedDate ?? new Date();
+      setPendingDate(selectedDate ?? null);
+      setViewMonth(d.getMonth());
+      setViewYear(d.getFullYear());
       setView('calendar');
+      setInputValue(selectedDate ? formatDateSlash(selectedDate) : '');
+      setSlideDirection(null);
+    }
+  }, [open, selectedDate]);
+
+  const updateValue = (date: Date | null) => {
+    if (!isControlled) setInternalValue(date);
+    onChange?.(date);
+  };
+
+  const isOutOfRange = (date: Date): boolean => {
+    if (minDate && date < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())) return true;
+    if (maxDate && date > new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate())) return true;
+    return false;
+  };
+
+  const handleConfirm = () => {
+    if (view === 'input') {
+      const parsed = parseDate(inputValue);
+      if (parsed && !isOutOfRange(parsed)) updateValue(parsed);
+      else if (inputValue === '') updateValue(null);
+    } else {
+      updateValue(pendingDate);
+    }
+    onOpenChange(false);
+  };
+
+  const handleCancel = React.useCallback(() => {
+    onOpenChange(false);
+  }, [onOpenChange]);
+
+  const goPrevMonth = () => {
+    setSlideDirection('right');
+    if (viewMonth === 0) {
+      setViewMonth(11);
+      setViewYear((y) => y - 1);
+    } else {
+      setViewMonth((m) => m - 1);
+    }
+  };
+
+  const goNextMonth = () => {
+    setSlideDirection('left');
+    if (viewMonth === 11) {
+      setViewMonth(0);
+      setViewYear((y) => y + 1);
+    } else {
+      setViewMonth((m) => m + 1);
+    }
+  };
+
+  const handleDaySelect = (date: Date) => {
+    setPendingDate(date);
+    setInputValue(formatDateSlash(date));
+  };
+
+  const handleYearSelect = (year: number) => {
+    setViewYear(year);
+    setView('calendar');
+  };
+
+  // Close on Escape
+  React.useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleCancel();
     };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [open, handleCancel]);
 
-    // Close on Escape
-    React.useEffect(() => {
-      if (!open) return;
-      const handler = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') handleCancel();
-      };
-      document.addEventListener('keydown', handler);
-      return () => document.removeEventListener('keydown', handler);
-    }, [open, handleCancel]);
+  if (!open) return null;
 
-    if (!open) return null;
+  const formattedDate = pendingDate ? formatDateHeader(pendingDate) : 'Enter date';
 
-    const formattedDate = pendingDate ? formatDateHeader(pendingDate) : 'Enter date';
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Scrim */}
+      <div className="absolute inset-0 bg-scrim/32" onClick={handleCancel} aria-hidden="true" />
 
-    return createPortal(
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        {/* Scrim */}
-        <div className="absolute inset-0 bg-scrim/32" onClick={handleCancel} aria-hidden="true" />
-
-        {/* Modal */}
-        <div
-          ref={ref}
-          role="dialog"
-          aria-modal="true"
-          aria-label={headerLabel}
-          className={cn(datePickerContainerVariants(), 'relative z-10', className)}
-        >
-          {/* Header */}
-          <div className="flex items-start justify-between px-6 pt-4 pb-0">
-            <div className="flex flex-col gap-3 pt-2">
-              <span className="text-sm text-surface-variant-foreground">{headerLabel}</span>
-              <span className="pb-4 font-normal text-3xl text-foreground">
-                {view === 'input' ? 'Enter date' : formattedDate}
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setView(view === 'input' ? 'calendar' : 'input')}
-              className="relative mt-3 flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
-              aria-label={view === 'input' ? 'Switch to calendar' : 'Switch to text input'}
-            >
-              <Ripple />
-              {view === 'input' ? <CalendarIcon className="size-5" /> : <Pencil className="size-5" />}
-            </button>
+      {/* Modal */}
+      <div
+        ref={ref}
+        role="dialog"
+        aria-modal="true"
+        aria-label={headerLabel}
+        className={cn(datePickerContainerVariants(), 'relative z-10', className)}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between px-6 pt-4 pb-0">
+          <div className="flex flex-col gap-3 pt-2">
+            <span className="text-sm text-surface-variant-foreground">{headerLabel}</span>
+            <span className="pb-4 font-normal text-3xl text-foreground">
+              {view === 'input' ? 'Enter date' : formattedDate}
+            </span>
           </div>
-
-          <div className="mx-6 border-outline-variant border-b" />
-
-          {/* Body */}
-          {view === 'input' ? (
-            /* Input view */
-            <div className="px-6 pt-4 pb-0">
-              <div className="relative flex h-14 items-center rounded-[4px]">
-                <input
-                  id="modal-date-input"
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="mm/dd/yyyy"
-                  className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
-                />
-                <fieldset className="pointer-events-none absolute inset-0 m-0 rounded-[inherit] border border-outline p-0 px-3">
-                  <legend className="invisible h-0 max-w-full overflow-hidden whitespace-nowrap px-1 text-xs/4">
-                    Date
-                  </legend>
-                </fieldset>
-                <label
-                  htmlFor="modal-date-input"
-                  className="pointer-events-none absolute -top-2 left-4 px-1 text-primary text-xs/4"
-                >
-                  Date
-                </label>
-              </div>
-            </div>
-          ) : view === 'year' ? (
-            /* Year grid view */
-            <>
-              <div className="flex items-center justify-between px-3 pt-4 pb-1">
-                <button
-                  type="button"
-                  onClick={() => setView('calendar')}
-                  className={cn(
-                    'relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8',
-                    'bg-foreground/8',
-                  )}
-                >
-                  <Ripple />
-                  {MONTH_NAMES[viewMonth]} {viewYear}
-                  <ChevronDown className="size-4 rotate-180 transition-transform" />
-                </button>
-              </div>
-              <YearGrid year={viewYear} onSelect={handleYearSelect} />
-            </>
-          ) : (
-            /* Calendar view */
-            <>
-              <div className="flex items-center justify-between px-3 pt-4 pb-1">
-                <button
-                  type="button"
-                  onClick={() => setView('year')}
-                  className="relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8"
-                >
-                  <Ripple />
-                  {MONTH_NAMES[viewMonth]} {viewYear}
-                  <ChevronDown className="size-4 transition-transform" />
-                </button>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={goPrevMonth}
-                    className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
-                    aria-label="Previous month"
-                  >
-                    <Ripple />
-                    <ChevronLeft className="size-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={goNextMonth}
-                    className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
-                    aria-label="Next month"
-                  >
-                    <Ripple />
-                    <ChevronRight className="size-5" />
-                  </button>
-                </div>
-              </div>
-              <CalendarGrid
-                viewMonth={viewMonth}
-                viewYear={viewYear}
-                value={pendingDate}
-                minDate={minDate}
-                maxDate={maxDate}
-                onSelect={handleDaySelect}
-                onPrevMonth={goPrevMonth}
-                onNextMonth={goNextMonth}
-                slideDirection={slideDirection}
-              />
-            </>
-          )}
-
-          {/* Footer */}
-          <div className="flex items-center justify-end gap-2 px-3 pt-2 pb-3">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
-            >
-              <Ripple />
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleConfirm}
-              className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
-            >
-              <Ripple />
-              OK
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setView(view === 'input' ? 'calendar' : 'input')}
+            className="relative mt-3 flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+            aria-label={view === 'input' ? 'Switch to calendar' : 'Switch to text input'}
+          >
+            <Ripple />
+            {view === 'input' ? <CalendarIcon className="size-5" /> : <Pencil className="size-5" />}
+          </button>
         </div>
-      </div>,
-      document.body,
-    );
-  },
-);
+
+        <div className="mx-6 border-outline-variant border-b" />
+
+        {/* Body */}
+        {view === 'input' ? (
+          /* Input view */
+          <div className="px-6 pt-4 pb-0">
+            <div className="relative flex h-14 items-center rounded-[4px]">
+              <input
+                id="modal-date-input"
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="mm/dd/yyyy"
+                className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
+              />
+              <fieldset className="pointer-events-none absolute inset-0 m-0 rounded-[inherit] border border-outline p-0 px-3">
+                <legend className="invisible h-0 max-w-full overflow-hidden whitespace-nowrap px-1 text-xs/4">
+                  Date
+                </legend>
+              </fieldset>
+              <label
+                htmlFor="modal-date-input"
+                className="pointer-events-none absolute -top-2 left-4 px-1 text-primary text-xs/4"
+              >
+                Date
+              </label>
+            </div>
+          </div>
+        ) : view === 'year' ? (
+          /* Year grid view */
+          <>
+            <div className="flex items-center justify-between px-3 pt-4 pb-1">
+              <button
+                type="button"
+                onClick={() => setView('calendar')}
+                className={cn(
+                  'relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8',
+                  'bg-foreground/8',
+                )}
+              >
+                <Ripple />
+                {MONTH_NAMES[viewMonth]} {viewYear}
+                <ChevronDown className="size-4 rotate-180 transition-transform" />
+              </button>
+            </div>
+            <YearGrid year={viewYear} onSelect={handleYearSelect} />
+          </>
+        ) : (
+          /* Calendar view */
+          <>
+            <div className="flex items-center justify-between px-3 pt-4 pb-1">
+              <button
+                type="button"
+                onClick={() => setView('year')}
+                className="relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+              >
+                <Ripple />
+                {MONTH_NAMES[viewMonth]} {viewYear}
+                <ChevronDown className="size-4 transition-transform" />
+              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={goPrevMonth}
+                  className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+                  aria-label="Previous month"
+                >
+                  <Ripple />
+                  <ChevronLeft className="size-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={goNextMonth}
+                  className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+                  aria-label="Next month"
+                >
+                  <Ripple />
+                  <ChevronRight className="size-5" />
+                </button>
+              </div>
+            </div>
+            <CalendarGrid
+              viewMonth={viewMonth}
+              viewYear={viewYear}
+              value={pendingDate}
+              minDate={minDate}
+              maxDate={maxDate}
+              onSelect={handleDaySelect}
+              onPrevMonth={goPrevMonth}
+              onNextMonth={goNextMonth}
+              slideDirection={slideDirection}
+            />
+          </>
+        )}
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-2 px-3 pt-2 pb-3">
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
+          >
+            <Ripple />
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleConfirm}
+            className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
+          >
+            <Ripple />
+            OK
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+};
 DatePickerModal.displayName = 'DatePickerModal';
 
 // =============================================================================

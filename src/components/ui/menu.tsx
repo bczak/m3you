@@ -122,7 +122,12 @@ export interface MenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonE
   asChild?: boolean;
 }
 
-const MenuTrigger = React.forwardRef<HTMLButtonElement, MenuTriggerProps>(({ asChild, children, ...props }, ref) => {
+const MenuTrigger = ({
+  asChild,
+  children,
+  ref,
+  ...props
+}: MenuTriggerProps & { ref?: React.Ref<HTMLButtonElement> }) => {
   if (asChild && React.isValidElement(children)) {
     return <BaseMenu.Trigger ref={ref} render={children as React.ReactElement<Record<string, unknown>>} {...props} />;
   }
@@ -132,7 +137,7 @@ const MenuTrigger = React.forwardRef<HTMLButtonElement, MenuTriggerProps>(({ asC
       {children}
     </BaseMenu.Trigger>
   );
-});
+};
 MenuTrigger.displayName = 'MenuTrigger';
 
 // =============================================================================
@@ -145,32 +150,38 @@ export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   grouped?: boolean;
 }
 
-const MenuContent = React.forwardRef<HTMLDivElement, MenuContentProps>(
-  ({ className, side = 'bottom', align = 'start', grouped = false, children, ...props }, ref) => {
-    const color = useMenuColor();
+const MenuContent = ({
+  className,
+  side = 'bottom',
+  align = 'start',
+  grouped = false,
+  children,
+  ref,
+  ...props
+}: MenuContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const color = useMenuColor();
 
-    return (
-      <BaseMenu.Portal>
-        <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
-          <BaseMenu.Popup
-            ref={ref}
-            data-menu-grouped={grouped || undefined}
-            className={cn(
-              'flex min-w-28 max-w-70 flex-col outline-none',
-              'animate-menu-in',
-              grouped ? 'gap-1' : 'overflow-y-auto rounded-2xl p-1 shadow-md',
-              !grouped && menuContainerVariants({ color }),
-              className,
-            )}
-            {...props}
-          >
-            {children}
-          </BaseMenu.Popup>
-        </BaseMenu.Positioner>
-      </BaseMenu.Portal>
-    );
-  },
-);
+  return (
+    <BaseMenu.Portal>
+      <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
+        <BaseMenu.Popup
+          ref={ref}
+          data-menu-grouped={grouped || undefined}
+          className={cn(
+            'flex min-w-28 max-w-70 flex-col outline-none',
+            'animate-menu-in',
+            grouped ? 'gap-1' : 'overflow-y-auto rounded-2xl p-1 shadow-md',
+            !grouped && menuContainerVariants({ color }),
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </BaseMenu.Popup>
+      </BaseMenu.Positioner>
+    </BaseMenu.Portal>
+  );
+};
 MenuContent.displayName = 'MenuContent';
 
 // =============================================================================
@@ -189,59 +200,55 @@ export interface MenuItemProps extends React.ComponentPropsWithoutRef<'div'> {
   onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
-const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
-  (
-    {
-      leadingIcon,
-      trailingIcon,
-      trailingText,
-      badge,
-      supportingText,
-      selected = false,
-      disabled = false,
-      closeOnSelect = true,
-      className,
-      children,
-      onClick,
-      ...props
-    },
-    ref,
-  ) => {
-    const color = useMenuColor();
-    const iconClasses = menuIconVariants({ color, selected });
+const MenuItem = ({
+  leadingIcon,
+  trailingIcon,
+  trailingText,
+  badge,
+  supportingText,
+  selected = false,
+  disabled = false,
+  closeOnSelect = true,
+  className,
+  children,
+  onClick,
+  ref,
+  ...props
+}: MenuItemProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const color = useMenuColor();
+  const iconClasses = menuIconVariants({ color, selected });
 
-    return (
-      <BaseMenu.Item
-        ref={ref}
-        disabled={disabled}
-        closeOnClick={closeOnSelect}
-        onClick={onClick}
-        data-selected={selected || undefined}
-        className={cn(menuItemVariants({ color, selected, disabled }), className)}
-        {...props}
-      >
-        <Ripple hoverOpacity={0} />
-        {selected && !leadingIcon && <Check className="size-5 shrink-0" aria-hidden="true" />}
-        {leadingIcon && (
-          <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
-            {leadingIcon}
-          </span>
-        )}
-        <span className="flex min-w-0 flex-1 flex-col items-start">
-          <span className="truncate">{children}</span>
-          {supportingText && <span className="truncate text-xs opacity-70">{supportingText}</span>}
+  return (
+    <BaseMenu.Item
+      ref={ref}
+      disabled={disabled}
+      closeOnClick={closeOnSelect}
+      onClick={onClick}
+      data-selected={selected || undefined}
+      className={cn(menuItemVariants({ color, selected, disabled }), className)}
+      {...props}
+    >
+      <Ripple hoverOpacity={0} />
+      {selected && !leadingIcon && <Check className="size-5 shrink-0" aria-hidden="true" />}
+      {leadingIcon && (
+        <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
+          {leadingIcon}
         </span>
-        {badge && <span className="shrink-0">{badge}</span>}
-        {trailingText && <span className={cn('shrink-0 text-xs', iconClasses)}>{trailingText}</span>}
-        {trailingIcon && (
-          <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
-            {trailingIcon}
-          </span>
-        )}
-      </BaseMenu.Item>
-    );
-  },
-);
+      )}
+      <span className="flex min-w-0 flex-1 flex-col items-start">
+        <span className="truncate">{children}</span>
+        {supportingText && <span className="truncate text-xs opacity-70">{supportingText}</span>}
+      </span>
+      {badge && <span className="shrink-0">{badge}</span>}
+      {trailingText && <span className={cn('shrink-0 text-xs', iconClasses)}>{trailingText}</span>}
+      {trailingIcon && (
+        <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
+          {trailingIcon}
+        </span>
+      )}
+    </BaseMenu.Item>
+  );
+};
 MenuItem.displayName = 'MenuItem';
 
 // =============================================================================
@@ -250,9 +257,9 @@ MenuItem.displayName = 'MenuItem';
 
 export type MenuDividerProps = React.ComponentProps<'div'>;
 
-const MenuDivider = React.forwardRef<HTMLDivElement, MenuDividerProps>(({ className, ...props }, ref) => (
+const MenuDivider = ({ className, ref, ...props }: MenuDividerProps & { ref?: React.Ref<HTMLDivElement> }) => (
   <BaseMenu.Separator ref={ref} className={cn('my-1 border-outline-variant border-t', className)} {...props} />
-));
+);
 MenuDivider.displayName = 'MenuDivider';
 
 // =============================================================================
@@ -261,14 +268,14 @@ MenuDivider.displayName = 'MenuDivider';
 
 export type MenuLabelProps = React.HTMLAttributes<HTMLDivElement>;
 
-const MenuLabel = React.forwardRef<HTMLDivElement, MenuLabelProps>(({ className, children, ...props }, ref) => {
+const MenuLabel = ({ className, children, ref, ...props }: MenuLabelProps & { ref?: React.Ref<HTMLDivElement> }) => {
   const color = useMenuColor();
   return (
     <BaseMenu.GroupLabel ref={ref} className={cn(menuLabelVariants({ color }), className)} {...props}>
       {children}
     </BaseMenu.GroupLabel>
   );
-});
+};
 MenuLabel.displayName = 'MenuLabel';
 
 // =============================================================================
@@ -279,7 +286,13 @@ export interface MenuGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string;
 }
 
-const MenuGroup = React.forwardRef<HTMLDivElement, MenuGroupProps>(({ className, label, children, ...props }, ref) => {
+const MenuGroup = ({
+  className,
+  label,
+  children,
+  ref,
+  ...props
+}: MenuGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
   const color = useMenuColor();
 
   return (
@@ -293,7 +306,7 @@ const MenuGroup = React.forwardRef<HTMLDivElement, MenuGroupProps>(({ className,
       </div>
     </BaseMenu.Group>
   );
-});
+};
 MenuGroup.displayName = 'MenuGroup';
 
 // =============================================================================
@@ -305,7 +318,7 @@ export interface MenuSubProps {
 }
 
 function MenuSub({ children }: MenuSubProps) {
-  return <BaseMenu.Root>{children}</BaseMenu.Root>;
+  return <BaseMenu.SubmenuRoot>{children}</BaseMenu.SubmenuRoot>;
 }
 MenuSub.displayName = 'MenuSub';
 
@@ -315,39 +328,48 @@ MenuSub.displayName = 'MenuSub';
 
 export interface MenuSubTriggerProps extends Omit<MenuItemProps, 'trailingIcon' | 'closeOnSelect'> {}
 
-const MenuSubTrigger = React.forwardRef<HTMLDivElement, MenuSubTriggerProps>(
-  ({ children, className, leadingIcon, badge, trailingText, supportingText, selected, disabled, ...props }, ref) => {
-    const color = useMenuColor();
-    const iconClasses = menuIconVariants({ color, selected });
+const MenuSubTrigger = ({
+  children,
+  className,
+  leadingIcon,
+  badge,
+  trailingText,
+  supportingText,
+  selected,
+  disabled,
+  ref,
+  ...props
+}: MenuSubTriggerProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const color = useMenuColor();
+  const iconClasses = menuIconVariants({ color, selected });
 
-    return (
-      <BaseMenu.SubmenuTrigger
-        ref={ref}
-        disabled={disabled}
-        data-selected={selected || undefined}
-        className={cn(menuItemVariants({ color, selected, disabled }), className)}
-        {...props}
-      >
-        <Ripple hoverOpacity={0} />
-        {selected && !leadingIcon && <Check className="size-5 shrink-0" aria-hidden="true" />}
-        {leadingIcon && (
-          <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
-            {leadingIcon}
-          </span>
-        )}
-        <span className="flex min-w-0 flex-1 flex-col items-start">
-          <span className="truncate">{children}</span>
-          {supportingText && <span className="truncate text-xs opacity-70">{supportingText}</span>}
-        </span>
-        {badge && <span className="shrink-0">{badge}</span>}
-        {trailingText && <span className={cn('shrink-0 text-xs', iconClasses)}>{trailingText}</span>}
+  return (
+    <BaseMenu.SubmenuTrigger
+      ref={ref}
+      disabled={disabled}
+      data-selected={selected || undefined}
+      className={cn(menuItemVariants({ color, selected, disabled }), className)}
+      {...props}
+    >
+      <Ripple hoverOpacity={0} />
+      {selected && !leadingIcon && <Check className="size-5 shrink-0" aria-hidden="true" />}
+      {leadingIcon && (
         <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
-          <ChevronRight className="size-5" />
+          {leadingIcon}
         </span>
-      </BaseMenu.SubmenuTrigger>
-    );
-  },
-);
+      )}
+      <span className="flex min-w-0 flex-1 flex-col items-start">
+        <span className="truncate">{children}</span>
+        {supportingText && <span className="truncate text-xs opacity-70">{supportingText}</span>}
+      </span>
+      {badge && <span className="shrink-0">{badge}</span>}
+      {trailingText && <span className={cn('shrink-0 text-xs', iconClasses)}>{trailingText}</span>}
+      <span className={cn('flex size-6 shrink-0 items-center justify-center', iconClasses)} aria-hidden="true">
+        <ChevronRight className="size-5" />
+      </span>
+    </BaseMenu.SubmenuTrigger>
+  );
+};
 MenuSubTrigger.displayName = 'MenuSubTrigger';
 
 // =============================================================================
@@ -356,30 +378,33 @@ MenuSubTrigger.displayName = 'MenuSubTrigger';
 
 export type MenuSubContentProps = React.HTMLAttributes<HTMLDivElement>;
 
-const MenuSubContent = React.forwardRef<HTMLDivElement, MenuSubContentProps>(
-  ({ className, children, ...props }, ref) => {
-    const color = useMenuColor();
+const MenuSubContent = ({
+  className,
+  children,
+  ref,
+  ...props
+}: MenuSubContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const color = useMenuColor();
 
-    return (
-      <BaseMenu.Portal>
-        <BaseMenu.Positioner sideOffset={4}>
-          <BaseMenu.Popup
-            ref={ref}
-            className={cn(
-              'flex min-w-28 max-w-70 flex-col rounded-2xl p-1 shadow-md outline-none',
-              'animate-menu-in',
-              menuContainerVariants({ color }),
-              className,
-            )}
-            {...props}
-          >
-            {children}
-          </BaseMenu.Popup>
-        </BaseMenu.Positioner>
-      </BaseMenu.Portal>
-    );
-  },
-);
+  return (
+    <BaseMenu.Portal>
+      <BaseMenu.Positioner sideOffset={4}>
+        <BaseMenu.Popup
+          ref={ref}
+          className={cn(
+            'flex min-w-28 max-w-70 flex-col rounded-2xl p-1 shadow-md outline-none',
+            'animate-menu-in',
+            menuContainerVariants({ color }),
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </BaseMenu.Popup>
+      </BaseMenu.Positioner>
+    </BaseMenu.Portal>
+  );
+};
 MenuSubContent.displayName = 'MenuSubContent';
 
 // =============================================================================

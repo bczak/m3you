@@ -74,65 +74,61 @@ const useNavigationRail = () => {
   return context;
 };
 
-const NavigationRail = React.forwardRef<HTMLElement, NavigationRailProps>(
-  (
-    {
-      className,
-      state = 'collapsed',
-      modality = 'standard',
-      position = 'fixed',
-      value,
-      onValueChange,
-      onStateChange,
-      menu,
-      fab,
-      footer,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const resolvedState = state ?? 'collapsed';
+const NavigationRail = ({
+  className,
+  state = 'collapsed',
+  modality = 'standard',
+  position = 'fixed',
+  value,
+  onValueChange,
+  onStateChange,
+  menu,
+  fab,
+  footer,
+  children,
+  ref,
+  ...props
+}: NavigationRailProps & { ref?: React.Ref<HTMLElement> }) => {
+  const resolvedState = state ?? 'collapsed';
 
-    return (
-      <NavigationRailContext.Provider value={{ value, onValueChange, state: resolvedState, onStateChange }}>
-        {/* Modal backdrop */}
-        {state === 'expanded' && modality === 'modal' && (
-          <button
-            type="button"
-            className="fixed inset-0 z-40 cursor-default border-none bg-scrim/50 transition-opacity duration-300"
-            onClick={() => onStateChange?.('collapsed')}
-            onKeyDown={(e) => e.key === 'Escape' && onStateChange?.('collapsed')}
-            tabIndex={-1}
-            aria-label="Close navigation"
-          />
+  return (
+    <NavigationRailContext.Provider value={{ value, onValueChange, state: resolvedState, onStateChange }}>
+      {/* Modal backdrop */}
+      {state === 'expanded' && modality === 'modal' && (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 cursor-default border-none bg-scrim/50 transition-opacity duration-300"
+          onClick={() => onStateChange?.('collapsed')}
+          onKeyDown={(e) => e.key === 'Escape' && onStateChange?.('collapsed')}
+          tabIndex={-1}
+          aria-label="Close navigation"
+        />
+      )}
+      <nav
+        ref={ref}
+        aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
+        className={cn(navigationRailVariants({ state, modality, position, className }))}
+        {...props}
+      >
+        {/* Header section: Menu button */}
+        {menu && <div className="flex shrink-0 justify-start px-3 pt-4">{menu}</div>}
+
+        {/* FAB section */}
+        {fab && <div className="flex shrink-0 justify-start px-3 py-3">{fab}</div>}
+
+        {/* Navigation items */}
+        <div className={cn('flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-2', 'items-stretch')}>{children}</div>
+
+        {/* Footer section */}
+        {footer && (
+          <div className={cn('shrink-0 border-outline-variant border-t px-3 py-3', state === 'expanded' && 'px-4')}>
+            {footer}
+          </div>
         )}
-        <nav
-          ref={ref}
-          aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
-          className={cn(navigationRailVariants({ state, modality, position, className }))}
-          {...props}
-        >
-          {/* Header section: Menu button */}
-          {menu && <div className="flex shrink-0 justify-start px-3 pt-4">{menu}</div>}
-
-          {/* FAB section */}
-          {fab && <div className="flex shrink-0 justify-start px-3 py-3">{fab}</div>}
-
-          {/* Navigation items */}
-          <div className={cn('flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-2', 'items-stretch')}>{children}</div>
-
-          {/* Footer section */}
-          {footer && (
-            <div className={cn('shrink-0 border-outline-variant border-t px-3 py-3', state === 'expanded' && 'px-4')}>
-              {footer}
-            </div>
-          )}
-        </nav>
-      </NavigationRailContext.Provider>
-    );
-  },
-);
+      </nav>
+    </NavigationRailContext.Provider>
+  );
+};
 NavigationRail.displayName = 'NavigationRail';
 
 /* =============================================================================
@@ -192,119 +188,125 @@ export type NavigationRailItemProps = Omit<React.ComponentProps<'button'>, 'valu
     badge?: React.ReactNode;
   };
 
-const NavigationRailItem = React.forwardRef<HTMLButtonElement, NavigationRailItemProps>(
-  ({ className, value, icon, activeIcon, label, badge, disabled, ...props }, ref) => {
-    const { value: selectedValue, onValueChange, state } = useNavigationRail();
-    const isActive = selectedValue === value;
+const NavigationRailItem = ({
+  className,
+  value,
+  icon,
+  activeIcon,
+  label,
+  badge,
+  disabled,
+  ref,
+  ...props
+}: NavigationRailItemProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  const { value: selectedValue, onValueChange, state } = useNavigationRail();
+  const isActive = selectedValue === value;
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (!disabled) {
-        onValueChange?.(value);
-      }
-      props.onClick?.(e);
-    };
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!disabled) {
+      onValueChange?.(value);
+    }
+    props.onClick?.(e);
+  };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-        onValueChange?.(value);
-      }
-      props.onKeyDown?.(e);
-    };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+      onValueChange?.(value);
+    }
+    props.onKeyDown?.(e);
+  };
 
-    // Icon with opacity transition between outline and filled
-    const renderIcon = () => {
-      if (!activeIcon) {
-        return icon;
-      }
-
-      return (
-        <span className="grid [&>*]:col-start-1 [&>*]:row-start-1">
-          <span className={cn('transition-opacity duration-200', isActive ? 'opacity-0' : 'opacity-100')}>{icon}</span>
-          <span className={cn('transition-opacity duration-200', isActive ? 'opacity-100' : 'opacity-0')}>
-            {activeIcon}
-          </span>
-        </span>
-      );
-    };
-
-    if (state === 'collapsed') {
-      // Collapsed: Vertical layout - icon above label
-      return (
-        <button
-          ref={ref}
-          type="button"
-          aria-label={label}
-          aria-current={isActive ? 'page' : undefined}
-          disabled={disabled}
-          className={cn(navigationRailItemVariants({ active: isActive, state, className }))}
-          onClick={handleClick}
-          onKeyDown={handleKeyDown}
-          {...props}
-        >
-          {/* Icon container with indicator */}
-          <span className="relative flex items-center justify-center">
-            {/* Active indicator - pill shape behind icon */}
-            <span
-              className={cn(
-                'absolute flex h-8 w-14 items-center justify-center rounded-full bg-secondary-container transition-all duration-200 ease-out',
-                isActive ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0',
-              )}
-            >
-              <Ripple />
-            </span>
-            {/* Icon with badge */}
-            <span className="relative z-10 flex h-8 items-center justify-center">
-              <span className="relative">
-                {renderIcon()}
-                {badge && (
-                  <span className="absolute -top-2 -right-2 z-20 flex min-w-4 items-center justify-center">
-                    {badge}
-                  </span>
-                )}
-              </span>
-            </span>
-          </span>
-          {/* Label */}
-          <span className="z-10 font-medium text-xs leading-none">{label}</span>
-        </button>
-      );
+  // Icon with opacity transition between outline and filled
+  const renderIcon = () => {
+    if (!activeIcon) {
+      return icon;
     }
 
-    // Expanded: Horizontal layout - icon + label side by side
+    return (
+      <span className="grid [&>*]:col-start-1 [&>*]:row-start-1">
+        <span className={cn('transition-opacity duration-200', isActive ? 'opacity-0' : 'opacity-100')}>{icon}</span>
+        <span className={cn('transition-opacity duration-200', isActive ? 'opacity-100' : 'opacity-0')}>
+          {activeIcon}
+        </span>
+      </span>
+    );
+  };
+
+  if (state === 'collapsed') {
+    // Collapsed: Vertical layout - icon above label
     return (
       <button
         ref={ref}
         type="button"
-        aria-current={isActive ? 'page' : undefined}
         aria-label={label}
+        aria-current={isActive ? 'page' : undefined}
         disabled={disabled}
         className={cn(navigationRailItemVariants({ active: isActive, state, className }))}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         {...props}
       >
-        {/* Active indicator - full item background */}
-        <span
-          className={cn(
-            'absolute inset-0 flex items-center justify-center rounded-full bg-secondary-container transition-all duration-200 ease-out',
-            isActive ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0',
-          )}
-        >
-          <Ripple />
-        </span>
-        {/* Icon with badge */}
-        <span className="relative z-10 flex items-center justify-center">
-          {renderIcon()}
-          {badge && (
-            <span className="absolute -top-1.5 -right-1.5 z-20 flex min-w-4 items-center justify-center">{badge}</span>
-          )}
+        {/* Icon container with indicator */}
+        <span className="relative flex items-center justify-center">
+          {/* Active indicator - pill shape behind icon */}
+          <span
+            className={cn(
+              'absolute flex h-8 w-14 items-center justify-center rounded-full bg-secondary-container transition-all duration-200 ease-out',
+              isActive ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0',
+            )}
+          >
+            <Ripple />
+          </span>
+          {/* Icon with badge */}
+          <span className="relative z-10 flex h-8 items-center justify-center">
+            <span className="relative">
+              {renderIcon()}
+              {badge && (
+                <span className="absolute -top-2 -right-2 z-20 flex min-w-4 items-center justify-center">{badge}</span>
+              )}
+            </span>
+          </span>
         </span>
         {/* Label */}
-        <span className="z-10 flex-1 text-left font-medium text-sm leading-none">{label}</span>
+        <span className="z-10 font-medium text-xs leading-none">{label}</span>
       </button>
     );
-  },
-);
+  }
+
+  // Expanded: Horizontal layout - icon + label side by side
+  return (
+    <button
+      ref={ref}
+      type="button"
+      aria-current={isActive ? 'page' : undefined}
+      aria-label={label}
+      disabled={disabled}
+      className={cn(navigationRailItemVariants({ active: isActive, state, className }))}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      {...props}
+    >
+      {/* Active indicator - full item background */}
+      <span
+        className={cn(
+          'absolute inset-0 flex items-center justify-center rounded-full bg-secondary-container transition-all duration-200 ease-out',
+          isActive ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0',
+        )}
+      >
+        <Ripple />
+      </span>
+      {/* Icon with badge */}
+      <span className="relative z-10 flex items-center justify-center">
+        {renderIcon()}
+        {badge && (
+          <span className="absolute -top-1.5 -right-1.5 z-20 flex min-w-4 items-center justify-center">{badge}</span>
+        )}
+      </span>
+      {/* Label */}
+      <span className="z-10 flex-1 text-left font-medium text-sm leading-none">{label}</span>
+    </button>
+  );
+};
 NavigationRailItem.displayName = 'NavigationRailItem';
 
 /* =============================================================================
@@ -316,27 +318,29 @@ export type NavigationRailSectionProps = React.ComponentProps<'div'> & {
   title?: string;
 };
 
-const NavigationRailSection = React.forwardRef<HTMLDivElement, NavigationRailSectionProps>(
-  ({ className, title, children, ...props }, ref) => {
-    const { state } = useNavigationRail();
+const NavigationRailSection = ({
+  className,
+  title,
+  children,
+  ref,
+  ...props
+}: NavigationRailSectionProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const { state } = useNavigationRail();
 
-    return (
-      <div ref={ref} className={cn('flex flex-col gap-1', className)} {...props}>
-        {/* Section header - only visible when expanded */}
-        {title && state === 'expanded' && (
-          <div className="px-4 py-2">
-            <span className="font-medium text-surface-variant-foreground text-xs uppercase tracking-wider">
-              {title}
-            </span>
-          </div>
-        )}
-        {/* Divider for collapsed state */}
-        {title && state === 'collapsed' && <div className="my-2 h-px w-8 bg-outline-variant" />}
-        {children}
-      </div>
-    );
-  },
-);
+  return (
+    <div ref={ref} className={cn('flex flex-col gap-1', className)} {...props}>
+      {/* Section header - only visible when expanded */}
+      {title && state === 'expanded' && (
+        <div className="px-4 py-2">
+          <span className="font-medium text-surface-variant-foreground text-xs uppercase tracking-wider">{title}</span>
+        </div>
+      )}
+      {/* Divider for collapsed state */}
+      {title && state === 'collapsed' && <div className="my-2 h-px w-8 bg-outline-variant" />}
+      {children}
+    </div>
+  );
+};
 NavigationRailSection.displayName = 'NavigationRailSection';
 
 /* =============================================================================
@@ -350,36 +354,41 @@ export type NavigationRailMenuButtonProps = React.ComponentProps<'button'> & {
   expandedIcon?: React.ReactNode;
 };
 
-const NavigationRailMenuButton = React.forwardRef<HTMLButtonElement, NavigationRailMenuButtonProps>(
-  ({ className, collapsedIcon, expandedIcon, children, ...props }, ref) => {
-    const { state, onStateChange } = useNavigationRail();
+const NavigationRailMenuButton = ({
+  className,
+  collapsedIcon,
+  expandedIcon,
+  children,
+  ref,
+  ...props
+}: NavigationRailMenuButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  const { state, onStateChange } = useNavigationRail();
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      onStateChange?.(state === 'collapsed' ? 'expanded' : 'collapsed');
-      props.onClick?.(e);
-    };
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onStateChange?.(state === 'collapsed' ? 'expanded' : 'collapsed');
+    props.onClick?.(e);
+  };
 
-    const icon = state === 'collapsed' ? collapsedIcon : expandedIcon;
+  const icon = state === 'collapsed' ? collapsedIcon : expandedIcon;
 
-    return (
-      <button
-        ref={ref}
-        type="button"
-        aria-label={state === 'collapsed' ? 'Expand navigation' : 'Collapse navigation'}
-        aria-expanded={state === 'expanded'}
-        className={cn(
-          'relative flex size-12 items-center justify-center rounded-full text-surface-variant-foreground outline-none transition-colors hover:bg-surface-container-high hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&_svg]:size-6',
-          className,
-        )}
-        onClick={handleClick}
-        {...props}
-      >
-        <Ripple />
-        {icon || children}
-      </button>
-    );
-  },
-);
+  return (
+    <button
+      ref={ref}
+      type="button"
+      aria-label={state === 'collapsed' ? 'Expand navigation' : 'Collapse navigation'}
+      aria-expanded={state === 'expanded'}
+      className={cn(
+        'relative flex size-12 items-center justify-center rounded-full text-surface-variant-foreground outline-none transition-colors hover:bg-surface-container-high hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&_svg]:size-6',
+        className,
+      )}
+      onClick={handleClick}
+      {...props}
+    >
+      <Ripple />
+      {icon || children}
+    </button>
+  );
+};
 NavigationRailMenuButton.displayName = 'NavigationRailMenuButton';
 
 export {

@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '../../lib/utils';
 import { Button } from './button';
@@ -27,7 +27,7 @@ const iconButtonVariants = cva(
         xs: 'h-8 [&_svg]:size-5',
         sm: 'h-10 [&_svg]:size-6',
         md: 'h-14 [&_svg]:size-6',
-        lg: 'h-24 [&_svg]:size-8',
+        lg: 'h-20 [&_svg]:size-8',
         xl: 'h-[136px] [&_svg]:size-10',
       },
       width: {
@@ -55,7 +55,7 @@ const iconButtonVariants = cva(
       { width: 'default', size: 'md', class: 'w-14' },
       { width: 'narrow', size: 'md', class: 'w-12' },
       { width: 'wide', size: 'md', class: 'w-[72px]' },
-      { width: 'default', size: 'lg', class: 'w-24' },
+      { width: 'default', size: 'lg', class: 'w-20' },
       { width: 'narrow', size: 'lg', class: 'w-16' },
       { width: 'wide', size: 'lg', class: 'w-32' },
       { width: 'default', size: 'xl', class: 'w-[136px]' },
@@ -133,35 +133,31 @@ export type IconButtonProps = React.ComponentProps<'button'> &
     selected?: boolean;
   };
 
-const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  (
-    {
-      className,
-      variant = 'filled',
-      shape = 'round',
-      size = 'sm',
-      width = 'default',
-      morph = false,
-      selected,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const selectedVariant = selected !== undefined ? selected : undefined;
+const IconButton = ({
+  className,
+  variant = 'filled',
+  shape = 'round',
+  size = 'sm',
+  width = 'default',
+  morph = false,
+  selected,
+  children,
+  ref,
+  ...props
+}: IconButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  const selectedVariant = selected !== undefined ? selected : undefined;
 
-    return (
-      <Button
-        variant="text"
-        ref={ref}
-        className={cn(iconButtonVariants({ variant, shape, size, width, morph, selected: selectedVariant, className }))}
-        {...props}
-      >
-        {children}
-      </Button>
-    );
-  },
-);
+  return (
+    <Button
+      variant="text"
+      ref={ref}
+      className={cn(iconButtonVariants({ variant, shape, size, width, morph, selected: selectedVariant, className }))}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+};
 IconButton.displayName = 'IconButton';
 
 export { IconButton, iconButtonVariants };

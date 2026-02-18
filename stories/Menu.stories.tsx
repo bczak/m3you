@@ -85,9 +85,7 @@ export const StandardColor: Story = {
         <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
           Item 2
         </MenuItem>
-        <MenuItem leadingIcon={<Pencil className="size-5" />} selected>
-          Item 3
-        </MenuItem>
+        <MenuItem leadingIcon={<Pencil className="size-5" />}>Item 3</MenuItem>
         <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
       </MenuContent>
     </Menu>
@@ -112,9 +110,7 @@ export const VibrantColor: Story = {
         <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
           Item 2
         </MenuItem>
-        <MenuItem leadingIcon={<Pencil className="size-5" />} selected>
-          Item 3
-        </MenuItem>
+        <MenuItem leadingIcon={<Pencil className="size-5" />}>Item 3</MenuItem>
         <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
       </MenuContent>
     </Menu>
@@ -132,7 +128,7 @@ export const ColorComparison: Story = {
     <div className="flex min-h-screen items-start justify-center gap-16 bg-surface-container-lowest p-12">
       <div className="flex flex-col items-center gap-4">
         <p className="text-foreground/60 text-sm">Standard</p>
-        <Menu defaultOpen color="standard">
+        <Menu color="standard">
           <MenuTrigger asChild>
             <IconButton variant="text">
               <MoreVertical aria-hidden="true" />
@@ -143,14 +139,14 @@ export const ColorComparison: Story = {
             <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
               Item 2
             </MenuItem>
-            <MenuItem selected>Item 3</MenuItem>
+            <MenuItem>Item 3</MenuItem>
             <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
           </MenuContent>
         </Menu>
       </div>
       <div className="flex flex-col items-center gap-4">
         <p className="text-foreground/60 text-sm">Vibrant</p>
-        <Menu defaultOpen color="vibrant">
+        <Menu color="vibrant">
           <MenuTrigger asChild>
             <IconButton variant="text">
               <MoreVertical aria-hidden="true" />
@@ -161,7 +157,7 @@ export const ColorComparison: Story = {
             <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
               Item 2
             </MenuItem>
-            <MenuItem selected>Item 3</MenuItem>
+            <MenuItem>Item 3</MenuItem>
             <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
           </MenuContent>
         </Menu>
@@ -192,7 +188,7 @@ export const WithSubmenu: Story = {
             <MenuItem leadingIcon={<Image className="size-5" />}>Image</MenuItem>
           </MenuSubContent>
         </MenuSub>
-        <MenuItem selected>Offline mode</MenuItem>
+        <MenuItem>Offline mode</MenuItem>
         <MenuSub>
           <MenuSubTrigger leadingIcon={<Share className="size-5" />}>Share</MenuSubTrigger>
           <MenuSubContent>
@@ -262,9 +258,7 @@ export const GroupedLayout: Story = {
               </MenuItem>
             </MenuGroup>
             <MenuGroup>
-              <MenuItem leadingIcon={<Pencil className="size-5" />} selected>
-                Item 3
-              </MenuItem>
+              <MenuItem leadingIcon={<Pencil className="size-5" />}>Item 3</MenuItem>
             </MenuGroup>
             <MenuGroup>
               <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
@@ -291,9 +285,7 @@ export const GroupedLayout: Story = {
               </MenuItem>
             </MenuGroup>
             <MenuGroup>
-              <MenuItem leadingIcon={<Pencil className="size-5" />} selected>
-                Item 3
-              </MenuItem>
+              <MenuItem leadingIcon={<Pencil className="size-5" />}>Item 3</MenuItem>
             </MenuGroup>
             <MenuGroup>
               <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
@@ -538,12 +530,12 @@ export const StatesShowcase: Story = {
         <div className="flex flex-col gap-4">
           <p className="text-center text-foreground/60 text-xs">Standard</p>
           <div className="rounded-2xl bg-surface-container-low p-1 shadow-md">
-            <Menu defaultOpen color="standard">
+            <Menu color="standard">
               <MenuTrigger className="hidden">Open</MenuTrigger>
               <MenuContent className="static flex shadow-none">
                 <MenuItem>Item 1</MenuItem>
                 <MenuItem>Item 2</MenuItem>
-                <MenuItem selected>Item 3</MenuItem>
+                <MenuItem>Item 3</MenuItem>
                 <MenuItem>Item 4</MenuItem>
               </MenuContent>
             </Menu>
@@ -552,12 +544,12 @@ export const StatesShowcase: Story = {
         <div className="flex flex-col gap-4">
           <p className="text-center text-foreground/60 text-xs">Vibrant</p>
           <div className="rounded-2xl bg-tertiary-container p-1 shadow-md">
-            <Menu defaultOpen color="vibrant">
+            <Menu color="vibrant">
               <MenuTrigger className="hidden">Open</MenuTrigger>
               <MenuContent className="static flex shadow-none">
                 <MenuItem>Item 1</MenuItem>
                 <MenuItem>Item 2</MenuItem>
-                <MenuItem selected>Item 3</MenuItem>
+                <MenuItem>Item 3</MenuItem>
                 <MenuItem>Item 4</MenuItem>
               </MenuContent>
             </Menu>
@@ -576,7 +568,6 @@ export const CompleteShowcase: Story = {
   name: 'Complete Showcase',
   parameters: { layout: 'fullscreen' },
   render: () => {
-    const [offlineMode, setOfflineMode] = useState(true);
     return (
       <div className="flex min-h-screen items-start justify-center gap-16 bg-surface-container-lowest p-12 pt-24">
         {/* Standard menu with icon button trigger */}
@@ -618,9 +609,7 @@ export const CompleteShowcase: Story = {
                   <MenuItem leadingIcon={<Image className="size-5" />}>Image</MenuItem>
                 </MenuSubContent>
               </MenuSub>
-              <MenuItem selected={offlineMode} closeOnSelect={false} onClick={() => setOfflineMode((prev) => !prev)}>
-                Offline mode
-              </MenuItem>
+              <MenuItem>Offline mode</MenuItem>
               <MenuSub>
                 <MenuSubTrigger leadingIcon={<Share className="size-5" />}>Share</MenuSubTrigger>
                 <MenuSubContent>

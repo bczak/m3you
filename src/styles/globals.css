@@ -5,6 +5,10 @@
   /* Custom spacing for M3 checkbox (18px) */
   --spacing-4_5: 1.125rem;
 
+  /* Override text-xs to 11px (M3 spec) */
+  --text-xs: 0.6875rem;
+  --text-xs--line-height: 1rem;
+
   /* Primary */
   --color-primary: hsl(217 38% 41%);
   --color-primary-foreground: hsl(0 0% 100%);

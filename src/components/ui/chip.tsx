@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Check, X } from 'lucide-react';
 import { Ripple } from 'm3-ripple';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
@@ -70,102 +70,98 @@ export type ChipProps = Omit<React.ComponentProps<'button'>, 'type'> &
     onClose?: () => void;
   };
 
-const Chip = React.forwardRef<HTMLButtonElement, ChipProps>(
-  (
-    {
-      className,
-      type = 'assist',
-      variant = 'outlined',
-      selected = false,
-      leadingIcon,
-      trailingIcon,
-      onClose,
-      disabled,
-      children,
-      onKeyDown,
-      ...props
-    },
-    ref,
-  ) => {
-    // For filter chips: always render check icon container for animation
-    const isFilterChip = type === 'filter';
+const Chip = ({
+  className,
+  type = 'assist',
+  variant = 'outlined',
+  selected = false,
+  leadingIcon,
+  trailingIcon,
+  onClose,
+  disabled,
+  children,
+  onKeyDown,
+  ref,
+  ...props
+}: ChipProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  // For filter chips: always render check icon container for animation
+  const isFilterChip = type === 'filter';
 
-    // For input chips: show close button
-    const showCloseButton = type === 'input' && onClose;
+  // For input chips: show close button
+  const showCloseButton = type === 'input' && onClose;
 
-    // Determine if we have leading/trailing icons for padding
-    // For filter chips, always account for the icon space when selected
-    const hasLeadingIcon = Boolean(leadingIcon) || (isFilterChip && selected);
-    const hasTrailingIcon = Boolean(trailingIcon) || Boolean(showCloseButton);
+  // Determine if we have leading/trailing icons for padding
+  // For filter chips, always account for the icon space when selected
+  const hasLeadingIcon = Boolean(leadingIcon) || (isFilterChip && selected);
+  const hasTrailingIcon = Boolean(trailingIcon) || Boolean(showCloseButton);
 
-    // Handle keyboard events for input chips
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (type === 'input' && (e.key === 'Delete' || e.key === 'Backspace') && onClose) {
-        e.preventDefault();
-        onClose();
-      }
-      onKeyDown?.(e);
-    };
+  // Handle keyboard events for input chips
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (type === 'input' && (e.key === 'Delete' || e.key === 'Backspace') && onClose) {
+      e.preventDefault();
+      onClose();
+    }
+    onKeyDown?.(e);
+  };
 
-    // Handle close button click
-    const handleCloseClick = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onClose?.();
-    };
+  // Handle close button click
+  const handleCloseClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onClose?.();
+  };
 
-    return (
-      <button
-        ref={ref}
-        type="button"
-        disabled={disabled}
-        onKeyDown={handleKeyDown}
-        aria-pressed={type === 'filter' ? selected : undefined}
-        className={cn(chipVariants({ type, variant, selected, hasLeadingIcon, hasTrailingIcon, className }))}
-        {...props}
-      >
-        <Ripple />
-        {isFilterChip && (
-          <span
-            aria-hidden="true"
-            className={cn(
-              'inline-flex items-center justify-center overflow-hidden transition-all duration-200 ease-out',
-              selected ? 'mr-2 w-[18px]' : 'mr-0 w-0',
-            )}
-          >
-            <Check className={cn('transition-transform duration-200 ease-out', selected ? 'scale-100' : 'scale-0')} />
+  return (
+    <button
+      ref={ref}
+      type="button"
+      disabled={disabled}
+      onKeyDown={handleKeyDown}
+      aria-pressed={type === 'filter' ? selected : undefined}
+      className={cn(chipVariants({ type, variant, selected, hasLeadingIcon, hasTrailingIcon, className }))}
+      {...props}
+    >
+      <Ripple />
+      {isFilterChip && (
+        <span
+          aria-hidden="true"
+          className={cn(
+            'inline-flex items-center justify-center overflow-hidden transition-all duration-200 ease-out',
+            selected ? 'mr-2 w-[18px]' : 'mr-0 w-0',
+          )}
+        >
+          <Check className={cn('transition-transform duration-200 ease-out', selected ? 'scale-100' : 'scale-0')} />
+        </span>
+      )}
+      {!isFilterChip && leadingIcon && (
+        <span aria-hidden="true" className="mr-2">
+          {leadingIcon}
+        </span>
+      )}
+      <span>{children}</span>
+      {showCloseButton ? (
+        <button
+          type="button"
+          aria-label={`Remove ${typeof children === 'string' ? children : 'chip'}`}
+          onClick={handleCloseClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+            }
+          }}
+          className="ml-2 inline-flex cursor-pointer items-center justify-center rounded-full p-0.5 transition-colors hover:bg-on-surface/12 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        >
+          <X aria-hidden="true" className="size-[18px]" />
+        </button>
+      ) : (
+        trailingIcon && (
+          <span aria-hidden="true" className="ml-2">
+            {trailingIcon}
           </span>
-        )}
-        {!isFilterChip && leadingIcon && (
-          <span aria-hidden="true" className="mr-2">
-            {leadingIcon}
-          </span>
-        )}
-        <span>{children}</span>
-        {showCloseButton ? (
-          <button
-            type="button"
-            aria-label={`Remove ${typeof children === 'string' ? children : 'chip'}`}
-            onClick={handleCloseClick}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.stopPropagation();
-              }
-            }}
-            className="ml-2 inline-flex cursor-pointer items-center justify-center rounded-full p-0.5 transition-colors hover:bg-on-surface/12 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          >
-            <X aria-hidden="true" className="size-[18px]" />
-          </button>
-        ) : (
-          trailingIcon && (
-            <span aria-hidden="true" className="ml-2">
-              {trailingIcon}
-            </span>
-          )
-        )}
-      </button>
-    );
-  },
-);
+        )
+      )}
+    </button>
+  );
+};
 Chip.displayName = 'Chip';
 
 export { Chip, chipVariants };

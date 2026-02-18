@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Ripple } from 'm3-ripple';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
@@ -23,46 +23,54 @@ export type CardProps = React.ComponentProps<'div'> &
     ripple?: boolean;
   };
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = 'filled', disabled, ripple, onClick, onKeyDown, children, ...props }, ref) => {
-    const isInteractive = Boolean(onClick);
-    const showRipple = ripple ?? isInteractive;
+const Card = ({
+  className,
+  variant = 'filled',
+  disabled,
+  ripple,
+  onClick,
+  onKeyDown,
+  children,
+  ref,
+  ...props
+}: CardProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const isInteractive = Boolean(onClick);
+  const showRipple = ripple ?? isInteractive;
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (isInteractive && !disabled && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
-      }
-      onKeyDown?.(e);
-    };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isInteractive && !disabled && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
+    }
+    onKeyDown?.(e);
+  };
 
-    return (
-      // biome-ignore lint/a11y/noStaticElementInteractions: role="button" is set conditionally when interactive
-      <div
-        ref={ref}
-        role={isInteractive ? 'button' : undefined}
-        tabIndex={isInteractive && !disabled ? 0 : undefined}
-        aria-disabled={isInteractive && disabled ? true : undefined}
-        onClick={!disabled ? onClick : undefined}
-        onKeyDown={isInteractive ? handleKeyDown : onKeyDown}
-        className={cn(
-          cardVariants({ variant }),
-          isInteractive &&
-            !disabled &&
-            'cursor-pointer transition-shadow duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-          isInteractive && !disabled && variant === 'elevated' && 'hover:shadow-lg',
-          isInteractive && !disabled && variant !== 'elevated' && 'hover:shadow-sm',
-          disabled && 'pointer-events-none opacity-38',
-          className,
-        )}
-        {...props}
-      >
-        {showRipple && !disabled && <Ripple />}
-        {children}
-      </div>
-    );
-  },
-);
+  return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: role="button" is set conditionally when interactive
+    <div
+      ref={ref}
+      role={isInteractive ? 'button' : undefined}
+      tabIndex={isInteractive && !disabled ? 0 : undefined}
+      aria-disabled={isInteractive && disabled ? true : undefined}
+      onClick={!disabled ? onClick : undefined}
+      onKeyDown={isInteractive ? handleKeyDown : onKeyDown}
+      className={cn(
+        cardVariants({ variant }),
+        isInteractive &&
+          !disabled &&
+          'cursor-pointer transition-shadow duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        isInteractive && !disabled && variant === 'elevated' && 'hover:shadow-lg',
+        isInteractive && !disabled && variant !== 'elevated' && 'hover:shadow-sm',
+        disabled && 'pointer-events-none opacity-38',
+        className,
+      )}
+      {...props}
+    >
+      {showRipple && !disabled && <Ripple />}
+      {children}
+    </div>
+  );
+};
 Card.displayName = 'Card';
 
 export { Card, cardVariants };

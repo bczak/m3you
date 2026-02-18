@@ -24,12 +24,17 @@ export interface ButtonGroupProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof buttonGroupVariants> {}
 
-const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(({ className, orientation, ...props }, ref) => {
+const ButtonGroup = ({
+  className,
+  orientation,
+  ref,
+  ...props
+}: ButtonGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
   return (
     // biome-ignore lint/a11y/useSemanticElements: role="group" is correct per WAI-ARIA
     <div ref={ref} role="group" className={cn(buttonGroupVariants({ orientation, className }))} {...props} />
   );
-});
+};
 ButtonGroup.displayName = 'ButtonGroup';
 
 // =============================================================================
@@ -61,93 +66,89 @@ export interface ConnectedButtonGroupProps
   onValueChange?: (value: number[]) => void;
 }
 
-const ConnectedButtonGroup = React.forwardRef<HTMLDivElement, ConnectedButtonGroupProps>(
-  (
-    {
-      className,
-      orientation = 'horizontal',
-      size = 'sm',
-      shape = 'round',
-      morph = false,
-      selectionMode = 'multiple',
-      value: controlledValue,
-      defaultValue = [],
-      onValueChange,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const [internalValue, setInternalValue] = React.useState<number[]>(defaultValue);
-    const isControlled = controlledValue !== undefined;
-    const selectedIndices = new Set(isControlled ? controlledValue : internalValue);
+const ConnectedButtonGroup = ({
+  className,
+  orientation = 'horizontal',
+  size = 'sm',
+  shape = 'round',
+  morph = false,
+  selectionMode = 'multiple',
+  value: controlledValue,
+  defaultValue = [],
+  onValueChange,
+  children,
+  ref,
+  ...props
+}: ConnectedButtonGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const [internalValue, setInternalValue] = React.useState<number[]>(defaultValue);
+  const isControlled = controlledValue !== undefined;
+  const selectedIndices = new Set(isControlled ? controlledValue : internalValue);
 
-    const handleToggle = (index: number) => {
-      let newValue: number[];
+  const handleToggle = (index: number) => {
+    let newValue: number[];
 
-      if (selectionMode === 'single') {
-        // Single mode: toggle off if already selected, otherwise select only this one
-        newValue = selectedIndices.has(index) ? [] : [index];
+    if (selectionMode === 'single') {
+      // Single mode: toggle off if already selected, otherwise select only this one
+      newValue = selectedIndices.has(index) ? [] : [index];
+    } else {
+      // Multiple mode: toggle individual selection
+      const newSelected = new Set(selectedIndices);
+      if (newSelected.has(index)) {
+        newSelected.delete(index);
       } else {
-        // Multiple mode: toggle individual selection
-        const newSelected = new Set(selectedIndices);
-        if (newSelected.has(index)) {
-          newSelected.delete(index);
-        } else {
-          newSelected.add(index);
-        }
-        newValue = Array.from(newSelected);
+        newSelected.add(index);
       }
+      newValue = Array.from(newSelected);
+    }
 
-      if (!isControlled) {
-        setInternalValue(newValue);
-      }
-      onValueChange?.(newValue);
-    };
+    if (!isControlled) {
+      setInternalValue(newValue);
+    }
+    onValueChange?.(newValue);
+  };
 
-    const childArray = React.Children.toArray(children);
+  const childArray = React.Children.toArray(children);
 
-    const enhancedChildren = childArray.map((child, index) => {
-      if (!React.isValidElement<ButtonProps>(child)) {
-        return child;
-      }
+  const enhancedChildren = childArray.map((child, index) => {
+    if (!React.isValidElement<ButtonProps>(child)) {
+      return child;
+    }
 
-      const isSelected = selectedIndices.has(index);
-      const isFirst = index === 0;
-      const isLast = index === childArray.length - 1;
-      // Only apply morph to middle buttons (not first or last)
-      const shouldMorph = morph && !isFirst && !isLast;
+    const isSelected = selectedIndices.has(index);
+    const isFirst = index === 0;
+    const isLast = index === childArray.length - 1;
+    // Only apply morph to middle buttons (not first or last)
+    const shouldMorph = morph && !isFirst && !isLast;
 
-      return React.cloneElement(child, {
-        size: child.props.size ?? size,
-        shape: shape,
-        morph: child.props.morph ?? shouldMorph,
-        selected: isSelected,
-        'data-selected': isSelected || undefined,
-        onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
-          handleToggle(index);
-          child.props.onClick?.(e);
-        },
-      } as ButtonProps);
-    });
+    return React.cloneElement(child, {
+      size: child.props.size ?? size,
+      shape: shape,
+      morph: child.props.morph ?? shouldMorph,
+      selected: isSelected,
+      'data-selected': isSelected || undefined,
+      onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+        handleToggle(index);
+        child.props.onClick?.(e);
+      },
+    } as ButtonProps);
+  });
 
-    return (
-      // biome-ignore lint/a11y/useSemanticElements: role="group" is correct per WAI-ARIA
-      <div
-        ref={ref}
-        role="group"
-        data-connected-group
-        data-size={size}
-        data-orientation={orientation}
-        data-morph={morph || undefined}
-        className={cn(connectedButtonGroupVariants({ orientation, className }))}
-        {...props}
-      >
-        {enhancedChildren}
-      </div>
-    );
-  },
-);
+  return (
+    // biome-ignore lint/a11y/useSemanticElements: role="group" is correct per WAI-ARIA
+    <div
+      ref={ref}
+      role="group"
+      data-connected-group
+      data-size={size}
+      data-orientation={orientation}
+      data-morph={morph || undefined}
+      className={cn(connectedButtonGroupVariants({ orientation, className }))}
+      {...props}
+    >
+      {enhancedChildren}
+    </div>
+  );
+};
 ConnectedButtonGroup.displayName = 'ConnectedButtonGroup';
 
 export { ButtonGroup, buttonGroupVariants, ConnectedButtonGroup, connectedButtonGroupVariants };

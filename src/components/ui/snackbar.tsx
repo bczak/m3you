@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
-import * as React from 'react';
+import type * as React from 'react';
 import { Toaster as SonnerToaster, toast as sonnerToast } from 'sonner';
 
 import { cn } from '../../lib/utils';
@@ -42,71 +42,79 @@ export type SnackbarProps = React.ComponentProps<'output'> &
 
 // ─── Snackbar Component ──────────────────────────────────────────────────────
 
-const Snackbar = React.forwardRef<HTMLOutputElement, SnackbarProps>(
-  ({ className, layout = 'singleLine', message, actionLabel, onAction, closable, onClose, ...props }, ref) => {
-    const isLongerAction = layout === 'longerAction';
+const Snackbar = ({
+  className,
+  layout = 'singleLine',
+  message,
+  actionLabel,
+  onAction,
+  closable,
+  onClose,
+  ref,
+  ...props
+}: SnackbarProps & { ref?: React.Ref<HTMLOutputElement> }) => {
+  const isLongerAction = layout === 'longerAction';
 
-    return (
-      <output ref={ref} aria-live="polite" className={cn(snackbarVariants({ layout, className }))} {...props}>
-        {isLongerAction ? (
-          <>
-            {/* M3: supporting text with 16px left padding, 8px right padding */}
-            <span className="px-4 pt-[14px] pb-1 text-sm leading-5">{message}</span>
-            <div className="flex items-center justify-end px-2 pb-[2px]">
-              {actionLabel && (
-                <button
-                  type="button"
-                  onClick={onAction}
-                  className="cursor-pointer rounded px-3 py-[10px] font-medium text-inverse-primary text-sm hover:opacity-80"
-                >
-                  {actionLabel}
-                </button>
-              )}
-              {closable && (
-                <button
-                  type="button"
-                  aria-label="Dismiss"
-                  onClick={onClose}
-                  className="cursor-pointer rounded-full p-3 text-inverse-surface-foreground hover:bg-inverse-surface-foreground/12"
-                >
-                  <X className="size-5" />
-                </button>
-              )}
-            </div>
-          </>
-        ) : (
-          <>
-            {/* M3: 16px left padding for supporting text */}
-            <span className="flex-1 py-[14px] pl-4 text-sm leading-5">{message}</span>
-            <div className="flex shrink-0 items-center pr-2">
-              {/* M3: action uses inverse-primary color, label-large typography */}
-              {actionLabel && (
-                <button
-                  type="button"
-                  onClick={onAction}
-                  className="cursor-pointer rounded px-3 py-[10px] font-medium text-inverse-primary text-sm hover:opacity-80"
-                >
-                  {actionLabel}
-                </button>
-              )}
-              {/* M3: close icon uses inverse-on-surface color, 48px touch target */}
-              {closable && (
-                <button
-                  type="button"
-                  aria-label="Dismiss"
-                  onClick={onClose}
-                  className="cursor-pointer rounded-full p-3 text-inverse-surface-foreground hover:bg-inverse-surface-foreground/12"
-                >
-                  <X className="size-5" />
-                </button>
-              )}
-            </div>
-          </>
-        )}
-      </output>
-    );
-  },
-);
+  return (
+    <output ref={ref} aria-live="polite" className={cn(snackbarVariants({ layout, className }))} {...props}>
+      {isLongerAction ? (
+        <>
+          {/* M3: supporting text with 16px left padding, 8px right padding */}
+          <span className="px-4 pt-[14px] pb-1 text-sm leading-5">{message}</span>
+          <div className="flex items-center justify-end px-2 pb-[2px]">
+            {actionLabel && (
+              <button
+                type="button"
+                onClick={onAction}
+                className="cursor-pointer rounded px-3 py-[10px] font-medium text-inverse-primary text-sm hover:opacity-80"
+              >
+                {actionLabel}
+              </button>
+            )}
+            {closable && (
+              <button
+                type="button"
+                aria-label="Dismiss"
+                onClick={onClose}
+                className="cursor-pointer rounded-full p-3 text-inverse-surface-foreground hover:bg-inverse-surface-foreground/12"
+              >
+                <X className="size-5" />
+              </button>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          {/* M3: 16px left padding for supporting text */}
+          <span className="flex-1 py-[14px] pl-4 text-sm leading-5">{message}</span>
+          <div className="flex shrink-0 items-center pr-2">
+            {/* M3: action uses inverse-primary color, label-large typography */}
+            {actionLabel && (
+              <button
+                type="button"
+                onClick={onAction}
+                className="cursor-pointer rounded px-3 py-[10px] font-medium text-inverse-primary text-sm hover:opacity-80"
+              >
+                {actionLabel}
+              </button>
+            )}
+            {/* M3: close icon uses inverse-on-surface color, 48px touch target */}
+            {closable && (
+              <button
+                type="button"
+                aria-label="Dismiss"
+                onClick={onClose}
+                className="cursor-pointer rounded-full p-3 text-inverse-surface-foreground hover:bg-inverse-surface-foreground/12"
+              >
+                <X className="size-5" />
+              </button>
+            )}
+          </div>
+        </>
+      )}
+    </output>
+  );
+};
 Snackbar.displayName = 'Snackbar';
 
 // ─── Snackbar Host (Sonner Toaster) ──────────────────────────────────────────

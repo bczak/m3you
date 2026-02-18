@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Bell, Heart, Home, Mail, MessageSquare, Settings, ShoppingCart, Star, Tag, User } from 'lucide-react';
 import * as React from 'react';
 import { Badge, BadgeAnchor } from '../src/components/ui/badge';
+import { Button } from '../src/components/ui/button';
 import { Chip } from '../src/components/ui/chip';
 import { IconButton } from '../src/components/ui/icon-button';
 
@@ -350,27 +351,15 @@ export const VisibilityToggle: Story = {
           </BadgeAnchor>
 
           <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setCount((c) => Math.max(0, c - 1))}
-              className="rounded-lg bg-surface-container px-3 py-1.5 text-sm"
-            >
+            <Button variant="tonal" size="sm" onClick={() => setCount((c) => Math.max(0, c - 1))}>
               -1
-            </button>
-            <button
-              type="button"
-              onClick={() => setCount((c) => c + 1)}
-              className="rounded-lg bg-surface-container px-3 py-1.5 text-sm"
-            >
+            </Button>
+            <Button variant="tonal" size="sm" onClick={() => setCount((c) => c + 1)}>
               +1
-            </button>
-            <button
-              type="button"
-              onClick={() => setVisible((v) => !v)}
-              className="rounded-lg bg-surface-container px-3 py-1.5 text-sm"
-            >
+            </Button>
+            <Button variant="tonal" size="sm" onClick={() => setVisible((v) => !v)}>
               {visible ? 'Hide' : 'Show'}
-            </button>
+            </Button>
           </div>
 
           <span className="text-foreground/50 text-xs">Count: {count}</span>

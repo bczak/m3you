@@ -1,13 +1,25 @@
+/**
+ * Badge — Material Design 3
+ * @see https://m3.material.io/components/badges/overview
+ * @see https://m3.material.io/components/badges/specs
+ *
+ * Tokens:
+ * - Small badge: 6dp diameter, shape full (rounded-full)
+ * - Large badge: 16dp height, 16dp min-width, shape 8dp (rounded-lg)
+ * - Large padding: 4dp horizontal (px-1)
+ * - Typography: label-small 11sp (text-xs)
+ * - Color: error (bg-error), on-error (text-error-foreground)
+ */
 import { cva, type VariantProps } from 'class-variance-authority';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
 const badgeVariants = cva('inline-flex items-center justify-center font-medium text-error-foreground', {
   variants: {
     size: {
-      small: 'size-1.5 rounded-[3px] bg-error',
-      large: 'h-4 min-w-4 rounded-lg bg-error px-1 text-[11px] leading-none',
+      small: 'size-1.5 rounded-full bg-error',
+      large: 'h-4 min-w-4 rounded-lg bg-error px-1 text-xs leading-none',
     },
   },
   defaultVariants: {
@@ -25,30 +37,36 @@ export type BadgeProps = Omit<React.ComponentProps<'span'>, 'children'> &
     visible?: boolean;
   };
 
-const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, size, count, max = 999, visible = true, ...props }, ref) => {
-    // Determine if this should be a small (dot) or large badge
-    const isSmall = size === 'small' || count === undefined || count === 0;
-    const actualSize = isSmall ? 'small' : 'large';
+const Badge = ({
+  className,
+  size,
+  count,
+  max = 999,
+  visible = true,
+  ref,
+  ...props
+}: BadgeProps & { ref?: React.Ref<HTMLSpanElement> }) => {
+  // Determine if this should be a small (dot) or large badge
+  const isSmall = size === 'small' || count === undefined || count === 0;
+  const actualSize = isSmall ? 'small' : 'large';
 
-    // Format the display value
-    const getDisplayValue = () => {
-      if (isSmall) return null;
-      if (count !== undefined && count > max) {
-        return `${max}+`;
-      }
-      return count?.toString();
-    };
+  // Format the display value
+  const getDisplayValue = () => {
+    if (isSmall) return null;
+    if (count !== undefined && count > max) {
+      return `${max}+`;
+    }
+    return count?.toString();
+  };
 
-    if (!visible) return null;
+  if (!visible) return null;
 
-    return (
-      <span ref={ref} className={cn(badgeVariants({ size: actualSize, className }))} {...props}>
-        {getDisplayValue()}
-      </span>
-    );
-  },
-);
+  return (
+    <span ref={ref} className={cn(badgeVariants({ size: actualSize, className }))} {...props}>
+      {getDisplayValue()}
+    </span>
+  );
+};
 Badge.displayName = 'Badge';
 
 // BadgeAnchor - A wrapper component to position a badge relative to its children
@@ -87,16 +105,22 @@ const anchorPositionVariants = cva('absolute', {
   },
 });
 
-const BadgeAnchor = React.forwardRef<HTMLSpanElement, BadgeAnchorProps>(
-  ({ className, children, badge, position = 'top-right', overlap = 'rectangular', ...props }, ref) => {
-    return (
-      <span ref={ref} className={cn('relative inline-flex', className)} {...props}>
-        {children}
-        <span className={cn(anchorPositionVariants({ position, overlap }))}>{badge}</span>
-      </span>
-    );
-  },
-);
+const BadgeAnchor = ({
+  className,
+  children,
+  badge,
+  position = 'top-right',
+  overlap = 'rectangular',
+  ref,
+  ...props
+}: BadgeAnchorProps & { ref?: React.Ref<HTMLSpanElement> }) => {
+  return (
+    <span ref={ref} className={cn('relative inline-flex', className)} {...props}>
+      {children}
+      <span className={cn(anchorPositionVariants({ position, overlap }))}>{badge}</span>
+    </span>
+  );
+};
 BadgeAnchor.displayName = 'BadgeAnchor';
 
 export { Badge, BadgeAnchor, badgeVariants };

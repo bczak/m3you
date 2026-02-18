@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
@@ -63,66 +63,72 @@ export type CircularProgressProps = React.ComponentProps<'div'> &
     strokeWidth?: number;
   };
 
-const CircularProgress = React.forwardRef<HTMLDivElement, CircularProgressProps>(
-  ({ className, size = 'md', value = 0, indeterminate = false, strokeWidth = 4, ...props }, ref) => {
-    const clampedValue = Math.min(100, Math.max(0, value));
+const CircularProgress = ({
+  className,
+  size = 'md',
+  value = 0,
+  indeterminate = false,
+  strokeWidth = 4,
+  ref,
+  ...props
+}: CircularProgressProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const clampedValue = Math.min(100, Math.max(0, value));
 
-    // SVG circle calculations
-    const radius = 20; // viewBox is 48x48, center at 24, radius 20 gives good padding for stroke
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (clampedValue / 100) * circumference;
+  // SVG circle calculations
+  const radius = 20; // viewBox is 48x48, center at 24, radius 20 gives good padding for stroke
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (clampedValue / 100) * circumference;
 
-    return (
-      <div
-        ref={ref}
-        role="progressbar"
-        aria-valuenow={indeterminate ? undefined : clampedValue}
-        aria-valuemin={indeterminate ? undefined : 0}
-        aria-valuemax={indeterminate ? undefined : 100}
-        aria-label={indeterminate ? 'Loading' : `Progress: ${clampedValue}%`}
-        className={cn(circularProgressVariants({ size, className }))}
-        {...props}
+  return (
+    <div
+      ref={ref}
+      role="progressbar"
+      aria-valuenow={indeterminate ? undefined : clampedValue}
+      aria-valuemin={indeterminate ? undefined : 0}
+      aria-valuemax={indeterminate ? undefined : 100}
+      aria-label={indeterminate ? 'Loading' : `Progress: ${clampedValue}%`}
+      className={cn(circularProgressVariants({ size, className }))}
+      {...props}
+    >
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 48 48"
+        fill="none"
+        className={cn('size-full', circularProgressSvgVariants({ indeterminate }))}
       >
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 48 48"
+        {/* Track circle */}
+        <circle
+          cx="24"
+          cy="24"
+          r={radius}
+          strokeWidth={strokeWidth}
           fill="none"
-          className={cn('size-full', circularProgressSvgVariants({ indeterminate }))}
-        >
-          {/* Track circle */}
-          <circle
-            cx="24"
-            cy="24"
-            r={radius}
-            strokeWidth={strokeWidth}
-            fill="none"
-            className={cn(circularProgressTrackVariants({ size }))}
-          />
-          {/* Progress indicator circle */}
-          <circle
-            cx="24"
-            cy="24"
-            r={radius}
-            strokeWidth={strokeWidth}
-            fill="none"
-            strokeLinecap="round"
-            className={cn(circularProgressIndicatorVariants({ indeterminate }))}
-            style={
-              indeterminate
-                ? undefined
-                : {
-                    strokeDasharray: circumference,
-                    strokeDashoffset,
-                    transform: 'rotate(-90deg)',
-                    transformOrigin: 'center',
-                  }
-            }
-          />
-        </svg>
-      </div>
-    );
-  },
-);
+          className={cn(circularProgressTrackVariants({ size }))}
+        />
+        {/* Progress indicator circle */}
+        <circle
+          cx="24"
+          cy="24"
+          r={radius}
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeLinecap="round"
+          className={cn(circularProgressIndicatorVariants({ indeterminate }))}
+          style={
+            indeterminate
+              ? undefined
+              : {
+                  strokeDasharray: circumference,
+                  strokeDashoffset,
+                  transform: 'rotate(-90deg)',
+                  transformOrigin: 'center',
+                }
+          }
+        />
+      </svg>
+    </div>
+  );
+};
 CircularProgress.displayName = 'CircularProgress';
 
 export { CircularProgress, circularProgressVariants };

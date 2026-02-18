@@ -108,105 +108,101 @@ export type SwitchProps = Omit<React.ComponentProps<'input'>, 'type'> & {
   onCheckedChange?: (checked: boolean) => void;
 };
 
-const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
-  (
-    {
-      className,
-      checked: checkedProp,
-      defaultChecked = false,
-      variant = 'primary',
-      showIcons = false,
-      disabled,
-      onCheckedChange,
-      ...props
-    },
-    ref,
-  ) => {
-    const isControlled = checkedProp !== undefined;
-    const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
-    const checked = isControlled ? checkedProp : internalChecked;
+const Switch = ({
+  className,
+  checked: checkedProp,
+  defaultChecked = false,
+  variant = 'primary',
+  showIcons = false,
+  disabled,
+  onCheckedChange,
+  ref,
+  ...props
+}: SwitchProps & { ref?: React.Ref<HTMLInputElement> }) => {
+  const isControlled = checkedProp !== undefined;
+  const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
+  const checked = isControlled ? checkedProp : internalChecked;
 
-    const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-    // Merge refs
-    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+  // Merge refs
+  React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (!isControlled) {
-        setInternalChecked(e.target.checked);
-      }
-      onCheckedChange?.(e.target.checked);
-      props.onChange?.(e);
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isControlled) {
+      setInternalChecked(e.target.checked);
+    }
+    onCheckedChange?.(e.target.checked);
+    props.onChange?.(e);
+  };
 
-    return (
-      <label
+  return (
+    <label
+      className={cn(
+        'group relative inline-flex h-12 w-[68px] cursor-pointer items-center justify-center',
+        disabled && 'pointer-events-none opacity-38',
+        className,
+      )}
+    >
+      {/* State layer (40dp circular, centered on thumb) */}
+      <span
         className={cn(
-          'group relative inline-flex h-12 w-[68px] cursor-pointer items-center justify-center',
-          disabled && 'pointer-events-none opacity-38',
-          className,
+          'pointer-events-none absolute flex size-10 items-center justify-center rounded-full transition-all duration-300',
+          variant === 'primary' && (checked ? 'group-hover:bg-primary/8' : 'group-hover:bg-outline/8'),
+          variant === 'error' && (checked ? 'group-hover:bg-error/8' : 'group-hover:bg-error/8'),
+          // Position state layer with thumb
+          checked ? 'translate-x-3' : '-translate-x-3',
         )}
       >
-        {/* State layer (40dp circular, centered on thumb) */}
-        <span
-          className={cn(
-            'pointer-events-none absolute flex size-10 items-center justify-center rounded-full transition-all duration-300',
-            variant === 'primary' && (checked ? 'group-hover:bg-primary/8' : 'group-hover:bg-outline/8'),
-            variant === 'error' && (checked ? 'group-hover:bg-error/8' : 'group-hover:bg-error/8'),
-            // Position state layer with thumb
-            checked ? 'translate-x-3' : '-translate-x-3',
+        <Ripple />
+      </span>
+
+      {/* Track */}
+      <span
+        data-track
+        aria-hidden="true"
+        className={cn('pointer-events-none', switchTrackVariants({ variant, checked }))}
+      >
+        {/* Thumb - positioned absolutely, anchored to left (unchecked) or right (checked) */}
+        <span data-thumb className={switchThumbVariants({ variant, checked, withIcon: showIcons })}>
+          {showIcons && (
+            <span
+              className={cn(
+                'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+                checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
+              )}
+            >
+              <Check className="size-4" strokeWidth={3} />
+            </span>
           )}
-        >
-          <Ripple />
+          {showIcons && (
+            <span
+              className={cn(
+                'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+                !checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
+              )}
+            >
+              <X className="size-4" strokeWidth={3} />
+            </span>
+          )}
         </span>
+      </span>
 
-        {/* Track */}
-        <span
-          data-track
-          aria-hidden="true"
-          className={cn('pointer-events-none', switchTrackVariants({ variant, checked }))}
-        >
-          {/* Thumb - positioned absolutely, anchored to left (unchecked) or right (checked) */}
-          <span data-thumb className={switchThumbVariants({ variant, checked, withIcon: showIcons })}>
-            {showIcons && (
-              <span
-                className={cn(
-                  'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
-                  checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
-                )}
-              >
-                <Check className="size-4" strokeWidth={3} />
-              </span>
-            )}
-            {showIcons && (
-              <span
-                className={cn(
-                  'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
-                  !checked ? 'scale-100 opacity-100' : 'scale-0 opacity-0',
-                )}
-              >
-                <X className="size-4" strokeWidth={3} />
-              </span>
-            )}
-          </span>
-        </span>
-
-        {/* Hidden native input for accessibility */}
-        <input
-          ref={inputRef}
-          type="checkbox"
-          role="switch"
-          checked={checked}
-          disabled={disabled}
-          onChange={handleChange}
-          aria-checked={checked}
-          className="sr-only"
-          {...props}
-        />
-      </label>
-    );
-  },
-);
+      {/* Hidden native input for accessibility */}
+      <input
+        ref={inputRef}
+        type="checkbox"
+        role="switch"
+        checked={checked}
+        disabled={disabled}
+        onChange={handleChange}
+        aria-checked={checked}
+        className="sr-only"
+        {...props}
+      />
+    </label>
+  );
+};
 Switch.displayName = 'Switch';
 
 export { Switch, switchTrackVariants, switchThumbVariants };

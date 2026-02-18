@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Ripple } from 'm3-ripple';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
@@ -97,26 +97,31 @@ export type ButtonProps = React.ComponentProps<'button'> &
     selected?: boolean;
   };
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { className, variant = 'filled', shape = 'round', size = 'sm', morph = false, selected, children, ...props },
-    ref,
-  ) => {
-    // Only pass selected to variants if it's defined and variant is not 'text' (text buttons are not toggleable)
-    const selectedVariant = selected !== undefined && variant !== 'text' ? selected : undefined;
+const Button = ({
+  className,
+  variant = 'filled',
+  shape = 'round',
+  size = 'sm',
+  morph = false,
+  selected,
+  children,
+  ref,
+  ...props
+}: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  // Only pass selected to variants if it's defined and variant is not 'text' (text buttons are not toggleable)
+  const selectedVariant = selected !== undefined && variant !== 'text' ? selected : undefined;
 
-    return (
-      <button
-        className={cn(buttonVariants({ variant, shape, size, morph, selected: selectedVariant, className }))}
-        ref={ref}
-        {...props}
-      >
-        <Ripple />
-        {children}
-      </button>
-    );
-  },
-);
+  return (
+    <button
+      className={cn(buttonVariants({ variant, shape, size, morph, selected: selectedVariant, className }))}
+      ref={ref}
+      {...props}
+    >
+      <Ripple />
+      {children}
+    </button>
+  );
+};
 Button.displayName = 'Button';
 
 export { Button, buttonVariants };

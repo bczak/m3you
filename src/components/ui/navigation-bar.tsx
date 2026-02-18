@@ -55,23 +55,30 @@ const useNavigationBar = () => {
   return context;
 };
 
-const NavigationBar = React.forwardRef<HTMLElement, NavigationBarProps>(
-  ({ className, elevation, orientation = 'vertical', value, onValueChange, children, ...props }, ref) => {
-    const resolvedOrientation = orientation ?? 'vertical';
-    return (
-      <NavigationBarContext.Provider value={{ value, onValueChange, orientation: resolvedOrientation }}>
-        <nav
-          ref={ref}
-          aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
-          className={cn(navigationBarVariants({ elevation, orientation, className }))}
-          {...props}
-        >
-          {children}
-        </nav>
-      </NavigationBarContext.Provider>
-    );
-  },
-);
+const NavigationBar = ({
+  className,
+  elevation,
+  orientation = 'vertical',
+  value,
+  onValueChange,
+  children,
+  ref,
+  ...props
+}: NavigationBarProps & { ref?: React.Ref<HTMLElement> }) => {
+  const resolvedOrientation = orientation ?? 'vertical';
+  return (
+    <NavigationBarContext.Provider value={{ value, onValueChange, orientation: resolvedOrientation }}>
+      <nav
+        ref={ref}
+        aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
+        className={cn(navigationBarVariants({ elevation, orientation, className }))}
+        {...props}
+      >
+        {children}
+      </nav>
+    </NavigationBarContext.Provider>
+  );
+};
 NavigationBar.displayName = 'NavigationBar';
 
 /* =============================================================================
@@ -114,135 +121,144 @@ export type NavigationBarItemProps = Omit<React.ComponentProps<'button'>, 'value
     hideInactiveLabel?: boolean;
   };
 
-const NavigationBarItem = React.forwardRef<HTMLButtonElement, NavigationBarItemProps>(
-  ({ className, value, icon, activeIcon, label, badge, hideInactiveLabel = false, disabled, ...props }, ref) => {
-    const { value: selectedValue, onValueChange, orientation } = useNavigationBar();
-    const isActive = selectedValue === value;
+const NavigationBarItem = ({
+  className,
+  value,
+  icon,
+  activeIcon,
+  label,
+  badge,
+  hideInactiveLabel = false,
+  disabled,
+  ref,
+  ...props
+}: NavigationBarItemProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  const { value: selectedValue, onValueChange, orientation } = useNavigationBar();
+  const isActive = selectedValue === value;
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (!disabled) {
-        onValueChange?.(value);
-      }
-      props.onClick?.(e);
-    };
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!disabled) {
+      onValueChange?.(value);
+    }
+    props.onClick?.(e);
+  };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-        onValueChange?.(value);
-      }
-      props.onKeyDown?.(e);
-    };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+      onValueChange?.(value);
+    }
+    props.onKeyDown?.(e);
+  };
 
-    const showLabel = !hideInactiveLabel || isActive;
+  const showLabel = !hideInactiveLabel || isActive;
 
-    // Icon with opacity transition between outline and filled
-    // Both icons are stacked using CSS Grid, with opacity toggling based on active state
-    const renderIcon = () => {
-      if (!activeIcon) {
-        return icon;
-      }
+  // Icon with opacity transition between outline and filled
+  // Both icons are stacked using CSS Grid, with opacity toggling based on active state
+  const renderIcon = () => {
+    if (!activeIcon) {
+      return icon;
+    }
 
-      // Use CSS Grid to stack both icons in the same cell
-      return (
-        <span className="grid [&>*]:col-start-1 [&>*]:row-start-1">
-          {/* Outline icon - opacity 100 when inactive, 0 when active */}
-          <span className={cn('transition-opacity duration-200', isActive ? 'opacity-0' : 'opacity-100')}>{icon}</span>
-          {/* Filled icon - opacity 0 when inactive, 100 when active */}
-          <span className={cn('transition-opacity duration-200', isActive ? 'opacity-100' : 'opacity-0')}>
-            {activeIcon}
-          </span>
-        </span>
-      );
-    };
-
+    // Use CSS Grid to stack both icons in the same cell
     return (
-      <button
-        ref={ref}
-        type="button"
-        aria-label={label}
-        aria-current={isActive ? 'page' : undefined}
-        disabled={disabled}
-        className={cn(navigationBarItemVariants({ active: isActive, orientation, className }))}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        {...props}
-      >
-        {orientation === 'vertical' ? (
-          <>
-            {/* Vertical: Icon with indicator behind it only */}
-            <span className="relative flex items-center justify-center">
-              {/* Active indicator - expands from center */}
-              <span
-                className={cn(
-                  'absolute flex h-8 w-16 items-center justify-center rounded-full transition-transform duration-200 ease-out',
-                  isActive ? 'scale-x-100 bg-secondary-container' : 'scale-x-0 bg-secondary-container',
-                )}
-              />
-              {/* Ripple - always present for touch feedback */}
-              <span className="absolute flex h-8 w-16 items-center justify-center rounded-full">
-                <Ripple />
-              </span>
-              {/* Icon container with badge */}
-              <span className="relative z-10 flex h-8 items-center justify-center px-5">
-                <span className="relative">
-                  {renderIcon()}
-                  {/* Badge - positioned relative to icon */}
-                  {badge && (
-                    <span className="absolute -top-2 -right-2 z-20 flex min-w-4 items-center justify-center">
-                      {badge}
-                    </span>
-                  )}
-                </span>
-              </span>
-            </span>
-            {/* Label */}
+      <span className="grid [&>*]:col-start-1 [&>*]:row-start-1">
+        {/* Outline icon - opacity 100 when inactive, 0 when active */}
+        <span className={cn('transition-opacity duration-200', isActive ? 'opacity-0' : 'opacity-100')}>{icon}</span>
+        {/* Filled icon - opacity 0 when inactive, 100 when active */}
+        <span className={cn('transition-opacity duration-200', isActive ? 'opacity-100' : 'opacity-0')}>
+          {activeIcon}
+        </span>
+      </span>
+    );
+  };
+
+  return (
+    <button
+      ref={ref}
+      type="button"
+      aria-label={label}
+      aria-current={isActive ? 'page' : undefined}
+      disabled={disabled}
+      className={cn(navigationBarItemVariants({ active: isActive, orientation, className }))}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      {...props}
+    >
+      {orientation === 'vertical' ? (
+        <>
+          {/* Vertical: Icon with indicator behind it only */}
+          <span className="relative flex items-center justify-center">
+            {/* Active indicator - expands from center */}
             <span
               className={cn(
-                'z-10 mt-1 font-medium text-xs leading-none transition-opacity duration-200',
-                showLabel ? 'opacity-100' : 'h-0 opacity-0',
-              )}
-            >
-              {label}
-            </span>
-          </>
-        ) : (
-          <>
-            {/* Horizontal: Indicator behind both icon and label - expands from center */}
-            <span
-              className={cn(
-                'absolute inset-0 flex items-center justify-center rounded-full transition-transform duration-200 ease-out',
+                'absolute flex h-8 w-16 items-center justify-center rounded-full transition-transform duration-200 ease-out',
                 isActive ? 'scale-x-100 bg-secondary-container' : 'scale-x-0 bg-secondary-container',
               )}
             />
             {/* Ripple - always present for touch feedback */}
-            <span className="absolute inset-0 flex items-center justify-center rounded-full">
+            <span className="absolute flex h-8 w-16 items-center justify-center rounded-full">
               <Ripple />
             </span>
-            {/* Icon with badge */}
-            <span className="relative z-10 flex items-center justify-center">
-              {renderIcon()}
-              {/* Badge - positioned on icon */}
-              {badge && (
-                <span className="absolute -top-1.5 -right-1.5 z-20 flex min-w-4 items-center justify-center">
-                  {badge}
-                </span>
-              )}
+            {/* Icon container with badge */}
+            <span className="relative z-10 flex h-8 items-center justify-center px-5">
+              <span className="relative">
+                {renderIcon()}
+                {/* Badge - positioned relative to icon */}
+                {badge && (
+                  <span className="absolute -top-2 -right-2 z-20 flex min-w-4 items-center justify-center">
+                    {badge}
+                  </span>
+                )}
+              </span>
             </span>
-            {/* Label */}
-            <span
-              className={cn(
-                'z-10 font-medium text-sm leading-none transition-opacity duration-200',
-                showLabel ? 'opacity-100' : 'w-0 opacity-0',
-              )}
-            >
-              {label}
-            </span>
-          </>
-        )}
-      </button>
-    );
-  },
-);
+          </span>
+          {/* Label */}
+          <span
+            className={cn(
+              'z-10 mt-1 font-medium text-xs leading-none transition-opacity duration-200',
+              showLabel ? 'opacity-100' : 'h-0 opacity-0',
+            )}
+          >
+            {label}
+          </span>
+        </>
+      ) : (
+        <>
+          {/* Horizontal: Indicator behind both icon and label - expands from center */}
+          <span
+            className={cn(
+              'absolute inset-0 flex items-center justify-center rounded-full transition-transform duration-200 ease-out',
+              isActive ? 'scale-x-100 bg-secondary-container' : 'scale-x-0 bg-secondary-container',
+            )}
+          />
+          {/* Ripple - always present for touch feedback */}
+          <span className="absolute inset-0 flex items-center justify-center rounded-full">
+            <Ripple />
+          </span>
+          {/* Icon with badge */}
+          <span className="relative z-10 flex items-center justify-center">
+            {renderIcon()}
+            {/* Badge - positioned on icon */}
+            {badge && (
+              <span className="absolute -top-1.5 -right-1.5 z-20 flex min-w-4 items-center justify-center">
+                {badge}
+              </span>
+            )}
+          </span>
+          {/* Label */}
+          <span
+            className={cn(
+              'z-10 font-medium text-sm leading-none transition-opacity duration-200',
+              showLabel ? 'opacity-100' : 'w-0 opacity-0',
+            )}
+          >
+            {label}
+          </span>
+        </>
+      )}
+    </button>
+  );
+};
 NavigationBarItem.displayName = 'NavigationBarItem';
 
 export { NavigationBar, navigationBarVariants, NavigationBarItem, navigationBarItemVariants };

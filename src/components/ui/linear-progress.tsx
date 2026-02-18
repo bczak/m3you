@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
@@ -36,29 +36,34 @@ export type LinearProgressProps = React.ComponentProps<'div'> &
     indeterminate?: boolean;
   };
 
-const LinearProgress = React.forwardRef<HTMLDivElement, LinearProgressProps>(
-  ({ className, size = 'md', value = 0, indeterminate = false, ...props }, ref) => {
-    const clampedValue = Math.min(100, Math.max(0, value));
+const LinearProgress = ({
+  className,
+  size = 'md',
+  value = 0,
+  indeterminate = false,
+  ref,
+  ...props
+}: LinearProgressProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const clampedValue = Math.min(100, Math.max(0, value));
 
-    return (
+  return (
+    <div
+      ref={ref}
+      role="progressbar"
+      aria-valuenow={indeterminate ? undefined : clampedValue}
+      aria-valuemin={indeterminate ? undefined : 0}
+      aria-valuemax={indeterminate ? undefined : 100}
+      aria-label={indeterminate ? 'Loading' : `Progress: ${clampedValue}%`}
+      className={cn(linearProgressVariants({ size, className }))}
+      {...props}
+    >
       <div
-        ref={ref}
-        role="progressbar"
-        aria-valuenow={indeterminate ? undefined : clampedValue}
-        aria-valuemin={indeterminate ? undefined : 0}
-        aria-valuemax={indeterminate ? undefined : 100}
-        aria-label={indeterminate ? 'Loading' : `Progress: ${clampedValue}%`}
-        className={cn(linearProgressVariants({ size, className }))}
-        {...props}
-      >
-        <div
-          className={cn(linearProgressIndicatorVariants({ indeterminate }))}
-          style={indeterminate ? undefined : { width: `${clampedValue}%` }}
-        />
-      </div>
-    );
-  },
-);
+        className={cn(linearProgressIndicatorVariants({ indeterminate }))}
+        style={indeterminate ? undefined : { width: `${clampedValue}%` }}
+      />
+    </div>
+  );
+};
 LinearProgress.displayName = 'LinearProgress';
 
 export { LinearProgress, linearProgressVariants };

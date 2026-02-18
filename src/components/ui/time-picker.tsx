@@ -352,262 +352,258 @@ export type TimePickerProps = {
   className?: string;
 };
 
-const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
-  (
-    {
-      open,
-      onOpenChange,
-      value: controlledValue,
-      defaultValue,
-      onChange,
-      format = '12h',
-      headerLabel,
-      orientation = 'auto',
-      defaultMode = 'dial',
-      className,
-    },
-    ref,
-  ) => {
-    const isControlled = controlledValue !== undefined;
-    const [internalValue, setInternalValue] = React.useState(defaultValue ?? { hours: 12, minutes: 0 });
-    const currentValue = isControlled ? (controlledValue ?? { hours: 12, minutes: 0 }) : internalValue;
+const TimePicker = ({
+  open,
+  onOpenChange,
+  value: controlledValue,
+  defaultValue,
+  onChange,
+  format = '12h',
+  headerLabel,
+  orientation = 'auto',
+  defaultMode = 'dial',
+  className,
+  ref,
+}: TimePickerProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const isControlled = controlledValue !== undefined;
+  const [internalValue, setInternalValue] = React.useState(defaultValue ?? { hours: 12, minutes: 0 });
+  const currentValue = isControlled ? (controlledValue ?? { hours: 12, minutes: 0 }) : internalValue;
 
-    const [mode, setMode] = React.useState<TimePickerMode>(defaultMode);
-    const [selection, setSelection] = React.useState<Selection>('hours');
-    const [hours, setHours] = React.useState(currentValue.hours);
-    const [minutes, setMinutes] = React.useState(currentValue.minutes);
-    const [period, setPeriod] = React.useState<Period>(currentValue.hours >= 12 ? 'PM' : 'AM');
-    const [autoLandscape, setAutoLandscape] = React.useState(false);
-    const landscape = orientation === 'landscape' ? true : orientation === 'portrait' ? false : autoLandscape;
+  const [mode, setMode] = React.useState<TimePickerMode>(defaultMode);
+  const [selection, setSelection] = React.useState<Selection>('hours');
+  const [hours, setHours] = React.useState(currentValue.hours);
+  const [minutes, setMinutes] = React.useState(currentValue.minutes);
+  const [period, setPeriod] = React.useState<Period>(currentValue.hours >= 12 ? 'PM' : 'AM');
+  const [autoLandscape, setAutoLandscape] = React.useState(false);
+  const landscape = orientation === 'landscape' ? true : orientation === 'portrait' ? false : autoLandscape;
 
-    const hourInputRef = React.useRef<HTMLInputElement>(null);
-    const minuteInputRef = React.useRef<HTMLInputElement>(null);
+  const hourInputRef = React.useRef<HTMLInputElement>(null);
+  const minuteInputRef = React.useRef<HTMLInputElement>(null);
 
-    // Reset state when opened
-    React.useEffect(() => {
-      if (open) {
-        const v = isControlled ? (controlledValue ?? { hours: 12, minutes: 0 }) : internalValue;
-        setHours(v.hours);
-        setMinutes(v.minutes);
-        setPeriod(v.hours >= 12 ? 'PM' : 'AM');
-        setSelection('hours');
-        setMode(defaultMode);
-      }
-    }, [open, controlledValue, internalValue, isControlled, defaultMode]);
+  // Reset state when opened
+  React.useEffect(() => {
+    if (open) {
+      const v = isControlled ? (controlledValue ?? { hours: 12, minutes: 0 }) : internalValue;
+      setHours(v.hours);
+      setMinutes(v.minutes);
+      setPeriod(v.hours >= 12 ? 'PM' : 'AM');
+      setSelection('hours');
+      setMode(defaultMode);
+    }
+  }, [open, controlledValue, internalValue, isControlled, defaultMode]);
 
-    // Detect landscape (only used when orientation='auto')
-    React.useEffect(() => {
-      if (orientation !== 'auto') return;
-      const check = () => {
-        const isLand = window.innerWidth > window.innerHeight && window.innerHeight < 500;
-        setAutoLandscape(isLand);
-        if (window.innerHeight < 400) setMode('input');
-      };
-      check();
-      window.addEventListener('resize', check);
-      return () => window.removeEventListener('resize', check);
-    }, [orientation]);
-
-    const handleConfirm = React.useCallback(() => {
-      let h = hours;
-      if (format === '12h') {
-        if (period === 'PM' && h < 12) h += 12;
-        if (period === 'AM' && h === 12) h = 0;
-      }
-      const time = { hours: h, minutes };
-      if (!isControlled) setInternalValue(time);
-      onChange?.(time);
-      onOpenChange(false);
-    }, [hours, minutes, period, format, onChange, onOpenChange, isControlled]);
-
-    const displayHour = () => {
-      if (format === '24h') return hours.toString().padStart(2, '0');
-      const h = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
-      return h.toString().padStart(2, '0');
+  // Detect landscape (only used when orientation='auto')
+  React.useEffect(() => {
+    if (orientation !== 'auto') return;
+    const check = () => {
+      const isLand = window.innerWidth > window.innerHeight && window.innerHeight < 500;
+      setAutoLandscape(isLand);
+      if (window.innerHeight < 400) setMode('input');
     };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, [orientation]);
 
-    const dialHours = format === '12h' ? (hours === 0 ? 12 : hours > 12 ? hours - 12 : hours) : hours;
+  const handleConfirm = React.useCallback(() => {
+    let h = hours;
+    if (format === '12h') {
+      if (period === 'PM' && h < 12) h += 12;
+      if (period === 'AM' && h === 12) h = 0;
+    }
+    const time = { hours: h, minutes };
+    if (!isControlled) setInternalValue(time);
+    onChange?.(time);
+    onOpenChange(false);
+  }, [hours, minutes, period, format, onChange, onOpenChange, isControlled]);
 
-    const handleHourInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const val = Number.parseInt(e.target.value, 10);
-      if (Number.isNaN(val)) return;
-      if (format === '24h') {
-        if (val >= 0 && val <= 23) setHours(val);
-      } else {
-        if (val >= 1 && val <= 12) setHours(val);
-      }
-    };
+  const displayHour = () => {
+    if (format === '24h') return hours.toString().padStart(2, '0');
+    const h = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+    return h.toString().padStart(2, '0');
+  };
 
-    const handleMinuteInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const val = Number.parseInt(e.target.value, 10);
-      if (Number.isNaN(val)) return;
-      if (val >= 0 && val <= 59) setMinutes(val);
-    };
+  const dialHours = format === '12h' ? (hours === 0 ? 12 : hours > 12 ? hours - 12 : hours) : hours;
 
-    const headerText = headerLabel ?? (mode === 'dial' ? 'Select time' : 'Enter time');
+  const handleHourInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number.parseInt(e.target.value, 10);
+    if (Number.isNaN(val)) return;
+    if (format === '24h') {
+      if (val >= 0 && val <= 23) setHours(val);
+    } else {
+      if (val >= 1 && val <= 12) setHours(val);
+    }
+  };
 
-    const isInput = mode === 'input';
-    const periodOrientation = landscape && !isInput ? 'horizontal' : 'vertical';
+  const handleMinuteInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number.parseInt(e.target.value, 10);
+    if (Number.isNaN(val)) return;
+    if (val >= 0 && val <= 59) setMinutes(val);
+  };
 
-    const renderTimeDisplay = () => (
-      <div className={cn('flex items-center gap-2', landscape && !isInput && 'flex-col items-start')}>
-        {!isInput ? (
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className={timeBoxVariants({ selected: selection === 'hours', inputMode: false })}
-              onClick={() => setSelection('hours')}
+  const headerText = headerLabel ?? (mode === 'dial' ? 'Select time' : 'Enter time');
+
+  const isInput = mode === 'input';
+  const periodOrientation = landscape && !isInput ? 'horizontal' : 'vertical';
+
+  const renderTimeDisplay = () => (
+    <div className={cn('flex items-center gap-2', landscape && !isInput && 'flex-col items-start')}>
+      {!isInput ? (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className={timeBoxVariants({ selected: selection === 'hours', inputMode: false })}
+            onClick={() => setSelection('hours')}
+            aria-label="Hours"
+          >
+            {displayHour()}
+          </button>
+          <span className="font-normal text-[45px] text-foreground leading-none">:</span>
+          <button
+            type="button"
+            className={timeBoxVariants({ selected: selection === 'minutes', inputMode: false })}
+            onClick={() => setSelection('minutes')}
+            aria-label="Minutes"
+          >
+            {minutes.toString().padStart(2, '0')}
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="flex flex-col gap-1">
+            <input
+              ref={hourInputRef}
+              className={cn(
+                timeBoxVariants({ selected: selection === 'hours', inputMode: true }),
+                'w-24 text-center caret-primary outline-none',
+              )}
+              value={displayHour()}
+              onChange={handleHourInput}
+              onFocus={() => setSelection('hours')}
+              placeholder="--"
+              inputMode="numeric"
+              maxLength={2}
               aria-label="Hours"
-            >
-              {displayHour()}
-            </button>
-            <span className="font-normal text-[45px] text-foreground leading-none">:</span>
-            <button
-              type="button"
-              className={timeBoxVariants({ selected: selection === 'minutes', inputMode: false })}
-              onClick={() => setSelection('minutes')}
-              aria-label="Minutes"
-            >
-              {minutes.toString().padStart(2, '0')}
-            </button>
+            />
+            <span className="font-medium text-surface-variant-foreground text-xs tracking-wider">Hour</span>
           </div>
-        ) : (
-          <>
-            <div className="flex flex-col gap-1">
-              <input
-                ref={hourInputRef}
-                className={cn(
-                  timeBoxVariants({ selected: selection === 'hours', inputMode: true }),
-                  'w-24 text-center caret-primary outline-none',
-                )}
-                value={displayHour()}
-                onChange={handleHourInput}
-                onFocus={() => setSelection('hours')}
-                placeholder="--"
-                inputMode="numeric"
-                maxLength={2}
-                aria-label="Hours"
-              />
-              <span className="font-medium text-surface-variant-foreground text-xs tracking-wider">Hour</span>
-            </div>
-            <span className="mt-[-20px] font-normal text-[45px] text-foreground leading-none">:</span>
-            <div className="flex flex-col gap-1">
-              <input
-                ref={minuteInputRef}
-                className={cn(
-                  timeBoxVariants({ selected: selection === 'minutes', inputMode: true }),
-                  'w-24 text-center caret-primary outline-none',
-                )}
-                value={minutes.toString().padStart(2, '0')}
-                onChange={handleMinuteInput}
-                onFocus={() => setSelection('minutes')}
-                placeholder="--"
-                inputMode="numeric"
-                maxLength={2}
-                aria-label="Minutes"
-              />
-              <span className="font-medium text-surface-variant-foreground text-xs tracking-wider">Minute</span>
-            </div>
-          </>
-        )}
-        {format === '12h' && (
-          <PeriodSelector period={period} onChange={setPeriod} orientation={periodOrientation} inputMode={isInput} />
-        )}
+          <span className="mt-[-20px] font-normal text-[45px] text-foreground leading-none">:</span>
+          <div className="flex flex-col gap-1">
+            <input
+              ref={minuteInputRef}
+              className={cn(
+                timeBoxVariants({ selected: selection === 'minutes', inputMode: true }),
+                'w-24 text-center caret-primary outline-none',
+              )}
+              value={minutes.toString().padStart(2, '0')}
+              onChange={handleMinuteInput}
+              onFocus={() => setSelection('minutes')}
+              placeholder="--"
+              inputMode="numeric"
+              maxLength={2}
+              aria-label="Minutes"
+            />
+            <span className="font-medium text-surface-variant-foreground text-xs tracking-wider">Minute</span>
+          </div>
+        </>
+      )}
+      {format === '12h' && (
+        <PeriodSelector period={period} onChange={setPeriod} orientation={periodOrientation} inputMode={isInput} />
+      )}
+    </div>
+  );
+
+  const renderDialBody = () =>
+    landscape ? (
+      <div className="flex items-center gap-6">
+        <div className="flex flex-col gap-3">
+          <span className="font-medium text-surface-variant-foreground text-xs uppercase tracking-wider">
+            {headerText}
+          </span>
+          {renderTimeDisplay()}
+        </div>
+        <ClockDial
+          selection={selection}
+          hours={dialHours}
+          minutes={minutes}
+          format={format}
+          onHourChange={setHours}
+          onMinuteChange={setMinutes}
+          onSelectionChange={setSelection}
+        />
+      </div>
+    ) : (
+      <div className="flex items-center justify-center">
+        <ClockDial
+          selection={selection}
+          hours={dialHours}
+          minutes={minutes}
+          format={format}
+          onHourChange={setHours}
+          onMinuteChange={setMinutes}
+          onSelectionChange={setSelection}
+        />
       </div>
     );
 
-    const renderDialBody = () =>
-      landscape ? (
-        <div className="flex items-center gap-6">
-          <div className="flex flex-col gap-3">
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        ref={ref}
+        aria-label={headerText}
+        className={cn(
+          'flex w-auto flex-col gap-5',
+          landscape && !isInput ? 'min-w-[520px]' : 'min-w-[328px]',
+          className,
+        )}
+      >
+        {/* Portrait header + time display, or landscape input mode */}
+        {(!landscape || isInput) && (
+          <>
             <span className="font-medium text-surface-variant-foreground text-xs uppercase tracking-wider">
               {headerText}
             </span>
             {renderTimeDisplay()}
-          </div>
-          <ClockDial
-            selection={selection}
-            hours={dialHours}
-            minutes={minutes}
-            format={format}
-            onHourChange={setHours}
-            onMinuteChange={setMinutes}
-            onSelectionChange={setSelection}
-          />
-        </div>
-      ) : (
-        <div className="flex items-center justify-center">
-          <ClockDial
-            selection={selection}
-            hours={dialHours}
-            minutes={minutes}
-            format={format}
-            onHourChange={setHours}
-            onMinuteChange={setMinutes}
-            onSelectionChange={setSelection}
-          />
-        </div>
-      );
+          </>
+        )}
 
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent
-          ref={ref}
-          aria-label={headerText}
-          className={cn(
-            'flex w-auto flex-col gap-5',
-            landscape && !isInput ? 'min-w-[520px]' : 'min-w-[328px]',
-            className,
-          )}
-        >
-          {/* Portrait header + time display, or landscape input mode */}
-          {(!landscape || isInput) && (
-            <>
-              <span className="font-medium text-surface-variant-foreground text-xs uppercase tracking-wider">
-                {headerText}
-              </span>
-              {renderTimeDisplay()}
-            </>
-          )}
+        {/* Dial body (handles its own landscape header) */}
+        {!isInput && renderDialBody()}
 
-          {/* Dial body (handles its own landscape header) */}
-          {!isInput && renderDialBody()}
-
-          {/* Footer */}
-          <div className="flex items-center justify-between">
+        {/* Footer */}
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+            onClick={() => setMode((m) => (m === 'dial' ? 'input' : 'dial'))}
+            aria-label={isInput ? 'Switch to clock dial' : 'Switch to keyboard input'}
+          >
+            <Ripple />
+            {isInput ? <Clock className="size-6" /> : <Keyboard className="size-6" />}
+          </button>
+          <div className="flex gap-2">
             <button
               type="button"
-              className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
-              onClick={() => setMode((m) => (m === 'dial' ? 'input' : 'dial'))}
-              aria-label={isInput ? 'Switch to clock dial' : 'Switch to keyboard input'}
+              onClick={() => onOpenChange(false)}
+              className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
             >
               <Ripple />
-              {isInput ? <Clock className="size-6" /> : <Keyboard className="size-6" />}
+              Cancel
             </button>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => onOpenChange(false)}
-                className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
-              >
-                <Ripple />
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirm}
-                className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
-              >
-                <Ripple />
-                OK
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleConfirm}
+              className="relative rounded-full px-3 py-1.5 font-medium text-primary text-sm transition-colors hover:bg-primary/8"
+            >
+              <Ripple />
+              OK
+            </button>
           </div>
-        </DialogContent>
-      </Dialog>
-    );
-  },
-);
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 TimePicker.displayName = 'TimePicker';
 
 // =============================================================================

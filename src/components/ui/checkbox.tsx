@@ -40,76 +40,80 @@ export type CheckboxProps = Omit<React.ComponentProps<'input'>, 'type'> & {
   onCheckedChange?: (checked: boolean) => void;
 };
 
-const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  (
-    { className, checked = false, indeterminate = false, variant = 'primary', disabled, onCheckedChange, ...props },
-    ref,
-  ) => {
-    const inputRef = React.useRef<HTMLInputElement>(null);
+const Checkbox = ({
+  className,
+  checked = false,
+  indeterminate = false,
+  variant = 'primary',
+  disabled,
+  onCheckedChange,
+  ref,
+  ...props
+}: CheckboxProps & { ref?: React.Ref<HTMLInputElement> }) => {
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-    // Merge refs
-    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+  // Merge refs
+  React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-    // Set indeterminate state via ref (not an HTML attribute)
-    React.useEffect(() => {
-      if (inputRef.current) {
-        inputRef.current.indeterminate = indeterminate;
-      }
-    }, [indeterminate]);
+  // Set indeterminate state via ref (not an HTML attribute)
+  React.useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.indeterminate = indeterminate;
+    }
+  }, [indeterminate]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      onCheckedChange?.(e.target.checked);
-      props.onChange?.(e);
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onCheckedChange?.(e.target.checked);
+    props.onChange?.(e);
+  };
 
-    // Determine visual state: indeterminate takes precedence over checked
-    const isVisuallyChecked = indeterminate || checked;
+  // Determine visual state: indeterminate takes precedence over checked
+  const isVisuallyChecked = indeterminate || checked;
 
-    return (
-      <label
+  return (
+    <label
+      className={cn(
+        'group relative inline-flex size-12 cursor-pointer items-center justify-center',
+        disabled && 'pointer-events-none opacity-38',
+        className,
+      )}
+    >
+      {/* State layer (40px circular) */}
+      <span
         className={cn(
-          'group relative inline-flex size-12 cursor-pointer items-center justify-center',
-          disabled && 'pointer-events-none opacity-38',
-          className,
+          'pointer-events-none absolute flex size-10 items-center justify-center rounded-full transition-colors duration-200',
+          variant === 'primary' && 'group-hover:bg-primary/8',
+          variant === 'error' && 'group-hover:bg-error/8',
         )}
       >
-        {/* State layer (40px circular) */}
-        <span
-          className={cn(
-            'pointer-events-none absolute flex size-10 items-center justify-center rounded-full transition-colors duration-200',
-            variant === 'primary' && 'group-hover:bg-primary/8',
-            variant === 'error' && 'group-hover:bg-error/8',
-          )}
-        >
-          <Ripple />
-        </span>
+        <Ripple />
+      </span>
 
-        {/* Visual checkbox (18px) */}
-        <span
-          aria-hidden="true"
-          className={cn('pointer-events-none', checkboxVariants({ variant, checked: isVisuallyChecked }))}
-        >
-          {indeterminate ? (
-            <Minus className="scale-100 transition-transform duration-200 ease-out" />
-          ) : checked ? (
-            <Check className="scale-100 transition-transform duration-200 ease-out" />
-          ) : null}
-        </span>
+      {/* Visual checkbox (18px) */}
+      <span
+        aria-hidden="true"
+        className={cn('pointer-events-none', checkboxVariants({ variant, checked: isVisuallyChecked }))}
+      >
+        {indeterminate ? (
+          <Minus className="scale-100 transition-transform duration-200 ease-out" />
+        ) : checked ? (
+          <Check className="scale-100 transition-transform duration-200 ease-out" />
+        ) : null}
+      </span>
 
-        {/* Hidden native input for accessibility */}
-        <input
-          ref={inputRef}
-          type="checkbox"
-          checked={checked}
-          disabled={disabled}
-          onChange={handleChange}
-          className="sr-only"
-          {...props}
-        />
-      </label>
-    );
-  },
-);
+      {/* Hidden native input for accessibility */}
+      <input
+        ref={inputRef}
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={handleChange}
+        className="sr-only"
+        {...props}
+      />
+    </label>
+  );
+};
 Checkbox.displayName = 'Checkbox';
 
 export { Checkbox, checkboxVariants };
