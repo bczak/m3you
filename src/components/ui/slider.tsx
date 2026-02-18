@@ -274,6 +274,9 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
               const distFromHandle = Math.abs(stopPercent - clampedPercent);
               if (distFromHandle < 2) return null;
               const stopValue = min + i * step;
+              // Inset first/last dots by outerR so they stay inside rounded corners
+              const insetPx = outerR * (1 - (2 * stopPercent) / 100);
+              const pos = `calc(${stopPercent}% + ${insetPx}px)`;
               return (
                 <div
                   key={stopValue}
@@ -282,7 +285,7 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
                     isVertical ? 'left-1/2' : 'top-1/2',
                     isActive ? 'bg-primary-foreground/40' : 'bg-outline/40',
                   )}
-                  style={isVertical ? { bottom: `${stopPercent}%` } : { left: `${stopPercent}%` }}
+                  style={isVertical ? { bottom: pos } : { left: pos }}
                 />
               );
             })}
