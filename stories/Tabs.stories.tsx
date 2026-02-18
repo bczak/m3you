@@ -231,7 +231,7 @@ const WithPanelsDemo = () => {
           role="tabpanel"
           aria-labelledby={`tab-${key}`}
           hidden={value !== key}
-          className="p-4 text-foreground text-sm"
+          className="p-4 text-on-background text-sm"
         >
           {content}
         </div>
@@ -277,12 +277,12 @@ export const BuildingBlocks: Story = {
   render: () => {
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h1 className="mb-8 text-center font-semibold text-foreground text-xl">Building Blocks</h1>
+        <h1 className="mb-8 text-center font-semibold text-on-background text-xl">Building Blocks</h1>
 
         <div className="mx-auto max-w-3xl space-y-12">
           {/* Primary - Icon + Label */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Primary - Icon + Label</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Primary - Icon + Label</h2>
             <div className="flex justify-center gap-4">
               <Tabs value="active" className="w-[300px]">
                 <Tab value="active" icon={<MdFlight />}>
@@ -297,7 +297,7 @@ export const BuildingBlocks: Story = {
 
           {/* Primary - Label Only */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Primary - Label Only</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Primary - Label Only</h2>
             <div className="flex justify-center gap-4">
               <Tabs value="active" className="w-[300px]">
                 <Tab value="active">Active</Tab>
@@ -308,7 +308,7 @@ export const BuildingBlocks: Story = {
 
           {/* Primary - Icon + Label + Badge */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Primary - Icon + Label + Badge</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Primary - Icon + Label + Badge</h2>
             <div className="flex justify-center gap-4">
               <Tabs value="active" className="w-[300px]">
                 <Tab value="active" icon={<MdFlight />} badge={<Badge variant="small">3</Badge>}>
@@ -323,7 +323,7 @@ export const BuildingBlocks: Story = {
 
           {/* Secondary - Label Only */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Secondary - Label Only</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Secondary - Label Only</h2>
             <div className="flex justify-center gap-4">
               <Tabs variant="secondary" value="active" className="w-[300px]">
                 <Tab value="active">Active</Tab>
@@ -334,10 +334,10 @@ export const BuildingBlocks: Story = {
 
           {/* Content Width vs Full Width */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Full Width vs Content Width</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Full Width vs Content Width</h2>
             <div className="space-y-4">
               <div>
-                <p className="mb-2 text-foreground/40 text-xs">Full Width (default)</p>
+                <p className="mb-2 text-on-background/40 text-xs">Full Width (default)</p>
                 <Tabs value="tab1">
                   <Tab value="tab1">Tab 1</Tab>
                   <Tab value="tab2">Tab 2</Tab>
@@ -345,7 +345,7 @@ export const BuildingBlocks: Story = {
                 </Tabs>
               </div>
               <div>
-                <p className="mb-2 text-foreground/40 text-xs">Content Width</p>
+                <p className="mb-2 text-on-background/40 text-xs">Content Width</p>
                 <Tabs value="tab1" fullWidth={false}>
                   <Tab value="tab1">Tab 1</Tab>
                   <Tab value="tab2">Tab 2</Tab>
@@ -357,7 +357,7 @@ export const BuildingBlocks: Story = {
 
           {/* Disabled State */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Disabled State</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Disabled State</h2>
             <div className="flex justify-center gap-4">
               <Tabs value="active" className="w-[300px]">
                 <Tab value="active" icon={<MdFlight />}>
@@ -385,27 +385,19 @@ const TravelApp = () => {
   return (
     <div className="w-[420px] bg-surface">
       <div className="bg-primary px-4 pt-4 pb-0">
-        <h1 className="mb-4 font-bold text-primary-foreground text-xl">Travel</h1>
-        <Tabs value={value} onValueChange={setValue} className="border-primary-foreground/20">
-          <Tab
-            value="flights"
-            icon={<MdOutlineFlight />}
-            className="text-primary-foreground/70 aria-selected:text-primary-foreground"
-          >
+        <h1 className="mb-4 font-bold text-on-primary text-xl">Travel</h1>
+        <Tabs value={value} onValueChange={setValue} className="border-on-primary/20">
+          <Tab value="flights" icon={<MdOutlineFlight />} className="text-on-primary/70 aria-selected:text-on-primary">
             Flights
           </Tab>
           <Tab
             value="trips"
             icon={<MdOutlineLocalActivity />}
-            className="text-primary-foreground/70 aria-selected:text-primary-foreground"
+            className="text-on-primary/70 aria-selected:text-on-primary"
           >
             Trips
           </Tab>
-          <Tab
-            value="explore"
-            icon={<MdOutlineExplore />}
-            className="text-primary-foreground/70 aria-selected:text-primary-foreground"
-          >
+          <Tab value="explore" icon={<MdOutlineExplore />} className="text-on-primary/70 aria-selected:text-on-primary">
             Explore
           </Tab>
         </Tabs>
@@ -414,19 +406,19 @@ const TravelApp = () => {
         {value === 'flights' && (
           <div className="space-y-3">
             <div className="rounded-lg bg-surface-container p-4">
-              <p className="font-medium text-foreground">New York to London</p>
-              <p className="text-foreground/60 text-sm">Mar 15 - Mar 22, 2026</p>
+              <p className="font-medium text-on-background">New York to London</p>
+              <p className="text-on-background/60 text-sm">Mar 15 - Mar 22, 2026</p>
             </div>
             <div className="rounded-lg bg-surface-container p-4">
-              <p className="font-medium text-foreground">Tokyo to Paris</p>
-              <p className="text-foreground/60 text-sm">Apr 3 - Apr 10, 2026</p>
+              <p className="font-medium text-on-background">Tokyo to Paris</p>
+              <p className="text-on-background/60 text-sm">Apr 3 - Apr 10, 2026</p>
             </div>
           </div>
         )}
         {value === 'trips' && (
           <div className="rounded-lg bg-surface-container p-4">
-            <p className="font-medium text-foreground">No upcoming trips</p>
-            <p className="text-foreground/60 text-sm">Book a flight to get started</p>
+            <p className="font-medium text-on-background">No upcoming trips</p>
+            <p className="text-on-background/60 text-sm">Book a flight to get started</p>
           </div>
         )}
         {value === 'explore' && (
@@ -434,7 +426,7 @@ const TravelApp = () => {
             {['Paris', 'Tokyo', 'London', 'New York'].map((city) => (
               <div key={city} className="overflow-hidden rounded-lg bg-surface-container">
                 <div className="aspect-video bg-secondary-container/50" />
-                <p className="p-2 font-medium text-foreground text-sm">{city}</p>
+                <p className="p-2 font-medium text-on-background text-sm">{city}</p>
               </div>
             ))}
           </div>
@@ -458,8 +450,8 @@ const ProductPage = () => {
   return (
     <div className="w-[420px] bg-surface">
       <div className="p-4 pb-0">
-        <h1 className="mb-1 font-bold text-foreground text-lg">Pixel Watch 3</h1>
-        <p className="mb-4 text-foreground/60 text-sm">The best of Google on your wrist</p>
+        <h1 className="mb-1 font-bold text-lg text-on-background">Pixel Watch 3</h1>
+        <p className="mb-4 text-on-background/60 text-sm">The best of Google on your wrist</p>
       </div>
 
       <Tabs variant="secondary" value={value} onValueChange={setValue}>
@@ -470,7 +462,7 @@ const ProductPage = () => {
 
       <div className="p-4">
         {value === 'overview' && (
-          <p className="text-foreground/80 text-sm leading-relaxed">
+          <p className="text-on-background/80 text-sm leading-relaxed">
             Meet Pixel Watch 3, the watch designed to help you get the most out of every day. With advanced health
             tracking, seamless Google integration, and a beautiful design.
           </p>
@@ -478,24 +470,24 @@ const ProductPage = () => {
         {value === 'specifications' && (
           <div className="space-y-2 text-sm">
             <div className="flex justify-between border-outline-variant/50 border-b pb-2">
-              <span className="text-foreground/60">Display</span>
-              <span className="text-foreground">1.2&quot; AMOLED</span>
+              <span className="text-on-background/60">Display</span>
+              <span className="text-on-background">1.2&quot; AMOLED</span>
             </div>
             <div className="flex justify-between border-outline-variant/50 border-b pb-2">
-              <span className="text-foreground/60">Battery</span>
-              <span className="text-foreground">24 hours</span>
+              <span className="text-on-background/60">Battery</span>
+              <span className="text-on-background">24 hours</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-foreground/60">Water resistance</span>
-              <span className="text-foreground">5 ATM</span>
+              <span className="text-on-background/60">Water resistance</span>
+              <span className="text-on-background">5 ATM</span>
             </div>
           </div>
         )}
         {value === 'reviews' && (
           <div className="space-y-3">
             <div className="rounded-lg bg-surface-container p-3">
-              <p className="mb-1 font-medium text-foreground text-sm">Great smartwatch!</p>
-              <p className="text-foreground/60 text-xs">Love the health tracking features.</p>
+              <p className="mb-1 font-medium text-on-background text-sm">Great smartwatch!</p>
+              <p className="text-on-background/60 text-xs">Love the health tracking features.</p>
             </div>
           </div>
         )}

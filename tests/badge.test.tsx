@@ -114,7 +114,7 @@ test('has error background color class', async () => {
 test('has error foreground text color class', async () => {
   render(<Badge count={5} data-testid="badge" />);
   const badge = screen.getByTestId('badge');
-  expect(badge).toHaveClass('text-error-foreground');
+  expect(badge).toHaveClass('text-on-error');
 });
 
 // BadgeAnchor tests

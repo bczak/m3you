@@ -51,34 +51,34 @@ export const AllVariantsShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">TextField States</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">TextField States</h2>
       <div className="mx-auto max-w-4xl space-y-10">
         {/* Filled */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Filled Variant</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Filled Variant</h3>
           <div className="grid grid-cols-3 gap-6">
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Enabled (empty)</span>
+              <span className="text-on-background/40 text-xs">Enabled (empty)</span>
               <TextField label="Label" />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">With value</span>
+              <span className="text-on-background/40 text-xs">With value</span>
               <TextField label="Label" defaultValue="Input text" />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Error</span>
+              <span className="text-on-background/40 text-xs">Error</span>
               <TextField label="Label" defaultValue="Input text" error errorText="Error message" />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Disabled (empty)</span>
+              <span className="text-on-background/40 text-xs">Disabled (empty)</span>
               <TextField label="Label" disabled />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Disabled (with value)</span>
+              <span className="text-on-background/40 text-xs">Disabled (with value)</span>
               <TextField label="Label" defaultValue="Input text" disabled />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">With supporting text</span>
+              <span className="text-on-background/40 text-xs">With supporting text</span>
               <TextField label="Label" supportingText="Supporting text" />
             </div>
           </div>
@@ -86,30 +86,30 @@ export const AllVariantsShowcase: Story = {
 
         {/* Outlined */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Outlined Variant</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Outlined Variant</h3>
           <div className="grid grid-cols-3 gap-6">
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Enabled (empty)</span>
+              <span className="text-on-background/40 text-xs">Enabled (empty)</span>
               <TextField variant="outlined" label="Label" />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">With value</span>
+              <span className="text-on-background/40 text-xs">With value</span>
               <TextField variant="outlined" label="Label" defaultValue="Input text" />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Error</span>
+              <span className="text-on-background/40 text-xs">Error</span>
               <TextField variant="outlined" label="Label" defaultValue="Input text" error errorText="Error message" />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Disabled (empty)</span>
+              <span className="text-on-background/40 text-xs">Disabled (empty)</span>
               <TextField variant="outlined" label="Label" disabled />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Disabled (with value)</span>
+              <span className="text-on-background/40 text-xs">Disabled (with value)</span>
               <TextField variant="outlined" label="Label" defaultValue="Input text" disabled />
             </div>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">With supporting text</span>
+              <span className="text-on-background/40 text-xs">With supporting text</span>
               <TextField variant="outlined" label="Label" supportingText="Supporting text" />
             </div>
           </div>
@@ -217,24 +217,24 @@ export const WithIcons: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">TextField with Icons</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">TextField with Icons</h2>
         <div className="mx-auto max-w-md space-y-8">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
             <div className="space-y-6">
               <div className="space-y-2">
-                <span className="text-foreground/40 text-xs">Leading icon</span>
+                <span className="text-on-background/40 text-xs">Leading icon</span>
                 <TextField label="Search" leadingIcon={<SearchIcon />} />
               </div>
               <div className="space-y-2">
-                <span className="text-foreground/40 text-xs">Trailing icon</span>
+                <span className="text-on-background/40 text-xs">Trailing icon</span>
                 <TextField label="Email" error errorText="Invalid email" trailingIcon={<ErrorIcon />} />
               </div>
               <div className="space-y-2">
-                <span className="text-foreground/40 text-xs">Both icons</span>
+                <span className="text-on-background/40 text-xs">Both icons</span>
                 <TextField label="Search" leadingIcon={<SearchIcon />} trailingIcon={<ClearIcon />} />
               </div>
               <div className="space-y-2">
-                <span className="text-foreground/40 text-xs">Password toggle</span>
+                <span className="text-on-background/40 text-xs">Password toggle</span>
                 <PasswordField />
               </div>
             </div>
@@ -251,7 +251,7 @@ export const WithSupportingText: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Supporting Text & Error Messages</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Supporting Text & Error Messages</h2>
       <div className="mx-auto max-w-md space-y-8">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
           <div className="space-y-6">
@@ -309,7 +309,7 @@ export const CharacterCounter: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Character Counter</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Character Counter</h2>
         <div className="mx-auto max-w-md space-y-8">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
             <div className="space-y-6">
@@ -329,7 +329,7 @@ export const PrefixAndSuffix: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Prefix & Suffix Text</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Prefix & Suffix Text</h2>
       <div className="mx-auto max-w-md space-y-8">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
           <div className="space-y-6">
@@ -350,7 +350,7 @@ export const InputTypes: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Input Types</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Input Types</h2>
       <div className="mx-auto max-w-md space-y-8">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
           <div className="space-y-6">
@@ -452,10 +452,10 @@ export const FormExample: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Login Form Example</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Login Form Example</h2>
         <div className="mx-auto max-w-sm">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center font-medium text-foreground text-lg">Welcome back</h3>
+            <h3 className="mb-6 text-center font-medium text-lg text-on-background">Welcome back</h3>
             <LoginForm />
           </div>
         </div>
@@ -470,10 +470,10 @@ export const ContactForm: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Contact Form (Mixed Variants)</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Contact Form (Mixed Variants)</h2>
       <div className="mx-auto max-w-lg">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground text-lg">Contact Us</h3>
+          <h3 className="mb-6 text-center font-medium text-lg text-on-background">Contact Us</h3>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <TextField label="First Name" />
@@ -520,7 +520,7 @@ export const SearchBar: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Search Bar</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Search Bar</h2>
         <div className="mx-auto max-w-md">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
             <SearchInput />

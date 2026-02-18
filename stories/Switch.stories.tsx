@@ -39,44 +39,44 @@ export const AllStatesShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Switch States</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Switch States</h2>
       <div className="mx-auto max-w-4xl space-y-8">
         {/* Primary Variant */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Primary Variant</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Primary Variant</h3>
           <div className="grid grid-cols-4 gap-8">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Off</span>
+              <span className="text-on-background/40 text-xs">Off</span>
               <Switch />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">On</span>
+              <span className="text-on-background/40 text-xs">On</span>
               <Switch checked />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Off (with icon)</span>
+              <span className="text-on-background/40 text-xs">Off (with icon)</span>
               <Switch showIcons />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">On (with icon)</span>
+              <span className="text-on-background/40 text-xs">On (with icon)</span>
               <Switch checked showIcons />
             </div>
           </div>
           <div className="mt-8 grid grid-cols-4 gap-8">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Off</span>
+              <span className="text-on-background/40 text-xs">Disabled Off</span>
               <Switch disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled On</span>
+              <span className="text-on-background/40 text-xs">Disabled On</span>
               <Switch checked disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Off (icon)</span>
+              <span className="text-on-background/40 text-xs">Disabled Off (icon)</span>
               <Switch showIcons disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled On (icon)</span>
+              <span className="text-on-background/40 text-xs">Disabled On (icon)</span>
               <Switch checked showIcons disabled />
             </div>
           </div>
@@ -84,40 +84,40 @@ export const AllStatesShowcase: Story = {
 
         {/* Error Variant */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Error Variant</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Error Variant</h3>
           <div className="grid grid-cols-4 gap-8">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Off</span>
+              <span className="text-on-background/40 text-xs">Off</span>
               <Switch variant="error" />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">On</span>
+              <span className="text-on-background/40 text-xs">On</span>
               <Switch variant="error" checked />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Off (with icon)</span>
+              <span className="text-on-background/40 text-xs">Off (with icon)</span>
               <Switch variant="error" showIcons />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">On (with icon)</span>
+              <span className="text-on-background/40 text-xs">On (with icon)</span>
               <Switch variant="error" checked showIcons />
             </div>
           </div>
           <div className="mt-8 grid grid-cols-4 gap-8">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Off</span>
+              <span className="text-on-background/40 text-xs">Disabled Off</span>
               <Switch variant="error" disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled On</span>
+              <span className="text-on-background/40 text-xs">Disabled On</span>
               <Switch variant="error" checked disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Off (icon)</span>
+              <span className="text-on-background/40 text-xs">Disabled Off (icon)</span>
               <Switch variant="error" showIcons disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled On (icon)</span>
+              <span className="text-on-background/40 text-xs">Disabled On (icon)</span>
               <Switch variant="error" checked showIcons disabled />
             </div>
           </div>
@@ -136,14 +136,14 @@ export const InteractiveToggle: Story = {
       return (
         <div className="flex flex-col items-center gap-4">
           <Switch checked={checked} onCheckedChange={setChecked} showIcons />
-          <span className="text-foreground/60 text-sm">State: {checked ? 'On' : 'Off'}</span>
+          <span className="text-on-background/60 text-sm">State: {checked ? 'On' : 'Off'}</span>
         </div>
       );
     };
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Interactive Switch (Click to toggle)</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Interactive Switch (Click to toggle)</h2>
         <div className="mx-auto max-w-md">
           <div className="flex justify-center rounded-lg border-2 border-outline-variant border-dashed p-8">
             <InteractiveSwitch />
@@ -176,10 +176,10 @@ export const WithLabels: Story = {
       return (
         <div className="flex items-center justify-between gap-4 py-3">
           <div className="flex flex-col">
-            <label htmlFor={id} className="cursor-pointer text-foreground text-sm">
+            <label htmlFor={id} className="cursor-pointer text-on-background text-sm">
               {label}
             </label>
-            {description && <span className="text-foreground/50 text-xs">{description}</span>}
+            {description && <span className="text-on-background/50 text-xs">{description}</span>}
           </div>
           <Switch id={id} checked={checked} onCheckedChange={setChecked} variant={variant} showIcons={showIcons} />
         </div>
@@ -188,11 +188,11 @@ export const WithLabels: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Switches with Labels</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Switches with Labels</h2>
         <div className="mx-auto max-w-md space-y-8">
           {/* Display settings */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Display Settings</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Display Settings</h3>
             <div className="divide-y divide-outline-variant/30">
               <LabeledSwitch label="Dark mode" description="Switch to dark theme" defaultChecked />
               <LabeledSwitch label="Reduce motion" description="Minimize animations" />
@@ -202,7 +202,7 @@ export const WithLabels: Story = {
 
           {/* Notification settings */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Notifications</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Notifications</h3>
             <div className="divide-y divide-outline-variant/30">
               <LabeledSwitch label="Push notifications" defaultChecked showIcons />
               <LabeledSwitch label="Email notifications" defaultChecked showIcons />
@@ -212,7 +212,7 @@ export const WithLabels: Story = {
 
           {/* Privacy settings with error variant */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Privacy (Error Variant)</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Privacy (Error Variant)</h3>
             <div className="divide-y divide-outline-variant/30">
               <LabeledSwitch
                 label="Share usage data"
@@ -253,14 +253,14 @@ export const SettingsPage: Story = {
       const id = React.useId();
       return (
         <div className="flex items-center gap-4 py-4">
-          <div className="flex size-10 items-center justify-center rounded-full bg-surface-container text-foreground/60">
+          <div className="flex size-10 items-center justify-center rounded-full bg-surface-container text-on-background/60">
             {icon}
           </div>
           <div className="flex-1">
-            <label htmlFor={id} className="cursor-pointer font-medium text-foreground text-sm">
+            <label htmlFor={id} className="cursor-pointer font-medium text-on-background text-sm">
               {label}
             </label>
-            <p className="text-foreground/50 text-xs">{description}</p>
+            <p className="text-on-background/50 text-xs">{description}</p>
           </div>
           <Switch id={id} checked={checked} onCheckedChange={setChecked} showIcons />
         </div>
@@ -269,11 +269,11 @@ export const SettingsPage: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Settings Page Example</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Settings Page Example</h2>
         <div className="mx-auto max-w-lg">
           <div className="rounded-2xl bg-surface-container-low p-6 shadow-md">
-            <h3 className="mb-2 font-semibold text-foreground text-lg">Quick Settings</h3>
-            <p className="mb-6 text-foreground/50 text-sm">Manage your preferences</p>
+            <h3 className="mb-2 font-semibold text-lg text-on-background">Quick Settings</h3>
+            <p className="mb-6 text-on-background/50 text-sm">Manage your preferences</p>
             <div className="divide-y divide-outline-variant/30">
               <SettingRow
                 icon={<Wifi className="size-5" />}
@@ -330,21 +330,19 @@ export const FeatureFlags: Story = {
         <div className="flex items-start gap-4 rounded-lg bg-surface-container-low p-4">
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <label htmlFor={id} className="cursor-pointer font-medium text-foreground text-sm">
+              <label htmlFor={id} className="cursor-pointer font-medium text-on-background text-sm">
                 {name}
               </label>
               {isNew && (
-                <span className="rounded-full bg-tertiary px-2 py-0.5 font-medium text-tertiary-foreground text-xs">
-                  NEW
-                </span>
+                <span className="rounded-full bg-tertiary px-2 py-0.5 font-medium text-on-tertiary text-xs">NEW</span>
               )}
               {isBeta && (
-                <span className="rounded-full bg-secondary-container px-2 py-0.5 font-medium text-secondary-container-foreground text-xs">
+                <span className="rounded-full bg-secondary-container px-2 py-0.5 font-medium text-on-secondary-container text-xs">
                   BETA
                 </span>
               )}
             </div>
-            <p className="mt-1 text-foreground/50 text-xs">{description}</p>
+            <p className="mt-1 text-on-background/50 text-xs">{description}</p>
           </div>
           <Switch id={id} checked={enabled} onCheckedChange={setEnabled} showIcons />
         </div>
@@ -353,7 +351,7 @@ export const FeatureFlags: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Feature Flags</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Feature Flags</h2>
         <div className="mx-auto max-w-lg space-y-3">
           <FeatureToggle name="AI Suggestions" description="Get smart suggestions while typing" defaultEnabled isNew />
           <FeatureToggle name="Advanced Analytics" description="Access detailed performance metrics" isBeta />
@@ -392,7 +390,7 @@ export const FormValidation: Story = {
               <div>
                 <label
                   htmlFor="terms"
-                  className={`cursor-pointer text-sm ${hasError ? 'text-error' : 'text-foreground'}`}
+                  className={`cursor-pointer text-sm ${hasError ? 'text-error' : 'text-on-background'}`}
                 >
                   Accept Terms & Conditions
                 </label>
@@ -412,10 +410,10 @@ export const FormValidation: Story = {
 
             <div className="flex items-center justify-between gap-4">
               <div>
-                <label htmlFor="marketing" className="cursor-pointer text-foreground text-sm">
+                <label htmlFor="marketing" className="cursor-pointer text-on-background text-sm">
                   Receive marketing emails
                 </label>
-                <p className="text-foreground/50 text-xs">Optional</p>
+                <p className="text-on-background/50 text-xs">Optional</p>
               </div>
               <Switch id="marketing" checked={marketingOptIn} onCheckedChange={setMarketingOptIn} />
             </div>
@@ -423,7 +421,7 @@ export const FormValidation: Story = {
 
           <button
             type="submit"
-            className="w-full rounded-full bg-primary py-3 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90"
+            className="w-full rounded-full bg-primary py-3 font-medium text-on-primary text-sm transition-colors hover:bg-primary/90"
           >
             Submit
           </button>
@@ -433,10 +431,10 @@ export const FormValidation: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Form Validation Example</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Form Validation Example</h2>
         <div className="mx-auto max-w-md">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 font-medium text-foreground">Create Account</h3>
+            <h3 className="mb-4 font-medium text-on-background">Create Account</h3>
             <FormExample />
           </div>
         </div>
@@ -467,12 +465,12 @@ export const WithStateIndicators: Story = {
         <div className="flex items-center gap-4">
           <div className={`flex items-center gap-2 transition-opacity ${!checked ? 'opacity-100' : 'opacity-30'}`}>
             {offIcon}
-            <span className="text-foreground/60 text-sm">{offLabel}</span>
+            <span className="text-on-background/60 text-sm">{offLabel}</span>
           </div>
           <Switch checked={checked} onCheckedChange={setChecked} showIcons />
           <div className={`flex items-center gap-2 transition-opacity ${checked ? 'opacity-100' : 'opacity-30'}`}>
             {onIcon}
-            <span className="text-foreground/60 text-sm">{onLabel}</span>
+            <span className="text-on-background/60 text-sm">{onLabel}</span>
           </div>
         </div>
       );
@@ -480,7 +478,7 @@ export const WithStateIndicators: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Switches with State Indicators</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Switches with State Indicators</h2>
         <div className="mx-auto max-w-md space-y-8">
           <div className="flex flex-col items-center gap-6 rounded-lg border-2 border-outline-variant border-dashed p-6">
             <StatefulSwitch
@@ -493,21 +491,21 @@ export const WithStateIndicators: Story = {
             <StatefulSwitch
               offLabel="Muted"
               onLabel="Sound On"
-              offIcon={<VolumeX className="size-5 text-foreground/40" />}
+              offIcon={<VolumeX className="size-5 text-on-background/40" />}
               onIcon={<Volume2 className="size-5 text-primary" />}
               defaultChecked
             />
             <StatefulSwitch
               offLabel="Offline"
               onLabel="Online"
-              offIcon={<WifiOff className="size-5 text-foreground/40" />}
+              offIcon={<WifiOff className="size-5 text-on-background/40" />}
               onIcon={<Wifi className="size-5 text-primary" />}
               defaultChecked
             />
             <StatefulSwitch
               offLabel="Silent"
               onLabel="Alerts On"
-              offIcon={<BellOff className="size-5 text-foreground/40" />}
+              offIcon={<BellOff className="size-5 text-on-background/40" />}
               onIcon={<Bell className="size-5 text-primary" />}
             />
           </div>
@@ -526,7 +524,7 @@ export const IconComparison: Story = {
       const [withIcon, setWithIcon] = React.useState(defaultChecked);
       return (
         <div className="grid grid-cols-3 items-center gap-4 py-2">
-          <span className="text-foreground/60 text-sm">{label}</span>
+          <span className="text-on-background/60 text-sm">{label}</span>
           <div className="flex justify-center">
             <Switch checked={withoutIcon} onCheckedChange={setWithoutIcon} />
           </div>
@@ -539,13 +537,13 @@ export const IconComparison: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Icon Comparison</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Icon Comparison</h2>
         <div className="mx-auto max-w-md">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
             <div className="mb-4 grid grid-cols-3 gap-4 border-outline-variant/30 border-b pb-2">
-              <span className="text-foreground/40 text-xs">Setting</span>
-              <span className="text-center text-foreground/40 text-xs">Without Icons</span>
-              <span className="text-center text-foreground/40 text-xs">With Icons</span>
+              <span className="text-on-background/40 text-xs">Setting</span>
+              <span className="text-center text-on-background/40 text-xs">Without Icons</span>
+              <span className="text-center text-on-background/40 text-xs">With Icons</span>
             </div>
             <ComparisonRow label="Wi-Fi" defaultChecked />
             <ComparisonRow label="Bluetooth" />
@@ -577,10 +575,10 @@ export const AccessibilityDemo: Story = {
       return (
         <div className="flex items-start justify-between gap-4 py-3">
           <div>
-            <label htmlFor={id} className="cursor-pointer font-medium text-foreground text-sm">
+            <label htmlFor={id} className="cursor-pointer font-medium text-on-background text-sm">
               {label}
             </label>
-            <p id={descriptionId} className="text-foreground/50 text-xs">
+            <p id={descriptionId} className="text-on-background/50 text-xs">
               {description}
             </p>
           </div>
@@ -591,11 +589,13 @@ export const AccessibilityDemo: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Accessibility Demo</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Accessibility Demo</h2>
         <div className="mx-auto max-w-md space-y-6">
           <div className="rounded-lg bg-surface-container-low p-4">
-            <p className="mb-4 text-foreground/60 text-sm">These switches demonstrate accessibility best practices:</p>
-            <ul className="mb-4 list-inside list-disc space-y-1 text-foreground/50 text-xs">
+            <p className="mb-4 text-on-background/60 text-sm">
+              These switches demonstrate accessibility best practices:
+            </p>
+            <ul className="mb-4 list-inside list-disc space-y-1 text-on-background/50 text-xs">
               <li>
                 Role: <code className="rounded bg-surface-container-highest px-1">switch</code>
               </li>
@@ -617,7 +617,7 @@ export const AccessibilityDemo: Story = {
             <AccessibleSwitch label="Reduce Motion" description="Minimize animations throughout the interface" />
             <AccessibleSwitch label="High Contrast" description="Increase contrast for better visibility" />
           </div>
-          <p className="text-center text-foreground/40 text-xs">
+          <p className="text-center text-on-background/40 text-xs">
             Try navigating with Tab and toggling with Space or Enter
           </p>
         </div>

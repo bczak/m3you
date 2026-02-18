@@ -246,7 +246,7 @@ const Slider = ({
           {showIcon && (
             <span
               className={cn(
-                'absolute flex items-center justify-center text-primary-foreground',
+                'absolute flex items-center justify-center text-on-primary',
                 isVertical ? 'bottom-1 left-1/2 -translate-x-1/2' : 'top-1/2 left-1 -translate-y-1/2',
               )}
               style={{ width: `${config.iconSize}px`, height: `${config.iconSize}px` }}
@@ -280,7 +280,7 @@ const Slider = ({
                 className={cn(
                   'absolute size-1 -translate-x-1/2 -translate-y-1/2 rounded-full',
                   isVertical ? 'left-1/2' : 'top-1/2',
-                  isActive ? 'bg-primary-foreground/40' : 'bg-outline/40',
+                  isActive ? 'bg-on-primary/40' : 'bg-outline/40',
                 )}
                 style={isVertical ? { bottom: pos } : { left: pos }}
               />
@@ -298,7 +298,7 @@ const Slider = ({
           {/* Value tooltip — M3 label container: 44×48dp */}
           {showTooltip && isDragging && (
             <div
-              className="pointer-events-none absolute left-1/2 flex h-11 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-inverse-surface font-medium text-inverse-surface-foreground text-sm"
+              className="pointer-events-none absolute left-1/2 flex h-11 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-inverse-surface font-medium text-inverse-on-surface text-sm"
               style={isVertical ? { left: -56, top: '50%', transform: 'translateY(-50%)' } : { top: -52 }}
             >
               {tooltipLabel}

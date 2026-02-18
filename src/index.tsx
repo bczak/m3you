@@ -183,7 +183,7 @@ export {
   TooltipProvider,
   TooltipTrigger,
 } from './components/ui/tooltip';
-
+export { applyM3Theme, generateM3Theme } from './lib/color';
 // Utilities
 export { cn } from './lib/utils';
 

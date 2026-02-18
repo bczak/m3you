@@ -127,7 +127,7 @@ export const ColorComparison: Story = {
   render: () => (
     <div className="flex min-h-screen items-start justify-center gap-16 bg-surface-container-lowest p-12">
       <div className="flex flex-col items-center gap-4">
-        <p className="text-foreground/60 text-sm">Standard</p>
+        <p className="text-on-background/60 text-sm">Standard</p>
         <Menu color="standard">
           <MenuTrigger asChild>
             <IconButton variant="text">
@@ -145,7 +145,7 @@ export const ColorComparison: Story = {
         </Menu>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <p className="text-foreground/60 text-sm">Vibrant</p>
+        <p className="text-on-background/60 text-sm">Vibrant</p>
         <Menu color="vibrant">
           <MenuTrigger asChild>
             <IconButton variant="text">
@@ -241,7 +241,7 @@ export const GroupedLayout: Story = {
   render: () => (
     <div className="flex min-h-screen items-start justify-center gap-16 bg-surface-container-lowest p-12">
       <div className="flex flex-col items-center gap-4">
-        <p className="text-foreground/60 text-sm">Standard Grouped</p>
+        <p className="text-on-background/60 text-sm">Standard Grouped</p>
         <Menu color="standard">
           <MenuTrigger asChild>
             <Button variant="outlined">
@@ -268,7 +268,7 @@ export const GroupedLayout: Story = {
         </Menu>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <p className="text-foreground/60 text-sm">Vibrant Grouped</p>
+        <p className="text-on-background/60 text-sm">Vibrant Grouped</p>
         <Menu color="vibrant">
           <MenuTrigger asChild>
             <Button variant="outlined">
@@ -453,7 +453,7 @@ export const Positioning: Story = {
     <div className="flex min-h-screen flex-col items-center justify-center gap-16 bg-surface-container-lowest p-12">
       <div className="flex items-start gap-16">
         <div className="flex flex-col items-center gap-2">
-          <p className="text-foreground/60 text-xs">Bottom / Start</p>
+          <p className="text-on-background/60 text-xs">Bottom / Start</p>
           <Menu>
             <MenuTrigger asChild>
               <IconButton variant="text">
@@ -467,7 +467,7 @@ export const Positioning: Story = {
           </Menu>
         </div>
         <div className="flex flex-col items-center gap-2">
-          <p className="text-foreground/60 text-xs">Bottom / End</p>
+          <p className="text-on-background/60 text-xs">Bottom / End</p>
           <Menu>
             <MenuTrigger asChild>
               <IconButton variant="text">
@@ -494,7 +494,7 @@ export const Positioning: Story = {
               <MenuItem>Item 2</MenuItem>
             </MenuContent>
           </Menu>
-          <p className="text-foreground/60 text-xs">Top / Start</p>
+          <p className="text-on-background/60 text-xs">Top / Start</p>
         </div>
         <div className="flex flex-col items-center gap-2">
           <Menu>
@@ -508,7 +508,7 @@ export const Positioning: Story = {
               <MenuItem>Item 2</MenuItem>
             </MenuContent>
           </Menu>
-          <p className="text-foreground/60 text-xs">Top / End</p>
+          <p className="text-on-background/60 text-xs">Top / End</p>
         </div>
       </div>
     </div>
@@ -524,11 +524,11 @@ export const StatesShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="flex min-h-screen flex-col items-center gap-8 bg-surface-container-lowest p-12">
-      <h2 className="text-foreground/60 text-sm">Menu Item States</h2>
+      <h2 className="text-on-background/60 text-sm">Menu Item States</h2>
       <div className="flex gap-12">
         {/* Light theme */}
         <div className="flex flex-col gap-4">
-          <p className="text-center text-foreground/60 text-xs">Standard</p>
+          <p className="text-center text-on-background/60 text-xs">Standard</p>
           <div className="rounded-2xl bg-surface-container-low p-1 shadow-md">
             <Menu color="standard">
               <MenuTrigger className="hidden">Open</MenuTrigger>
@@ -542,7 +542,7 @@ export const StatesShowcase: Story = {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <p className="text-center text-foreground/60 text-xs">Vibrant</p>
+          <p className="text-center text-on-background/60 text-xs">Vibrant</p>
           <div className="rounded-2xl bg-tertiary-container p-1 shadow-md">
             <Menu color="vibrant">
               <MenuTrigger className="hidden">Open</MenuTrigger>
@@ -572,7 +572,7 @@ export const CompleteShowcase: Story = {
       <div className="flex min-h-screen items-start justify-center gap-16 bg-surface-container-lowest p-12 pt-24">
         {/* Standard menu with icon button trigger */}
         <div className="flex flex-col items-center gap-4">
-          <p className="text-foreground/60 text-xs">Standard + Icons</p>
+          <p className="text-on-background/60 text-xs">Standard + Icons</p>
           <Menu color="standard">
             <MenuTrigger asChild>
               <IconButton variant="text">
@@ -593,7 +593,7 @@ export const CompleteShowcase: Story = {
 
         {/* Vibrant with submenu */}
         <div className="flex flex-col items-center gap-4">
-          <p className="text-foreground/60 text-xs">Vibrant + Submenu</p>
+          <p className="text-on-background/60 text-xs">Vibrant + Submenu</p>
           <Menu color="vibrant">
             <MenuTrigger asChild>
               <IconButton variant="text">
@@ -624,7 +624,7 @@ export const CompleteShowcase: Story = {
 
         {/* Button trigger with labels */}
         <div className="flex flex-col items-center gap-4">
-          <p className="text-foreground/60 text-xs">Button Trigger + Labels</p>
+          <p className="text-on-background/60 text-xs">Button Trigger + Labels</p>
           <Menu>
             <MenuTrigger asChild>
               <Button variant="outlined">

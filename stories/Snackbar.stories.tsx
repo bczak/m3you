@@ -66,23 +66,23 @@ export const AllConfigurations: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">All Snackbar Configurations</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">All Snackbar Configurations</h2>
       <div className="mx-auto flex max-w-2xl flex-col gap-8">
         {/* 1. Single line */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">1. Single line</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">1. Single line</h3>
           <Snackbar message="Single-line snackbar" />
         </div>
 
         {/* 2. Single line with action */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">2. Single line with action</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">2. Single line with action</h3>
           <Snackbar message="Single-line snackbar with action" actionLabel="Action" onAction={() => {}} />
         </div>
 
         {/* 3. Single line with action + close */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">3. Single line with action + close</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">3. Single line with action + close</h3>
           <Snackbar
             message="Single-line snackbar with icon"
             actionLabel="Action"
@@ -94,13 +94,13 @@ export const AllConfigurations: Story = {
 
         {/* 4. Two lines */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">4. Two lines</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">4. Two lines</h3>
           <Snackbar layout="twoLine" message={'Two-line snackbar\nwithout action'} />
         </div>
 
         {/* 5. Two lines with action */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">5. Two lines with action</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">5. Two lines with action</h3>
           <Snackbar
             layout="twoLine"
             message={'Two-line snackbar\nwith action'}
@@ -111,7 +111,7 @@ export const AllConfigurations: Story = {
 
         {/* 6. Two lines with longer action */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">6. Two lines with longer action</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">6. Two lines with longer action</h3>
           <Snackbar
             layout="longerAction"
             message={'Two-line snackbar\nwith longer action'}
@@ -134,8 +134,8 @@ export const InteractiveDemo: Story = {
         <div className="flex min-h-screen items-center justify-center bg-surface-container-lowest p-8">
           <SnackbarHost />
           <div className="mx-auto max-w-lg space-y-6">
-            <h2 className="text-center text-foreground/60 text-sm">Interactive Snackbar Demo</h2>
-            <p className="text-center text-foreground/40 text-xs">
+            <h2 className="text-center text-on-background/60 text-sm">Interactive Snackbar Demo</h2>
+            <p className="text-center text-on-background/40 text-xs">
               Click the buttons below to trigger snackbar notifications
             </p>
 
@@ -143,7 +143,7 @@ export const InteractiveDemo: Story = {
               {/* Simple message */}
               <button
                 type="button"
-                className="rounded-lg bg-primary px-4 py-2.5 text-primary-foreground text-sm"
+                className="rounded-lg bg-primary px-4 py-2.5 text-on-primary text-sm"
                 onClick={() => snackbar('File saved successfully')}
               >
                 Simple snackbar
@@ -152,7 +152,7 @@ export const InteractiveDemo: Story = {
               {/* With action */}
               <button
                 type="button"
-                className="rounded-lg bg-primary px-4 py-2.5 text-primary-foreground text-sm"
+                className="rounded-lg bg-primary px-4 py-2.5 text-on-primary text-sm"
                 onClick={() =>
                   snackbar({
                     message: 'Item moved to trash',
@@ -167,7 +167,7 @@ export const InteractiveDemo: Story = {
               {/* With close button */}
               <button
                 type="button"
-                className="rounded-lg bg-primary px-4 py-2.5 text-primary-foreground text-sm"
+                className="rounded-lg bg-primary px-4 py-2.5 text-on-primary text-sm"
                 onClick={() =>
                   snackbar({
                     message: 'Message sent',
@@ -181,7 +181,7 @@ export const InteractiveDemo: Story = {
               {/* With action + close */}
               <button
                 type="button"
-                className="rounded-lg bg-primary px-4 py-2.5 text-primary-foreground text-sm"
+                className="rounded-lg bg-primary px-4 py-2.5 text-on-primary text-sm"
                 onClick={() =>
                   snackbar({
                     message: 'Photo saved to album',
@@ -197,7 +197,7 @@ export const InteractiveDemo: Story = {
               {/* Two-line */}
               <button
                 type="button"
-                className="rounded-lg bg-primary px-4 py-2.5 text-primary-foreground text-sm"
+                className="rounded-lg bg-primary px-4 py-2.5 text-on-primary text-sm"
                 onClick={() =>
                   snackbar({
                     message: 'Connection timed out. Showing limited search results.',
@@ -213,7 +213,7 @@ export const InteractiveDemo: Story = {
               {/* Longer action */}
               <button
                 type="button"
-                className="rounded-lg bg-primary px-4 py-2.5 text-primary-foreground text-sm"
+                className="rounded-lg bg-primary px-4 py-2.5 text-on-primary text-sm"
                 onClick={() =>
                   snackbar({
                     message: 'This item already has the label "travel". You can add a new label.',
@@ -229,7 +229,7 @@ export const InteractiveDemo: Story = {
               {/* Dismiss all */}
               <button
                 type="button"
-                className="rounded-lg bg-outline px-4 py-2.5 text-outline-foreground text-sm"
+                className="rounded-lg bg-outline px-4 py-2.5 text-on-primary text-sm"
                 onClick={() => snackbar.dismiss()}
               >
                 Dismiss all
@@ -297,7 +297,7 @@ export const ImperativeSnackbar: Story = {
       <button
         type="button"
         data-testid="trigger"
-        className="rounded-lg bg-primary px-4 py-2.5 text-primary-foreground text-sm"
+        className="rounded-lg bg-primary px-4 py-2.5 text-on-primary text-sm"
         onClick={() =>
           snackbar({
             message: 'File saved successfully',
@@ -328,17 +328,17 @@ export const RealWorldExamples: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Real-world Examples</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Real-world Examples</h2>
       <div className="mx-auto flex max-w-2xl flex-col gap-6">
         {/* Email */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Email app</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Email app</h3>
           <Snackbar message="Conversation archived" actionLabel="Undo" onAction={() => {}} />
         </div>
 
         {/* Photo */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Photo app</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Photo app</h3>
           <Snackbar
             message={'Saved in "Vacation" album'}
             actionLabel="View"
@@ -350,19 +350,19 @@ export const RealWorldExamples: Story = {
 
         {/* Network error */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Network error</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Network error</h3>
           <Snackbar message="Can't send photo. Retry in 5 seconds." actionLabel="Retry" onAction={() => {}} />
         </div>
 
         {/* Form submission */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Form submission</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Form submission</h3>
           <Snackbar message="Changes saved" closable onClose={() => {}} />
         </div>
 
         {/* Label conflict */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Label conflict</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Label conflict</h3>
           <Snackbar
             layout="longerAction"
             message={'This item already has the label "travel".\nYou can add a new label.'}

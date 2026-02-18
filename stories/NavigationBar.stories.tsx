@@ -53,11 +53,11 @@ const DefaultNavigationBar = () => {
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Bar - Vertical</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Bar - Vertical</h1>
+        <p className="text-on-background/60 text-sm">
           Default orientation with icon above label. Icons transition from outline to filled on selection.
         </p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="mt-2 text-on-background/60 text-sm">
           Current selection: <strong className="text-primary">{value}</strong>
         </p>
       </div>
@@ -91,11 +91,11 @@ const HorizontalNavigationBar = () => {
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Bar - Horizontal</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Bar - Horizontal</h1>
+        <p className="text-on-background/60 text-sm">
           Horizontal orientation with icon and label side by side. Indicator covers both icon and label.
         </p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="mt-2 text-on-background/60 text-sm">
           Current selection: <strong className="text-primary">{value}</strong>
         </p>
       </div>
@@ -128,8 +128,8 @@ const WithBadgesVertical = () => {
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Badges - Vertical</h1>
-        <p className="text-foreground/60 text-sm">Vertical navigation with dot and number badges.</p>
+        <h1 className="mb-2 font-medium text-lg text-on-background">Badges - Vertical</h1>
+        <p className="text-on-background/60 text-sm">Vertical navigation with dot and number badges.</p>
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
@@ -174,8 +174,8 @@ const WithBadgesHorizontal = () => {
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Badges - Horizontal</h1>
-        <p className="text-foreground/60 text-sm">Horizontal navigation with dot and number badges.</p>
+        <h1 className="mb-2 font-medium text-lg text-on-background">Badges - Horizontal</h1>
+        <p className="text-on-background/60 text-sm">Horizontal navigation with dot and number badges.</p>
       </div>
 
       <NavigationBar value={value} onValueChange={setValue} orientation="horizontal">
@@ -213,11 +213,11 @@ const IconTransitionDemo = () => {
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Icon Transition</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Icon Transition</h1>
+        <p className="text-on-background/60 text-sm">
           Icons smoothly transition from outline to filled when selected. Click different items to see the effect.
         </p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="mt-2 text-on-background/60 text-sm">
           Current selection: <strong className="text-primary">{value}</strong>
         </p>
       </div>
@@ -246,8 +246,8 @@ const ThreeDestinationsVerticalDemo = () => {
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Three Destinations - Vertical</h1>
-        <p className="text-foreground/60 text-sm">Minimum recommended destinations for a navigation bar.</p>
+        <h1 className="mb-2 font-medium text-lg text-on-background">Three Destinations - Vertical</h1>
+        <p className="text-on-background/60 text-sm">Minimum recommended destinations for a navigation bar.</p>
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
@@ -273,8 +273,8 @@ const FiveDestinationsVerticalDemo = () => {
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Five Destinations - Vertical</h1>
-        <p className="text-foreground/60 text-sm">Maximum recommended destinations for a navigation bar.</p>
+        <h1 className="mb-2 font-medium text-lg text-on-background">Five Destinations - Vertical</h1>
+        <p className="text-on-background/60 text-sm">Maximum recommended destinations for a navigation bar.</p>
       </div>
 
       <NavigationBar value={value} onValueChange={setValue}>
@@ -312,8 +312,8 @@ const ElevatedNavigationBar = () => {
   return (
     <div className="relative min-h-[400px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Elevated Navigation Bar</h1>
-        <p className="text-foreground/60 text-sm">Elevated style adds a shadow for more visual prominence.</p>
+        <h1 className="mb-2 font-medium text-lg text-on-background">Elevated Navigation Bar</h1>
+        <p className="text-on-background/60 text-sm">Elevated style adds a shadow for more visual prominence.</p>
       </div>
 
       <NavigationBar value={value} onValueChange={setValue} elevation="elevated">
@@ -366,19 +366,19 @@ const MusicAppNavigationBar = () => {
       <div className="p-6 pb-24">
         <div className="mb-6 flex items-center gap-3">
           <MdMusicNote className="size-8 text-primary" />
-          <span className="font-bold text-foreground text-xl">Music</span>
+          <span className="font-bold text-on-background text-xl">Music</span>
         </div>
 
         <div className="rounded-xl bg-surface-container p-6">
-          <h1 className="mb-2 font-semibold text-2xl text-foreground">{content[value].title}</h1>
-          <p className="text-foreground/70">{content[value].description}</p>
+          <h1 className="mb-2 font-semibold text-2xl text-on-background">{content[value].title}</h1>
+          <p className="text-on-background/70">{content[value].description}</p>
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           {['Recently Played', 'Made for You', 'Top Charts', 'New Releases'].map((item) => (
             <div key={item} className="rounded-lg bg-surface-container-high p-4">
               <div className="mb-2 aspect-square rounded-md bg-secondary-container" />
-              <span className="text-foreground text-sm">{item}</span>
+              <span className="text-on-background text-sm">{item}</span>
             </div>
           ))}
         </div>
@@ -409,8 +409,8 @@ const ECommerceNavigationBar = () => {
   return (
     <div className="relative min-h-[500px] bg-surface-container-lowest">
       <div className="bg-primary p-4 pb-6">
-        <h1 className="font-bold text-primary-foreground text-xl">ShopNow</h1>
-        <p className="mt-1 text-primary-foreground/80 text-sm">Find your style</p>
+        <h1 className="font-bold text-on-primary text-xl">ShopNow</h1>
+        <p className="mt-1 text-on-primary/80 text-sm">Find your style</p>
       </div>
 
       <div className="p-4 pb-24">
@@ -419,7 +419,7 @@ const ECommerceNavigationBar = () => {
             <button
               key={category}
               type="button"
-              className="shrink-0 rounded-full bg-secondary-container px-4 py-2 text-secondary-container-foreground text-sm"
+              className="shrink-0 rounded-full bg-secondary-container px-4 py-2 text-on-secondary-container text-sm"
             >
               {category}
             </button>
@@ -431,7 +431,7 @@ const ECommerceNavigationBar = () => {
             <div key={`product-${item}`} className="overflow-hidden rounded-xl bg-surface-container">
               <div className="aspect-square bg-secondary-container/50" />
               <div className="p-3">
-                <span className="text-foreground text-sm">Product {item}</span>
+                <span className="text-on-background text-sm">Product {item}</span>
                 <p className="font-medium text-primary">$99.00</p>
               </div>
             </div>
@@ -475,20 +475,20 @@ const CalendarAppNavigationBar = () => {
     <div className="relative min-h-[500px] bg-surface-container-lowest">
       <div className="border-outline-variant border-b p-4">
         <div className="flex items-center justify-between">
-          <h1 className="font-semibold text-foreground text-lg">February 2026</h1>
+          <h1 className="font-semibold text-lg text-on-background">February 2026</h1>
           <div className="flex gap-2">
             <IconButton variant="text" size="sm">
-              <MdOutlineSearch className="size-5 text-foreground" />
+              <MdOutlineSearch className="size-5 text-on-background" />
             </IconButton>
             <IconButton variant="text" size="sm">
-              <MdOutlineSettings className="size-5 text-foreground" />
+              <MdOutlineSettings className="size-5 text-on-background" />
             </IconButton>
           </div>
         </div>
       </div>
 
       <div className="p-4 pb-24">
-        <div className="grid grid-cols-7 gap-1 text-center text-foreground/60 text-xs">
+        <div className="grid grid-cols-7 gap-1 text-center text-on-background/60 text-xs">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
             <span key={day}>{day.charAt(0)}</span>
           ))}
@@ -499,7 +499,7 @@ const CalendarAppNavigationBar = () => {
               key={`day-${day}`}
               type="button"
               className={`aspect-square rounded-full text-sm ${
-                day === 4 ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-surface-container-high'
+                day === 4 ? 'bg-primary text-on-primary' : 'text-on-background hover:bg-surface-container-high'
               }`}
             >
               {day}
@@ -508,12 +508,12 @@ const CalendarAppNavigationBar = () => {
         </div>
 
         <div className="mt-6">
-          <h2 className="mb-3 font-medium text-foreground">Today&apos;s Events</h2>
+          <h2 className="mb-3 font-medium text-on-background">Today&apos;s Events</h2>
           <div className="space-y-2">
             {['Team Meeting', 'Project Review', 'Lunch with Client'].map((event) => (
               <div key={event} className="flex items-center gap-3 rounded-lg bg-surface-container p-3">
                 <div className="h-8 w-1 rounded-full bg-primary" />
-                <span className="text-foreground text-sm">{event}</span>
+                <span className="text-on-background text-sm">{event}</span>
               </div>
             ))}
           </div>
@@ -559,12 +559,14 @@ export const BuildingBlocksVertical: Story = {
   render: () => {
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h1 className="mb-6 text-center font-semibold text-foreground text-xl">Building Blocks - Vertical Nav Item</h1>
+        <h1 className="mb-6 text-center font-semibold text-on-background text-xl">
+          Building Blocks - Vertical Nav Item
+        </h1>
 
         <div className="mx-auto max-w-2xl space-y-8">
           {/* Row 1: Basic states */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States (Outline → Filled)</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Basic States (Outline → Filled)</h2>
             <div className="flex justify-center gap-8">
               <NavigationBar value="none" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
                 <NavigationBarItem value="item1" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Label" />
@@ -573,7 +575,7 @@ export const BuildingBlocksVertical: Story = {
                 <NavigationBarItem value="item2" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Label" />
               </NavigationBar>
             </div>
-            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+            <div className="mt-2 flex justify-center gap-8 text-on-background/50 text-xs">
               <span className="w-16 text-center">Unselected</span>
               <span className="w-16 text-center">Selected</span>
             </div>
@@ -581,7 +583,7 @@ export const BuildingBlocksVertical: Story = {
 
           {/* Row 2: With dot badge */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Dot Badge</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">With Dot Badge</h2>
             <div className="flex justify-center gap-8">
               <NavigationBar value="none" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
                 <NavigationBarItem
@@ -602,7 +604,7 @@ export const BuildingBlocksVertical: Story = {
                 />
               </NavigationBar>
             </div>
-            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+            <div className="mt-2 flex justify-center gap-8 text-on-background/50 text-xs">
               <span className="w-16 text-center">Unselected</span>
               <span className="w-16 text-center">Selected</span>
             </div>
@@ -610,7 +612,7 @@ export const BuildingBlocksVertical: Story = {
 
           {/* Row 3: With number badge */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Number Badge</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">With Number Badge</h2>
             <div className="flex justify-center gap-8">
               <NavigationBar value="none" onValueChange={() => {}} className="!static !h-auto !w-auto !p-0">
                 <NavigationBarItem
@@ -631,7 +633,7 @@ export const BuildingBlocksVertical: Story = {
                 />
               </NavigationBar>
             </div>
-            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+            <div className="mt-2 flex justify-center gap-8 text-on-background/50 text-xs">
               <span className="w-16 text-center">Unselected</span>
               <span className="w-16 text-center">Selected</span>
             </div>
@@ -650,14 +652,14 @@ export const BuildingBlocksHorizontal: Story = {
   render: () => {
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h1 className="mb-6 text-center font-semibold text-foreground text-xl">
+        <h1 className="mb-6 text-center font-semibold text-on-background text-xl">
           Building Blocks - Horizontal Nav Item
         </h1>
 
         <div className="mx-auto max-w-2xl space-y-8">
           {/* Row 1: Basic states */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States (Outline → Filled)</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Basic States (Outline → Filled)</h2>
             <div className="flex justify-center gap-8">
               <NavigationBar
                 value="none"
@@ -676,7 +678,7 @@ export const BuildingBlocksHorizontal: Story = {
                 <NavigationBarItem value="item2" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Label" />
               </NavigationBar>
             </div>
-            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+            <div className="mt-2 flex justify-center gap-8 text-on-background/50 text-xs">
               <span className="w-24 text-center">Unselected</span>
               <span className="w-24 text-center">Selected</span>
             </div>
@@ -684,7 +686,7 @@ export const BuildingBlocksHorizontal: Story = {
 
           {/* Row 2: With dot badge */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Dot Badge</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">With Dot Badge</h2>
             <div className="flex justify-center gap-8">
               <NavigationBar
                 value="none"
@@ -715,7 +717,7 @@ export const BuildingBlocksHorizontal: Story = {
                 />
               </NavigationBar>
             </div>
-            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+            <div className="mt-2 flex justify-center gap-8 text-on-background/50 text-xs">
               <span className="w-24 text-center">Unselected</span>
               <span className="w-24 text-center">Selected</span>
             </div>
@@ -723,7 +725,7 @@ export const BuildingBlocksHorizontal: Story = {
 
           {/* Row 3: With number badge */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Number Badge</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">With Number Badge</h2>
             <div className="flex justify-center gap-8">
               <NavigationBar
                 value="none"
@@ -754,7 +756,7 @@ export const BuildingBlocksHorizontal: Story = {
                 />
               </NavigationBar>
             </div>
-            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+            <div className="mt-2 flex justify-center gap-8 text-on-background/50 text-xs">
               <span className="w-24 text-center">Unselected</span>
               <span className="w-24 text-center">Selected</span>
             </div>
@@ -781,11 +783,11 @@ const AccessibilityShowcase = () => {
   return (
     <div className="relative min-h-[500px] bg-surface-container-lowest">
       <div className="p-4 pb-24">
-        <h1 className="mb-4 font-semibold text-foreground text-lg">Accessibility Features</h1>
+        <h1 className="mb-4 font-semibold text-lg text-on-background">Accessibility Features</h1>
 
-        <div className="space-y-4 text-foreground/80 text-sm">
+        <div className="space-y-4 text-on-background/80 text-sm">
           <div className="rounded-lg bg-surface-container p-4">
-            <h2 className="mb-2 font-medium text-foreground">Keyboard Navigation</h2>
+            <h2 className="mb-2 font-medium text-on-background">Keyboard Navigation</h2>
             <ul className="space-y-1">
               <li>
                 • <kbd className="rounded bg-surface-container-high px-1">Tab</kbd> - Move between navigation items
@@ -798,7 +800,7 @@ const AccessibilityShowcase = () => {
           </div>
 
           <div className="rounded-lg bg-surface-container p-4">
-            <h2 className="mb-2 font-medium text-foreground">Screen Reader Support</h2>
+            <h2 className="mb-2 font-medium text-on-background">Screen Reader Support</h2>
             <ul className="space-y-1">
               <li>
                 • Uses semantic <code>&lt;nav&gt;</code> element with <code>aria-label</code>
@@ -813,7 +815,7 @@ const AccessibilityShowcase = () => {
           </div>
 
           <div className="rounded-lg bg-surface-container p-4">
-            <h2 className="mb-2 font-medium text-foreground">Icon Guidelines</h2>
+            <h2 className="mb-2 font-medium text-on-background">Icon Guidelines</h2>
             <ul className="space-y-1">
               <li>
                 • Use <code>icon</code> prop for outline icons (MdOutline*)

@@ -96,26 +96,26 @@ const Showcase = ({ title, variant }: ShowcaseProps) => {
 
   return (
     <div className="flex flex-col gap-6 rounded-lg border-2 border-outline-variant border-dashed p-8">
-      <h3 className="text-center text-foreground/40 text-xs">{title}</h3>
+      <h3 className="text-center text-on-background/40 text-xs">{title}</h3>
       <div className="flex flex-col items-center gap-4">
         {sizes.map((size) => (
           <ExtendedFAB key={size} variant={variant} size={size} icon={<EditIcon />} label="Compose" />
         ))}
       </div>
       <div className="mt-4 flex flex-col items-center gap-4">
-        <span className="text-foreground/30 text-xs">Lowered</span>
+        <span className="text-on-background/30 text-xs">Lowered</span>
         {sizes.map((size) => (
           <ExtendedFAB key={size} variant={variant} size={size} icon={<EditIcon />} label="Compose" lowered />
         ))}
       </div>
       <div className="mt-4 flex flex-col items-center gap-4">
-        <span className="text-foreground/30 text-xs">Without Icon</span>
+        <span className="text-on-background/30 text-xs">Without Icon</span>
         {sizes.map((size) => (
           <ExtendedFAB key={size} variant={variant} size={size} label="Navigate" />
         ))}
       </div>
       <div className="mt-4 flex flex-col items-center gap-4">
-        <span className="text-foreground/30 text-xs">Disabled</span>
+        <span className="text-on-background/30 text-xs">Disabled</span>
         <ExtendedFAB variant={variant} size="md" icon={<EditIcon />} label="Compose" disabled />
       </div>
     </div>
@@ -126,7 +126,7 @@ export const FilledShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Filled Variant</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Filled Variant</h2>
       <div className="flex justify-center">
         <Showcase title="Filled" variant="filled" />
       </div>
@@ -138,7 +138,7 @@ export const ElevatedShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Elevated Variant</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Elevated Variant</h2>
       <div className="flex justify-center">
         <Showcase title="Elevated" variant="elevated" />
       </div>
@@ -150,7 +150,7 @@ export const TonalShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Tonal Variant</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Tonal Variant</h2>
       <div className="flex justify-center">
         <Showcase title="Tonal" variant="tonal" />
       </div>
@@ -162,7 +162,7 @@ export const OutlinedShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Outlined Variant</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Outlined Variant</h2>
       <div className="flex justify-center">
         <Showcase title="Outlined" variant="outlined" />
       </div>
@@ -174,7 +174,7 @@ export const AllVariants: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">All ExtendedFAB Variants</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">All ExtendedFAB Variants</h2>
       <div className="grid grid-cols-2 justify-items-center gap-8 lg:grid-cols-4">
         <Showcase title="Filled" variant="filled" />
         <Showcase title="Elevated" variant="elevated" />

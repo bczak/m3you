@@ -36,28 +36,28 @@ export const AllSizes: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Badge Sizes</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Badge Sizes</h2>
       <div className="mx-auto max-w-2xl">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
           <div className="flex items-center justify-center gap-12">
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">Small (Dot)</span>
+              <span className="text-on-background/50 text-xs">Small (Dot)</span>
               <Badge size="small" />
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">Large (1 digit)</span>
+              <span className="text-on-background/50 text-xs">Large (1 digit)</span>
               <Badge count={3} />
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">Large (2 digits)</span>
+              <span className="text-on-background/50 text-xs">Large (2 digits)</span>
               <Badge count={42} />
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">Large (3 digits)</span>
+              <span className="text-on-background/50 text-xs">Large (3 digits)</span>
               <Badge count={108} />
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">Large (Max count)</span>
+              <span className="text-on-background/50 text-xs">Large (Max count)</span>
               <Badge count={1500} max={999} />
             </div>
           </div>
@@ -72,24 +72,24 @@ export const MaxCountVariants: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Maximum Count Display</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Maximum Count Display</h2>
       <div className="mx-auto max-w-3xl">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
           <div className="grid grid-cols-4 gap-8">
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">max=9</span>
+              <span className="text-on-background/50 text-xs">max=9</span>
               <Badge count={15} max={9} />
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">max=99</span>
+              <span className="text-on-background/50 text-xs">max=99</span>
               <Badge count={150} max={99} />
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">max=999 (default)</span>
+              <span className="text-on-background/50 text-xs">max=999 (default)</span>
               <Badge count={1500} max={999} />
             </div>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">max=9999</span>
+              <span className="text-on-background/50 text-xs">max=9999</span>
               <Badge count={15000} max={9999} />
             </div>
           </div>
@@ -104,7 +104,7 @@ export const WithIconButton: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Badge with Icon Buttons</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Badge with Icon Buttons</h2>
       <div className="mx-auto max-w-3xl">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
           <div className="flex items-center justify-center gap-8">
@@ -143,13 +143,13 @@ export const Positions: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Badge Positions</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Badge Positions</h2>
       <div className="mx-auto max-w-3xl">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Rectangular Overlap</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Rectangular Overlap</h3>
           <div className="mb-8 flex items-center justify-center gap-12">
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">top-right</span>
+              <span className="text-on-background/50 text-xs">top-right</span>
               <BadgeAnchor badge={<Badge count={5} />} position="top-right">
                 <div className="flex size-12 items-center justify-center rounded-lg bg-surface-container">
                   <Star className="size-6 text-on-surface" />
@@ -158,7 +158,7 @@ export const Positions: Story = {
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">top-left</span>
+              <span className="text-on-background/50 text-xs">top-left</span>
               <BadgeAnchor badge={<Badge count={5} />} position="top-left">
                 <div className="flex size-12 items-center justify-center rounded-lg bg-surface-container">
                   <Star className="size-6 text-on-surface" />
@@ -167,7 +167,7 @@ export const Positions: Story = {
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">bottom-right</span>
+              <span className="text-on-background/50 text-xs">bottom-right</span>
               <BadgeAnchor badge={<Badge count={5} />} position="bottom-right">
                 <div className="flex size-12 items-center justify-center rounded-lg bg-surface-container">
                   <Star className="size-6 text-on-surface" />
@@ -176,7 +176,7 @@ export const Positions: Story = {
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">bottom-left</span>
+              <span className="text-on-background/50 text-xs">bottom-left</span>
               <BadgeAnchor badge={<Badge count={5} />} position="bottom-left">
                 <div className="flex size-12 items-center justify-center rounded-lg bg-surface-container">
                   <Star className="size-6 text-on-surface" />
@@ -185,10 +185,10 @@ export const Positions: Story = {
             </div>
           </div>
 
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Circular Overlap</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Circular Overlap</h3>
           <div className="flex items-center justify-center gap-12">
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">top-right</span>
+              <span className="text-on-background/50 text-xs">top-right</span>
               <BadgeAnchor badge={<Badge count={5} />} position="top-right" overlap="circular">
                 <div className="flex size-12 items-center justify-center rounded-full bg-surface-container">
                   <Star className="size-6 text-on-surface" />
@@ -197,7 +197,7 @@ export const Positions: Story = {
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">top-left</span>
+              <span className="text-on-background/50 text-xs">top-left</span>
               <BadgeAnchor badge={<Badge count={5} />} position="top-left" overlap="circular">
                 <div className="flex size-12 items-center justify-center rounded-full bg-surface-container">
                   <Star className="size-6 text-on-surface" />
@@ -206,7 +206,7 @@ export const Positions: Story = {
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">bottom-right</span>
+              <span className="text-on-background/50 text-xs">bottom-right</span>
               <BadgeAnchor badge={<Badge count={5} />} position="bottom-right" overlap="circular">
                 <div className="flex size-12 items-center justify-center rounded-full bg-surface-container">
                   <Star className="size-6 text-on-surface" />
@@ -215,7 +215,7 @@ export const Positions: Story = {
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <span className="text-foreground/50 text-xs">bottom-left</span>
+              <span className="text-on-background/50 text-xs">bottom-left</span>
               <BadgeAnchor badge={<Badge count={5} />} position="bottom-left" overlap="circular">
                 <div className="flex size-12 items-center justify-center rounded-full bg-surface-container">
                   <Star className="size-6 text-on-surface" />
@@ -234,7 +234,7 @@ export const NavigationBar: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Navigation Bar with Badges</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Navigation Bar with Badges</h2>
       <div className="mx-auto max-w-lg">
         <div className="rounded-2xl bg-surface-container p-4">
           <div className="flex items-center justify-around">
@@ -283,7 +283,7 @@ export const NavigationRail: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Navigation Rail with Badges</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Navigation Rail with Badges</h2>
       <div className="mx-auto flex max-w-xs justify-center">
         <div className="inline-flex flex-col gap-4 rounded-2xl bg-surface-container p-4">
           <div className="flex flex-col items-center gap-1">
@@ -362,14 +362,14 @@ export const VisibilityToggle: Story = {
             </Button>
           </div>
 
-          <span className="text-foreground/50 text-xs">Count: {count}</span>
+          <span className="text-on-background/50 text-xs">Count: {count}</span>
         </div>
       );
     };
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Badge Visibility Control</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Badge Visibility Control</h2>
         <div className="mx-auto max-w-lg">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
             <BadgeVisibilityDemo />
@@ -387,7 +387,7 @@ export const LightAndDarkMode: Story = {
     <div className="flex min-h-screen">
       {/* Light mode */}
       <div className="flex-1 bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Light Mode</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Light Mode</h2>
         <div className="flex flex-col items-center gap-6">
           <div className="flex items-center gap-6">
             <BadgeAnchor badge={<Badge size="small" />} overlap="circular">
@@ -445,11 +445,11 @@ export const M3Configuration: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">M3 Badge Configuration</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">M3 Badge Configuration</h2>
       <div className="mx-auto max-w-4xl space-y-8">
         {/* Inactive with label */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Inactive with Label</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Inactive with Label</h3>
           <div className="flex items-center justify-center gap-12">
             <div className="flex flex-col items-center gap-1">
               <BadgeAnchor badge={<Badge size="small" />} overlap="circular">
@@ -482,7 +482,7 @@ export const M3Configuration: Story = {
 
         {/* Active with label */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Active with Label</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Active with Label</h3>
           <div className="flex items-center justify-center gap-12">
             <div className="flex flex-col items-center gap-1">
               <BadgeAnchor badge={<Badge size="small" />} overlap="circular">
@@ -515,7 +515,7 @@ export const M3Configuration: Story = {
 
         {/* Without label */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Without Label (Active)</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Without Label (Active)</h3>
           <div className="flex items-center justify-center gap-12">
             <div className="flex flex-col items-center gap-3">
               <BadgeAnchor badge={<Badge size="small" />} overlap="circular">
@@ -523,7 +523,7 @@ export const M3Configuration: Story = {
                   <Home className="size-6 text-on-surface" />
                 </div>
               </BadgeAnchor>
-              <span className="text-foreground/50 text-xs">Small badge</span>
+              <span className="text-on-background/50 text-xs">Small badge</span>
             </div>
 
             <div className="flex flex-col items-center gap-3">
@@ -532,7 +532,7 @@ export const M3Configuration: Story = {
                   <Home className="size-6 text-on-surface" />
                 </div>
               </BadgeAnchor>
-              <span className="text-foreground/50 text-xs">Large badge</span>
+              <span className="text-on-background/50 text-xs">Large badge</span>
             </div>
 
             <div className="flex flex-col items-center gap-3">
@@ -541,7 +541,7 @@ export const M3Configuration: Story = {
                   <Home className="size-6 text-on-surface" />
                 </div>
               </BadgeAnchor>
-              <span className="text-foreground/50 text-xs">Max count</span>
+              <span className="text-on-background/50 text-xs">Max count</span>
             </div>
           </div>
         </div>
@@ -575,11 +575,11 @@ export const WithChips: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Badges with Chips</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Badges with Chips</h2>
         <div className="mx-auto max-w-4xl space-y-8">
           {/* Filter chips with notification badges */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center text-foreground/60 text-xs">Filter Chips with Notification Counts</h3>
+            <h3 className="mb-6 text-center text-on-background/60 text-xs">Filter Chips with Notification Counts</h3>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <FilterChipWithBadge count={12} selected>
                 Inbox
@@ -593,7 +593,7 @@ export const WithChips: Story = {
 
           {/* Assist chips with badges */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center text-foreground/60 text-xs">Assist Chips with Status Indicators</h3>
+            <h3 className="mb-6 text-center text-on-background/60 text-xs">Assist Chips with Status Indicators</h3>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <BadgeAnchor badge={<Badge size="small" />}>
                 <Chip type="assist" variant="outlined" leadingIcon={<MessageSquare />}>
@@ -615,7 +615,7 @@ export const WithChips: Story = {
 
           {/* Category filter with counts */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center text-foreground/60 text-xs">Category Filters with Item Counts</h3>
+            <h3 className="mb-6 text-center text-on-background/60 text-xs">Category Filters with Item Counts</h3>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <BadgeAnchor badge={<Badge count={42} />}>
                 <Chip type="filter" variant="elevated" leadingIcon={<Tag />}>
@@ -642,7 +642,9 @@ export const WithChips: Story = {
 
           {/* Interactive example */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center text-foreground/60 text-xs">Interactive Filter Chips (Click to toggle)</h3>
+            <h3 className="mb-6 text-center text-on-background/60 text-xs">
+              Interactive Filter Chips (Click to toggle)
+            </h3>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <FilterChipWithBadge count={8} selected>
                 Unread
@@ -663,46 +665,46 @@ export const CompleteShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Complete Badge Showcase</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Complete Badge Showcase</h2>
       <div className="mx-auto max-w-5xl space-y-8">
         {/* Standalone badges */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Standalone Badges</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Standalone Badges</h3>
           <div className="flex items-center justify-center gap-8">
             <div className="flex flex-col items-center gap-3">
               <Badge size="small" />
-              <span className="text-foreground/50 text-xs">Dot</span>
+              <span className="text-on-background/50 text-xs">Dot</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <Badge count={1} />
-              <span className="text-foreground/50 text-xs">1</span>
+              <span className="text-on-background/50 text-xs">1</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <Badge count={9} />
-              <span className="text-foreground/50 text-xs">9</span>
+              <span className="text-on-background/50 text-xs">9</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <Badge count={99} />
-              <span className="text-foreground/50 text-xs">99</span>
+              <span className="text-on-background/50 text-xs">99</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <Badge count={999} />
-              <span className="text-foreground/50 text-xs">999</span>
+              <span className="text-on-background/50 text-xs">999</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <Badge count={1000} max={999} />
-              <span className="text-foreground/50 text-xs">999+</span>
+              <span className="text-on-background/50 text-xs">999+</span>
             </div>
           </div>
         </div>
 
         {/* With icon buttons */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">With Icon Buttons</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">With Icon Buttons</h3>
           <div className="grid grid-cols-4 gap-8">
             {/* Standard variant */}
             <div className="flex flex-col items-center gap-4">
-              <span className="text-foreground/60 text-xs">Standard</span>
+              <span className="text-on-background/60 text-xs">Standard</span>
               <div className="flex gap-4">
                 <BadgeAnchor badge={<Badge size="small" />}>
                   <IconButton variant="standard" aria-label="Mail">
@@ -719,7 +721,7 @@ export const CompleteShowcase: Story = {
 
             {/* Filled variant */}
             <div className="flex flex-col items-center gap-4">
-              <span className="text-foreground/60 text-xs">Filled</span>
+              <span className="text-on-background/60 text-xs">Filled</span>
               <div className="flex gap-4">
                 <BadgeAnchor badge={<Badge size="small" />}>
                   <IconButton variant="filled" aria-label="Mail">
@@ -736,7 +738,7 @@ export const CompleteShowcase: Story = {
 
             {/* Tonal variant */}
             <div className="flex flex-col items-center gap-4">
-              <span className="text-foreground/60 text-xs">Tonal</span>
+              <span className="text-on-background/60 text-xs">Tonal</span>
               <div className="flex gap-4">
                 <BadgeAnchor badge={<Badge size="small" />}>
                   <IconButton variant="tonal" aria-label="Mail">
@@ -753,7 +755,7 @@ export const CompleteShowcase: Story = {
 
             {/* Outlined variant */}
             <div className="flex flex-col items-center gap-4">
-              <span className="text-foreground/60 text-xs">Outlined</span>
+              <span className="text-on-background/60 text-xs">Outlined</span>
               <div className="flex gap-4">
                 <BadgeAnchor badge={<Badge size="small" />}>
                   <IconButton variant="outlined" aria-label="Mail">

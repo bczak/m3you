@@ -85,12 +85,12 @@ const DefaultNavigationRail = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Rail - Default</h1>
-        <p className="text-foreground/60 text-sm">Click the menu button to toggle between collapsed and expanded.</p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Rail - Default</h1>
+        <p className="text-on-background/60 text-sm">Click the menu button to toggle between collapsed and expanded.</p>
+        <p className="mt-2 text-on-background/60 text-sm">
           Current state: <strong className="text-primary">{state}</strong>
         </p>
-        <p className="text-foreground/60 text-sm">
+        <p className="text-on-background/60 text-sm">
           Current selection: <strong className="text-primary">{value}</strong>
         </p>
       </main>
@@ -130,11 +130,11 @@ const CollapsedRail = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Rail - Collapsed</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Rail - Collapsed</h1>
+        <p className="text-on-background/60 text-sm">
           Collapsed state shows vertical items (icon above label). Width is 80px.
         </p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="mt-2 text-on-background/60 text-sm">
           Current selection: <strong className="text-primary">{value}</strong>
         </p>
       </main>
@@ -175,12 +175,12 @@ const ExpandedStandardRail = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Rail - Expanded (Standard)</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Rail - Expanded (Standard)</h1>
+        <p className="text-on-background/60 text-sm">
           Expanded standard layout shows horizontal items (icon + label). Width is 288px.
         </p>
-        <p className="text-foreground/60 text-sm">Content is pushed to the right (not overlaid).</p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="text-on-background/60 text-sm">Content is pushed to the right (not overlaid).</p>
+        <p className="mt-2 text-on-background/60 text-sm">
           Current selection: <strong className="text-primary">{value}</strong>
         </p>
       </main>
@@ -223,16 +223,16 @@ const ExpandedModalRail = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6 pl-24">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Rail - Expanded (Modal)</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Rail - Expanded (Modal)</h1>
+        <p className="text-on-background/60 text-sm">
           Modal layout overlays content with a scrim backdrop. Click outside to collapse.
         </p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="mt-2 text-on-background/60 text-sm">
           Current state: <strong className="text-primary">{state}</strong>
         </p>
         <button
           type="button"
-          className="mt-4 rounded-full bg-primary px-4 py-2 text-primary-foreground"
+          className="mt-4 rounded-full bg-primary px-4 py-2 text-on-primary"
           onClick={() => setState('expanded')}
         >
           Open Modal Rail
@@ -287,12 +287,12 @@ const WithFAB = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Rail - With FAB</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Rail - With FAB</h1>
+        <p className="text-on-background/60 text-sm">
           FAB (Floating Action Button) is positioned below the menu button. It can be an icon-only FAB or extended FAB
           with label.
         </p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="mt-2 text-on-background/60 text-sm">
           Current state: <strong className="text-primary">{state}</strong>
         </p>
       </main>
@@ -347,11 +347,11 @@ const WithBadges = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Rail - With Badges</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Rail - With Badges</h1>
+        <p className="text-on-background/60 text-sm">
           Badges are positioned on the icon in both collapsed and expanded states.
         </p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="mt-2 text-on-background/60 text-sm">
           Current state: <strong className="text-primary">{state}</strong>
         </p>
       </main>
@@ -409,11 +409,11 @@ const WithSections = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Rail - With Sections</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Rail - With Sections</h1>
+        <p className="text-on-background/60 text-sm">
           Section headers group related items. Headers are visible in expanded state, dividers in collapsed state.
         </p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="mt-2 text-on-background/60 text-sm">
           Current state: <strong className="text-primary">{state}</strong>
         </p>
       </main>
@@ -438,8 +438,8 @@ const WithFooter = () => {
       <div className="size-8 rounded-full bg-primary" />
       {state === 'expanded' && (
         <div className="flex-1">
-          <p className="font-medium text-foreground text-sm">John Doe</p>
-          <p className="text-foreground/60 text-xs">john@example.com</p>
+          <p className="font-medium text-on-background text-sm">John Doe</p>
+          <p className="text-on-background/60 text-xs">john@example.com</p>
         </div>
       )}
     </div>
@@ -473,11 +473,11 @@ const WithFooter = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6">
-        <h1 className="mb-2 font-medium text-foreground text-lg">Navigation Rail - With Footer</h1>
-        <p className="text-foreground/60 text-sm">
+        <h1 className="mb-2 font-medium text-lg text-on-background">Navigation Rail - With Footer</h1>
+        <p className="text-on-background/60 text-sm">
           Footer section at the bottom for user profile or other persistent content.
         </p>
-        <p className="mt-2 text-foreground/60 text-sm">
+        <p className="mt-2 text-on-background/60 text-sm">
           Current state: <strong className="text-primary">{state}</strong>
         </p>
       </main>
@@ -544,19 +544,19 @@ const MusicAppRail = () => {
       <main className="flex-1 p-6">
         <div className="mb-6 flex items-center gap-3">
           <MdMusicNote className="size-8 text-primary" />
-          <span className="font-bold text-foreground text-xl">Music</span>
+          <span className="font-bold text-on-background text-xl">Music</span>
         </div>
 
         <div className="rounded-xl bg-surface-container p-6">
-          <h1 className="mb-2 font-semibold text-2xl text-foreground">{content[value].title}</h1>
-          <p className="text-foreground/70">{content[value].description}</p>
+          <h1 className="mb-2 font-semibold text-2xl text-on-background">{content[value].title}</h1>
+          <p className="text-on-background/70">{content[value].description}</p>
         </div>
 
         <div className="mt-4 grid grid-cols-4 gap-3">
           {['Recently Played', 'Made for You', 'Top Charts', 'New Releases'].map((item) => (
             <div key={item} className="rounded-lg bg-surface-container-high p-4">
               <div className="mb-2 aspect-square rounded-md bg-secondary-container" />
-              <span className="text-foreground text-sm">{item}</span>
+              <span className="text-on-background text-sm">{item}</span>
             </div>
           ))}
         </div>
@@ -603,13 +603,11 @@ const EmailAppRail = () => {
         }
         footer={
           <div className={`flex ${state === 'expanded' ? 'flex-row items-center gap-3' : 'flex-col items-center'}`}>
-            <div className="flex size-10 items-center justify-center rounded-full bg-tertiary text-tertiary-foreground">
-              JD
-            </div>
+            <div className="flex size-10 items-center justify-center rounded-full bg-tertiary text-on-tertiary">JD</div>
             {state === 'expanded' && (
               <div className="flex-1">
-                <p className="font-medium text-foreground text-sm">John Doe</p>
-                <p className="text-foreground/60 text-xs">john@example.com</p>
+                <p className="font-medium text-on-background text-sm">John Doe</p>
+                <p className="text-on-background/60 text-xs">john@example.com</p>
               </div>
             )}
           </div>
@@ -641,23 +639,23 @@ const EmailAppRail = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6">
-        <h1 className="mb-4 font-semibold text-foreground text-xl">Inbox</h1>
+        <h1 className="mb-4 font-semibold text-on-background text-xl">Inbox</h1>
 
         <div className="space-y-2">
           {emails.map((email) => (
             <div key={email.subject} className="rounded-xl bg-surface-container p-4 hover:bg-surface-container-high">
               <div className="flex items-start justify-between">
                 <div className="flex gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary-container text-secondary-container-foreground">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container">
                     {email.from[0]}
                   </div>
                   <div>
-                    <p className="font-medium text-foreground">{email.from}</p>
-                    <p className="text-foreground text-sm">{email.subject}</p>
-                    <p className="text-foreground/60 text-sm">{email.preview}</p>
+                    <p className="font-medium text-on-background">{email.from}</p>
+                    <p className="text-on-background text-sm">{email.subject}</p>
+                    <p className="text-on-background/60 text-sm">{email.preview}</p>
                   </div>
                 </div>
-                <span className="text-foreground/50 text-xs">{email.time}</span>
+                <span className="text-on-background/50 text-xs">{email.time}</span>
               </div>
             </div>
           ))}
@@ -679,14 +677,14 @@ export const BuildingBlocksCollapsed: Story = {
   render: () => {
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h1 className="mb-6 text-center font-semibold text-foreground text-xl">
+        <h1 className="mb-6 text-center font-semibold text-on-background text-xl">
           Building Blocks - Collapsed Rail Item
         </h1>
 
         <div className="mx-auto max-w-md space-y-8">
           {/* Basic states */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States (Outline → Filled)</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Basic States (Outline → Filled)</h2>
             <div className="flex justify-center gap-8">
               <NavigationRail
                 value="none"
@@ -707,7 +705,7 @@ export const BuildingBlocksCollapsed: Story = {
                 <NavigationRailItem value="item2" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Label" />
               </NavigationRail>
             </div>
-            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+            <div className="mt-2 flex justify-center gap-8 text-on-background/50 text-xs">
               <span className="w-14 text-center">Unselected</span>
               <span className="w-14 text-center">Selected</span>
             </div>
@@ -715,7 +713,7 @@ export const BuildingBlocksCollapsed: Story = {
 
           {/* With badge */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Badge</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">With Badge</h2>
             <div className="flex justify-center gap-8">
               <NavigationRail
                 value="none"
@@ -748,7 +746,7 @@ export const BuildingBlocksCollapsed: Story = {
                 />
               </NavigationRail>
             </div>
-            <div className="mt-2 flex justify-center gap-8 text-foreground/50 text-xs">
+            <div className="mt-2 flex justify-center gap-8 text-on-background/50 text-xs">
               <span className="w-14 text-center">Unselected</span>
               <span className="w-14 text-center">Selected</span>
             </div>
@@ -767,12 +765,14 @@ export const BuildingBlocksExpanded: Story = {
   render: () => {
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h1 className="mb-6 text-center font-semibold text-foreground text-xl">Building Blocks - Expanded Rail Item</h1>
+        <h1 className="mb-6 text-center font-semibold text-on-background text-xl">
+          Building Blocks - Expanded Rail Item
+        </h1>
 
         <div className="mx-auto max-w-lg space-y-8">
           {/* Basic states */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">Basic States (Outline → Filled)</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">Basic States (Outline → Filled)</h2>
             <div className="flex flex-col items-center gap-4">
               <NavigationRail
                 value="none"
@@ -793,7 +793,7 @@ export const BuildingBlocksExpanded: Story = {
                 <NavigationRailItem value="item2" icon={<MdOutlineStar />} activeIcon={<MdStar />} label="Label" />
               </NavigationRail>
             </div>
-            <div className="mt-2 flex flex-col items-center gap-4 text-foreground/50 text-xs">
+            <div className="mt-2 flex flex-col items-center gap-4 text-on-background/50 text-xs">
               <span>Unselected</span>
               <span>Selected</span>
             </div>
@@ -801,7 +801,7 @@ export const BuildingBlocksExpanded: Story = {
 
           {/* With badge */}
           <div className="rounded-xl border border-outline-variant border-dashed p-6">
-            <h2 className="mb-4 text-center text-foreground/60 text-sm">With Badge</h2>
+            <h2 className="mb-4 text-center text-on-background/60 text-sm">With Badge</h2>
             <div className="flex flex-col items-center gap-4">
               <NavigationRail
                 value="none"
@@ -878,11 +878,11 @@ const AccessibilityShowcase = () => {
       </NavigationRail>
 
       <main className="flex-1 p-6">
-        <h1 className="mb-4 font-semibold text-foreground text-lg">Accessibility Features</h1>
+        <h1 className="mb-4 font-semibold text-lg text-on-background">Accessibility Features</h1>
 
-        <div className="space-y-4 text-foreground/80 text-sm">
+        <div className="space-y-4 text-on-background/80 text-sm">
           <div className="rounded-lg bg-surface-container p-4">
-            <h2 className="mb-2 font-medium text-foreground">Keyboard Navigation</h2>
+            <h2 className="mb-2 font-medium text-on-background">Keyboard Navigation</h2>
             <ul className="space-y-1">
               <li>
                 • <kbd className="rounded bg-surface-container-high px-1">Tab</kbd> - Move between navigation items
@@ -898,7 +898,7 @@ const AccessibilityShowcase = () => {
           </div>
 
           <div className="rounded-lg bg-surface-container p-4">
-            <h2 className="mb-2 font-medium text-foreground">Screen Reader Support</h2>
+            <h2 className="mb-2 font-medium text-on-background">Screen Reader Support</h2>
             <ul className="space-y-1">
               <li>
                 • Uses semantic <code>&lt;nav&gt;</code> element with <code>aria-label</code>

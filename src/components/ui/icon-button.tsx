@@ -9,13 +9,12 @@ const iconButtonVariants = cva(
   {
     variants: {
       variant: {
-        standard:
-          'bg-transparent text-surface-variant-foreground hover:bg-surface-foreground/8 active:bg-surface-foreground/12',
+        standard: 'bg-transparent text-on-surface-variant hover:bg-on-surface/8 active:bg-on-surface/12',
         filled:
-          'bg-primary text-primary-foreground hover:bg-primary hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)] disabled:bg-muted disabled:text-muted-foreground',
-        elevated: 'bg-surface-container text-foreground hover:bg-surface-container shadow-lg',
+          'bg-primary text-on-primary hover:bg-primary hover:shadow-elevation-2 disabled:bg-muted disabled:text-on-surface-variant',
+        elevated: 'bg-surface-container text-on-background hover:bg-surface-container shadow-lg',
         tonal:
-          'bg-secondary-container text-secondary-container-foreground hover:bg-secondary-container hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]',
+          'bg-secondary-container text-on-secondary-container hover:bg-secondary-container hover:shadow-elevation-2',
         outlined: 'border border-outline/40 bg-transparent text-primary hover:bg-transparent',
         text: 'bg-transparent text-primary hover:bg-secondary-container/50',
       },
@@ -86,24 +85,24 @@ const iconButtonVariants = cva(
       { morph: true, shape: 'square', size: 'lg', class: 'active:rounded-xl' },
       { morph: true, shape: 'square', size: 'xl', class: 'active:rounded-xl' },
       // Selected: false (unselected state) - secondary bg for filled
-      { selected: false, variant: 'filled', class: 'bg-secondary/70 hover:bg-secondary/70 text-secondary-foreground' },
+      { selected: false, variant: 'filled', class: 'bg-secondary/70 hover:bg-secondary/70 text-on-secondary' },
       // Selected states for standard variant
       {
         selected: true,
         variant: 'standard',
-        class: 'bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80',
+        class: 'bg-primary text-on-primary hover:bg-primary/90 active:bg-primary/80',
       },
       // Selected states for elevated variant
-      { selected: true, variant: 'elevated', class: 'bg-primary hover:bg-primary text-primary-foreground shadow-xl' },
+      { selected: true, variant: 'elevated', class: 'bg-primary hover:bg-primary text-on-primary shadow-xl' },
       // Selected states for tonal variant
-      { selected: true, variant: 'tonal', class: 'bg-tertiary hover:bg-tertiary text-tertiary-foreground' },
+      { selected: true, variant: 'tonal', class: 'bg-tertiary hover:bg-tertiary text-on-tertiary' },
       // Selected states for outlined variant
-      { selected: true, variant: 'outlined', class: 'bg-outline hover:bg-outline text-outline-foreground' },
+      { selected: true, variant: 'outlined', class: 'bg-outline hover:bg-outline text-on-primary' },
       // Selected states for text variant
       {
         selected: true,
         variant: 'text',
-        class: 'bg-secondary-container hover:bg-secondary-container text-secondary-container-foreground',
+        class: 'bg-secondary-container hover:bg-secondary-container text-on-secondary-container',
       },
       // Selected: true + round shape -> square radius
       { selected: true, shape: 'round', size: 'xs', class: 'rounded-lg' },

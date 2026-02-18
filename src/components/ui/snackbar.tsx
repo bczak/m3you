@@ -9,7 +9,7 @@ import { cn } from '../../lib/utils';
 
 const snackbarVariants = cva(
   // M3: inverse-surface bg, extra-small shape (4px rounded), elevation level 3
-  'flex w-full min-w-[288px] max-w-[568px] animate-snackbar-slide-up rounded bg-inverse-surface text-inverse-surface-foreground shadow-lg',
+  'flex w-full min-w-[288px] max-w-[568px] animate-snackbar-slide-up rounded bg-inverse-surface text-inverse-on-surface shadow-lg',
   {
     variants: {
       layout: {
@@ -76,7 +76,7 @@ const Snackbar = ({
                 type="button"
                 aria-label="Dismiss"
                 onClick={onClose}
-                className="cursor-pointer rounded-full p-3 text-inverse-surface-foreground hover:bg-inverse-surface-foreground/12"
+                className="cursor-pointer rounded-full p-3 text-inverse-on-surface hover:bg-inverse-on-surface/12"
               >
                 <X className="size-5" />
               </button>
@@ -104,7 +104,7 @@ const Snackbar = ({
                 type="button"
                 aria-label="Dismiss"
                 onClick={onClose}
-                className="cursor-pointer rounded-full p-3 text-inverse-surface-foreground hover:bg-inverse-surface-foreground/12"
+                className="cursor-pointer rounded-full p-3 text-inverse-on-surface hover:bg-inverse-on-surface/12"
               >
                 <X className="size-5" />
               </button>

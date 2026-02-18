@@ -66,17 +66,17 @@ export const Showcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center font-medium text-foreground text-lg">ConnectedButtonGroup</h2>
-        <p className="mb-8 text-center text-foreground/50 text-sm">
+        <h2 className="mb-8 text-center font-medium text-lg text-on-background">ConnectedButtonGroup</h2>
+        <p className="mb-8 text-center text-on-background/50 text-sm">
           Selected buttons are always round. Middle buttons have squared corners. Morph only applies to middle buttons.
         </p>
         <div className="flex flex-col gap-12">
           {variants.map((variant) => (
             <div key={variant} className="rounded-lg border-2 border-outline-variant border-dashed p-8">
-              <h3 className="mb-6 text-center text-foreground/60 text-sm capitalize">{variant}</h3>
+              <h3 className="mb-6 text-center text-on-background/60 text-sm capitalize">{variant}</h3>
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-4">
-                  <span className="text-foreground/50 text-xs">Round</span>
+                  <span className="text-on-background/50 text-xs">Round</span>
                   <div className="flex flex-col items-start gap-4">
                     {sizes.map((size) => (
                       <ConnectedButtonGroup key={size} size={size} shape="round" morph>
@@ -97,7 +97,7 @@ export const Showcase: Story = {
                   </div>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <span className="text-foreground/50 text-xs">Square</span>
+                  <span className="text-on-background/50 text-xs">Square</span>
                   <div className="flex flex-col items-start gap-4">
                     {sizes.map((size) => (
                       <ConnectedButtonGroup key={size} size={size} shape="square" morph>
@@ -135,17 +135,17 @@ export const FiveButtons: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center font-medium text-foreground text-lg">ConnectedButtonGroup - 5 Buttons</h2>
-        <p className="mb-8 text-center text-foreground/50 text-sm">
+        <h2 className="mb-8 text-center font-medium text-lg text-on-background">ConnectedButtonGroup - 5 Buttons</h2>
+        <p className="mb-8 text-center text-on-background/50 text-sm">
           With 5 buttons, morph effect visible on middle 3 buttons (press and hold to see)
         </p>
         <div className="flex flex-col gap-12">
           {variants.map((variant) => (
             <div key={variant} className="rounded-lg border-2 border-outline-variant border-dashed p-8">
-              <h3 className="mb-6 text-center text-foreground/60 text-sm capitalize">{variant}</h3>
+              <h3 className="mb-6 text-center text-on-background/60 text-sm capitalize">{variant}</h3>
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-4">
-                  <span className="text-foreground/50 text-xs">Round</span>
+                  <span className="text-on-background/50 text-xs">Round</span>
                   <ConnectedButtonGroup shape="round" morph>
                     <Button variant={variant}>
                       <CircleStarIcon />
@@ -170,7 +170,7 @@ export const FiveButtons: Story = {
                   </ConnectedButtonGroup>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <span className="text-foreground/50 text-xs">Square</span>
+                  <span className="text-on-background/50 text-xs">Square</span>
                   <ConnectedButtonGroup shape="square" morph>
                     <Button variant={variant}>
                       <CircleStarIcon />
@@ -212,14 +212,14 @@ export const Vertical: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center font-medium text-foreground text-lg">Vertical ConnectedButtonGroup</h2>
+        <h2 className="mb-8 text-center font-medium text-lg text-on-background">Vertical ConnectedButtonGroup</h2>
         <div className="flex flex-wrap justify-center gap-12">
           {variants.map((variant) => (
             <div key={variant} className="rounded-lg border-2 border-outline-variant border-dashed p-8">
-              <h3 className="mb-6 text-center text-foreground/60 text-sm capitalize">{variant}</h3>
+              <h3 className="mb-6 text-center text-on-background/60 text-sm capitalize">{variant}</h3>
               <div className="flex gap-8">
                 <div className="flex flex-col items-center gap-4">
-                  <span className="text-foreground/50 text-xs">Round</span>
+                  <span className="text-on-background/50 text-xs">Round</span>
                   <ConnectedButtonGroup orientation="vertical" shape="round" morph>
                     <Button variant={variant}>
                       <CircleStarIcon />
@@ -236,7 +236,7 @@ export const Vertical: Story = {
                   </ConnectedButtonGroup>
                 </div>
                 <div className="flex flex-col items-center gap-4">
-                  <span className="text-foreground/50 text-xs">Square</span>
+                  <span className="text-on-background/50 text-xs">Square</span>
                   <ConnectedButtonGroup orientation="vertical" shape="square" morph>
                     <Button variant={variant}>
                       <CircleStarIcon />
@@ -281,7 +281,7 @@ const ControlledExample = () => {
           Three
         </Button>
       </ConnectedButtonGroup>
-      <span className="text-foreground/50 text-sm">Selected: [{value.join(', ')}]</span>
+      <span className="text-on-background/50 text-sm">Selected: [{value.join(', ')}]</span>
     </div>
   );
 };
@@ -293,7 +293,7 @@ export const Controlled: Story = {
 export const DefaultValue: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      <span className="text-foreground/50 text-sm">defaultValue=[0, 2] (first and third selected)</span>
+      <span className="text-on-background/50 text-sm">defaultValue=[0, 2] (first and third selected)</span>
       <ConnectedButtonGroup defaultValue={[0, 2]} morph>
         <Button variant="filled">
           <CircleStarIcon />
@@ -352,7 +352,7 @@ const SingleSelectionExample = () => {
           Option C
         </Button>
       </ConnectedButtonGroup>
-      <span className="text-foreground/50 text-sm">Selected: [{value.join(', ')}]</span>
+      <span className="text-on-background/50 text-sm">Selected: [{value.join(', ')}]</span>
     </div>
   );
 };
@@ -381,7 +381,7 @@ const MultipleSelectionExample = () => {
           Option C
         </Button>
       </ConnectedButtonGroup>
-      <span className="text-foreground/50 text-sm">Selected: [{value.join(', ')}]</span>
+      <span className="text-on-background/50 text-sm">Selected: [{value.join(', ')}]</span>
     </div>
   );
 };
@@ -399,14 +399,14 @@ export const SelectionModes: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center font-medium text-foreground text-lg">Selection Modes Comparison</h2>
+        <h2 className="mb-8 text-center font-medium text-lg text-on-background">Selection Modes Comparison</h2>
         <div className="flex flex-col gap-12">
           {variants.map((variant) => (
             <div key={variant} className="rounded-lg border-2 border-outline-variant border-dashed p-8">
-              <h3 className="mb-6 text-center text-foreground/60 text-sm capitalize">{variant}</h3>
+              <h3 className="mb-6 text-center text-on-background/60 text-sm capitalize">{variant}</h3>
               <div className="flex justify-center gap-16">
                 <div className="flex flex-col items-center gap-4">
-                  <span className="text-foreground/50 text-xs">Single Selection</span>
+                  <span className="text-on-background/50 text-xs">Single Selection</span>
                   <ConnectedButtonGroup selectionMode="single" defaultValue={[1]} morph>
                     <Button variant={variant}>One</Button>
                     <Button variant={variant}>Two</Button>
@@ -414,7 +414,7 @@ export const SelectionModes: Story = {
                   </ConnectedButtonGroup>
                 </div>
                 <div className="flex flex-col items-center gap-4">
-                  <span className="text-foreground/50 text-xs">Multiple Selection</span>
+                  <span className="text-on-background/50 text-xs">Multiple Selection</span>
                   <ConnectedButtonGroup selectionMode="multiple" defaultValue={[0, 2]} morph>
                     <Button variant={variant}>One</Button>
                     <Button variant={variant}>Two</Button>
@@ -436,13 +436,13 @@ export const MorphBehavior: Story = {
   },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-4 text-center font-medium text-foreground text-lg">Morph Behavior</h2>
-      <p className="mb-8 text-center text-foreground/50 text-sm">
+      <h2 className="mb-4 text-center font-medium text-lg text-on-background">Morph Behavior</h2>
+      <p className="mb-8 text-center text-on-background/50 text-sm">
         Press and hold buttons to see morph effect. Only middle buttons morph - first and last stay stable.
       </p>
       <div className="flex flex-col items-center gap-8">
         <div className="flex flex-col items-center gap-4">
-          <span className="text-foreground/50 text-xs">3 Buttons (only middle morphs)</span>
+          <span className="text-on-background/50 text-xs">3 Buttons (only middle morphs)</span>
           <ConnectedButtonGroup morph size="md">
             <Button variant="filled">First</Button>
             <Button variant="filled">Middle</Button>
@@ -450,7 +450,7 @@ export const MorphBehavior: Story = {
           </ConnectedButtonGroup>
         </div>
         <div className="flex flex-col items-center gap-4">
-          <span className="text-foreground/50 text-xs">5 Buttons (middle 3 morph)</span>
+          <span className="text-on-background/50 text-xs">5 Buttons (middle 3 morph)</span>
           <ConnectedButtonGroup morph size="md">
             <Button variant="filled">First</Button>
             <Button variant="filled">Two</Button>
@@ -460,14 +460,14 @@ export const MorphBehavior: Story = {
           </ConnectedButtonGroup>
         </div>
         <div className="flex flex-col items-center gap-4">
-          <span className="text-foreground/50 text-xs">2 Buttons (no morph - both are edge buttons)</span>
+          <span className="text-on-background/50 text-xs">2 Buttons (no morph - both are edge buttons)</span>
           <ConnectedButtonGroup morph size="md">
             <Button variant="filled">First</Button>
             <Button variant="filled">Last</Button>
           </ConnectedButtonGroup>
         </div>
         <div className="flex flex-col items-center gap-4">
-          <span className="text-foreground/50 text-xs">Vertical (only middle morphs)</span>
+          <span className="text-on-background/50 text-xs">Vertical (only middle morphs)</span>
           <ConnectedButtonGroup orientation="vertical" morph size="md">
             <Button variant="filled">Top</Button>
             <Button variant="filled">Middle</Button>

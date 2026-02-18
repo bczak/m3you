@@ -29,40 +29,40 @@ export const AllStatesShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Checkbox States</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Checkbox States</h2>
       <div className="mx-auto max-w-3xl space-y-8">
         {/* Primary Variant */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Primary Variant</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Primary Variant</h3>
           <div className="grid grid-cols-4 gap-6">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Unchecked</span>
+              <span className="text-on-background/40 text-xs">Unchecked</span>
               <Checkbox />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Checked</span>
+              <span className="text-on-background/40 text-xs">Checked</span>
               <Checkbox checked />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Indeterminate</span>
+              <span className="text-on-background/40 text-xs">Indeterminate</span>
               <Checkbox indeterminate />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled</span>
+              <span className="text-on-background/40 text-xs">Disabled</span>
               <Checkbox disabled />
             </div>
           </div>
           <div className="mt-6 grid grid-cols-4 gap-6">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Unchecked</span>
+              <span className="text-on-background/40 text-xs">Disabled Unchecked</span>
               <Checkbox disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Checked</span>
+              <span className="text-on-background/40 text-xs">Disabled Checked</span>
               <Checkbox checked disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Indeterminate</span>
+              <span className="text-on-background/40 text-xs">Disabled Indeterminate</span>
               <Checkbox indeterminate disabled />
             </div>
             <div />
@@ -71,36 +71,36 @@ export const AllStatesShowcase: Story = {
 
         {/* Error Variant */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Error Variant</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Error Variant</h3>
           <div className="grid grid-cols-4 gap-6">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Unchecked</span>
+              <span className="text-on-background/40 text-xs">Unchecked</span>
               <Checkbox variant="error" />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Checked</span>
+              <span className="text-on-background/40 text-xs">Checked</span>
               <Checkbox variant="error" checked />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Indeterminate</span>
+              <span className="text-on-background/40 text-xs">Indeterminate</span>
               <Checkbox variant="error" indeterminate />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled</span>
+              <span className="text-on-background/40 text-xs">Disabled</span>
               <Checkbox variant="error" disabled />
             </div>
           </div>
           <div className="mt-6 grid grid-cols-4 gap-6">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Unchecked</span>
+              <span className="text-on-background/40 text-xs">Disabled Unchecked</span>
               <Checkbox variant="error" disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Checked</span>
+              <span className="text-on-background/40 text-xs">Disabled Checked</span>
               <Checkbox variant="error" checked disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Indeterminate</span>
+              <span className="text-on-background/40 text-xs">Disabled Indeterminate</span>
               <Checkbox variant="error" indeterminate disabled />
             </div>
             <div />
@@ -120,14 +120,14 @@ export const InteractiveToggle: Story = {
       return (
         <div className="flex flex-col items-center gap-4">
           <Checkbox checked={checked} onCheckedChange={setChecked} />
-          <span className="text-foreground/60 text-sm">State: {checked ? 'Checked' : 'Unchecked'}</span>
+          <span className="text-on-background/60 text-sm">State: {checked ? 'Checked' : 'Unchecked'}</span>
         </div>
       );
     };
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Interactive Checkbox (Click to toggle)</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Interactive Checkbox (Click to toggle)</h2>
         <div className="mx-auto max-w-md">
           <div className="flex justify-center rounded-lg border-2 border-outline-variant border-dashed p-8">
             <InteractiveCheckbox />
@@ -156,7 +156,7 @@ export const WithLabels: Story = {
       return (
         <div className="flex items-center">
           <Checkbox id={id} checked={checked} onCheckedChange={setChecked} variant={variant} />
-          <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-foreground text-sm">
+          <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-on-background text-sm">
             {label}
           </label>
         </div>
@@ -165,11 +165,11 @@ export const WithLabels: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Checkboxes with Labels</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Checkboxes with Labels</h2>
         <div className="mx-auto max-w-md space-y-8">
           {/* Terms example */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Terms & Conditions</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Terms & Conditions</h3>
             <div className="space-y-2">
               <LabeledCheckbox label="I agree to the Terms of Service" />
               <LabeledCheckbox label="I agree to the Privacy Policy" />
@@ -179,7 +179,7 @@ export const WithLabels: Story = {
 
           {/* Preferences example */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Notification Preferences</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Notification Preferences</h3>
             <div className="space-y-2">
               <LabeledCheckbox label="Email notifications" defaultChecked />
               <LabeledCheckbox label="Push notifications" defaultChecked />
@@ -189,7 +189,7 @@ export const WithLabels: Story = {
 
           {/* Error example */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Required Field (Error Variant)</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Required Field (Error Variant)</h3>
             <div className="space-y-2">
               <LabeledCheckbox label="Accept terms to continue" variant="error" />
               <span className="ml-12 block text-error text-xs">This field is required</span>
@@ -235,7 +235,7 @@ export const ParentChildGroup: Story = {
               indeterminate={isIndeterminate}
               onCheckedChange={handleParentChange}
             />
-            <label htmlFor={parentId} className="-ml-2 cursor-pointer py-3 pr-3 font-medium text-foreground text-sm">
+            <label htmlFor={parentId} className="-ml-2 cursor-pointer py-3 pr-3 font-medium text-on-background text-sm">
               Select All
             </label>
           </div>
@@ -251,7 +251,7 @@ export const ParentChildGroup: Story = {
                     checked={child.checked}
                     onCheckedChange={(checked) => handleChildChange(child.id, checked)}
                   />
-                  <label htmlFor={childId} className="-ml-2 cursor-pointer py-3 pr-3 text-foreground text-sm">
+                  <label htmlFor={childId} className="-ml-2 cursor-pointer py-3 pr-3 text-on-background text-sm">
                     {child.label}
                   </label>
                 </div>
@@ -264,12 +264,12 @@ export const ParentChildGroup: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">
           Parent-Child Checkbox Group (Indeterminate State)
         </h2>
         <div className="mx-auto max-w-md">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Select Options</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Select Options</h3>
             <ParentChildCheckboxes />
           </div>
         </div>
@@ -302,7 +302,7 @@ export const ErrorVariant: Story = {
             />
             <label
               htmlFor={id}
-              className={`-ml-2 cursor-pointer py-3 pr-3 text-sm ${showError ? 'text-error' : 'text-foreground'}`}
+              className={`-ml-2 cursor-pointer py-3 pr-3 text-sm ${showError ? 'text-error' : 'text-on-background'}`}
             >
               I accept the terms and conditions
             </label>
@@ -311,7 +311,7 @@ export const ErrorVariant: Story = {
           <button
             type="button"
             onClick={() => setSubmitted(true)}
-            className="mt-4 rounded-full bg-primary px-6 py-2 text-primary-foreground text-sm hover:bg-primary/90"
+            className="mt-4 rounded-full bg-primary px-6 py-2 text-on-primary text-sm hover:bg-primary/90"
           >
             Submit
           </button>
@@ -321,10 +321,10 @@ export const ErrorVariant: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Error Variant (Form Validation)</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Error Variant (Form Validation)</h2>
         <div className="mx-auto max-w-md">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Form with Required Checkbox</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Form with Required Checkbox</h3>
             <ValidationExample />
           </div>
         </div>

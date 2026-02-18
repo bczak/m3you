@@ -15,14 +15,14 @@ test('applies filled variant classes correctly', async () => {
   render(<Button variant="filled">Filled</Button>);
   const button = screen.getByRole('button', { name: 'Filled' });
   expect(button).toHaveClass('bg-primary');
-  expect(button).toHaveClass('text-primary-foreground');
+  expect(button).toHaveClass('text-on-primary');
 });
 
 test('applies elevated variant classes correctly', async () => {
   render(<Button variant="elevated">Elevated</Button>);
   const button = screen.getByRole('button', { name: 'Elevated' });
   expect(button).toHaveClass('bg-surface-container');
-  expect(button).toHaveClass('text-foreground');
+  expect(button).toHaveClass('text-on-background');
   expect(button).toHaveClass('shadow-lg');
 });
 
@@ -30,7 +30,7 @@ test('applies tonal variant classes correctly', async () => {
   render(<Button variant="tonal">Tonal</Button>);
   const button = screen.getByRole('button', { name: 'Tonal' });
   expect(button).toHaveClass('bg-secondary-container');
-  expect(button).toHaveClass('text-secondary-container-foreground');
+  expect(button).toHaveClass('text-on-secondary-container');
 });
 
 test('applies outlined variant classes correctly', async () => {

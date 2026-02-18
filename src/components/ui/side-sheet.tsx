@@ -144,7 +144,7 @@ function SideSheetHeader({ className, children, onBack, showClose = true, ...pro
           <ArrowLeft />
         </IconButton>
       )}
-      <DrawerPrimitive.Title data-slot="side-sheet-title" className="flex-1 text-2xl text-surface-foreground">
+      <DrawerPrimitive.Title data-slot="side-sheet-title" className="flex-1 text-2xl text-on-surface">
         {children}
       </DrawerPrimitive.Title>
       {showClose && (

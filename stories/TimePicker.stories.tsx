@@ -48,7 +48,7 @@ export const Default: Story = {
         <Button variant="filled" onClick={() => setOpen(true)}>
           Select Time
         </Button>
-        <p className="text-foreground text-sm">Selected: {format12Display(time)}</p>
+        <p className="text-on-background text-sm">Selected: {format12Display(time)}</p>
         <TimePicker open={open} onOpenChange={setOpen} value={time} onChange={setTime} />
       </div>
     );
@@ -272,7 +272,7 @@ export const AllStatesShowcase: Story = {
       const display = format === '24h' ? format24Display(time) : format12Display(time);
       return (
         <div className="space-y-2">
-          <span className="text-foreground/40 text-xs">{label}</span>
+          <span className="text-on-background/40 text-xs">{label}</span>
           <div>
             <Button variant="outlined" onClick={() => setOpen(true)}>
               {display}
@@ -293,11 +293,11 @@ export const AllStatesShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">TimePicker — All Configurations</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">TimePicker — All Configurations</h2>
         <div className="mx-auto max-w-[900px] space-y-8">
           {/* Dial mode */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 font-medium text-foreground text-sm">Dial Mode — Portrait</h3>
+            <h3 className="mb-6 font-medium text-on-background text-sm">Dial Mode — Portrait</h3>
             <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
               <PickerCard label="12h AM" initialTime={{ hours: 10, minutes: 30 }} />
               <PickerCard label="12h PM" initialTime={{ hours: 14, minutes: 45 }} />
@@ -308,7 +308,7 @@ export const AllStatesShowcase: Story = {
 
           {/* Landscape */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 font-medium text-foreground text-sm">Dial Mode — Landscape</h3>
+            <h3 className="mb-6 font-medium text-on-background text-sm">Dial Mode — Landscape</h3>
             <div className="grid grid-cols-2 gap-8">
               <PickerCard label="12h Landscape" initialTime={{ hours: 10, minutes: 30 }} orientation="landscape" />
               <PickerCard
@@ -322,7 +322,7 @@ export const AllStatesShowcase: Story = {
 
           {/* Input mode */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 font-medium text-foreground text-sm">Input Mode (Keyboard)</h3>
+            <h3 className="mb-6 font-medium text-on-background text-sm">Input Mode (Keyboard)</h3>
             <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
               <PickerCard label="12h Input" initialTime={{ hours: 10, minutes: 30 }} defaultMode="input" />
               <PickerCard label="12h PM Input" initialTime={{ hours: 14, minutes: 45 }} defaultMode="input" />

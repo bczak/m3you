@@ -83,7 +83,7 @@ export const Modal: Story = {
         <Button variant="filled" onClick={() => setOpen(true)}>
           Open Modal Date Picker
         </Button>
-        <p className="text-foreground text-sm">Selected: {date ? date.toLocaleDateString() : 'None'}</p>
+        <p className="text-on-background text-sm">Selected: {date ? date.toLocaleDateString() : 'None'}</p>
         <DatePickerModal open={open} onOpenChange={setOpen} value={date} onChange={setDate} />
       </div>
     );
@@ -100,7 +100,7 @@ export const ModalEmpty: Story = {
         <Button variant="outlined" onClick={() => setOpen(true)}>
           Select Date
         </Button>
-        <p className="text-foreground text-sm">Selected: {date ? date.toLocaleDateString() : 'None'}</p>
+        <p className="text-on-background text-sm">Selected: {date ? date.toLocaleDateString() : 'None'}</p>
         <DatePickerModal open={open} onOpenChange={setOpen} value={date} onChange={setDate} />
       </div>
     );
@@ -118,7 +118,7 @@ export const ModalWithConstraints: Story = {
         <Button variant="tonal" onClick={() => setOpen(true)}>
           Pick a Future Date
         </Button>
-        <p className="text-foreground text-sm">Selected: {date ? date.toLocaleDateString() : 'None'}</p>
+        <p className="text-on-background text-sm">Selected: {date ? date.toLocaleDateString() : 'None'}</p>
         <DatePickerModal open={open} onOpenChange={setOpen} value={date} onChange={setDate} minDate={today} />
       </div>
     );
@@ -136,7 +136,7 @@ export const AllStatesShowcase: Story = {
       const [date, setDate] = React.useState<Date | null>(new Date(2025, 7, 17));
       return (
         <div className="space-y-2">
-          <span className="text-foreground/40 text-xs">With value (controlled)</span>
+          <span className="text-on-background/40 text-xs">With value (controlled)</span>
           <DatePicker value={date} onChange={setDate} />
         </div>
       );
@@ -146,7 +146,7 @@ export const AllStatesShowcase: Story = {
       const [date, setDate] = React.useState<Date | null>(null);
       return (
         <div className="space-y-2">
-          <span className="text-foreground/40 text-xs">Empty (controlled)</span>
+          <span className="text-on-background/40 text-xs">Empty (controlled)</span>
           <DatePicker value={date} onChange={setDate} />
         </div>
       );
@@ -156,7 +156,7 @@ export const AllStatesShowcase: Story = {
       const [date, setDate] = React.useState<Date | null>(null);
       return (
         <div className="space-y-2">
-          <span className="text-foreground/40 text-xs">Error state</span>
+          <span className="text-on-background/40 text-xs">Error state</span>
           <DatePicker value={date} onChange={setDate} error errorText="Date is required" />
         </div>
       );
@@ -167,7 +167,7 @@ export const AllStatesShowcase: Story = {
       const [open, setOpen] = React.useState(false);
       return (
         <div className="space-y-2">
-          <span className="text-foreground/40 text-xs">Modal date picker</span>
+          <span className="text-on-background/40 text-xs">Modal date picker</span>
           <Button variant="outlined" onClick={() => setOpen(true)}>
             {date ? date.toLocaleDateString() : 'Select Date'}
           </Button>
@@ -178,31 +178,31 @@ export const AllStatesShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">DatePicker States</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">DatePicker States</h2>
         <div className="mx-auto max-w-[900px]">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 font-medium text-foreground text-sm">Docked Date Picker</h3>
+            <h3 className="mb-6 font-medium text-on-background text-sm">Docked Date Picker</h3>
             <div className="grid grid-cols-2 gap-8">
               <ControlledExample />
               <EmptyExample />
               <ErrorExample />
               <div className="space-y-2">
-                <span className="text-foreground/40 text-xs">Disabled with value</span>
+                <span className="text-on-background/40 text-xs">Disabled with value</span>
                 <DatePicker defaultValue={new Date(2025, 7, 17)} disabled />
               </div>
               <div className="space-y-2">
-                <span className="text-foreground/40 text-xs">Disabled empty</span>
+                <span className="text-on-background/40 text-xs">Disabled empty</span>
                 <DatePicker disabled />
               </div>
               <div className="space-y-2">
-                <span className="text-foreground/40 text-xs">Custom label</span>
+                <span className="text-on-background/40 text-xs">Custom label</span>
                 <DatePicker label="Birthday" supportingText="Enter your date of birth" />
               </div>
             </div>
 
             <div className="my-8 border-outline-variant border-b" />
 
-            <h3 className="mb-6 font-medium text-foreground text-sm">Modal Date Picker</h3>
+            <h3 className="mb-6 font-medium text-on-background text-sm">Modal Date Picker</h3>
             <div className="grid grid-cols-2 gap-8">
               <ModalExample />
             </div>

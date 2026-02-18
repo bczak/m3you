@@ -57,7 +57,7 @@ test('tooltip content has correct M3 styling classes', () => {
 
   const popup = screen.getByText('Styled');
   expect(popup).toHaveClass('bg-inverse-surface');
-  expect(popup).toHaveClass('text-inverse-surface-foreground');
+  expect(popup).toHaveClass('text-inverse-on-surface');
   expect(popup).toHaveClass('rounded');
 });
 
@@ -128,7 +128,7 @@ test('rich tooltip content has correct M3 styling', () => {
 
   const headline = screen.getByText('Styled');
   expect(headline).toHaveClass('font-medium');
-  expect(headline).toHaveClass('text-surface-variant-foreground');
+  expect(headline).toHaveClass('text-on-surface-variant');
 });
 
 test('rich tooltip content supports custom className', () => {

@@ -57,7 +57,7 @@ const TooltipContent = ({
         <BaseTooltip.Popup
           ref={ref}
           className={cn(
-            'max-w-[200px] rounded bg-inverse-surface px-2 py-1 text-inverse-surface-foreground text-xs',
+            'max-w-[200px] rounded bg-inverse-surface px-2 py-1 text-inverse-on-surface text-xs',
             className,
           )}
           {...props}
@@ -117,8 +117,8 @@ const RichTooltipContent = ({
           className={cn('max-w-xs rounded-xl bg-surface-container pt-3 pr-4 pb-2 pl-4 shadow-md', className)}
           {...props}
         >
-          {headline && <div className="font-medium text-sm text-surface-variant-foreground">{headline}</div>}
-          <div className={cn('text-sm text-surface-variant-foreground', headline && 'mt-1')}>{children}</div>
+          {headline && <div className="font-medium text-on-surface-variant text-sm">{headline}</div>}
+          <div className={cn('text-on-surface-variant text-sm', headline && 'mt-1')}>{children}</div>
           {actions && <div className="mt-3 flex justify-end gap-2">{actions}</div>}
         </BaseTooltip.Popup>
       </BaseTooltip.Positioner>

@@ -353,7 +353,7 @@ test('NavigationRailItem applies inactive state color', async () => {
   );
 
   const searchItem = screen.getByRole('button', { name: 'Search' });
-  expect(searchItem).toHaveClass('text-surface-variant-foreground');
+  expect(searchItem).toHaveClass('text-on-surface-variant');
 });
 
 test('NavigationRailItem forwards ref correctly', async () => {

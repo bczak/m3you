@@ -197,10 +197,10 @@ const ControlledFABMenu = () => {
   return (
     <div className="h-[400px] w-[300px]">
       <div className="mb-4 flex items-center gap-2">
-        <span className="text-foreground/60 text-sm">Controlled: {open ? 'Open' : 'Closed'}</span>
+        <span className="text-on-background/60 text-sm">Controlled: {open ? 'Open' : 'Closed'}</span>
         <button
           type="button"
-          className="rounded bg-primary px-2 py-1 text-primary-foreground text-xs"
+          className="rounded bg-primary px-2 py-1 text-on-primary text-xs"
           onClick={() => setOpen(!open)}
         >
           Toggle
@@ -229,10 +229,10 @@ export const Showcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">FAB Menu Showcase</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">FAB Menu Showcase</h2>
       <div className="grid grid-cols-3 gap-8">
         <div className="relative h-[350px] rounded-lg border-2 border-outline-variant border-dashed p-4">
-          <h3 className="text-foreground/40 text-xs">Default (Square lg)</h3>
+          <h3 className="text-on-background/40 text-xs">Default (Square lg)</h3>
           <FABMenu className="absolute right-4 bottom-4">
             <FABMenuContent>
               <FABMenuItem>
@@ -247,7 +247,7 @@ export const Showcase: Story = {
         </div>
 
         <div className="relative h-[350px] rounded-lg border-2 border-outline-variant border-dashed p-4">
-          <h3 className="text-foreground/40 text-xs">Filled Trigger</h3>
+          <h3 className="text-on-background/40 text-xs">Filled Trigger</h3>
           <FABMenu className="absolute right-4 bottom-4">
             <FABMenuContent>
               <FABMenuItem>
@@ -262,7 +262,7 @@ export const Showcase: Story = {
         </div>
 
         <div className="relative h-[350px] rounded-lg border-2 border-outline-variant border-dashed p-4">
-          <h3 className="text-foreground/40 text-xs">Tonal Trigger</h3>
+          <h3 className="text-on-background/40 text-xs">Tonal Trigger</h3>
           <FABMenu className="absolute right-4 bottom-4">
             <FABMenuContent>
               <FABMenuItem>
@@ -277,7 +277,7 @@ export const Showcase: Story = {
         </div>
 
         <div className="relative h-[350px] rounded-lg border-2 border-outline-variant border-dashed p-4">
-          <h3 className="text-foreground/40 text-xs">Round Trigger</h3>
+          <h3 className="text-on-background/40 text-xs">Round Trigger</h3>
           <FABMenu className="absolute right-4 bottom-4">
             <FABMenuContent>
               <FABMenuItem>
@@ -292,7 +292,7 @@ export const Showcase: Story = {
         </div>
 
         <div className="relative h-[350px] rounded-lg border-2 border-outline-variant border-dashed p-4">
-          <h3 className="text-foreground/40 text-xs">Elevated Menu Items</h3>
+          <h3 className="text-on-background/40 text-xs">Elevated Menu Items</h3>
           <FABMenu className="absolute right-4 bottom-4">
             <FABMenuContent>
               <FABMenuItem variant="elevated">
@@ -307,7 +307,7 @@ export const Showcase: Story = {
         </div>
 
         <div className="relative h-[350px] rounded-lg border-2 border-outline-variant border-dashed p-4">
-          <h3 className="text-foreground/40 text-xs">AsChild (ExtendedFAB)</h3>
+          <h3 className="text-on-background/40 text-xs">AsChild (ExtendedFAB)</h3>
           <FABMenu className="absolute right-4 bottom-4">
             <FABMenuContent>
               <FABMenuItem>

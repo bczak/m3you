@@ -30,7 +30,7 @@ export const Default: Story = {
       <SideSheetContent>
         <SideSheetHeader>Title</SideSheetHeader>
         <SideSheetBody>
-          <p className="text-sm text-surface-variant-foreground">
+          <p className="text-on-surface-variant text-sm">
             Side sheets are surfaces containing supplementary content or actions to support tasks as part of a flow.
             They are typically anchored on the right edge of larger screens like tablets and desktops.
           </p>
@@ -48,7 +48,7 @@ export const WithBackButton: Story = {
       <SideSheetContent>
         <SideSheetHeader onBack={() => console.log('Back pressed')}>Title</SideSheetHeader>
         <SideSheetBody>
-          <p className="text-sm text-surface-variant-foreground">
+          <p className="text-on-surface-variant text-sm">
             Modal side sheets can include a back icon button for navigation within the sheet's content.
           </p>
         </SideSheetBody>
@@ -65,7 +65,7 @@ export const WithActions: Story = {
       <SideSheetContent>
         <SideSheetHeader>Title</SideSheetHeader>
         <SideSheetBody>
-          <p className="text-sm text-surface-variant-foreground">
+          <p className="text-on-surface-variant text-sm">
             Side sheets can contain action buttons at the bottom for saving or cancelling changes.
           </p>
         </SideSheetBody>
@@ -91,7 +91,7 @@ export const WithBackAndActions: Story = {
       <SideSheetContent>
         <SideSheetHeader onBack={() => console.log('Back pressed')}>Title</SideSheetHeader>
         <SideSheetBody>
-          <p className="text-sm text-surface-variant-foreground">
+          <p className="text-on-surface-variant text-sm">
             A combination of back navigation and action buttons provides full navigation within the side sheet.
           </p>
         </SideSheetBody>
@@ -117,7 +117,7 @@ export const Standard: Story = {
       <SideSheetContent>
         <SideSheetHeader>Title</SideSheetHeader>
         <SideSheetBody>
-          <p className="text-sm text-surface-variant-foreground">
+          <p className="text-on-surface-variant text-sm">
             Standard side sheets do not have a scrim and use a divider on the edge to separate from the main content.
           </p>
         </SideSheetBody>
@@ -134,7 +134,7 @@ export const StandardWithActions: Story = {
       <SideSheetContent>
         <SideSheetHeader>Title</SideSheetHeader>
         <SideSheetBody>
-          <p className="text-sm text-surface-variant-foreground">
+          <p className="text-on-surface-variant text-sm">
             Standard side sheets can also contain action buttons at the bottom.
           </p>
         </SideSheetBody>
@@ -160,9 +160,7 @@ export const LeftSide: Story = {
       <SideSheetContent>
         <SideSheetHeader>Title</SideSheetHeader>
         <SideSheetBody>
-          <p className="text-sm text-surface-variant-foreground">
-            Side sheets can also appear from the left edge when needed.
-          </p>
+          <p className="text-on-surface-variant text-sm">Side sheets can also appear from the left edge when needed.</p>
         </SideSheetBody>
       </SideSheetContent>
     </SideSheet>
@@ -174,18 +172,18 @@ export const Showcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Side Sheet Variants</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Side Sheet Variants</h2>
       <div className="mx-auto flex max-w-3xl flex-col gap-8">
         {/* Standard variants */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Standard Side Sheets</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Standard Side Sheets</h3>
           <div className="flex flex-wrap gap-4">
             <SideSheet modal={false}>
               <SideSheetTrigger render={<Button variant="outlined">Title + Close</Button>} />
               <SideSheetContent>
                 <SideSheetHeader>Title</SideSheetHeader>
                 <SideSheetBody>
-                  <p className="text-sm text-surface-variant-foreground">Standard side sheet with title and close.</p>
+                  <p className="text-on-surface-variant text-sm">Standard side sheet with title and close.</p>
                 </SideSheetBody>
               </SideSheetContent>
             </SideSheet>
@@ -195,9 +193,7 @@ export const Showcase: Story = {
               <SideSheetContent>
                 <SideSheetHeader onBack={() => {}}>Title</SideSheetHeader>
                 <SideSheetBody>
-                  <p className="text-sm text-surface-variant-foreground">
-                    Standard side sheet with back, title, and close.
-                  </p>
+                  <p className="text-on-surface-variant text-sm">Standard side sheet with back, title, and close.</p>
                 </SideSheetBody>
               </SideSheetContent>
             </SideSheet>
@@ -207,7 +203,7 @@ export const Showcase: Story = {
               <SideSheetContent>
                 <SideSheetHeader>Title</SideSheetHeader>
                 <SideSheetBody>
-                  <p className="text-sm text-surface-variant-foreground">Standard with action buttons.</p>
+                  <p className="text-on-surface-variant text-sm">Standard with action buttons.</p>
                 </SideSheetBody>
                 <SideSheetDivider />
                 <SideSheetFooter>
@@ -225,14 +221,14 @@ export const Showcase: Story = {
 
         {/* Modal variants */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Modal Side Sheets</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Modal Side Sheets</h3>
           <div className="flex flex-wrap gap-4">
             <SideSheet>
               <SideSheetTrigger render={<Button variant="outlined">Title + Close</Button>} />
               <SideSheetContent>
                 <SideSheetHeader>Title</SideSheetHeader>
                 <SideSheetBody>
-                  <p className="text-sm text-surface-variant-foreground">Modal side sheet with title and close.</p>
+                  <p className="text-on-surface-variant text-sm">Modal side sheet with title and close.</p>
                 </SideSheetBody>
               </SideSheetContent>
             </SideSheet>
@@ -242,9 +238,7 @@ export const Showcase: Story = {
               <SideSheetContent>
                 <SideSheetHeader onBack={() => {}}>Title</SideSheetHeader>
                 <SideSheetBody>
-                  <p className="text-sm text-surface-variant-foreground">
-                    Modal side sheet with back, title, and close.
-                  </p>
+                  <p className="text-on-surface-variant text-sm">Modal side sheet with back, title, and close.</p>
                 </SideSheetBody>
               </SideSheetContent>
             </SideSheet>
@@ -254,7 +248,7 @@ export const Showcase: Story = {
               <SideSheetContent>
                 <SideSheetHeader>Title</SideSheetHeader>
                 <SideSheetBody>
-                  <p className="text-sm text-surface-variant-foreground">Modal with action buttons.</p>
+                  <p className="text-on-surface-variant text-sm">Modal with action buttons.</p>
                 </SideSheetBody>
                 <SideSheetDivider />
                 <SideSheetFooter>
@@ -273,7 +267,7 @@ export const Showcase: Story = {
               <SideSheetContent>
                 <SideSheetHeader onBack={() => {}}>Title</SideSheetHeader>
                 <SideSheetBody>
-                  <p className="text-sm text-surface-variant-foreground">Modal with back and action buttons.</p>
+                  <p className="text-on-surface-variant text-sm">Modal with back and action buttons.</p>
                 </SideSheetBody>
                 <SideSheetDivider />
                 <SideSheetFooter>

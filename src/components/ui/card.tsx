@@ -7,9 +7,9 @@ import { cn } from '../../lib/utils';
 const cardVariants = cva('relative overflow-hidden rounded-xl', {
   variants: {
     variant: {
-      elevated: 'bg-surface-container-low text-foreground shadow-md',
-      filled: 'bg-surface-container-highest text-foreground',
-      outlined: 'border border-outline-variant bg-surface text-foreground',
+      elevated: 'bg-surface-container-low text-on-background shadow-md',
+      filled: 'bg-surface-container-highest text-on-background',
+      outlined: 'border border-outline-variant bg-surface text-on-background',
     },
   },
   defaultVariants: {

@@ -102,22 +102,22 @@ export const WithDividers: Story = {
         <DialogBody className="mt-0 max-h-[200px] overflow-y-auto py-4">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm">
+              <div className="flex size-10 items-center justify-center rounded-full bg-primary text-on-primary text-sm">
                 L
               </div>
-              <span className="text-sm text-surface-foreground">leevillanuevanotes@google.com</span>
+              <span className="text-on-surface text-sm">leevillanuevanotes@google.com</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-full bg-tertiary text-sm text-tertiary-foreground">
+              <div className="flex size-10 items-center justify-center rounded-full bg-tertiary text-on-tertiary text-sm">
                 A
               </div>
-              <span className="text-sm text-surface-foreground">alloalejandro@google.com</span>
+              <span className="text-on-surface text-sm">alloalejandro@google.com</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-full bg-secondary text-secondary-foreground text-sm">
+              <div className="flex size-10 items-center justify-center rounded-full bg-secondary text-on-secondary text-sm">
                 O
               </div>
-              <span className="text-sm text-surface-foreground">oliortega@google.com</span>
+              <span className="text-on-surface text-sm">oliortega@google.com</span>
             </div>
           </div>
         </DialogBody>
@@ -208,11 +208,11 @@ export const Showcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Dialog Variants</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Dialog Variants</h2>
       <div className="mx-auto flex max-w-2xl flex-col gap-8">
         {/* Basic */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Basic Dialog</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Basic Dialog</h3>
           <Dialog>
             <DialogTrigger render={<Button variant="outlined">Basic</Button>} />
             <DialogContent>
@@ -233,7 +233,7 @@ export const Showcase: Story = {
 
         {/* With Icon */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Dialog with Hero Icon</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Dialog with Hero Icon</h3>
           <Dialog>
             <DialogTrigger render={<Button variant="outlined">With Icon</Button>} />
             <DialogContent>
@@ -257,7 +257,7 @@ export const Showcase: Story = {
 
         {/* With Dividers */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Dialog with Dividers & Scrollable Content</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Dialog with Dividers & Scrollable Content</h3>
           <Dialog>
             <DialogTrigger render={<Button variant="outlined">With Dividers</Button>} />
             <DialogContent>
@@ -285,7 +285,7 @@ export const Showcase: Story = {
 
         {/* Full-screen */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Full-Screen Dialog</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Full-Screen Dialog</h3>
           <FullScreenDialog>
             <FullScreenDialogTrigger render={<Button variant="outlined">Full-Screen</Button>} />
             <FullScreenDialogContent>
@@ -302,7 +302,7 @@ export const Showcase: Story = {
               <DialogDivider />
               <FullScreenDialogBody>
                 <div className="mx-auto max-w-lg">
-                  <p className="text-surface-variant-foreground">
+                  <p className="text-on-surface-variant">
                     Full-screen dialogs fill the entire screen, containing actions that require a series of tasks to
                     complete. They are used on mobile devices only due to limited screen space.
                   </p>

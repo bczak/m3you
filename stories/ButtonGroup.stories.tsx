@@ -81,17 +81,17 @@ export const Showcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center font-medium text-foreground text-lg">ButtonGroup</h2>
-        <p className="mb-8 text-center text-foreground/50 text-sm">
+        <h2 className="mb-8 text-center font-medium text-lg text-on-background">ButtonGroup</h2>
+        <p className="mb-8 text-center text-on-background/50 text-sm">
           Multi-selectable buttons - click to toggle selection
         </p>
         <div className="flex flex-col gap-12">
           {variants.map((variant) => (
             <div key={variant} className="rounded-lg border-2 border-outline-variant border-dashed p-8">
-              <h3 className="mb-6 text-center text-foreground/60 text-sm capitalize">{variant}</h3>
+              <h3 className="mb-6 text-center text-on-background/60 text-sm capitalize">{variant}</h3>
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-4">
-                  <span className="text-foreground/50 text-xs">Round</span>
+                  <span className="text-on-background/50 text-xs">Round</span>
                   <div className="flex flex-col items-start gap-4">
                     {sizes.map((size) => (
                       <MultiSelectGroup key={size} count={3} variant={variant} size={size} shape="round" />
@@ -99,7 +99,7 @@ export const Showcase: Story = {
                   </div>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <span className="text-foreground/50 text-xs">Square</span>
+                  <span className="text-on-background/50 text-xs">Square</span>
                   <div className="flex flex-col items-start gap-4">
                     {sizes.map((size) => (
                       <MultiSelectGroup key={size} count={3} variant={variant} size={size} shape="square" />
@@ -124,21 +124,21 @@ export const FiveButtonsShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center font-medium text-foreground text-lg">ButtonGroup - 5 Buttons</h2>
-        <p className="mb-8 text-center text-foreground/50 text-sm">
+        <h2 className="mb-8 text-center font-medium text-lg text-on-background">ButtonGroup - 5 Buttons</h2>
+        <p className="mb-8 text-center text-on-background/50 text-sm">
           Multi-selectable buttons - click to toggle selection
         </p>
         <div className="flex flex-col gap-12">
           {variants.map((variant) => (
             <div key={variant} className="rounded-lg border-2 border-outline-variant border-dashed p-8">
-              <h3 className="mb-6 text-center text-foreground/60 text-sm capitalize">{variant}</h3>
+              <h3 className="mb-6 text-center text-on-background/60 text-sm capitalize">{variant}</h3>
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-4">
-                  <span className="text-foreground/50 text-xs">Round</span>
+                  <span className="text-on-background/50 text-xs">Round</span>
                   <MultiSelectGroup count={5} variant={variant} shape="round" />
                 </div>
                 <div className="flex flex-col gap-4">
-                  <span className="text-foreground/50 text-xs">Square</span>
+                  <span className="text-on-background/50 text-xs">Square</span>
                   <MultiSelectGroup count={5} variant={variant} shape="square" />
                 </div>
               </div>

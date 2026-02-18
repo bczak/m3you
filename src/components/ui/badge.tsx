@@ -8,14 +8,14 @@
  * - Large badge: 16dp height, 16dp min-width, shape 8dp (rounded-lg)
  * - Large padding: 4dp horizontal (px-1)
  * - Typography: label-small 11sp (text-xs)
- * - Color: error (bg-error), on-error (text-error-foreground)
+ * - Color: error (bg-error), on-error (text-on-error)
  */
 import { cva, type VariantProps } from 'class-variance-authority';
 import type * as React from 'react';
 
 import { cn } from '../../lib/utils';
 
-const badgeVariants = cva('inline-flex items-center justify-center font-medium text-error-foreground', {
+const badgeVariants = cva('inline-flex items-center justify-center font-medium text-on-error', {
   variants: {
     size: {
       small: 'size-1.5 rounded-full bg-error',

@@ -86,12 +86,12 @@ NavigationBar.displayName = 'NavigationBar';
    ============================================================================= */
 
 const navigationBarItemVariants = cva(
-  'relative flex min-w-16 cursor-pointer items-center justify-center gap-1 bg-transparent text-surface-variant-foreground outline-none transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0',
+  'relative flex min-w-16 cursor-pointer items-center justify-center gap-1 bg-transparent text-on-surface-variant outline-none transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0',
   {
     variants: {
       active: {
         true: 'text-primary',
-        false: 'hover:text-foreground',
+        false: 'hover:text-on-background',
       },
       orientation: {
         vertical: 'max-w-24 flex-1 flex-col',

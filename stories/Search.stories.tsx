@@ -103,7 +103,7 @@ export const WithFilteredSuggestions: Story = {
               </SearchSuggestionItem>
             ))
           ) : (
-            <div className="px-4 py-8 text-center text-sm text-surface-variant-foreground">No results found</div>
+            <div className="px-4 py-8 text-center text-on-surface-variant text-sm">No results found</div>
           )}
         </SearchBar>
       </div>
@@ -260,18 +260,18 @@ export const Showcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Search</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Search</h2>
         <div className="mx-auto max-w-md space-y-10">
           {/* Inline search bar */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Search Bar (inline)</h3>
+            <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Search Bar (inline)</h3>
             <div className="space-y-4">
               <div className="space-y-2">
-                <span className="text-foreground/40 text-xs">Default</span>
+                <span className="text-on-background/40 text-xs">Default</span>
                 <InlineExample />
               </div>
               <div className="space-y-2">
-                <span className="text-foreground/40 text-xs">With trailing icon</span>
+                <span className="text-on-background/40 text-xs">With trailing icon</span>
                 <InlineWithIconsExample />
               </div>
             </div>
@@ -279,18 +279,18 @@ export const Showcase: Story = {
 
           {/* Expandable search bar */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Search Bar (expandable)</h3>
+            <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Search Bar (expandable)</h3>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Click to expand into search view</span>
+              <span className="text-on-background/40 text-xs">Click to expand into search view</span>
               <ExpandableExample />
             </div>
           </div>
 
           {/* Search View (docked) */}
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Search View (docked)</h3>
+            <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Search View (docked)</h3>
             <div className="space-y-2">
-              <span className="text-foreground/40 text-xs">Standalone docked search view</span>
+              <span className="text-on-background/40 text-xs">Standalone docked search view</span>
               <DockedViewExample />
             </div>
           </div>

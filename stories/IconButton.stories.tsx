@@ -36,7 +36,7 @@ const widthLabels = ['Narrow', 'Default', 'Wide'];
 const WidthHeaders = () => (
   <div className="grid grid-cols-3 items-center justify-items-center gap-x-8">
     {widthLabels.map((label) => (
-      <span key={label} className="text-foreground/50 text-xs">
+      <span key={label} className="text-on-background/50 text-xs">
         {label}
       </span>
     ))}
@@ -56,14 +56,14 @@ const Showcase = ({ title, variant, selectable = false }: ShowcaseProps) => {
 
   return (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-4 text-center text-foreground/60 text-sm">
+      <h2 className="mb-4 text-center text-on-background/60 text-sm">
         {title}
         {selectable && ' (Click to toggle)'}
       </h2>
       <div className="flex flex-col gap-8">
         {/* Round Shape */}
         <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
-          <h3 className="mb-4 text-center text-foreground/40 text-xs">Round</h3>
+          <h3 className="mb-4 text-center text-on-background/40 text-xs">Round</h3>
           <WidthHeaders />
           <div className="mt-4 flex flex-col gap-6">
             {sizes.map((size) => (
@@ -79,7 +79,7 @@ const Showcase = ({ title, variant, selectable = false }: ShowcaseProps) => {
         </div>
         {/* Square Shape */}
         <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
-          <h3 className="mb-4 text-center text-foreground/40 text-xs">Square</h3>
+          <h3 className="mb-4 text-center text-on-background/40 text-xs">Square</h3>
           <WidthHeaders />
           <div className="mt-4 flex flex-col gap-6">
             {sizes.map((size) => (
@@ -95,7 +95,7 @@ const Showcase = ({ title, variant, selectable = false }: ShowcaseProps) => {
         </div>
         {/* Disabled States */}
         <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
-          <h3 className="mb-4 text-center text-foreground/40 text-xs">Disabled</h3>
+          <h3 className="mb-4 text-center text-on-background/40 text-xs">Disabled</h3>
           <WidthHeaders />
           <div className="mt-4 flex flex-col gap-6">
             {sizes.map((size) => (

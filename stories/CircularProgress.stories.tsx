@@ -28,29 +28,29 @@ export const DeterminateValues: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Determinate Progress Values</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Determinate Progress Values</h2>
       <div className="mx-auto max-w-2xl">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
           <div className="flex items-center justify-center gap-8">
             <div className="flex flex-col items-center gap-3">
               <CircularProgress value={0} />
-              <span className="text-foreground/50 text-xs">0%</span>
+              <span className="text-on-background/50 text-xs">0%</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress value={25} />
-              <span className="text-foreground/50 text-xs">25%</span>
+              <span className="text-on-background/50 text-xs">25%</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress value={50} />
-              <span className="text-foreground/50 text-xs">50%</span>
+              <span className="text-on-background/50 text-xs">50%</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress value={75} />
-              <span className="text-foreground/50 text-xs">75%</span>
+              <span className="text-on-background/50 text-xs">75%</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress value={100} />
-              <span className="text-foreground/50 text-xs">100%</span>
+              <span className="text-on-background/50 text-xs">100%</span>
             </div>
           </div>
         </div>
@@ -64,40 +64,40 @@ export const AllSizes: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Circular Progress Sizes</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Circular Progress Sizes</h2>
       <div className="mx-auto max-w-3xl space-y-8">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Determinate</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Determinate</h3>
           <div className="flex items-center justify-center gap-12">
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="sm" value={60} />
-              <span className="text-foreground/50 text-xs">Small (24px)</span>
+              <span className="text-on-background/50 text-xs">Small (24px)</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="md" value={60} />
-              <span className="text-foreground/50 text-xs">Medium (40px)</span>
+              <span className="text-on-background/50 text-xs">Medium (40px)</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="lg" value={60} />
-              <span className="text-foreground/50 text-xs">Large (48px)</span>
+              <span className="text-on-background/50 text-xs">Large (48px)</span>
             </div>
           </div>
         </div>
 
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Indeterminate</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Indeterminate</h3>
           <div className="flex items-center justify-center gap-12">
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="sm" indeterminate />
-              <span className="text-foreground/50 text-xs">Small</span>
+              <span className="text-on-background/50 text-xs">Small</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="md" indeterminate />
-              <span className="text-foreground/50 text-xs">Medium</span>
+              <span className="text-on-background/50 text-xs">Medium</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="lg" indeterminate />
-              <span className="text-foreground/50 text-xs">Large</span>
+              <span className="text-on-background/50 text-xs">Large</span>
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ export const Indeterminate: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Indeterminate Circular Progress</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Indeterminate Circular Progress</h2>
       <div className="mx-auto max-w-2xl">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
           <div className="flex items-center justify-center gap-12">
@@ -130,25 +130,25 @@ export const StrokeWidths: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Stroke Width Variants</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Stroke Width Variants</h2>
       <div className="mx-auto max-w-2xl">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
           <div className="flex items-center justify-center gap-12">
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="lg" value={60} strokeWidth={2} />
-              <span className="text-foreground/50 text-xs">2px</span>
+              <span className="text-on-background/50 text-xs">2px</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="lg" value={60} strokeWidth={4} />
-              <span className="text-foreground/50 text-xs">4px (default)</span>
+              <span className="text-on-background/50 text-xs">4px (default)</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="lg" value={60} strokeWidth={6} />
-              <span className="text-foreground/50 text-xs">6px</span>
+              <span className="text-on-background/50 text-xs">6px</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="lg" value={60} strokeWidth={8} />
-              <span className="text-foreground/50 text-xs">8px</span>
+              <span className="text-on-background/50 text-xs">8px</span>
             </div>
           </div>
         </div>
@@ -205,7 +205,7 @@ export const InteractiveDemo: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Interactive Progress Demo</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Interactive Progress Demo</h2>
         <div className="mx-auto max-w-2xl">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
             <ProgressDemo />
@@ -221,24 +221,24 @@ export const UsageExamples: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Circular Progress Usage Examples</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Circular Progress Usage Examples</h2>
       <div className="mx-auto max-w-4xl space-y-8">
         {/* Button with progress */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Button Loading States</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Button Loading States</h3>
           <div className="flex items-center justify-center gap-6">
             <button
               type="button"
               disabled
-              className="inline-flex h-10 cursor-not-allowed items-center justify-center gap-2 rounded-full bg-primary px-6 text-primary-foreground opacity-70"
+              className="inline-flex h-10 cursor-not-allowed items-center justify-center gap-2 rounded-full bg-primary px-6 text-on-primary opacity-70"
             >
-              <CircularProgress size="sm" indeterminate className="text-primary-foreground" />
+              <CircularProgress size="sm" indeterminate className="text-on-primary" />
               <span>Loading</span>
             </button>
             <button
               type="button"
               disabled
-              className="inline-flex h-10 cursor-not-allowed items-center justify-center rounded-full bg-secondary-container px-6 text-secondary-container-foreground opacity-70"
+              className="inline-flex h-10 cursor-not-allowed items-center justify-center rounded-full bg-secondary-container px-6 text-on-secondary-container opacity-70"
             >
               <CircularProgress size="sm" indeterminate />
             </button>
@@ -247,18 +247,18 @@ export const UsageExamples: Story = {
 
         {/* Card with progress overlay */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Card Loading State</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Card Loading State</h3>
           <div className="flex items-center justify-center">
             <div className="flex h-48 w-64 flex-col items-center justify-center rounded-xl bg-surface-container">
               <CircularProgress size="lg" indeterminate />
-              <span className="mt-4 text-foreground/60 text-sm">Loading...</span>
+              <span className="mt-4 text-on-background/60 text-sm">Loading...</span>
             </div>
           </div>
         </div>
 
         {/* Progress with label */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Progress with Label</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Progress with Label</h3>
           <div className="flex items-center justify-center gap-12">
             <div className="relative">
               <CircularProgress size="lg" value={75} strokeWidth={5} className="size-16" />
@@ -277,7 +277,7 @@ export const UsageExamples: Story = {
 
         {/* Inline progress */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center text-foreground/60 text-xs">Inline Progress Indicators</h3>
+          <h3 className="mb-6 text-center text-on-background/60 text-xs">Inline Progress Indicators</h3>
           <div className="mx-auto max-w-sm space-y-4">
             <div className="flex items-center justify-between rounded-lg bg-surface-container p-3">
               <span className="text-sm">Uploading files</span>
@@ -303,63 +303,63 @@ export const CompleteShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Complete Circular Progress Showcase</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Complete Circular Progress Showcase</h2>
       <div className="mx-auto max-w-4xl space-y-8">
         {/* Determinate vs Indeterminate */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Types</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Types</h3>
           <div className="grid grid-cols-2 gap-8">
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="lg" value={60} />
-              <span className="text-foreground/60 text-xs">Determinate</span>
-              <p className="text-center text-foreground/40 text-xs">Shows exact progress percentage</p>
+              <span className="text-on-background/60 text-xs">Determinate</span>
+              <p className="text-center text-on-background/40 text-xs">Shows exact progress percentage</p>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="lg" indeterminate />
-              <span className="text-foreground/60 text-xs">Indeterminate</span>
-              <p className="text-center text-foreground/40 text-xs">Shows ongoing process</p>
+              <span className="text-on-background/60 text-xs">Indeterminate</span>
+              <p className="text-center text-on-background/40 text-xs">Shows ongoing process</p>
             </div>
           </div>
         </div>
 
         {/* Size and stroke comparison */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Size Comparison</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Size Comparison</h3>
           <div className="flex items-end justify-center gap-8">
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="sm" value={60} />
-              <span className="text-foreground/50 text-xs">Small</span>
+              <span className="text-on-background/50 text-xs">Small</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="md" value={60} />
-              <span className="text-foreground/50 text-xs">Medium</span>
+              <span className="text-on-background/50 text-xs">Medium</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <CircularProgress size="lg" value={60} />
-              <span className="text-foreground/50 text-xs">Large</span>
+              <span className="text-on-background/50 text-xs">Large</span>
             </div>
           </div>
         </div>
 
         {/* On different backgrounds */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">On Different Backgrounds</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">On Different Backgrounds</h3>
           <div className="grid grid-cols-4 gap-4">
             <div className="flex flex-col items-center justify-center gap-3 rounded-lg bg-surface p-6">
               <CircularProgress size="md" value={70} />
-              <span className="text-foreground/50 text-xs">Surface</span>
+              <span className="text-on-background/50 text-xs">Surface</span>
             </div>
             <div className="flex flex-col items-center justify-center gap-3 rounded-lg bg-surface-container p-6">
               <CircularProgress size="md" value={70} />
-              <span className="text-foreground/50 text-xs">Container</span>
+              <span className="text-on-background/50 text-xs">Container</span>
             </div>
             <div className="flex flex-col items-center justify-center gap-3 rounded-lg bg-surface-container-high p-6">
               <CircularProgress size="md" value={70} />
-              <span className="text-foreground/50 text-xs">Container High</span>
+              <span className="text-on-background/50 text-xs">Container High</span>
             </div>
             <div className="flex flex-col items-center justify-center gap-3 rounded-lg bg-primary-container p-6">
               <CircularProgress size="md" value={70} />
-              <span className="text-primary-container-foreground/70 text-xs">Primary</span>
+              <span className="text-on-primary-container/70 text-xs">Primary</span>
             </div>
           </div>
         </div>

@@ -38,7 +38,7 @@ const squareLabels = ['Square', 'Morph', 'Disabled'];
 const RoundHeaders = () => (
   <div className="grid grid-cols-3 items-center justify-items-center gap-x-8">
     {roundLabels.map((label) => (
-      <span key={label} className="text-foreground/50 text-xs">
+      <span key={label} className="text-on-background/50 text-xs">
         {label}
       </span>
     ))}
@@ -48,7 +48,7 @@ const RoundHeaders = () => (
 const SquareHeaders = () => (
   <div className="grid grid-cols-3 items-center justify-items-center gap-x-8">
     {squareLabels.map((label) => (
-      <span key={label} className="text-foreground/50 text-xs">
+      <span key={label} className="text-on-background/50 text-xs">
         {label}
       </span>
     ))}
@@ -64,7 +64,7 @@ export const FilledShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-4 text-center text-foreground/60 text-sm">Filled</h2>
+        <h2 className="mb-4 text-center text-on-background/60 text-sm">Filled</h2>
         <div className="flex flex-col gap-8">
           <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
             <RoundHeaders />
@@ -123,7 +123,7 @@ export const FilledSelectableShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-4 text-center text-foreground/60 text-sm">Filled Selectable (Click to toggle)</h2>
+        <h2 className="mb-4 text-center text-on-background/60 text-sm">Filled Selectable (Click to toggle)</h2>
         <div className="flex flex-col gap-8">
           <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
             <RoundHeaders />
@@ -182,7 +182,7 @@ export const ElevatedShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-4 text-center text-foreground/60 text-sm">Elevated</h2>
+        <h2 className="mb-4 text-center text-on-background/60 text-sm">Elevated</h2>
         <div className="flex flex-col gap-8">
           <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
             <RoundHeaders />
@@ -241,7 +241,7 @@ export const ElevatedSelectableShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-4 text-center text-foreground/60 text-sm">Elevated Selectable (Click to toggle)</h2>
+        <h2 className="mb-4 text-center text-on-background/60 text-sm">Elevated Selectable (Click to toggle)</h2>
         <div className="flex flex-col gap-8">
           <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
             <RoundHeaders />
@@ -300,7 +300,7 @@ export const TonalShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-4 text-center text-foreground/60 text-sm">Tonal</h2>
+        <h2 className="mb-4 text-center text-on-background/60 text-sm">Tonal</h2>
         <div className="flex flex-col gap-8">
           <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
             <RoundHeaders />
@@ -359,7 +359,7 @@ export const TonalSelectableShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-4 text-center text-foreground/60 text-sm">Tonal Selectable (Click to toggle)</h2>
+        <h2 className="mb-4 text-center text-on-background/60 text-sm">Tonal Selectable (Click to toggle)</h2>
         <div className="flex flex-col gap-8">
           <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
             <RoundHeaders />
@@ -418,7 +418,7 @@ export const OutlinedShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-4 text-center text-foreground/60 text-sm">Outlined</h2>
+        <h2 className="mb-4 text-center text-on-background/60 text-sm">Outlined</h2>
         <div className="flex flex-col gap-8">
           <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
             <RoundHeaders />
@@ -477,7 +477,7 @@ export const OutlinedSelectableShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-4 text-center text-foreground/60 text-sm">Outlined Selectable (Click to toggle)</h2>
+        <h2 className="mb-4 text-center text-on-background/60 text-sm">Outlined Selectable (Click to toggle)</h2>
         <div className="flex flex-col gap-8">
           <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
             <RoundHeaders />
@@ -536,7 +536,7 @@ export const TextShowcase: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-4 text-center text-foreground/60 text-sm">Text</h2>
+        <h2 className="mb-4 text-center text-on-background/60 text-sm">Text</h2>
         <div className="flex flex-col gap-8">
           <div className="flex-1 rounded-lg border-2 border-outline-variant border-dashed p-8">
             <RoundHeaders />

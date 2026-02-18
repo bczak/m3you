@@ -28,26 +28,26 @@ export const AllStatesShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Radio Button States</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Radio Button States</h2>
       <div className="mx-auto max-w-3xl space-y-8">
         {/* Primary Variant */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Primary Variant</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Primary Variant</h3>
           <div className="grid grid-cols-4 gap-6">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Unselected</span>
+              <span className="text-on-background/40 text-xs">Unselected</span>
               <RadioButton />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Selected</span>
+              <span className="text-on-background/40 text-xs">Selected</span>
               <RadioButton checked />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Unselected</span>
+              <span className="text-on-background/40 text-xs">Disabled Unselected</span>
               <RadioButton disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Selected</span>
+              <span className="text-on-background/40 text-xs">Disabled Selected</span>
               <RadioButton checked disabled />
             </div>
           </div>
@@ -55,22 +55,22 @@ export const AllStatesShowcase: Story = {
 
         {/* Error Variant */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-foreground/80 text-sm">Error Variant</h3>
+          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Error Variant</h3>
           <div className="grid grid-cols-4 gap-6">
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Unselected</span>
+              <span className="text-on-background/40 text-xs">Unselected</span>
               <RadioButton variant="error" />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Selected</span>
+              <span className="text-on-background/40 text-xs">Selected</span>
               <RadioButton variant="error" checked />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Unselected</span>
+              <span className="text-on-background/40 text-xs">Disabled Unselected</span>
               <RadioButton variant="error" disabled />
             </div>
             <div className="flex flex-col items-center gap-2">
-              <span className="text-foreground/40 text-xs">Disabled Selected</span>
+              <span className="text-on-background/40 text-xs">Disabled Selected</span>
               <RadioButton variant="error" checked disabled />
             </div>
           </div>
@@ -93,21 +93,21 @@ export const RadioGroupBasic: Story = {
               return (
                 <div key={opt} className="flex items-center">
                   <RadioGroupItem value={opt} id={id} />
-                  <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-foreground text-sm capitalize">
+                  <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-on-background text-sm capitalize">
                     {opt.replace('option', 'Option ')}
                   </label>
                 </div>
               );
             })}
           </RadioGroup>
-          <p className="text-foreground/60 text-xs">Selected: {value}</p>
+          <p className="text-on-background/60 text-xs">Selected: {value}</p>
         </div>
       );
     };
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Radio Group — Basic</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Radio Group — Basic</h2>
         <div className="mx-auto max-w-md">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
             <BasicGroup />
@@ -135,8 +135,8 @@ export const WithLabels: Story = {
               <div key={option.value} className="flex items-start">
                 <RadioGroupItem value={option.value} id={id} className="mt-0.5" />
                 <label htmlFor={id} className="-ml-2 cursor-pointer py-2 pr-3">
-                  <span className="block text-foreground text-sm">{option.label}</span>
-                  <span className="block text-foreground/50 text-xs">{option.description}</span>
+                  <span className="block text-on-background text-sm">{option.label}</span>
+                  <span className="block text-on-background/50 text-xs">{option.description}</span>
                 </label>
               </div>
             );
@@ -159,7 +159,7 @@ export const WithLabels: Story = {
             return (
               <div key={option.value} className="flex items-center">
                 <RadioGroupItem value={option.value} id={id} />
-                <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-foreground text-sm">
+                <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-on-background text-sm">
                   {option.label}
                 </label>
               </div>
@@ -171,14 +171,14 @@ export const WithLabels: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Radio Buttons with Labels</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Radio Buttons with Labels</h2>
         <div className="mx-auto max-w-md space-y-8">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Shipping Method</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Shipping Method</h3>
             <ShippingMethod />
           </div>
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Payment Method</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Payment Method</h3>
             <PaymentMethod />
           </div>
         </div>
@@ -216,7 +216,7 @@ export const ErrorVariant: Story = {
                   <RadioGroupItem value={option.value} id={id} />
                   <label
                     htmlFor={id}
-                    className={`-ml-2 cursor-pointer py-3 pr-3 text-sm ${showError ? 'text-error' : 'text-foreground'}`}
+                    className={`-ml-2 cursor-pointer py-3 pr-3 text-sm ${showError ? 'text-error' : 'text-on-background'}`}
                   >
                     {option.label}
                   </label>
@@ -228,7 +228,7 @@ export const ErrorVariant: Story = {
           <button
             type="button"
             onClick={() => setSubmitted(true)}
-            className="mt-4 rounded-full bg-primary px-6 py-2 text-primary-foreground text-sm hover:bg-primary/90"
+            className="mt-4 rounded-full bg-primary px-6 py-2 text-on-primary text-sm hover:bg-primary/90"
           >
             Submit
           </button>
@@ -238,10 +238,10 @@ export const ErrorVariant: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Error Variant (Form Validation)</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Error Variant (Form Validation)</h2>
         <div className="mx-auto max-w-md">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Required Selection</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Required Selection</h3>
             <ValidationExample />
           </div>
         </div>
@@ -260,7 +260,7 @@ export const SettingsExample: Story = {
       return (
         <div className="space-y-8">
           <div>
-            <h4 className="mb-3 font-medium text-foreground text-sm">Appearance</h4>
+            <h4 className="mb-3 font-medium text-on-background text-sm">Appearance</h4>
             <RadioGroup value={theme} onValueChange={setTheme} className="space-y-1">
               {[
                 { value: 'light', label: 'Light', description: 'Always use light theme' },
@@ -272,8 +272,8 @@ export const SettingsExample: Story = {
                   <div key={option.value} className="flex items-start">
                     <RadioGroupItem value={option.value} id={id} className="mt-0.5" />
                     <label htmlFor={id} className="-ml-2 cursor-pointer py-2 pr-3">
-                      <span className="block text-foreground text-sm">{option.label}</span>
-                      <span className="block text-foreground/50 text-xs">{option.description}</span>
+                      <span className="block text-on-background text-sm">{option.label}</span>
+                      <span className="block text-on-background/50 text-xs">{option.description}</span>
                     </label>
                   </div>
                 );
@@ -282,7 +282,7 @@ export const SettingsExample: Story = {
           </div>
 
           <div>
-            <h4 className="mb-3 font-medium text-foreground text-sm">Display Density</h4>
+            <h4 className="mb-3 font-medium text-on-background text-sm">Display Density</h4>
             <RadioGroup value={density} onValueChange={setDensity} className="space-y-1">
               {[
                 { value: 'comfortable', label: 'Comfortable' },
@@ -292,7 +292,7 @@ export const SettingsExample: Story = {
                 return (
                   <div key={option.value} className="flex items-center">
                     <RadioGroupItem value={option.value} id={id} />
-                    <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-foreground text-sm">
+                    <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-on-background text-sm">
                       {option.label}
                     </label>
                   </div>
@@ -306,7 +306,7 @@ export const SettingsExample: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Settings Page Example</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Settings Page Example</h2>
         <div className="mx-auto max-w-md">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
             <ThemeSettings />
@@ -321,17 +321,17 @@ export const DisabledGroup: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Disabled Radio Group</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Disabled Radio Group</h2>
       <div className="mx-auto max-w-md space-y-8">
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Entire group disabled</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Entire group disabled</h3>
           <RadioGroup value="option2" disabled className="space-y-1">
             {['option1', 'option2', 'option3'].map((opt) => {
               const id = `disabled-${opt}`;
               return (
                 <div key={opt} className="flex items-center">
                   <RadioGroupItem value={opt} id={id} />
-                  <label htmlFor={id} className="-ml-2 py-3 pr-3 text-foreground/38 text-sm capitalize">
+                  <label htmlFor={id} className="-ml-2 py-3 pr-3 text-on-background/38 text-sm capitalize">
                     {opt.replace('option', 'Option ')}
                   </label>
                 </div>
@@ -341,7 +341,7 @@ export const DisabledGroup: Story = {
         </div>
 
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-foreground/60 text-xs">Individual item disabled</h3>
+          <h3 className="mb-4 text-on-background/60 text-xs">Individual item disabled</h3>
           <RadioGroup defaultValue="free" className="space-y-1">
             {[
               { value: 'free', label: 'Free tier', disabled: false },
@@ -354,7 +354,7 @@ export const DisabledGroup: Story = {
                   <RadioGroupItem value={option.value} id={id} disabled={option.disabled} />
                   <label
                     htmlFor={id}
-                    className={`-ml-2 py-3 pr-3 text-sm ${option.disabled ? 'text-foreground/38' : 'cursor-pointer text-foreground'}`}
+                    className={`-ml-2 py-3 pr-3 text-sm ${option.disabled ? 'text-on-background/38' : 'cursor-pointer text-on-background'}`}
                   >
                     {option.label}
                   </label>
@@ -386,7 +386,7 @@ export const HorizontalLayout: Story = {
             return (
               <div key={option.value} className="flex items-center">
                 <RadioGroupItem value={option.value} id={id} />
-                <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-1 font-medium text-foreground text-sm">
+                <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-1 font-medium text-on-background text-sm">
                   {option.label}
                 </label>
               </div>
@@ -398,10 +398,10 @@ export const HorizontalLayout: Story = {
 
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-foreground/60 text-sm">Horizontal Layout</h2>
+        <h2 className="mb-8 text-center text-on-background/60 text-sm">Horizontal Layout</h2>
         <div className="mx-auto max-w-md">
           <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-foreground/60 text-xs">Select Size</h3>
+            <h3 className="mb-4 text-on-background/60 text-xs">Select Size</h3>
             <SizeSelector />
           </div>
         </div>

@@ -82,10 +82,10 @@ const switchThumbVariants = cva(
       { checked: false, withIcon: true, class: 'size-6 translate-x-[3px] bg-outline' },
 
       // Checked thumb positions and sizes
-      { checked: true, withIcon: false, variant: 'primary', class: 'size-6 translate-x-[22px] bg-primary-foreground' },
-      { checked: true, withIcon: false, variant: 'error', class: 'size-6 translate-x-[22px] bg-error-foreground' },
-      { checked: true, withIcon: true, variant: 'primary', class: 'size-6 translate-x-[22px] bg-primary-foreground' },
-      { checked: true, withIcon: true, variant: 'error', class: 'size-6 translate-x-[22px] bg-error-foreground' },
+      { checked: true, withIcon: false, variant: 'primary', class: 'size-6 translate-x-[22px] bg-on-primary' },
+      { checked: true, withIcon: false, variant: 'error', class: 'size-6 translate-x-[22px] bg-on-error' },
+      { checked: true, withIcon: true, variant: 'primary', class: 'size-6 translate-x-[22px] bg-on-primary' },
+      { checked: true, withIcon: true, variant: 'error', class: 'size-6 translate-x-[22px] bg-on-error' },
 
       // Icon colors
       { checked: false, variant: 'primary', class: '[&_svg]:text-surface-container-highest' },

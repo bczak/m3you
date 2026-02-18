@@ -120,7 +120,7 @@ export const Alarms: Story = {
       <div className="relative mx-auto flex h-[812px] w-[375px] flex-col bg-surface-container-lowest">
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 pt-12 pb-2">
-          <h1 className="font-normal text-2xl text-foreground">Alarms</h1>
+          <h1 className="font-normal text-2xl text-on-background">Alarms</h1>
           <Menu>
             <MenuTrigger asChild>
               <IconButton variant="text">
@@ -146,7 +146,7 @@ export const Alarms: Story = {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col gap-0.5">
                     <span className="text-on-surface-variant text-xs">{isEnabled ? 'Scheduled' : 'Not scheduled'}</span>
-                    <span className="font-light text-4xl text-foreground">{alarm.time}</span>
+                    <span className="font-light text-4xl text-on-background">{alarm.time}</span>
                   </div>
                   <Switch
                     checked={isEnabled}
@@ -218,7 +218,7 @@ function TimerCard({ timer, onToggle, onDelete }: { timer: TimerState; onToggle:
       <div className="mt-2 flex items-end justify-between">
         <div className="relative flex items-center justify-center">
           <CircularProgress value={progress} size="lg" className="size-44" strokeWidth={2} />
-          <span className="absolute font-light text-3xl text-foreground">{formatSeconds(timer.remaining)}</span>
+          <span className="absolute font-light text-3xl text-on-background">{formatSeconds(timer.remaining)}</span>
         </div>
         <IconButton variant="filled" size="lg" width="wide" onClick={onToggle}>
           {timer.running ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
@@ -271,7 +271,7 @@ export const Timers: Story = {
       <div className="relative mx-auto flex h-dvh max-w-screen-sm flex-col bg-surface-container-lowest">
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 pt-12 pb-2">
-          <h1 className="font-normal text-2xl text-foreground">Timers</h1>
+          <h1 className="font-normal text-2xl text-on-background">Timers</h1>
           <Menu>
             <MenuTrigger asChild>
               <IconButton variant="text">

@@ -147,12 +147,7 @@ export const FloatingVariants: Story = {
             <MoreVerticalIcon />
           </IconButton>
         </Toolbar>
-        <IconButton
-          variant="filled"
-          size="md"
-          shape="square"
-          className="bg-error-container text-error-container-foreground"
-        >
+        <IconButton variant="filled" size="md" shape="square" className="bg-error-container text-on-error-container">
           <PhoneOffIcon />
         </IconButton>
       </div>
@@ -200,10 +195,10 @@ export const Types: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Toolbar Types</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Toolbar Types</h2>
       <div className="mx-auto max-w-2xl space-y-12">
         <div className="space-y-3">
-          <h3 className="text-center text-foreground/50 text-xs">Floating (default)</h3>
+          <h3 className="text-center text-on-background/50 text-xs">Floating (default)</h3>
           <div className="flex justify-center">
             <Toolbar type="floating">
               <IconButton variant="standard" size="sm">
@@ -220,7 +215,7 @@ export const Types: Story = {
         </div>
 
         <div className="space-y-3">
-          <h3 className="text-center text-foreground/50 text-xs">Docked (full-width, replaces bottom app bar)</h3>
+          <h3 className="text-center text-on-background/50 text-xs">Docked (full-width, replaces bottom app bar)</h3>
           <Toolbar type="docked">
             <IconButton variant="standard" size="sm">
               <Share2Icon />
@@ -243,11 +238,11 @@ export const Colors: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Color Schemes</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Color Schemes</h2>
       <div className="mx-auto max-w-2xl space-y-12">
         {/* Floating */}
         <div className="space-y-6">
-          <h3 className="text-center text-foreground/50 text-xs">Floating</h3>
+          <h3 className="text-center text-on-background/50 text-xs">Floating</h3>
           <div className="flex flex-wrap items-center justify-center gap-8">
             <div className="flex flex-col items-center gap-2">
               <Toolbar type="floating" color="standard">
@@ -261,7 +256,7 @@ export const Colors: Story = {
                   <DownloadIcon />
                 </IconButton>
               </Toolbar>
-              <span className="text-foreground/50 text-xs">Standard</span>
+              <span className="text-on-background/50 text-xs">Standard</span>
             </div>
             <div className="flex flex-col items-center gap-2">
               <Toolbar type="floating" color="vibrant">
@@ -275,14 +270,14 @@ export const Colors: Story = {
                   <DownloadIcon />
                 </IconButton>
               </Toolbar>
-              <span className="text-foreground/50 text-xs">Vibrant</span>
+              <span className="text-on-background/50 text-xs">Vibrant</span>
             </div>
           </div>
         </div>
 
         {/* Docked */}
         <div className="space-y-6">
-          <h3 className="text-center text-foreground/50 text-xs">Docked</h3>
+          <h3 className="text-center text-on-background/50 text-xs">Docked</h3>
           <div className="space-y-6">
             <div className="space-y-2">
               <Toolbar type="docked" color="standard">
@@ -296,7 +291,7 @@ export const Colors: Story = {
                   <DownloadIcon />
                 </IconButton>
               </Toolbar>
-              <p className="text-center text-foreground/50 text-xs">Standard</p>
+              <p className="text-center text-on-background/50 text-xs">Standard</p>
             </div>
             <div className="space-y-2">
               <Toolbar type="docked" color="vibrant">
@@ -310,7 +305,7 @@ export const Colors: Story = {
                   <DownloadIcon />
                 </IconButton>
               </Toolbar>
-              <p className="text-center text-foreground/50 text-xs">Vibrant</p>
+              <p className="text-center text-on-background/50 text-xs">Vibrant</p>
             </div>
           </div>
         </div>
@@ -324,7 +319,7 @@ export const Layouts: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Layouts</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Layouts</h2>
       <div className="mx-auto max-w-2xl space-y-12">
         <div className="flex flex-wrap items-start justify-center gap-12">
           <div className="flex flex-col items-center gap-3">
@@ -339,7 +334,7 @@ export const Layouts: Story = {
                 <DownloadIcon />
               </IconButton>
             </Toolbar>
-            <span className="text-foreground/50 text-xs">Horizontal</span>
+            <span className="text-on-background/50 text-xs">Horizontal</span>
           </div>
 
           <div className="flex flex-col items-center gap-3">
@@ -354,7 +349,7 @@ export const Layouts: Story = {
                 <DownloadIcon />
               </IconButton>
             </Toolbar>
-            <span className="text-foreground/50 text-xs">Vertical</span>
+            <span className="text-on-background/50 text-xs">Vertical</span>
           </div>
 
           <div className="flex flex-col items-center gap-3">
@@ -369,7 +364,7 @@ export const Layouts: Story = {
                 <DownloadIcon />
               </IconButton>
             </Toolbar>
-            <span className="text-foreground/50 text-xs">Vibrant Horizontal</span>
+            <span className="text-on-background/50 text-xs">Vibrant Horizontal</span>
           </div>
 
           <div className="flex flex-col items-center gap-3">
@@ -384,7 +379,7 @@ export const Layouts: Story = {
                 <DownloadIcon />
               </IconButton>
             </Toolbar>
-            <span className="text-foreground/50 text-xs">Vibrant Vertical</span>
+            <span className="text-on-background/50 text-xs">Vibrant Vertical</span>
           </div>
         </div>
       </div>
@@ -397,11 +392,11 @@ export const WithFAB: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Toolbar with FAB</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Toolbar with FAB</h2>
       <div className="mx-auto max-w-2xl space-y-12">
         {/* Floating toolbar with inline filled button */}
         <div className="space-y-3">
-          <h3 className="text-center text-foreground/50 text-xs">Floating with embedded primary action</h3>
+          <h3 className="text-center text-on-background/50 text-xs">Floating with embedded primary action</h3>
           <div className="flex justify-center">
             <Toolbar type="floating" color="standard">
               <IconButton variant="standard" size="sm">
@@ -428,7 +423,7 @@ export const WithFAB: Story = {
 
         {/* Floating toolbar paired with separate FAB */}
         <div className="space-y-3">
-          <h3 className="text-center text-foreground/50 text-xs">Floating toolbar paired with separate FAB</h3>
+          <h3 className="text-center text-on-background/50 text-xs">Floating toolbar paired with separate FAB</h3>
           <div className="flex items-center justify-center gap-2">
             <Toolbar type="floating" color="vibrant">
               <IconButton variant="standard" size="sm">
@@ -458,7 +453,7 @@ export const WithFAB: Story = {
 
         {/* Docked toolbar with embedded FAB */}
         <div className="space-y-3">
-          <h3 className="text-center text-foreground/50 text-xs">Docked with embedded primary action</h3>
+          <h3 className="text-center text-on-background/50 text-xs">Docked with embedded primary action</h3>
           <Toolbar type="docked" color="standard">
             <IconButton variant="standard" size="sm">
               <ArrowLeftIcon />
@@ -493,7 +488,7 @@ export const TextFormatting: Story = {
 
       return (
         <div className="min-h-screen bg-surface-container-lowest p-8">
-          <h2 className="mb-8 text-center text-foreground/60 text-sm">Text Formatting Toolbars</h2>
+          <h2 className="mb-8 text-center text-on-background/60 text-sm">Text Formatting Toolbars</h2>
           <div className="mx-auto max-w-2xl space-y-8">
             {/* Standard */}
             <div className="flex flex-col items-center gap-3">
@@ -517,7 +512,7 @@ export const TextFormatting: Story = {
                   <MoreVerticalIcon />
                 </IconButton>
               </Toolbar>
-              <span className="text-foreground/50 text-xs">Standard</span>
+              <span className="text-on-background/50 text-xs">Standard</span>
             </div>
 
             {/* Vibrant */}
@@ -542,7 +537,7 @@ export const TextFormatting: Story = {
                   <MoreVerticalIcon />
                 </IconButton>
               </Toolbar>
-              <span className="text-foreground/50 text-xs">Vibrant</span>
+              <span className="text-on-background/50 text-xs">Vibrant</span>
             </div>
 
             {/* Vertical */}
@@ -567,7 +562,7 @@ export const TextFormatting: Story = {
                   <MoreVerticalIcon />
                 </IconButton>
               </Toolbar>
-              <span className="text-foreground/50 text-xs">Vertical</span>
+              <span className="text-on-background/50 text-xs">Vertical</span>
             </div>
           </div>
         </div>
@@ -649,11 +644,11 @@ export const BuildingBlocks: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Building Blocks</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Building Blocks</h2>
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Tonal icon buttons */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-center text-foreground/50 text-xs">Tonal icon buttons</h3>
+          <h3 className="mb-4 text-center text-on-background/50 text-xs">Tonal icon buttons</h3>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Toolbar type="floating" color="standard">
               <IconButton variant="standard" size="sm">
@@ -694,7 +689,7 @@ export const BuildingBlocks: Story = {
 
         {/* Outlined icon buttons */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-center text-foreground/50 text-xs">Outlined icon buttons</h3>
+          <h3 className="mb-4 text-center text-on-background/50 text-xs">Outlined icon buttons</h3>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Toolbar type="floating" color="standard">
               <IconButton variant="outlined" size="sm">
@@ -735,7 +730,7 @@ export const BuildingBlocks: Story = {
 
         {/* Mixed variants with selected state */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-center text-foreground/50 text-xs">Mixed variants (with selected state)</h3>
+          <h3 className="mb-4 text-center text-on-background/50 text-xs">Mixed variants (with selected state)</h3>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Toolbar type="floating" color="standard">
               <IconButton variant="standard" size="sm">
@@ -776,7 +771,7 @@ export const BuildingBlocks: Story = {
 
         {/* Tonal text buttons */}
         <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-center text-foreground/50 text-xs">Tonal text buttons (toggleable)</h3>
+          <h3 className="mb-4 text-center text-on-background/50 text-xs">Tonal text buttons (toggleable)</h3>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Toolbar type="floating" color="standard">
               <Button variant="standard" size="sm" selected>
@@ -814,11 +809,11 @@ export const CompleteShowcase: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">M3 Toolbar - Complete Showcase</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">M3 Toolbar - Complete Showcase</h2>
       <div className="mx-auto max-w-3xl space-y-12">
         {/* Floating section */}
         <div className="space-y-6">
-          <h3 className="font-medium text-foreground/60 text-sm">Floating Toolbars</h3>
+          <h3 className="font-medium text-on-background/60 text-sm">Floating Toolbars</h3>
           <div className="flex flex-wrap items-start gap-6">
             {/* Standard horizontal */}
             <Toolbar type="floating" color="standard">
@@ -903,7 +898,7 @@ export const CompleteShowcase: Story = {
 
         {/* Floating with FAB pairing */}
         <div className="space-y-6">
-          <h3 className="font-medium text-foreground/60 text-sm">Floating with FAB Pairing</h3>
+          <h3 className="font-medium text-on-background/60 text-sm">Floating with FAB Pairing</h3>
           <div className="flex flex-wrap items-center gap-6">
             <div className="flex items-center gap-2">
               <Toolbar type="floating" color="vibrant">
@@ -935,7 +930,7 @@ export const CompleteShowcase: Story = {
 
         {/* Docked section */}
         <div className="space-y-6">
-          <h3 className="font-medium text-foreground/60 text-sm">Docked Toolbars</h3>
+          <h3 className="font-medium text-on-background/60 text-sm">Docked Toolbars</h3>
           <div className="space-y-4">
             <Toolbar type="docked" color="standard">
               <IconButton variant="standard" size="sm">
@@ -976,7 +971,7 @@ export const CompleteShowcase: Story = {
 
         {/* Tonal text buttons */}
         <div className="space-y-6">
-          <h3 className="font-medium text-foreground/60 text-sm">Tonal Text Buttons</h3>
+          <h3 className="font-medium text-on-background/60 text-sm">Tonal Text Buttons</h3>
           <div className="flex flex-wrap gap-6">
             <Toolbar type="floating" color="standard">
               <Button variant="standard" size="sm" selected>

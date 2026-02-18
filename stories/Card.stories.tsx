@@ -26,14 +26,14 @@ type Story = StoryObj<typeof meta>;
    --------------------------------------------------------------------------- */
 
 const Avatar = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-container text-primary-container-foreground text-sm">
+  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-container text-on-primary-container text-sm">
     {children}
   </div>
 );
 
 const MediaPlaceholder = ({ className = 'h-48' }: { className?: string }) => (
   <div className={`flex items-center justify-center bg-surface-container ${className}`}>
-    <span className="text-foreground/40 text-sm">Media</span>
+    <span className="text-on-background/40 text-sm">Media</span>
   </div>
 );
 
@@ -59,7 +59,7 @@ export const StackedCard: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Stacked Card</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Stacked Card</h2>
       <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6">
         {(['elevated', 'filled', 'outlined'] as const).map((v) => (
           <Card key={v} variant={v} className="w-80">
@@ -67,8 +67,8 @@ export const StackedCard: Story = {
             <div className="flex items-center gap-4 p-4">
               <Avatar>A</Avatar>
               <div className="min-w-0 flex-1">
-                <p className="font-medium text-foreground">Header</p>
-                <p className="text-foreground/60 text-sm">Subhead</p>
+                <p className="font-medium text-on-background">Header</p>
+                <p className="text-on-background/60 text-sm">Subhead</p>
               </div>
               <IconButton variant="text" size="sm">
                 <MoreVertical />
@@ -80,13 +80,13 @@ export const StackedCard: Story = {
 
             {/* Title & Subtitle */}
             <div className="px-4 pt-4">
-              <h3 className="font-medium text-foreground text-lg">Title</h3>
-              <p className="mt-1 text-foreground/60 text-sm">Subtitle</p>
+              <h3 className="font-medium text-lg text-on-background">Title</h3>
+              <p className="mt-1 text-on-background/60 text-sm">Subtitle</p>
             </div>
 
             {/* Supporting text */}
             <div className="px-4 pt-2 pb-4">
-              <p className="text-foreground/80 text-sm">
+              <p className="text-on-background/80 text-sm">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
               </p>
             </div>
@@ -115,15 +115,15 @@ export const HorizontalCard: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Horizontal Card</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Horizontal Card</h2>
       <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6">
         {(['elevated', 'filled', 'outlined'] as const).map((v) => (
           <Card key={v} variant={v} className="w-96">
             <div className="flex items-center gap-4 p-4">
               <Avatar>A</Avatar>
               <div className="min-w-0 flex-1">
-                <p className="font-medium text-foreground">Header</p>
-                <p className="text-foreground/60 text-sm">Subhead</p>
+                <p className="font-medium text-on-background">Header</p>
+                <p className="text-on-background/60 text-sm">Subhead</p>
               </div>
               <div className="flex items-center gap-1">
                 <IconButton variant="text" size="xs">
@@ -152,15 +152,15 @@ export const WithMedia: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Cards with Media</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Cards with Media</h2>
       <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6">
         {/* Media on top */}
         <Card variant="elevated" className="w-80">
           <MediaPlaceholder />
           <div className="p-4">
-            <h3 className="font-medium text-foreground text-lg">Media on top</h3>
-            <p className="mt-1 text-foreground/60 text-sm">Subhead</p>
-            <p className="mt-3 text-foreground/80 text-sm">
+            <h3 className="font-medium text-lg text-on-background">Media on top</h3>
+            <p className="mt-1 text-on-background/60 text-sm">Subhead</p>
+            <p className="mt-3 text-on-background/80 text-sm">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
             </p>
           </div>
@@ -179,8 +179,8 @@ export const WithMedia: Story = {
           <div className="flex items-center gap-4 p-4">
             <Avatar>A</Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-foreground">Header</p>
-              <p className="text-foreground/60 text-sm">Subhead</p>
+              <p className="font-medium text-on-background">Header</p>
+              <p className="text-on-background/60 text-sm">Subhead</p>
             </div>
             <IconButton variant="text" size="sm">
               <MoreVertical />
@@ -188,7 +188,7 @@ export const WithMedia: Story = {
           </div>
           <MediaPlaceholder />
           <div className="px-4 pt-4 pb-4">
-            <p className="text-foreground/80 text-sm">Supporting text for the content of this card.</p>
+            <p className="text-on-background/80 text-sm">Supporting text for the content of this card.</p>
           </div>
         </Card>
 
@@ -196,12 +196,12 @@ export const WithMedia: Story = {
         <Card variant="outlined" className="w-80">
           <div className="flex gap-4 p-4">
             <div className="min-w-0 flex-1">
-              <h3 className="font-medium text-foreground">Headline</h3>
-              <p className="mt-1 text-foreground/60 text-sm">Subhead</p>
-              <p className="mt-2 text-foreground/80 text-sm">Supporting text for the thumbnail layout.</p>
+              <h3 className="font-medium text-on-background">Headline</h3>
+              <p className="mt-1 text-on-background/60 text-sm">Subhead</p>
+              <p className="mt-2 text-on-background/80 text-sm">Supporting text for the thumbnail layout.</p>
             </div>
             <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-surface-container">
-              <span className="text-foreground/40 text-xs">Thumb</span>
+              <span className="text-on-background/40 text-xs">Thumb</span>
             </div>
           </div>
         </Card>
@@ -218,18 +218,18 @@ export const WithDividers: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Cards with Dividers</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Cards with Dividers</h2>
       <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6">
         {/* Full-width divider */}
         <Card variant="elevated" className="w-80">
           <div className="p-4">
-            <h3 className="font-medium text-foreground text-lg">Section One</h3>
-            <p className="mt-1 text-foreground/80 text-sm">Content for the first section of the card.</p>
+            <h3 className="font-medium text-lg text-on-background">Section One</h3>
+            <p className="mt-1 text-on-background/80 text-sm">Content for the first section of the card.</p>
           </div>
           <div className="border-outline-variant border-t" />
           <div className="p-4">
-            <h3 className="font-medium text-foreground text-lg">Section Two</h3>
-            <p className="mt-1 text-foreground/80 text-sm">Content for the second section of the card.</p>
+            <h3 className="font-medium text-lg text-on-background">Section Two</h3>
+            <p className="mt-1 text-on-background/80 text-sm">Content for the second section of the card.</p>
           </div>
         </Card>
 
@@ -238,24 +238,24 @@ export const WithDividers: Story = {
           <div className="flex items-center gap-4 p-4">
             <Avatar>A</Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-foreground">Item one</p>
-              <p className="text-foreground/60 text-sm">Supporting text</p>
+              <p className="font-medium text-on-background">Item one</p>
+              <p className="text-on-background/60 text-sm">Supporting text</p>
             </div>
           </div>
           <div className="ml-[72px] border-outline-variant border-t" />
           <div className="flex items-center gap-4 p-4">
             <Avatar>B</Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-foreground">Item two</p>
-              <p className="text-foreground/60 text-sm">Supporting text</p>
+              <p className="font-medium text-on-background">Item two</p>
+              <p className="text-on-background/60 text-sm">Supporting text</p>
             </div>
           </div>
           <div className="ml-[72px] border-outline-variant border-t" />
           <div className="flex items-center gap-4 p-4">
             <Avatar>C</Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-foreground">Item three</p>
-              <p className="text-foreground/60 text-sm">Supporting text</p>
+              <p className="font-medium text-on-background">Item three</p>
+              <p className="text-on-background/60 text-sm">Supporting text</p>
             </div>
           </div>
         </Card>
@@ -264,8 +264,10 @@ export const WithDividers: Story = {
         <Card variant="outlined" className="w-80">
           <MediaPlaceholder className="h-40" />
           <div className="p-4">
-            <h3 className="font-medium text-foreground text-lg">Headline</h3>
-            <p className="mt-1 text-foreground/80 text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <h3 className="font-medium text-lg text-on-background">Headline</h3>
+            <p className="mt-1 text-on-background/80 text-sm">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            </p>
           </div>
           <div className="border-outline-variant border-t" />
           <div className="flex gap-2 p-4">
@@ -290,15 +292,15 @@ export const WithActions: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Cards with Actions</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Cards with Actions</h2>
       <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-6">
         {/* Buttons only */}
         <Card variant="elevated" className="w-80">
           <div className="flex items-center gap-4 p-4">
             <Avatar>A</Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-foreground">Header</p>
-              <p className="text-foreground/60 text-sm">Subhead</p>
+              <p className="font-medium text-on-background">Header</p>
+              <p className="text-on-background/60 text-sm">Subhead</p>
             </div>
             <IconButton variant="text" size="sm">
               <MoreVertical />
@@ -306,7 +308,7 @@ export const WithActions: Story = {
           </div>
           <MediaPlaceholder />
           <div className="px-4 pt-4 pb-2">
-            <p className="text-foreground/80 text-sm">Supporting text for this card content.</p>
+            <p className="text-on-background/80 text-sm">Supporting text for this card content.</p>
           </div>
           <div className="flex gap-2 px-4 pb-4">
             <Button variant="outlined" size="xs">
@@ -322,9 +324,11 @@ export const WithActions: Story = {
         <Card variant="filled" className="w-80">
           <MediaPlaceholder />
           <div className="p-4">
-            <h3 className="font-medium text-foreground text-lg">Headline</h3>
-            <p className="mt-1 text-foreground/60 text-sm">Subhead</p>
-            <p className="mt-3 text-foreground/80 text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <h3 className="font-medium text-lg text-on-background">Headline</h3>
+            <p className="mt-1 text-on-background/60 text-sm">Subhead</p>
+            <p className="mt-3 text-on-background/80 text-sm">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            </p>
           </div>
           <div className="flex gap-1 px-4 pb-4">
             <IconButton variant="text" size="sm">
@@ -344,8 +348,8 @@ export const WithActions: Story = {
           <div className="flex items-center gap-4 p-4">
             <Avatar>A</Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-foreground">Header</p>
-              <p className="text-foreground/60 text-sm">Subhead</p>
+              <p className="font-medium text-on-background">Header</p>
+              <p className="text-on-background/60 text-sm">Subhead</p>
             </div>
             <IconButton variant="text" size="sm">
               <MoreVertical />
@@ -353,7 +357,7 @@ export const WithActions: Story = {
           </div>
           <MediaPlaceholder />
           <div className="px-4 pt-4 pb-2">
-            <p className="text-foreground/80 text-sm">
+            <p className="text-on-background/80 text-sm">
               Supporting text that provides more details about the card content.
             </p>
           </div>
@@ -417,7 +421,7 @@ export const RichContent: Story = {
 
       {/* Supporting text */}
       <div className="px-4 pt-4">
-        <p className="text-foreground/80 text-sm leading-relaxed">
+        <p className="text-on-background/80 text-sm leading-relaxed">
           Caminante, son tus huellas el camino y nada m&aacute;s; Caminante, no hay camino, se hace camino al andar. Al
           andar se hace el camino, y al volver la vista atr&aacute;s se ve la senda que nunca. Visite el enlace
           aqu&iacute;.
@@ -458,7 +462,7 @@ export const Interactive: Story = {
       const [clicked, setClicked] = React.useState('');
       return (
         <div className="min-h-screen bg-surface-container-lowest p-8">
-          <h2 className="mb-2 text-center text-foreground/60 text-sm">Interactive Cards (clickable)</h2>
+          <h2 className="mb-2 text-center text-on-background/60 text-sm">Interactive Cards (clickable)</h2>
           {clicked && <p className="mb-6 text-center text-primary text-sm">Clicked: {clicked}</p>}
           <div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-6">
             {(['elevated', 'filled', 'outlined'] as const).map((v) => (
@@ -466,8 +470,8 @@ export const Interactive: Story = {
                 <div className="flex items-center gap-4 p-4">
                   <Avatar>A</Avatar>
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-foreground capitalize">{v}</p>
-                    <p className="text-foreground/60 text-sm">Click the entire card</p>
+                    <p className="font-medium text-on-background capitalize">{v}</p>
+                    <p className="text-on-background/60 text-sm">Click the entire card</p>
                   </div>
                 </div>
               </Card>
@@ -488,15 +492,15 @@ export const Disabled: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => (
     <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-foreground/60 text-sm">Disabled Cards</h2>
+      <h2 className="mb-8 text-center text-on-background/60 text-sm">Disabled Cards</h2>
       <div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-6">
         {(['elevated', 'filled', 'outlined'] as const).map((v) => (
           <Card key={v} variant={v} className="w-72" onClick={() => {}} disabled>
             <div className="flex items-center gap-4 p-4">
               <Avatar>A</Avatar>
               <div className="min-w-0 flex-1">
-                <p className="font-medium text-foreground capitalize">{v}</p>
-                <p className="text-foreground/60 text-sm">Disabled</p>
+                <p className="font-medium text-on-background capitalize">{v}</p>
+                <p className="text-on-background/60 text-sm">Disabled</p>
               </div>
             </div>
           </Card>
@@ -519,20 +523,20 @@ export const CompleteShowcase: Story = {
 
       return (
         <div className="min-h-screen bg-surface-container-lowest p-8">
-          <h2 className="mb-8 text-center text-foreground/60 text-sm">Complete Card Showcase</h2>
+          <h2 className="mb-8 text-center text-on-background/60 text-sm">Complete Card Showcase</h2>
 
           <div className="mx-auto flex max-w-5xl flex-col gap-12">
             {/* Stacked */}
             <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-              <h3 className="mb-4 text-foreground/60 text-xs">Stacked</h3>
+              <h3 className="mb-4 text-on-background/60 text-xs">Stacked</h3>
               <div className="flex flex-wrap gap-4">
                 {variants.map((v) => (
                   <Card key={v} variant={v} className="w-80">
                     <div className="flex items-center gap-4 p-4">
                       <Avatar>A</Avatar>
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-foreground">Header</p>
-                        <p className="text-foreground/60 text-sm">Subhead</p>
+                        <p className="font-medium text-on-background">Header</p>
+                        <p className="text-on-background/60 text-sm">Subhead</p>
                       </div>
                       <IconButton variant="text" size="sm">
                         <MoreVertical />
@@ -540,11 +544,11 @@ export const CompleteShowcase: Story = {
                     </div>
                     <MediaPlaceholder className="h-40" />
                     <div className="px-4 pt-4">
-                      <h4 className="font-medium text-foreground">Title</h4>
-                      <p className="mt-1 text-foreground/60 text-sm">Subtitle</p>
+                      <h4 className="font-medium text-on-background">Title</h4>
+                      <p className="mt-1 text-on-background/60 text-sm">Subtitle</p>
                     </div>
                     <div className="px-4 pt-2 pb-4">
-                      <p className="text-foreground/80 text-sm">
+                      <p className="text-on-background/80 text-sm">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
                       </p>
                     </div>
@@ -563,15 +567,15 @@ export const CompleteShowcase: Story = {
 
             {/* Horizontal */}
             <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-              <h3 className="mb-4 text-foreground/60 text-xs">Horizontal</h3>
+              <h3 className="mb-4 text-on-background/60 text-xs">Horizontal</h3>
               <div className="flex flex-wrap gap-4">
                 {variants.map((v) => (
                   <Card key={v} variant={v} className="w-96">
                     <div className="flex items-center gap-4 p-4">
                       <Avatar>A</Avatar>
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-foreground">Header</p>
-                        <p className="text-foreground/60 text-sm">Subhead</p>
+                        <p className="font-medium text-on-background">Header</p>
+                        <p className="text-on-background/60 text-sm">Subhead</p>
                       </div>
                       <div className="flex items-center gap-1">
                         <IconButton variant="text" size="xs">
@@ -592,15 +596,15 @@ export const CompleteShowcase: Story = {
 
             {/* Interactive */}
             <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-              <h3 className="mb-1 text-foreground/60 text-xs">Interactive (click to increment: {count})</h3>
+              <h3 className="mb-1 text-on-background/60 text-xs">Interactive (click to increment: {count})</h3>
               <div className="mt-3 flex flex-wrap gap-4">
                 {variants.map((v) => (
                   <Card key={v} variant={v} className="w-72" onClick={() => setCount((c) => c + 1)}>
                     <div className="flex items-center gap-4 p-4">
                       <Avatar>A</Avatar>
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-foreground capitalize">{v}</p>
-                        <p className="text-foreground/60 text-sm">Click me</p>
+                        <p className="font-medium text-on-background capitalize">{v}</p>
+                        <p className="text-on-background/60 text-sm">Click me</p>
                       </div>
                     </div>
                   </Card>
@@ -610,15 +614,15 @@ export const CompleteShowcase: Story = {
 
             {/* Disabled */}
             <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-              <h3 className="mb-4 text-foreground/60 text-xs">Disabled</h3>
+              <h3 className="mb-4 text-on-background/60 text-xs">Disabled</h3>
               <div className="flex flex-wrap gap-4">
                 {variants.map((v) => (
                   <Card key={v} variant={v} className="w-72" onClick={() => {}} disabled>
                     <div className="flex items-center gap-4 p-4">
                       <Avatar>A</Avatar>
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-foreground capitalize">{v}</p>
-                        <p className="text-foreground/60 text-sm">Disabled</p>
+                        <p className="font-medium text-on-background capitalize">{v}</p>
+                        <p className="text-on-background/60 text-sm">Disabled</p>
                       </div>
                     </div>
                   </Card>

@@ -17,8 +17,8 @@ const toolbarVariants = cva('flex items-center', {
       floating: 'w-fit rounded-full shadow-md p-3',
     },
     color: {
-      standard: 'bg-surface-container text-foreground',
-      vibrant: 'bg-primary-container text-primary-container-foreground',
+      standard: 'bg-surface-container text-on-background',
+      vibrant: 'bg-primary-container text-on-primary-container',
     },
     layout: {
       horizontal: 'flex-row',

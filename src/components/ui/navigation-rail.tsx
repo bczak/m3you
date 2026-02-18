@@ -159,12 +159,12 @@ const navigationRailItemVariants = cva(
       {
         active: false,
         state: 'collapsed',
-        className: 'text-surface-variant-foreground hover:text-foreground',
+        className: 'text-on-surface-variant hover:text-on-background',
       },
       {
         active: false,
         state: 'expanded',
-        className: 'text-surface-variant-foreground',
+        className: 'text-on-surface-variant',
       },
     ],
     defaultVariants: {
@@ -332,7 +332,7 @@ const NavigationRailSection = ({
       {/* Section header - only visible when expanded */}
       {title && state === 'expanded' && (
         <div className="px-4 py-2">
-          <span className="font-medium text-surface-variant-foreground text-xs uppercase tracking-wider">{title}</span>
+          <span className="font-medium text-on-surface-variant text-xs uppercase tracking-wider">{title}</span>
         </div>
       )}
       {/* Divider for collapsed state */}
@@ -378,7 +378,7 @@ const NavigationRailMenuButton = ({
       aria-label={state === 'collapsed' ? 'Expand navigation' : 'Collapse navigation'}
       aria-expanded={state === 'expanded'}
       className={cn(
-        'relative flex size-12 items-center justify-center rounded-full text-surface-variant-foreground outline-none transition-colors hover:bg-surface-container-high hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&_svg]:size-6',
+        'relative flex size-12 items-center justify-center rounded-full text-on-surface-variant outline-none transition-colors hover:bg-surface-container-high hover:text-on-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&_svg]:size-6',
         className,
       )}
       onClick={handleClick}
