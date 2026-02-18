@@ -213,7 +213,7 @@ export const DiscreteSlider: Story = {
 export const WithIcon: Story = {
   parameters: { layout: 'fullscreen' },
   render: () => {
-    const IconSlider = ({ size, label }: { size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'; label: string }) => {
+    const IconSlider = ({ size, label }: { size: 'md' | 'lg' | 'xl'; label: string }) => {
       const [value, setValue] = React.useState(60);
       return (
         <div className="space-y-2">
@@ -232,7 +232,9 @@ export const WithIcon: Story = {
     return (
       <div className="min-h-screen bg-surface-container-lowest p-8">
         <h2 className="mb-2 text-center text-foreground/60 text-sm">Inset Icon</h2>
-        <p className="mb-8 text-center text-foreground/40 text-xs">Icon rendered inside the active track</p>
+        <p className="mb-8 text-center text-foreground/40 text-xs">
+          Icon rendered inside the active track (M, L, XL only)
+        </p>
         <div className="mx-auto max-w-2xl space-y-8">
           <IconSlider size="md" label="Medium" />
           <IconSlider size="lg" label="Large" />

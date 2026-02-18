@@ -55,35 +55,35 @@ test('forwards ref correctly', async () => {
   expect(ref.current).toBeInstanceOf(HTMLInputElement);
 });
 
-// Size variants
+// Size variants — container heights sized to fit handle
 test('applies xs size class to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="xs" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-8');
+  expect(wrapper).toHaveClass('h-12');
 });
 
 test('applies sm size class to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="sm" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-10');
+  expect(wrapper).toHaveClass('h-12');
 });
 
 test('applies md size class to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="md" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-12');
+  expect(wrapper).toHaveClass('h-14');
 });
 
 test('applies lg size class to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="lg" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-14');
+  expect(wrapper).toHaveClass('h-18');
 });
 
 test('applies xl size class to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="xl" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-16');
+  expect(wrapper).toHaveClass('h-28');
 });
 
 // Custom className

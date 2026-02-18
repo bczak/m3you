@@ -25,84 +25,83 @@ const sliderVariants = cva('relative flex touch-none select-none', {
 });
 
 /**
- * Per-size configuration for track, handle, gap, and inner radius.
- * Inner radius is more squared than the outer fully-rounded ends.
+ * Per-size configuration matching M3 spec measurements.
+ *
+ * Track shape = outer corner radius of the track.
+ * Inner radius (near handle) is more squared than outer.
+ * Label container (tooltip) is 44×48dp for all sizes.
+ * Inset icon is only supported for md, lg, xl.
  */
 const SIZE_CONFIG = {
   xs: {
-    touchTarget: 'h-8',
-    touchTargetV: 'w-8',
-    trackHeight: 8,
-    handleHeight: 24,
-    handleWidth: 3,
-    handlePressedWidth: 2,
-    gap: 3,
-    pressedGap: 1,
-    innerRadius: 2,
-    stateLayerSize: 'size-7',
-    tooltipSize: 'size-6 text-[10px]',
-    tooltipOffset: -24,
-    iconSize: 'size-4 text-[10px]',
-  },
-  sm: {
-    touchTarget: 'h-10',
-    touchTargetV: 'w-10',
-    trackHeight: 12,
-    handleHeight: 32,
-    handleWidth: 4,
-    handlePressedWidth: 2,
-    gap: 4,
-    pressedGap: 2,
-    innerRadius: 3,
-    stateLayerSize: 'size-8',
-    tooltipSize: 'size-7 text-xs',
-    tooltipOffset: -28,
-    iconSize: 'size-5',
-  },
-  md: {
     touchTarget: 'h-12',
     touchTargetV: 'w-12',
     trackHeight: 16,
     handleHeight: 44,
     handleWidth: 4,
     handlePressedWidth: 2,
-    gap: 6,
+    gap: 4,
     pressedGap: 2,
-    innerRadius: 4,
+    trackShape: 8,
+    innerRadius: 2,
     stateLayerSize: 'size-10',
-    tooltipSize: 'size-8 text-sm',
-    tooltipOffset: -32,
-    iconSize: 'size-5',
+    iconSize: 0,
   },
-  lg: {
+  sm: {
+    touchTarget: 'h-12',
+    touchTargetV: 'w-12',
+    trackHeight: 24,
+    handleHeight: 44,
+    handleWidth: 4,
+    handlePressedWidth: 2,
+    gap: 4,
+    pressedGap: 2,
+    trackShape: 8,
+    innerRadius: 2,
+    stateLayerSize: 'size-10',
+    iconSize: 0,
+  },
+  md: {
     touchTarget: 'h-14',
     touchTargetV: 'w-14',
-    trackHeight: 24,
+    trackHeight: 40,
     handleHeight: 52,
+    handleWidth: 4,
+    handlePressedWidth: 2,
+    gap: 6,
+    pressedGap: 2,
+    trackShape: 12,
+    innerRadius: 4,
+    stateLayerSize: 'size-10',
+    iconSize: 24,
+  },
+  lg: {
+    touchTarget: 'h-18',
+    touchTargetV: 'w-18',
+    trackHeight: 56,
+    handleHeight: 68,
     handleWidth: 4,
     handlePressedWidth: 2,
     gap: 8,
     pressedGap: 3,
+    trackShape: 16,
     innerRadius: 6,
     stateLayerSize: 'size-11',
-    tooltipSize: 'size-9 text-sm',
-    tooltipOffset: -36,
-    iconSize: 'size-6',
+    iconSize: 24,
   },
   xl: {
-    touchTarget: 'h-16',
-    touchTargetV: 'w-16',
-    trackHeight: 36,
-    handleHeight: 60,
-    handleWidth: 6,
-    handlePressedWidth: 3,
+    touchTarget: 'h-28',
+    touchTargetV: 'w-28',
+    trackHeight: 96,
+    handleHeight: 108,
+    handleWidth: 4,
+    handlePressedWidth: 2,
     gap: 10,
     pressedGap: 4,
+    trackShape: 28,
     innerRadius: 8,
     stateLayerSize: 'size-12',
-    tooltipSize: 'size-10 text-base',
-    tooltipOffset: -40,
-    iconSize: 'size-7',
+    iconSize: 32,
   },
 } as const;
 
@@ -129,7 +128,7 @@ export type SliderProps = Omit<React.ComponentProps<'input'>, 'type' | 'size'> &
   showTooltip?: boolean;
   /** Custom format function for the tooltip value. */
   formatTooltip?: (value: number) => string;
-  /** Inset icon rendered inside the active track. */
+  /** Inset icon rendered inside the active track (md, lg, xl only per M3 spec). */
   icon?: React.ReactNode;
 };
 
@@ -185,20 +184,22 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
 
     const tooltipLabel = formatTooltip ? formatTooltip(value) : String(value);
 
-    // Active/inactive track inner radius (squared near handle)
+    // Track shape = outer corner radius, inner radius = more squared near handle
+    const outerR = config.trackShape;
     const innerR = config.innerRadius;
-    const trackR = config.trackHeight / 2; // outer radius = fully rounded
 
     const activeTrackStyle = isVertical
       ? {
           height: `max(${clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-          borderRadius: `0 0 ${trackR}px ${trackR}px`,
+          borderBottomLeftRadius: `${outerR}px`,
+          borderBottomRightRadius: `${outerR}px`,
           borderTopLeftRadius: `${innerR}px`,
           borderTopRightRadius: `${innerR}px`,
         }
       : {
           width: `max(${clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-          borderRadius: `${trackR}px 0 0 ${trackR}px`,
+          borderTopLeftRadius: `${outerR}px`,
+          borderBottomLeftRadius: `${outerR}px`,
           borderTopRightRadius: `${innerR}px`,
           borderBottomRightRadius: `${innerR}px`,
         };
@@ -206,16 +207,21 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
     const inactiveTrackStyle = isVertical
       ? {
           height: `max(${100 - clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-          borderRadius: `${trackR}px ${trackR}px 0 0`,
+          borderTopLeftRadius: `${outerR}px`,
+          borderTopRightRadius: `${outerR}px`,
           borderBottomLeftRadius: `${innerR}px`,
           borderBottomRightRadius: `${innerR}px`,
         }
       : {
           width: `max(${100 - clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-          borderRadius: `0 ${trackR}px ${trackR}px 0`,
+          borderTopRightRadius: `${outerR}px`,
+          borderBottomRightRadius: `${outerR}px`,
           borderTopLeftRadius: `${innerR}px`,
           borderBottomLeftRadius: `${innerR}px`,
         };
+
+    // Show inset icon only for md, lg, xl per M3 spec
+    const showIcon = icon && config.iconSize > 0;
 
     return (
       <div
@@ -240,13 +246,13 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
             style={activeTrackStyle}
           >
             {/* Inset icon — M3 spec: only for md, lg, xl sizes */}
-            {icon && size !== 'xs' && size !== 'sm' && (
+            {showIcon && (
               <span
                 className={cn(
                   'absolute flex items-center justify-center text-primary-foreground',
-                  config.iconSize,
-                  isVertical ? 'bottom-0.5 left-1/2 -translate-x-1/2' : 'top-1/2 left-0.5 -translate-y-1/2',
+                  isVertical ? 'bottom-1 left-1/2 -translate-x-1/2' : 'top-1/2 left-1 -translate-y-1/2',
                 )}
+                style={{ width: `${config.iconSize}px`, height: `${config.iconSize}px` }}
               >
                 {icon}
               </span>
@@ -289,18 +295,11 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
             )}
             style={isVertical ? { bottom: `${clampedPercent}%` } : { left: `${clampedPercent}%` }}
           >
-            {/* Value tooltip */}
+            {/* Value tooltip — M3 label container: 44×48dp */}
             {showTooltip && isDragging && (
               <div
-                className={cn(
-                  'pointer-events-none absolute left-1/2 flex -translate-x-1/2 items-center justify-center rounded-full bg-inverse-surface font-medium text-inverse-surface-foreground',
-                  config.tooltipSize,
-                )}
-                style={
-                  isVertical
-                    ? { left: config.tooltipOffset, top: '50%', transform: 'translateY(-50%)' }
-                    : { top: config.tooltipOffset }
-                }
+                className="pointer-events-none absolute left-1/2 flex h-11 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-inverse-surface font-medium text-inverse-surface-foreground text-sm"
+                style={isVertical ? { left: -56, top: '50%', transform: 'translateY(-50%)' } : { top: -52 }}
               >
                 {tooltipLabel}
               </div>
