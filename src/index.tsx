@@ -2,6 +2,14 @@
 
 export type { BadgeAnchorProps, BadgeProps } from './components/ui/badge';
 export { Badge, BadgeAnchor, badgeVariants } from './components/ui/badge';
+export type { BottomSheetContentProps, BottomSheetProps } from './components/ui/bottom-sheet';
+export {
+  BottomSheet,
+  BottomSheetBody,
+  BottomSheetClose,
+  BottomSheetContent,
+  BottomSheetTrigger,
+} from './components/ui/bottom-sheet';
 export type { ButtonProps } from './components/ui/button';
 export { Button, buttonVariants } from './components/ui/button';
 export type { ButtonGroupProps, ConnectedButtonGroupProps } from './components/ui/button-group';
@@ -117,6 +125,22 @@ export {
   radioInnerVariants,
   radioOuterVariants,
 } from './components/ui/radio-button';
+export type {
+  SideSheetContentProps,
+  SideSheetHeaderProps,
+  SideSheetProps,
+} from './components/ui/side-sheet';
+export {
+  SideSheet,
+  SideSheetBody,
+  SideSheetClose,
+  SideSheetContent,
+  SideSheetDivider,
+  SideSheetFooter,
+  SideSheetHeader,
+  SideSheetTrigger,
+  sideSheetContentVariants,
+} from './components/ui/side-sheet';
 export type { SnackbarHostProps, SnackbarProps } from './components/ui/snackbar';
 export { Snackbar, SnackbarHost, snackbar, snackbarVariants } from './components/ui/snackbar';
 export type { SwitchProps } from './components/ui/switch';
