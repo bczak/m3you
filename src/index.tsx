@@ -125,6 +125,14 @@ export {
   radioInnerVariants,
   radioOuterVariants,
 } from './components/ui/radio-button';
+export type { SearchBarProps, SearchSuggestionItemProps, SearchViewProps } from './components/ui/search';
+export {
+  SearchBar,
+  SearchSuggestionItem,
+  SearchView,
+  searchBarVariants,
+  searchViewVariants,
+} from './components/ui/search';
 export type {
   SideSheetContentProps,
   SideSheetHeaderProps,
