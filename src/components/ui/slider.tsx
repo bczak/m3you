@@ -269,7 +269,7 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
           {isDiscrete &&
             stopCount > 0 &&
             Array.from({ length: stopCount }, (_, i) => {
-              const stopPercent = (i / (stopCount - 1)) * 100;
+              const stopPercent = stopCount <= 1 ? 0 : (i / (stopCount - 1)) * 100;
               const isActive = stopPercent <= clampedPercent;
               const distFromHandle = Math.abs(stopPercent - clampedPercent);
               if (distFromHandle < 2) return null;
