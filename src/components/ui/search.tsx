@@ -4,7 +4,7 @@ import { Ripple } from 'm3-ripple';
 import * as React from 'react';
 
 import { cn } from '../../lib/utils';
-import { IconButton } from './icon-button';
+import { IconButton, iconButtonVariants } from './icon-button';
 
 // =============================================================================
 // Variants
@@ -250,7 +250,11 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
             >
               {currentValue || placeholder}
             </span>
-            {trailingIcon && <span className="mr-3 flex shrink-0 items-center justify-center">{trailingIcon}</span>}
+            {trailingIcon && (
+              <span className={cn(iconButtonVariants({ variant: 'standard', size: 'sm' }), 'pointer-events-none mr-1')}>
+                {trailingIcon}
+              </span>
+            )}
           </button>
         ) : (
           <div className={cn(searchBarVariants(), className)} {...props}>
@@ -270,7 +274,9 @@ const SearchBar = React.forwardRef<HTMLDivElement, SearchBarProps>(
               aria-label={placeholder}
             />
             {trailingIcon && !currentValue && (
-              <span className="mr-3 flex shrink-0 items-center justify-center">{trailingIcon}</span>
+              <IconButton variant="standard" size="sm" className="mr-1">
+                {trailingIcon}
+              </IconButton>
             )}
             {currentValue && (
               <IconButton variant="standard" size="sm" className="mr-1" onClick={handleClear} aria-label="Clear search">
