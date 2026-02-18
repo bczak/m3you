@@ -6,7 +6,7 @@ import type * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const chipVariants = cva(
-  'relative inline-flex h-8 cursor-pointer items-center rounded-lg text-sm font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-38 [&_svg]:size-[18px] [&_svg]:shrink-0',
+  'relative inline-flex h-8 cursor-pointer items-center rounded-lg text-sm font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-38 [&_svg]:size-4_5 [&_svg]:shrink-0',
   {
     variants: {
       type: {
@@ -39,14 +39,13 @@ const chipVariants = cva(
         type: 'filter',
         variant: 'outlined',
         selected: true,
-        class:
-          'border-transparent bg-secondary-container text-secondary-container-foreground hover:bg-secondary-container/90',
+        class: 'border-transparent bg-secondary-container text-on-secondary-container hover:bg-secondary-container/90',
       },
       {
         type: 'filter',
         variant: 'elevated',
         selected: true,
-        class: 'bg-secondary-container text-secondary-container-foreground shadow-lg hover:bg-secondary-container/90',
+        class: 'bg-secondary-container text-on-secondary-container shadow-lg hover:bg-secondary-container/90',
       },
       // Filter selected always has leading icon (checkmark)
       { type: 'filter', selected: true, class: 'pl-2' },
@@ -126,7 +125,7 @@ const Chip = ({
           aria-hidden="true"
           className={cn(
             'inline-flex items-center justify-center overflow-hidden transition-all duration-200 ease-out',
-            selected ? 'mr-2 w-[18px]' : 'mr-0 w-0',
+            selected ? 'mr-2 w-4_5' : 'mr-0 w-0',
           )}
         >
           <Check className={cn('transition-transform duration-200 ease-out', selected ? 'scale-100' : 'scale-0')} />
@@ -150,7 +149,7 @@ const Chip = ({
           }}
           className="ml-2 inline-flex cursor-pointer items-center justify-center rounded-full p-0.5 transition-colors hover:bg-on-surface/12 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
-          <X aria-hidden="true" className="size-[18px]" />
+          <X aria-hidden="true" className="size-4_5" />
         </button>
       ) : (
         trailingIcon && (

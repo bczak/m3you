@@ -69,17 +69,15 @@ function getHandRadius(value: number, selection: Selection, format: ClockFormat)
 
 // ── CVA Variants ────────────────────────────────────────────────────────────
 
-const timePickerContainerVariants = cva(
-  'rounded-[28px] bg-surface-container-high p-6 shadow-[0_8px_24px_rgba(0,0,0,0.16)]',
-);
+const timePickerContainerVariants = cva('rounded-3xl bg-surface-container-high p-6 shadow-elevation-3');
 
 const timeBoxVariants = cva(
   'flex min-w-24 cursor-pointer items-center justify-center rounded-lg border-2 font-normal text-[45px] transition-colors duration-150',
   {
     variants: {
       selected: {
-        true: 'border-primary bg-primary-container text-primary-container-foreground',
-        false: 'border-transparent bg-surface-container-highest text-foreground hover:bg-foreground/8',
+        true: 'border-primary bg-primary-container text-on-primary-container',
+        false: 'border-transparent bg-surface-container-highest text-on-background hover:bg-on-background/8',
       },
       inputMode: {
         true: 'h-[72px]',
@@ -95,8 +93,8 @@ const clockNumberVariants = cva(
   {
     variants: {
       selected: {
-        true: 'bg-primary text-primary-foreground',
-        false: 'text-foreground hover:bg-foreground/8',
+        true: 'bg-primary text-on-primary',
+        false: 'text-on-background hover:bg-on-background/8',
       },
       inner: {
         true: 'text-[13px]',
@@ -112,8 +110,8 @@ const periodButtonVariants = cva(
   {
     variants: {
       selected: {
-        true: 'bg-tertiary-container text-tertiary-container-foreground',
-        false: 'bg-transparent text-surface-variant-foreground hover:bg-foreground/4',
+        true: 'bg-tertiary-container text-on-tertiary-container',
+        false: 'bg-transparent text-on-surface-variant hover:bg-on-background/4',
       },
     },
     defaultVariants: { selected: false },
@@ -458,7 +456,7 @@ const TimePicker = ({
           >
             {displayHour()}
           </button>
-          <span className="font-normal text-[45px] text-foreground leading-none">:</span>
+          <span className="font-normal text-[45px] text-on-background leading-none">:</span>
           <button
             type="button"
             className={timeBoxVariants({ selected: selection === 'minutes', inputMode: false })}
@@ -485,9 +483,9 @@ const TimePicker = ({
               maxLength={2}
               aria-label="Hours"
             />
-            <span className="font-medium text-surface-variant-foreground text-xs tracking-wider">Hour</span>
+            <span className="font-medium text-on-surface-variant text-xs tracking-wider">Hour</span>
           </div>
-          <span className="mt-[-20px] font-normal text-[45px] text-foreground leading-none">:</span>
+          <span className="mt-[-20px] font-normal text-[45px] text-on-background leading-none">:</span>
           <div className="flex flex-col gap-1">
             <input
               ref={minuteInputRef}
@@ -503,7 +501,7 @@ const TimePicker = ({
               maxLength={2}
               aria-label="Minutes"
             />
-            <span className="font-medium text-surface-variant-foreground text-xs tracking-wider">Minute</span>
+            <span className="font-medium text-on-surface-variant text-xs tracking-wider">Minute</span>
           </div>
         </>
       )}
@@ -517,9 +515,7 @@ const TimePicker = ({
     landscape ? (
       <div className="flex items-center gap-6">
         <div className="flex flex-col gap-3">
-          <span className="font-medium text-surface-variant-foreground text-xs uppercase tracking-wider">
-            {headerText}
-          </span>
+          <span className="font-medium text-on-surface-variant text-xs uppercase tracking-wider">{headerText}</span>
           {renderTimeDisplay()}
         </div>
         <ClockDial
@@ -560,9 +556,7 @@ const TimePicker = ({
         {/* Portrait header + time display, or landscape input mode */}
         {(!landscape || isInput) && (
           <>
-            <span className="font-medium text-surface-variant-foreground text-xs uppercase tracking-wider">
-              {headerText}
-            </span>
+            <span className="font-medium text-on-surface-variant text-xs uppercase tracking-wider">{headerText}</span>
             {renderTimeDisplay()}
           </>
         )}
@@ -574,7 +568,7 @@ const TimePicker = ({
         <div className="flex items-center justify-between">
           <button
             type="button"
-            className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+            className="relative flex size-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-on-background/8"
             onClick={() => setMode((m) => (m === 'dial' ? 'input' : 'dial'))}
             aria-label={isInput ? 'Switch to clock dial' : 'Switch to keyboard input'}
           >

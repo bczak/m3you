@@ -73,7 +73,7 @@ function BottomSheetContent({ className, children, showDragHandle = true, ...pro
         <DrawerPrimitive.Popup
           data-slot="bottom-sheet-content"
           className={cn(
-            'absolute right-0 bottom-0 left-0 mx-auto flex max-w-[640px] flex-col rounded-t-[28px] bg-surface-container-low outline-none',
+            'absolute right-0 bottom-0 left-0 mx-auto flex max-w-[640px] flex-col rounded-t-3xl bg-surface-container-low outline-none',
             'mt-[72px] sm:mx-14 sm:mt-14',
             className,
           )}
@@ -81,7 +81,7 @@ function BottomSheetContent({ className, children, showDragHandle = true, ...pro
         >
           {showDragHandle && (
             <div data-slot="bottom-sheet-drag-handle" className="flex justify-center pt-[22px] pb-[22px]">
-              <div className="h-1 w-8 rounded-full bg-surface-variant-foreground/40" />
+              <div className="h-1 w-8 rounded-full bg-on-surface-variant/40" />
             </div>
           )}
           {children}

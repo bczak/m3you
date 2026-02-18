@@ -13,8 +13,8 @@ import { cn } from '../../lib/utils';
 const menuContainerVariants = cva('', {
   variants: {
     color: {
-      standard: 'bg-surface-container-low text-surface-foreground',
-      vibrant: 'bg-tertiary-container text-tertiary-container-foreground',
+      standard: 'bg-surface-container-low text-on-surface',
+      vibrant: 'bg-tertiary-container text-on-tertiary-container',
     },
   },
   defaultVariants: { color: 'standard' },
@@ -26,30 +26,30 @@ const menuItemVariants = cva(
     variants: {
       color: { standard: '', vibrant: '' },
       selected: { true: '', false: '' },
-      disabled: { true: 'pointer-events-none opacity-[0.38]', false: '' },
+      disabled: { true: 'pointer-events-none opacity-38', false: '' },
     },
     compoundVariants: [
       {
         color: 'standard',
         selected: false,
-        className: 'text-surface-foreground hover:bg-surface-foreground/8 focus-visible:bg-surface-foreground/12',
+        className: 'text-on-surface hover:bg-on-surface/8 focus-visible:bg-on-surface/12',
       },
       {
         color: 'vibrant',
         selected: false,
         className:
-          'text-tertiary-container-foreground hover:bg-tertiary-container-foreground/8 focus-visible:bg-tertiary-container-foreground/12',
+          'text-on-tertiary-container hover:bg-on-tertiary-container/8 focus-visible:bg-on-tertiary-container/12',
       },
       {
         color: 'standard',
         selected: true,
         className:
-          'bg-tertiary-container text-tertiary-container-foreground hover:bg-tertiary-container/80 focus-visible:bg-tertiary-container/70',
+          'bg-tertiary-container text-on-tertiary-container hover:bg-tertiary-container/80 focus-visible:bg-tertiary-container/70',
       },
       {
         color: 'vibrant',
         selected: true,
-        className: 'bg-tertiary text-tertiary-foreground hover:bg-tertiary/90 focus-visible:bg-tertiary/80',
+        className: 'bg-tertiary text-on-tertiary hover:bg-tertiary/90 focus-visible:bg-tertiary/80',
       },
     ],
     defaultVariants: { color: 'standard', selected: false, disabled: false },
@@ -59,8 +59,8 @@ const menuItemVariants = cva(
 const menuIconVariants = cva('', {
   variants: {
     color: {
-      standard: 'text-surface-variant-foreground',
-      vibrant: 'text-tertiary-container-foreground',
+      standard: 'text-on-surface-variant',
+      vibrant: 'text-on-tertiary-container',
     },
     selected: { true: '', false: '' },
   },
@@ -71,8 +71,8 @@ const menuIconVariants = cva('', {
 const menuLabelVariants = cva('flex h-8 items-center px-3 font-medium text-xs', {
   variants: {
     color: {
-      standard: 'text-surface-variant-foreground',
-      vibrant: 'text-tertiary-container-foreground/70',
+      standard: 'text-on-surface-variant',
+      vibrant: 'text-on-tertiary-container/70',
     },
   },
   defaultVariants: { color: 'standard' },

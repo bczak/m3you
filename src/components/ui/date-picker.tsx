@@ -114,20 +114,18 @@ function getCalendarDays(year: number, month: number): CalendarDay[] {
 
 // ── CVA Variants ─────────────────────────────────────────────────────────────
 
-const datePickerContainerVariants = cva(
-  'w-[328px] rounded-[28px] bg-surface-container-high shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]',
-);
+const datePickerContainerVariants = cva('w-[328px] rounded-3xl bg-surface-container-high shadow-elevation-2');
 
 const dayCellVariants = cva(
   'relative flex size-10 cursor-pointer items-center justify-center rounded-full font-medium text-sm transition-colors duration-150',
   {
     variants: {
       state: {
-        default: 'text-foreground hover:bg-foreground/8',
+        default: 'text-on-background hover:bg-on-background/8',
         today: 'border border-primary text-primary hover:bg-primary/8',
-        selected: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        outsideMonth: 'text-surface-variant-foreground/60 hover:bg-foreground/8',
-        disabled: 'pointer-events-none text-foreground/38',
+        selected: 'bg-primary text-on-primary hover:bg-primary/90',
+        outsideMonth: 'text-on-surface-variant/60 hover:bg-on-background/8',
+        disabled: 'pointer-events-none text-on-background/38',
       },
     },
     defaultVariants: { state: 'default' },
@@ -139,8 +137,8 @@ const yearCellVariants = cva(
   {
     variants: {
       state: {
-        default: 'text-foreground hover:bg-foreground/8',
-        selected: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        default: 'text-on-background hover:bg-on-background/8',
+        selected: 'bg-primary text-on-primary hover:bg-primary/90',
       },
     },
     defaultVariants: { state: 'default' },
@@ -176,7 +174,7 @@ const MonthDropdown = ({ month, onSelect, onClose }: MonthDropdownProps) => {
   return (
     <div
       ref={listRef}
-      className="absolute inset-x-0 top-0 z-20 max-h-[320px] overflow-y-auto rounded-2xl bg-surface-container-high py-2 shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]"
+      className="absolute inset-x-0 top-0 z-20 max-h-[320px] overflow-y-auto rounded-2xl bg-surface-container-high py-2 shadow-elevation-2"
       role="listbox"
       aria-label="Select month"
     >
@@ -194,8 +192,8 @@ const MonthDropdown = ({ month, onSelect, onClose }: MonthDropdownProps) => {
           className={cn(
             'relative flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-sm transition-colors duration-100',
             i === month
-              ? 'bg-secondary-container font-medium text-secondary-container-foreground'
-              : 'text-foreground hover:bg-foreground/8',
+              ? 'bg-secondary-container font-medium text-on-secondary-container'
+              : 'text-on-background hover:bg-on-background/8',
           )}
         >
           {i === month ? <Check className="size-5" /> : <span className="size-5" />}
@@ -237,7 +235,7 @@ const YearDropdown = ({ year, onSelect, onClose }: YearDropdownProps) => {
   return (
     <div
       ref={listRef}
-      className="absolute inset-x-0 top-0 z-20 max-h-[320px] overflow-y-auto rounded-2xl bg-surface-container-high py-2 shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]"
+      className="absolute inset-x-0 top-0 z-20 max-h-[320px] overflow-y-auto rounded-2xl bg-surface-container-high py-2 shadow-elevation-2"
       role="listbox"
       aria-label="Select year"
     >
@@ -255,8 +253,8 @@ const YearDropdown = ({ year, onSelect, onClose }: YearDropdownProps) => {
           className={cn(
             'relative flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-sm transition-colors duration-100',
             y === year
-              ? 'bg-secondary-container font-medium text-secondary-container-foreground'
-              : 'text-foreground hover:bg-foreground/8',
+              ? 'bg-secondary-container font-medium text-on-secondary-container'
+              : 'text-on-background hover:bg-on-background/8',
           )}
         >
           {y === year ? <Check className="size-5" /> : <span className="size-5" />}
@@ -405,7 +403,7 @@ const CalendarGrid = ({
         {WEEKDAYS.map((weekday) => (
           <div
             key={weekday.key}
-            className="flex size-10 items-center justify-center font-medium text-foreground text-xs"
+            className="flex size-10 items-center justify-center font-medium text-on-background text-xs"
             aria-hidden="true"
           >
             {weekday.label}
@@ -495,13 +493,13 @@ const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, ma
   };
 
   return (
-    <div className="w-[328px] rounded-2xl bg-surface-container-high shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]">
+    <div className="w-[328px] rounded-2xl bg-surface-container-high shadow-elevation-2">
       {/* Navigation header */}
       <div className="relative flex items-center gap-0.5 px-3 pt-5 pb-1">
         <button
           type="button"
           onClick={goPrevMonth}
-          className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+          className="relative flex size-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-on-background/8"
           aria-label="Previous month"
         >
           <Ripple />
@@ -514,8 +512,8 @@ const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, ma
             setShowMonthDropdown(!showMonthDropdown);
           }}
           className={cn(
-            'relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8',
-            showMonthDropdown && 'bg-foreground/8',
+            'relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-on-surface-variant text-sm transition-colors hover:bg-on-background/8',
+            showMonthDropdown && 'bg-on-background/8',
           )}
           aria-label="Select month"
           aria-expanded={showMonthDropdown}
@@ -528,7 +526,7 @@ const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, ma
         <button
           type="button"
           onClick={goNextMonth}
-          className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+          className="relative flex size-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-on-background/8"
           aria-label="Next month"
         >
           <Ripple />
@@ -540,7 +538,7 @@ const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, ma
         <button
           type="button"
           onClick={() => setViewYear((y) => y - 1)}
-          className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+          className="relative flex size-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-on-background/8"
           aria-label="Previous year"
         >
           <Ripple />
@@ -553,8 +551,8 @@ const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, ma
             setShowYearDropdown(!showYearDropdown);
           }}
           className={cn(
-            'relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8',
-            showYearDropdown && 'bg-foreground/8',
+            'relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-on-surface-variant text-sm transition-colors hover:bg-on-background/8',
+            showYearDropdown && 'bg-on-background/8',
           )}
           aria-label="Select year"
           aria-expanded={showYearDropdown}
@@ -567,7 +565,7 @@ const DockedCalendarPanel = ({ value, onSelect, onCancel, onConfirm, minDate, ma
         <button
           type="button"
           onClick={() => setViewYear((y) => y + 1)}
-          className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+          className="relative flex size-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-on-background/8"
           aria-label="Next year"
         >
           <Ripple />
@@ -749,17 +747,17 @@ const DatePicker = ({
           data-error={hasError || undefined}
           data-disabled={disabled || undefined}
           data-populated={populated || undefined}
-          className="group/tf relative flex h-14 items-center rounded-[4px] text-base/6"
+          className="group/tf relative flex h-14 items-center rounded-sm text-base/6"
         >
           {label && (
             <label
               htmlFor={inputId}
               className={cn(
                 'pointer-events-none absolute z-10 origin-top-left transition-all duration-150 [transition-timing-function:cubic-bezier(0.2,0,0,1)]',
-                !floating && 'top-1/2 left-4 -translate-y-1/2 text-base/6 text-surface-variant-foreground',
+                !floating && 'top-1/2 left-4 -translate-y-1/2 text-base/6 text-on-surface-variant',
                 floating && '-top-2 left-4 px-1 text-xs/4',
                 floating && (focused || open) && !hasError && 'text-primary',
-                floating && !(focused || open) && 'text-surface-variant-foreground',
+                floating && !(focused || open) && 'text-on-surface-variant',
                 hasError && floating && 'text-error',
                 disabled && 'opacity-38',
               )}
@@ -784,7 +782,7 @@ const DatePicker = ({
             aria-invalid={hasError || undefined}
             aria-describedby={displaySupportingText ? supportingTextId : undefined}
             aria-haspopup="dialog"
-            className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
+            className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-on-background caret-primary outline-none placeholder:text-on-surface-variant"
           />
 
           <button
@@ -793,7 +791,7 @@ const DatePicker = ({
             disabled={disabled}
             aria-label={open ? 'Close calendar' : 'Open calendar'}
             tabIndex={-1}
-            className="relative mr-1 flex size-10 shrink-0 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+            className="relative mr-1 flex size-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-on-background/8"
           >
             <Ripple />
             <CalendarIcon className="size-5" />
@@ -837,9 +835,7 @@ const DatePicker = ({
 
       {displaySupportingText && (
         <div id={supportingTextId} className={cn('px-4 pt-1 text-xs/4', disabled && 'opacity-38')}>
-          <span className={cn('text-surface-variant-foreground', hasError && 'text-error')}>
-            {displaySupportingText}
-          </span>
+          <span className={cn('text-on-surface-variant', hasError && 'text-error')}>{displaySupportingText}</span>
         </div>
       )}
     </div>
@@ -989,15 +985,15 @@ const DatePickerModal = ({
         {/* Header */}
         <div className="flex items-start justify-between px-6 pt-4 pb-0">
           <div className="flex flex-col gap-3 pt-2">
-            <span className="text-sm text-surface-variant-foreground">{headerLabel}</span>
-            <span className="pb-4 font-normal text-3xl text-foreground">
+            <span className="text-on-surface-variant text-sm">{headerLabel}</span>
+            <span className="pb-4 font-normal text-3xl text-on-background">
               {view === 'input' ? 'Enter date' : formattedDate}
             </span>
           </div>
           <button
             type="button"
             onClick={() => setView(view === 'input' ? 'calendar' : 'input')}
-            className="relative mt-3 flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+            className="relative mt-3 flex size-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-on-background/8"
             aria-label={view === 'input' ? 'Switch to calendar' : 'Switch to text input'}
           >
             <Ripple />
@@ -1011,14 +1007,14 @@ const DatePickerModal = ({
         {view === 'input' ? (
           /* Input view */
           <div className="px-6 pt-4 pb-0">
-            <div className="relative flex h-14 items-center rounded-[4px]">
+            <div className="relative flex h-14 items-center rounded-sm">
               <input
                 id="modal-date-input"
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="mm/dd/yyyy"
-                className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
+                className="min-w-0 flex-1 bg-transparent pr-3 pl-4 text-base/6 text-on-background caret-primary outline-none placeholder:text-on-surface-variant"
               />
               <fieldset className="pointer-events-none absolute inset-0 m-0 rounded-[inherit] border border-outline p-0 px-3">
                 <legend className="invisible h-0 max-w-full overflow-hidden whitespace-nowrap px-1 text-xs/4">
@@ -1041,8 +1037,8 @@ const DatePickerModal = ({
                 type="button"
                 onClick={() => setView('calendar')}
                 className={cn(
-                  'relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8',
-                  'bg-foreground/8',
+                  'relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-on-surface-variant text-sm transition-colors hover:bg-on-background/8',
+                  'bg-on-background/8',
                 )}
               >
                 <Ripple />
@@ -1059,7 +1055,7 @@ const DatePickerModal = ({
               <button
                 type="button"
                 onClick={() => setView('year')}
-                className="relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-sm text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+                className="relative flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-on-surface-variant text-sm transition-colors hover:bg-on-background/8"
               >
                 <Ripple />
                 {MONTH_NAMES[viewMonth]} {viewYear}
@@ -1069,7 +1065,7 @@ const DatePickerModal = ({
                 <button
                   type="button"
                   onClick={goPrevMonth}
-                  className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+                  className="relative flex size-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-on-background/8"
                   aria-label="Previous month"
                 >
                   <Ripple />
@@ -1078,7 +1074,7 @@ const DatePickerModal = ({
                 <button
                   type="button"
                   onClick={goNextMonth}
-                  className="relative flex size-10 items-center justify-center rounded-full text-surface-variant-foreground transition-colors hover:bg-foreground/8"
+                  className="relative flex size-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-on-background/8"
                   aria-label="Next month"
                 >
                   <Ripple />

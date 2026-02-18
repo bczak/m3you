@@ -187,7 +187,7 @@ test('disabled menu item has opacity class', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('item')).toHaveClass('opacity-[0.38]');
+  expect(screen.getByTestId('item')).toHaveClass('opacity-38');
 });
 
 test('selected menu item renders check icon', async () => {

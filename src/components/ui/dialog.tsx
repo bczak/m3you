@@ -64,7 +64,7 @@ function DialogContent({ className, children, ...props }: DialogPrimitive.Popup.
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 grid w-full min-w-[280px] max-w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-[28px] bg-surface-container-high p-6 shadow-xl outline-none transition-all duration-200',
+          'fixed top-1/2 left-1/2 z-50 grid w-full min-w-[280px] max-w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-surface-container-high p-6 shadow-xl outline-none transition-all duration-200',
           'data-[ending-style]:scale-95 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
           className,
         )}
@@ -109,11 +109,7 @@ function DialogIcon({ className, ...props }: React.ComponentProps<'div'>) {
 
 function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
-    <DialogPrimitive.Title
-      data-slot="dialog-title"
-      className={cn('text-2xl text-surface-foreground', className)}
-      {...props}
-    />
+    <DialogPrimitive.Title data-slot="dialog-title" className={cn('text-2xl text-on-surface', className)} {...props} />
   );
 }
 
@@ -125,7 +121,7 @@ function DialogDescription({ className, ...props }: DialogPrimitive.Description.
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn('mt-4 text-sm text-surface-variant-foreground', className)}
+      className={cn('mt-4 text-on-surface-variant text-sm', className)}
       {...props}
     />
   );
@@ -136,9 +132,7 @@ function DialogDescription({ className, ...props }: DialogPrimitive.Description.
 // =============================================================================
 
 function DialogBody({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div data-slot="dialog-body" className={cn('mt-4 text-sm text-surface-variant-foreground', className)} {...props} />
-  );
+  return <div data-slot="dialog-body" className={cn('mt-4 text-on-surface-variant text-sm', className)} {...props} />;
 }
 
 // =============================================================================
@@ -222,7 +216,7 @@ function FullScreenDialogHeader({ className, icon, action, children, ...props }:
       {...props}
     >
       {icon && <div className="flex items-center [&_svg]:size-6">{icon}</div>}
-      <DialogPrimitive.Title className="flex-1 text-lg text-surface-foreground">{children}</DialogPrimitive.Title>
+      <DialogPrimitive.Title className="flex-1 text-lg text-on-surface">{children}</DialogPrimitive.Title>
       {action && <div className="flex items-center">{action}</div>}
     </div>
   );

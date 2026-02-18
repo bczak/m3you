@@ -23,7 +23,7 @@ test('renders outlined variant', async () => {
   const input = screen.getByRole('textbox');
   expect(input).toBeInTheDocument();
   // Outlined variant should have a fieldset for the border notch
-  const fieldset = input.closest('.rounded-\\[4px\\]')?.querySelector('fieldset');
+  const fieldset = input.closest('.rounded-sm')?.querySelector('fieldset');
   expect(fieldset).toBeInTheDocument();
 });
 

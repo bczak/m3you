@@ -85,7 +85,7 @@ Tabs.displayName = 'Tabs';
    ============================================================================= */
 
 const tabVariants = cva(
-  'group relative inline-flex cursor-pointer items-center justify-center bg-transparent text-surface-variant-foreground outline-none transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-[0.38] [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0',
+  'group relative inline-flex cursor-pointer items-center justify-center bg-transparent text-on-surface-variant outline-none transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-38 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -114,11 +114,11 @@ const tabVariants = cva(
       // Active primary tab: primary color for icon and label
       { variant: 'primary', active: true, class: 'text-primary' },
       // Inactive primary tab: on-surface-variant color
-      { variant: 'primary', active: false, class: 'text-surface-variant-foreground hover:text-foreground' },
+      { variant: 'primary', active: false, class: 'text-on-surface-variant hover:text-on-background' },
       // Active secondary tab: on-surface color
-      { variant: 'secondary', active: true, class: 'text-foreground' },
+      { variant: 'secondary', active: true, class: 'text-on-background' },
       // Inactive secondary tab: on-surface-variant
-      { variant: 'secondary', active: false, class: 'text-surface-variant-foreground hover:text-foreground' },
+      { variant: 'secondary', active: false, class: 'text-on-surface-variant hover:text-on-background' },
     ],
     defaultVariants: {
       variant: 'primary',

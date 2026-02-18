@@ -6,7 +6,7 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const checkboxVariants = cva(
-  'relative flex size-[18px] shrink-0 items-center justify-center rounded-[2px] transition-colors duration-200 ease-out [&_svg]:size-[18px]',
+  'relative flex size-4_5 shrink-0 items-center justify-center rounded-xs transition-colors duration-200 ease-out [&_svg]:size-4_5',
   {
     variants: {
       variant: {
@@ -23,8 +23,8 @@ const checkboxVariants = cva(
       { checked: false, variant: 'primary', class: 'border-2 border-outline' },
       { checked: false, variant: 'error', class: 'border-2 border-error' },
       // Checked: filled background
-      { checked: true, variant: 'primary', class: 'bg-primary text-primary-foreground' },
-      { checked: true, variant: 'error', class: 'bg-error text-error-foreground' },
+      { checked: true, variant: 'primary', class: 'bg-primary text-on-primary' },
+      { checked: true, variant: 'error', class: 'bg-error text-on-error' },
     ],
     defaultVariants: {
       variant: 'primary',

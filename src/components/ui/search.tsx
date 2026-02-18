@@ -19,7 +19,7 @@ const searchViewVariants = cva('z-50 flex flex-col bg-surface-container-high', {
     /** fullScreen: mobile full-screen overlay; docked: desktop panel below bar */
     mode: {
       fullScreen: 'fixed inset-0',
-      docked: 'rounded-[28px] shadow-xl',
+      docked: 'rounded-3xl shadow-xl',
     },
   },
   defaultVariants: {
@@ -111,7 +111,7 @@ const SearchView = ({
           onChange={(e) => updateValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="min-w-0 flex-1 bg-transparent text-base text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
+          className="min-w-0 flex-1 bg-transparent text-base text-on-background caret-primary outline-none placeholder:text-on-surface-variant"
           aria-label="Search input"
         />
 
@@ -232,13 +232,13 @@ const SearchBar = ({
           {...(props as React.ComponentProps<'button'>)}
         >
           <Ripple />
-          <span className="flex shrink-0 items-center pl-4 text-surface-variant-foreground [&_svg]:size-6">
+          <span className="flex shrink-0 items-center pl-4 text-on-surface-variant [&_svg]:size-6">
             {leadingIcon ?? <Search />}
           </span>
           <span
             className={cn(
               'min-w-0 flex-1 select-none truncate px-4 text-base',
-              currentValue ? 'text-foreground' : 'text-surface-variant-foreground',
+              currentValue ? 'text-on-background' : 'text-on-surface-variant',
             )}
           >
             {currentValue || placeholder}
@@ -251,7 +251,7 @@ const SearchBar = ({
         </button>
       ) : (
         <div className={cn(searchBarVariants(), className)} {...props}>
-          <span className="flex shrink-0 items-center pl-4 text-surface-variant-foreground [&_svg]:size-6">
+          <span className="flex shrink-0 items-center pl-4 text-on-surface-variant [&_svg]:size-6">
             {leadingIcon ?? <Search />}
           </span>
           <input
@@ -263,7 +263,7 @@ const SearchBar = ({
               if (e.key === 'Enter') onSearch?.(currentValue);
             }}
             placeholder={placeholder}
-            className="min-w-0 flex-1 bg-transparent px-4 text-base text-foreground caret-primary outline-none placeholder:text-surface-variant-foreground"
+            className="min-w-0 flex-1 bg-transparent px-4 text-base text-on-background caret-primary outline-none placeholder:text-on-surface-variant"
             aria-label={placeholder}
           />
           {trailingIcon && !currentValue && (
@@ -332,16 +332,16 @@ const SearchSuggestionItem = ({
     ref={ref}
     type="button"
     className={cn(
-      'relative flex h-14 w-full cursor-pointer items-center gap-4 px-4 text-left text-base text-foreground transition-colors hover:bg-foreground/8',
+      'relative flex h-14 w-full cursor-pointer items-center gap-4 px-4 text-left text-base text-on-background transition-colors hover:bg-on-background/8',
       className,
     )}
     {...props}
   >
     <Ripple />
-    {icon && <span className="flex shrink-0 items-center text-surface-variant-foreground [&_svg]:size-6">{icon}</span>}
+    {icon && <span className="flex shrink-0 items-center text-on-surface-variant [&_svg]:size-6">{icon}</span>}
     <span className="min-w-0 flex-1 truncate">{children}</span>
     {trailingIcon && (
-      <span className="flex shrink-0 items-center text-surface-variant-foreground [&_svg]:size-6">{trailingIcon}</span>
+      <span className="flex shrink-0 items-center text-on-surface-variant [&_svg]:size-6">{trailingIcon}</span>
     )}
   </button>
 );

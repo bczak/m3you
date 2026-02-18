@@ -10,10 +10,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         filled:
-          'bg-primary text-primary-foreground hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)] disabled:bg-muted disabled:text-muted-foreground',
-        elevated: 'bg-surface-container text-foreground shadow-lg',
-        tonal:
-          'bg-secondary-container text-secondary-container-foreground hover:shadow-[0_2px_6px_2px_rgba(0,0,0,0.15),0_1px_2px_0_rgba(0,0,0,0.3)]',
+          'bg-primary text-on-primary hover:shadow-elevation-2 disabled:bg-muted disabled:text-on-surface-variant',
+        elevated: 'bg-surface-container text-on-background shadow-lg',
+        tonal: 'bg-secondary-container text-on-secondary-container hover:shadow-elevation-2',
         outlined: 'border border-outline/40 bg-transparent text-primary',
         text: 'bg-transparent text-primary hover:bg-secondary-container/50',
       },
@@ -24,7 +23,7 @@ const buttonVariants = cva(
       size: {
         xs: 'h-8 px-3 text-xs [&_svg]:size-3.5',
         sm: 'h-10 px-4 text-sm [&_svg]:size-4',
-        md: 'h-14 px-6 py-4 text-base [&_svg]:size-[18px]',
+        md: 'h-14 px-6 py-4 text-base [&_svg]:size-4_5',
         lg: 'h-24 px-12 py-8 text-lg [&_svg]:size-6',
         xl: 'h-30 px-16 py-12 text-xl [&_svg]:size-7',
       },
@@ -63,13 +62,13 @@ const buttonVariants = cva(
       { morph: true, shape: 'square', size: 'lg', class: 'active:rounded-xl' },
       { morph: true, shape: 'square', size: 'xl', class: 'active:rounded-xl' },
       // Selected: false (unselected state) - secondary bg for filled
-      { selected: false, variant: 'filled', class: 'bg-secondary/70 text-secondary-foreground' },
+      { selected: false, variant: 'filled', class: 'bg-secondary/70 text-on-secondary' },
       // Selected states for elevated variant
-      { selected: true, variant: 'elevated', class: 'bg-primary text-primary-foreground shadow-xl' },
+      { selected: true, variant: 'elevated', class: 'bg-primary text-on-primary shadow-xl' },
       // Selected states for tonal variant
-      { selected: true, variant: 'tonal', class: 'bg-tertiary text-tertiary-foreground' },
+      { selected: true, variant: 'tonal', class: 'bg-tertiary text-on-tertiary' },
       // Selected states for outlined variant
-      { selected: true, variant: 'outlined', class: 'bg-outline text-outline-foreground' },
+      { selected: true, variant: 'outlined', class: 'bg-outline text-on-primary' },
       // Selected: true + round shape -> square radius
       { selected: true, shape: 'round', size: 'xs', class: 'rounded-lg' },
       { selected: true, shape: 'round', size: 'sm', class: 'rounded-lg' },
