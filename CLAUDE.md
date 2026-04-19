@@ -19,7 +19,7 @@ bun run lint           # Biome lint with auto-fix
 bun run format         # Biome format with auto-fix
 ```
 
-To run a single test file: `bunx vitest run tests/badge.test.tsx`
+To run a single test file: `bun run test tests/badge.test.tsx` (or `bunx vitest run tests/badge.test.tsx`).
 
 ## Architecture
 
@@ -64,14 +64,14 @@ Following `@material/web`'s pattern:
 
 ### Testing
 
-- **Rstest** (`@rstest/core`) with `@testing-library/react` and `happy-dom`
-- `rstest.setup.ts` globally extends `expect` with jest-dom matchers, polyfills `Element.animate()` for happy-dom, and runs `cleanup()` after each test
+- **Vitest** with `@testing-library/react` and `happy-dom`
+- `vitest.setup.ts` globally extends `expect` with jest-dom matchers, polyfills `Element.animate()` for happy-dom, and runs `cleanup()` after each test
 - Tests live in `tests/` directory, named `{component}.test.tsx`
-- Tests assert `md-*` CSS class names and `data-*` attributes (not Tailwind utility classes)
+- Tests assert `md-*` CSS class names and `data-*` attributes
 
 ### Stories
 
-- **Storybook 10** with `storybook-react-rsbuild`
+- **Storybook 10** with `@storybook/react-vite` (Tailwind via `@tailwindcss/vite` is injected in `.storybook/main.ts` for story styling only — it is not a runtime dep of the shipped library)
 - Stories live in `stories/` directory, named `{Component}.stories.tsx`
 - Pattern: `Meta<typeof Component>` + `StoryObj`, render functions for stateful stories
 

@@ -13,6 +13,42 @@
 @import "m3-ripple/ripple.css";
 
 /* =============================================================================
+   Mobile tap highlight — rely on m3 state layers + ripple instead of the
+   native iOS/Android Chrome blue flash.
+   ============================================================================= */
+
+[class*="md-"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =============================================================================
+   Disable text selection on button-like interactive components.
+   Prevents accidental text selection on tap/long-press. Containers with
+   real body text (Card, Dialog body, Snackbar, Tooltip, TextField) are not
+   affected.
+   ============================================================================= */
+
+:is(
+    .md-button,
+    .md-icon-button,
+    .md-extended-fab,
+    .md-extendable-fab,
+    .md-fab-menu,
+    .md-fab-menu-trigger,
+    .md-fab-menu-item,
+    .md-split-button,
+    .md-chip,
+    .md-tab,
+    .md-menu-item,
+    .md-navigation-bar-item,
+    .md-navigation-rail-item,
+    .md-navigation-rail-menu-button
+  ) {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* =============================================================================
    Component Styles — co-located with components, imported via their .tsx files
    ============================================================================= */
 

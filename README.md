@@ -1,6 +1,6 @@
 # m3you
 
-Material Design 3 component library for React, built with Tailwind CSS v4.
+Material Design 3 Expressive component library for React, built with plain CSS and CSS custom properties.
 
 ## Installation
 
@@ -12,19 +12,21 @@ bun add m3you
 
 ### Peer dependencies
 
-m3you requires React 18+ and Tailwind CSS 4+:
-
 ```bash
-npm install react react-dom tailwindcss
+npm install react react-dom
 ```
+
+React 18+ is required.
 
 ## Setup
 
-Import the stylesheet in your app entry point:
+Import the stylesheet once in your app entry point:
 
 ```tsx
 import 'm3you/styles.css';
 ```
+
+No bundler plugins, no Tailwind, no PostCSS config required — everything ships as plain CSS with M3 design tokens as CSS custom properties.
 
 ## Usage
 
@@ -45,56 +47,64 @@ function App() {
 
 | Category | Components |
 |---|---|
-| **Actions** | Button, ButtonGroup, ConnectedButtonGroup, IconButton, ExtendedFAB, FABMenu |
-| **Communication** | Badge, Snackbar, CircularProgress, LinearProgress |
-| **Containment** | Card, Dialog, BottomSheet, SideSheet, Tooltip, RichTooltip, Divider, Toolbar |
-| **Navigation** | NavigationBar, NavigationRail, Tabs, AppBar, SearchBar, SearchView |
+| **Actions** | Button, ButtonGroup, ConnectedButtonGroup, IconButton, ToggleButton, ToggleIconButton, Fab, ExtendedFab, FabMenu |
+| **Communication** | Badge, Snackbar, CircularProgress, LinearProgress, LoadingIndicator |
+| **Containment** | Card, Dialog, BottomSheet, SideSheet, Tooltip, Divider, Toolbar |
+| **Navigation** | NavigationBar, NavigationRail, Tabs, AppBar, SearchBar |
 | **Selection** | Checkbox, Chip, Switch, RadioButton, Slider, DatePicker, TimePicker |
 | **Text Input** | TextField (filled, outlined) |
 | **Menu** | Menu with sub-menus, groups, dividers |
 
 ## Theming
 
-m3you uses M3 design tokens as CSS custom properties. Generate a custom theme from any seed color:
+m3you uses M3 design tokens exposed as CSS custom properties (`--md-sys-*`). Generate a custom palette from any seed color:
 
 ```tsx
-import { generateM3Theme, applyM3Theme } from 'm3you';
+import { applyM3Theme } from 'm3you';
 
-const theme = generateM3Theme('#6750A4');
-applyM3Theme(theme);
+applyM3Theme('#6750A4');
 ```
 
-Or override CSS custom properties directly:
+You can also override any CSS custom property directly:
 
 ```css
 :root {
-  --color-primary: #6750a4;
-  --color-on-primary: #ffffff;
+  --md-sys-color-primary: #6750a4;
+  --md-sys-color-on-primary: #ffffff;
   /* ... */
 }
 ```
 
-Dark mode is supported via `prefers-color-scheme: dark`, or by adding `.dark` / `.light` classes to the root element.
+### Dark mode
+
+Dark mode is applied in two ways:
+
+- **System preference** — `prefers-color-scheme: dark` switches tokens automatically.
+- **Manual override** — set `data-theme="dark"` (or `"light"`) on `<html>` or any ancestor.
 
 ## Development
 
 ```bash
-bun run dev            # Watch mode
-bun run build          # Build for production
-bun run test           # Run tests
-bun run storybook      # Start Storybook
-bun run lint           # Lint with Biome
-bun run format         # Format with Biome
+bun install
+bun run dev            # Vite watch-mode build
+bun run build          # Library build (ESM + DTS)
+bun run test           # Vitest
+bun run test:watch     # Vitest in watch mode
+bun run storybook      # Storybook on port 6006
+bun run check          # Biome lint + format (auto-fix)
 ```
 
-## Tech Stack
+## Tech stack
 
-- **React** with TypeScript
-- **Tailwind CSS v4** for styling
-- **class-variance-authority** for variant management
-- **Base UI** for accessible primitives (dialogs, menus, tooltips, drawers)
-- **m3-ripple** for Material ripple effects
-- **Rslib** for bundling (unbundled ESM + DTS)
+- **React 18+** with TypeScript
+- **Plain CSS + CSS custom properties** (no runtime CSS-in-JS, no Tailwind in the shipped bundle)
+- **Vite** (library mode) + `vite-plugin-dts` for build
+- **Vitest** + `@testing-library/react` + `happy-dom` for tests
+- **Storybook 10** (`@storybook/react-vite`) for component explorer
+- **Biome** for lint/format
+- **`@base-ui/react`** for accessible primitives (dialog, menu, tooltip, popover)
+- **`m3-ripple`** for Material ripple effects
+- **`@material/material-color-utilities`** for dynamic theme generation
 
 ## License
 

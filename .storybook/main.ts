@@ -8,6 +8,7 @@ const getAbsolutePath = (value: string): string => {
 };
 
 const config: StorybookConfig = {
+  core: { allowedHosts: true },
   stories: ['../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
     '@storybook/addon-docs',
