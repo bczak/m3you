@@ -57,6 +57,7 @@ const SplitButton = ({
 
   return (
     <SplitButtonCtx value={{ variant, size, shape, morph, selected, open, setOpen }}>
+      {/* biome-ignore lint/a11y/useSemanticElements: role="group" is correct per WAI-ARIA */}
       <div
         ref={ref}
         className={cx('md-split-button', className)}

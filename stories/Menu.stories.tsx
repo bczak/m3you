@@ -53,15 +53,15 @@ export const Showcase: Story = {
     <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'flex-start' }}>
       {/* Basic items — no icons */}
       <div className="md-menu" style={{ width: 200 }}>
-        <div className="md-menu-item" role="menuitem">
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           Cut
         </div>
-        <div className="md-menu-item" role="menuitem">
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           Copy
         </div>
-        <div className="md-menu-item" role="menuitem">
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           Paste
         </div>
@@ -69,15 +69,15 @@ export const Showcase: Story = {
 
       {/* Items with icons */}
       <div className="md-menu" style={{ width: 200 }}>
-        <div className="md-menu-item" role="menuitem">
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           <ScissorsIcon /> Cut
         </div>
-        <div className="md-menu-item" role="menuitem">
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           <CopyIcon /> Copy
         </div>
-        <div className="md-menu-item" role="menuitem">
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           <EditIcon /> Paste
         </div>
@@ -85,16 +85,16 @@ export const Showcase: Story = {
 
       {/* Mixed — icons, supporting text, divider, disabled */}
       <div className="md-menu" style={{ width: 240 }}>
-        <div className="md-menu-item" role="menuitem">
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           <EditIcon /> Edit
         </div>
-        <div className="md-menu-item" role="menuitem">
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           <CopyIcon /> Duplicate
         </div>
-        <div className="md-menu-divider" role="separator" />
-        <div className="md-menu-item" role="menuitem">
+        <hr className="md-menu-divider" />
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           <UserIcon />
           <span className="md-menu-item__content">
@@ -102,7 +102,7 @@ export const Showcase: Story = {
             <span className="md-menu-item__supporting">View your profile</span>
           </span>
         </div>
-        <div className="md-menu-item" role="menuitem">
+        <div className="md-menu-item" role="menuitem" tabIndex={0}>
           <Ripple hoverOpacity={0} />
           <SettingsIcon />
           <span className="md-menu-item__content">
@@ -110,8 +110,8 @@ export const Showcase: Story = {
             <span className="md-menu-item__supporting">Manage preferences</span>
           </span>
         </div>
-        <div className="md-menu-divider" role="separator" />
-        <div className="md-menu-item" role="menuitem" data-disabled>
+        <hr className="md-menu-divider" />
+        <div className="md-menu-item" role="menuitem" tabIndex={-1} data-disabled>
           <Ripple hoverOpacity={0} />
           <Trash2Icon /> Delete
         </div>
@@ -120,17 +120,18 @@ export const Showcase: Story = {
       {/* With submenu — main menu + expanded submenu side by side */}
       <div style={{ display: 'flex', gap: 4, alignItems: 'flex-start' }}>
         <div className="md-menu" style={{ width: 200 }}>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <EditIcon /> Edit
           </div>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <CopyIcon /> Copy
           </div>
           <div
             className="md-menu-item"
             role="menuitem"
+            tabIndex={0}
             style={{
               backgroundColor: 'color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent)',
             }}
@@ -141,21 +142,21 @@ export const Showcase: Story = {
               <ChevronRightIcon />
             </span>
           </div>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <Trash2Icon /> Delete
           </div>
         </div>
         <div className="md-menu" style={{ width: 180, marginTop: 100 }}>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <LinkIcon /> Copy Link
           </div>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <MailIcon /> Email
           </div>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <DownloadIcon /> Download
           </div>
@@ -165,21 +166,21 @@ export const Showcase: Story = {
       {/* Grouped — two groups */}
       <div className="md-menu" style={{ width: 200 }}>
         <div className="md-menu-group">
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <StarIcon /> Favorite
           </div>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <ShareIcon /> Share
           </div>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <CopyIcon /> Copy
           </div>
         </div>
         <div className="md-menu-group">
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <Trash2Icon /> Delete
           </div>
@@ -189,31 +190,31 @@ export const Showcase: Story = {
       {/* Grouped — three groups */}
       <div className="md-menu" style={{ width: 200 }}>
         <div className="md-menu-group">
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <UserIcon /> Profile
           </div>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <SettingsIcon /> Settings
           </div>
         </div>
         <div className="md-menu-group">
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <MailIcon /> Inbox
           </div>
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <FileIcon /> Files
           </div>
         </div>
         <div className="md-menu-group">
-          <div className="md-menu-item" role="menuitem">
+          <div className="md-menu-item" role="menuitem" tabIndex={0}>
             <Ripple hoverOpacity={0} />
             <DownloadIcon /> Export
           </div>
-          <div className="md-menu-item" role="menuitem" data-disabled>
+          <div className="md-menu-item" role="menuitem" tabIndex={-1} data-disabled>
             <Ripple hoverOpacity={0} />
             <Trash2Icon /> Delete
           </div>

@@ -903,11 +903,9 @@ export const Nested: Story = {
                   </Button>
                 </div>
 
-                <div
-                  role="button"
-                  tabIndex={0}
+                <button
+                  type="button"
                   onClick={() => setInnerOpen(true)}
-                  onKeyDown={(e) => e.key === 'Enter' && setInnerOpen(true)}
                   style={{
                     padding: '12px 16px',
                     borderRadius: 'var(--md-sys-shape-corner-medium)',
@@ -916,6 +914,10 @@ export const Nested: Story = {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     cursor: 'pointer',
+                    border: 'none',
+                    font: 'inherit',
+                    textAlign: 'left',
+                    width: '100%',
                   }}
                 >
                   <div>
@@ -938,7 +940,7 @@ export const Nested: Story = {
                     </p>
                   </div>
                   <TrashIcon size={20} aria-hidden="true" style={{ color: 'var(--md-sys-color-on-error-container)' }} />
-                </div>
+                </button>
               </div>
             </DialogBody>
 

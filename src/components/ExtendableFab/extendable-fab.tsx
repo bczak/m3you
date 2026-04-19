@@ -65,6 +65,7 @@ const ExtendableFAB = ({
     [ref],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-measure when content-affecting props change
   React.useLayoutEffect(() => {
     const measure = measureRef.current;
 

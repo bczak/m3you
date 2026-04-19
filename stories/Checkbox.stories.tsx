@@ -63,9 +63,11 @@ export const Primary: Story = {
   render: () => <VariantStory variant="primary" />,
 };
 
-export const Error: Story = {
+const ErrorStory: Story = {
   render: () => <VariantStory variant="error" />,
 };
+
+export { ErrorStory as Error };
 
 const AllCombinations = () => {
   return (

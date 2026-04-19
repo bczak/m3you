@@ -203,6 +203,7 @@ const ControlledStory = () => {
       <div style={{ display: 'flex', gap: '8px' }}>
         {[0, 25, 50, 75, 100].map((v) => (
           <button
+            type="button"
             key={v}
             onClick={() => setValue(v)}
             style={{

@@ -34,5 +34,17 @@
         "noDescendingSpecificity": "off"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": [".storybook/**/*.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          }
+        }
+      }
+    }
+  ]
 }
