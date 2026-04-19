@@ -1,0 +1,106 @@
+/* =============================================================================
+   Badge — M3 Spec
+   Small dot: 6px, corner-full, error
+   Large: 16px, corner-full, error bg, on-error text, label-small
+   Source: m3.material.io/components/badges/specs
+   ============================================================================= */
+
+.md-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: var(--md-sys-color-on-error);
+
+  &[data-size="small"] {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--md-sys-color-error);
+  }
+
+  &[data-size="large"] {
+    height: 16px;
+    min-width: 16px;
+    border-radius: 8px;
+    background-color: var(--md-sys-color-error);
+    padding-inline: 4px;
+    font-family: var(--md-sys-typescale-label-small-font);
+    font-size: var(--md-sys-typescale-label-small-size);
+    line-height: var(--md-sys-typescale-label-small-line-height);
+    font-weight: var(--md-sys-typescale-label-small-weight);
+    letter-spacing: var(--md-sys-typescale-label-small-tracking);
+  }
+
+  /* ── Color variants ── */
+  &[data-color="primary"] {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  &[data-color="secondary"] {
+    background-color: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-secondary);
+  }
+
+  &[data-color="tertiary"] {
+    background-color: var(--md-sys-color-tertiary);
+    color: var(--md-sys-color-on-tertiary);
+  }
+}
+
+/* ── Badge Anchor ── */
+
+.md-badge-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.md-badge-anchor__badge {
+  position: absolute;
+
+  &[data-position="top-right"] {
+    right: 0;
+    top: 0;
+    transform: translate(50%, -50%);
+  }
+
+  &[data-position="top-left"] {
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  &[data-position="bottom-right"] {
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%);
+  }
+
+  &[data-position="bottom-left"] {
+    bottom: 0;
+    left: 0;
+    transform: translate(-50%, 50%);
+  }
+
+  /* Circular overlap: 14% inset from edge */
+  &[data-position="top-right"][data-overlap="circular"] {
+    right: 14%;
+    top: 14%;
+  }
+
+  &[data-position="top-left"][data-overlap="circular"] {
+    left: 14%;
+    top: 14%;
+  }
+
+  &[data-position="bottom-right"][data-overlap="circular"] {
+    bottom: 14%;
+    right: 14%;
+  }
+
+  &[data-position="bottom-left"][data-overlap="circular"] {
+    bottom: 14%;
+    left: 14%;
+  }
+}

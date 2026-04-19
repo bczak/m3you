@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**m3you** — A Material Design 3 (M3) component library for React, built with Tailwind CSS v4 and class-variance-authority (CVA). Package manager is **bun**.
+**m3you** — A Material Design 3 Expressive component library for React, built with plain CSS and CSS custom properties. Package manager is **bun**.
 
 ## Commands
 
 ```bash
-bun run build          # Build with Rslib
+bun run build          # Build with Vite
 bun run dev            # Watch mode build
-bun run test           # Run all tests (Rstest)
+bun run test           # Run all tests (Vitest)
 bun run test:watch     # Run tests in watch mode
 bun run storybook      # Start Storybook on port 6006
 bun run check          # Biome check (lint + format) with auto-fix
@@ -19,33 +19,55 @@ bun run lint           # Biome lint with auto-fix
 bun run format         # Biome format with auto-fix
 ```
 
-To run a single test file: `bunx rstest tests/badge.test.tsx`
+To run a single test file: `bunx vitest run tests/badge.test.tsx`
 
 ## Architecture
 
 ### Component Pattern
 
-Every component in `src/components/ui/` follows the same structure:
+Every component lives in its own directory under `src/components/{ComponentName}/`:
 
-1. **Variants** defined with `cva()` from class-variance-authority
-2. **Component** implemented with `React.forwardRef`
-3. **Exports**: both the component and its `*Variants` function
-4. **Utility**: `cn()` from `src/lib/utils.ts` (wraps `clsx` + `tailwind-merge`) for merging class names
+```
+src/components/Button/
+  button.tsx    — Component implementation
+  button.css    — Component styles (M3 design tokens as CSS custom properties)
+```
+
+1. **CSS** co-located as `{name}.css` in the component directory, imported as a side-effect in the `.tsx` file
+2. **Variants** via data attributes (`data-variant`, `data-size`, `data-shape`, etc.) — styled in CSS
+3. **Component** implemented with React ref forwarding
+4. **Class names**: `md-{component}` for root, `md-{component}__{part}` for sub-elements
+5. **Utility**: `cx()` from `src/lib/cx.ts` — minimal class name joiner (filters falsy, joins with space)
 
 All public components and types are re-exported from `src/index.tsx`.
 
-### Styling
+### Styling — Three-Tier Token Architecture
 
-- **Tailwind CSS v4** with M3 design tokens defined as CSS custom properties in `src/styles/globals.css`
+Following `@material/web`'s pattern:
+
+- **System tokens** (`--md-sys-*`): Design decisions — shape, color, typography, elevation, motion, state
+- **Component tokens** (`--md-{component}-*`): Per-component overrides (defined in component CSS files)
+- **Token files** in `src/styles/tokens/`:
+  - `sys.shape.css` — 10-step M3 Expressive shape scale (0px to full)
+  - `sys.typescale.css` — 15 type scales + Display XL + emphasized weights
+  - `sys.elevation.css` — 6 levels as box-shadow values
+  - `sys.motion.css` — 7 easing curves + 16 durations + spring approximations
+  - `sys.state.css` — hover/focus/pressed/dragged/disabled opacities
+  - `sys.color.css` — Light theme (29 tokens, seed #416699)
+  - `sys.color.dark.css` — Dark theme via `@media (prefers-color-scheme: dark)` + `[data-theme="dark"]`
+
 - M3 color system: `primary`, `secondary`, `tertiary`, `error`, `surface`, `surface-container`, `outline` etc.
 - Ripple effects via `m3-ripple` package (requires `Ripple` wrapper component)
+- Dynamic theming via `applyM3Theme(seedHex)` from `src/lib/color.ts`
 - Consumers import styles via `import 'm3you/styles.css'`
+- Dark mode: set `data-theme="dark"` on `<html>` or rely on system preference
 
 ### Testing
 
 - **Rstest** (`@rstest/core`) with `@testing-library/react` and `happy-dom`
 - `rstest.setup.ts` globally extends `expect` with jest-dom matchers, polyfills `Element.animate()` for happy-dom, and runs `cleanup()` after each test
 - Tests live in `tests/` directory, named `{component}.test.tsx`
+- Tests assert `md-*` CSS class names and `data-*` attributes (not Tailwind utility classes)
 
 ### Stories
 
@@ -55,16 +77,28 @@ All public components and types are re-exported from `src/index.tsx`.
 
 ### Build & Bundle
 
-- **Rslib** (unbundled ESM with DTS generation) configured in `rslib.config.ts`
+- **Vite** library mode (unbundled ESM with DTS generation) configured in `vite.config.ts`
 - Entry: `./src/**` — every file in src is a separate entry point
-- PostCSS with `@tailwindcss/postcss` for processing Tailwind
+- `cssCodeSplit: false` — all CSS (tokens from `globals.css` + component CSS imports) bundled into single `dist/styles/globals.css`
 
 ## Linting Rules (Biome)
 
 - Formatter: 2-space indent, 120 char line width, single quotes
-- `useSortedClasses`: **error** — Tailwind classes must be sorted
 - SVG icons need `aria-hidden="true"` for accessibility (Biome `a11y` rules)
 - Import organization is automatic via `organizeImports`
+
+## CSS Rules
+
+- **NEVER** use `!important` — rely on specificity via data-attribute selectors and CSS custom properties for overrides
+
+## Shape & Border Radius Rules
+
+- **NEVER** use `border-radius: 9999px` or `var(--md-sys-shape-corner-full)` on components
+- For **pill/capsule shapes** (wider than tall): use `calc(var(--_height) / 2)` where `--_height` is a CSS custom property set per size variant
+- For **circles** (width === height): use `border-radius: 50%`
+- The `--md-sys-shape-corner-full` token exists in `sys.shape.css` for reference but must NOT be used in component CSS
+- This ensures smooth morph/shape animations — `9999px` breaks CSS transitions because intermediate values stay visually "round"
+- For morph transitions, use `--md-sys-motion-easing-spring-default-spatial` for the M3 Expressive spring feel
 
 ## Path Aliases
 

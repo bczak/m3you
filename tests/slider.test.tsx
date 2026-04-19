@@ -1,6 +1,6 @@
-import { afterEach, expect, test } from '@rstest/core';
 import { cleanup, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { afterEach, expect, test } from 'vitest';
 import { Slider } from '../src/components/ui/slider';
 
 afterEach(() => {

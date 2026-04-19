@@ -1,6 +1,6 @@
-import { afterEach, expect, test } from '@rstest/core';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { afterEach, expect, test } from 'vitest';
 import { Switch } from '../src/components/ui/switch';
 
 // Cleanup after each test to prevent DOM pollution

@@ -1,0 +1,196 @@
+/* =============================================================================
+   Tabs — M3 Spec
+   Primary: 48px (72px with icon+text), 2px indicator, primary color
+   Secondary: 48px, 2px indicator, on-surface active color
+   Source: m3.material.io/components/tabs/specs
+   ============================================================================= */
+
+/* ── Tabs container (tablist) ── */
+.md-tabs {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ── Tab button ── */
+.md-tab {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  outline: none;
+  overflow: hidden;
+  transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+
+  & svg {
+    pointer-events: none;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  /* Full-width stretching */
+  &[data-full-width="true"] {
+    flex: 1;
+  }
+
+  /* Content-sized tabs that can overflow horizontally */
+  &[data-full-width="false"] {
+    flex: 0 0 auto;
+  }
+
+  /* ── Primary variant ── */
+  &[data-variant="primary"] {
+    flex-direction: column;
+    gap: 2px;
+    padding-inline: 12px;
+
+    &[data-has-icon="false"] {
+      height: 48px;
+    }
+
+    &[data-has-icon="true"] {
+      height: 72px;
+    }
+
+    &[data-active="true"] {
+      color: var(--md-sys-color-primary);
+    }
+
+    &[data-active="false"]:hover {
+      color: var(--md-sys-color-on-surface);
+    }
+  }
+
+  /* ── Secondary variant ── */
+  &[data-variant="secondary"] {
+    padding-inline: 12px;
+    height: 48px;
+
+    &[data-active="true"] {
+      color: var(--md-sys-color-on-surface);
+    }
+
+    &[data-active="false"]:hover {
+      color: var(--md-sys-color-on-surface);
+    }
+  }
+
+  &[data-variant="primary"][data-has-badge="true"] {
+    padding-inline: 16px;
+  }
+
+  &[data-variant="secondary"][data-has-badge="true"] {
+    padding-inline-start: 16px;
+    padding-inline-end: 28px;
+  }
+}
+
+/* ── Tab icon wrapper (primary) ── */
+.md-tab__icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Tab badge on icon ── */
+.md-tab__badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  z-index: 10;
+  display: flex;
+  min-width: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Tab badge on label ── */
+.md-tab__badge--label {
+  position: absolute;
+  top: -8px;
+  right: -16px;
+  z-index: 10;
+  display: flex;
+  min-width: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Tab label ── */
+.md-tab__label {
+  position: relative;
+  font-family: var(--md-sys-typescale-title-small-font);
+  font-size: var(--md-sys-typescale-title-small-size);
+  line-height: var(--md-sys-typescale-title-small-line-height);
+  font-weight: var(--md-sys-typescale-title-small-weight);
+  letter-spacing: var(--md-sys-typescale-title-small-tracking);
+}
+
+/* ── Active indicator ── */
+.md-tab__indicator {
+  position: absolute;
+  bottom: 0;
+  border-radius: 2px 2px 0 0;
+  transition:
+    width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    left var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  /* Primary indicator: centered 50% width, 2px tall */
+  &[data-variant="primary"][data-active="true"] {
+    height: 2px;
+    width: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--md-sys-color-primary);
+  }
+
+  &[data-variant="primary"][data-active="false"] {
+    height: 2px;
+    width: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: transparent;
+  }
+
+  /* Secondary indicator: full width, 2px tall */
+  &[data-variant="secondary"][data-active="true"] {
+    height: 2px;
+    left: 0;
+    right: 0;
+    background-color: var(--md-sys-color-primary);
+  }
+
+  &[data-variant="secondary"][data-active="false"] {
+    height: 2px;
+    left: 0;
+    right: 0;
+    background-color: transparent;
+  }
+}

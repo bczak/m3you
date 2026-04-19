@@ -1,0 +1,245 @@
+/* =============================================================================
+   ExtendableFAB — Animated FAB/Extended FAB transition
+   Dedicated component for prop-driven width transitions between collapsed and
+   extended states without affecting FAB or ExtendedFAB.
+   ============================================================================= */
+
+.md-extendable-fab {
+  --_extendable-fab-height: 56px;
+  --_extendable-fab-icon-size: 24px;
+  --_extendable-fab-padding-collapsed-start: 16px;
+  --_extendable-fab-padding-collapsed-end: 16px;
+  --_extendable-fab-padding-extended-start: 16px;
+  --_extendable-fab-padding-extended-end: 16px;
+  --_extendable-fab-gap: 8px;
+  --_extendable-fab-radius: var(--md-sys-shape-corner-large);
+  --_extendable-fab-width-adjust: calc(
+    var(--_extendable-fab-gap) +
+    var(--_extendable-fab-padding-extended-start) +
+    var(--_extendable-fab-padding-extended-end) -
+    var(--_extendable-fab-padding-collapsed-start) -
+    var(--_extendable-fab-padding-collapsed-end)
+  );
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  min-width: 0;
+  height: var(--_extendable-fab-height);
+  width: calc(
+    var(--_extendable-fab-height) +
+    var(--_extendable-fab-visible-content-width, 0px) +
+    var(--_extendable-fab-visible-extra-width, 0px)
+  );
+  border: 0 solid transparent;
+  border-radius: var(--_extendable-fab-radius);
+  padding-block: 0;
+  padding-inline-start: var(--_extendable-fab-padding-collapsed-start);
+  padding-inline-end: var(--_extendable-fab-padding-collapsed-end);
+  gap: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-decoration: none;
+  outline: none;
+  cursor: pointer;
+  box-shadow: var(--md-sys-elevation-3);
+  transition:
+    color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    width var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    padding-inline-start var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    padding-inline-end var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &[data-disabled] {
+    pointer-events: none;
+    opacity: var(--md-sys-state-disabled-opacity);
+    box-shadow: none;
+  }
+
+  &:hover {
+    box-shadow: var(--md-sys-elevation-4);
+  }
+
+  &[data-lowered] {
+    box-shadow: var(--md-sys-elevation-1);
+  }
+
+  &[data-lowered]:hover {
+    box-shadow: var(--md-sys-elevation-2);
+  }
+
+  &[data-extended] {
+    padding-inline-start: var(--_extendable-fab-padding-extended-start);
+    padding-inline-end: var(--_extendable-fab-padding-extended-end);
+  }
+
+  & svg {
+    width: var(--_extendable-fab-icon-size);
+    height: var(--_extendable-fab-icon-size);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
+  &[data-size="sm"] {
+    --_extendable-fab-height: 56px;
+    --_extendable-fab-icon-size: 24px;
+    --_extendable-fab-padding-collapsed-start: 16px;
+    --_extendable-fab-padding-collapsed-end: 16px;
+    --_extendable-fab-padding-extended-start: 16px;
+    --_extendable-fab-padding-extended-end: 16px;
+    --_extendable-fab-gap: 8px;
+    --_extendable-fab-radius: var(--md-sys-shape-corner-large);
+    font-family: var(--md-sys-typescale-title-medium-font);
+    font-size: var(--md-sys-typescale-title-medium-size);
+    line-height: var(--md-sys-typescale-title-medium-line-height);
+    font-weight: var(--md-sys-typescale-title-medium-weight);
+    letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+  }
+
+  &[data-size="md"] {
+    --_extendable-fab-height: 80px;
+    --_extendable-fab-icon-size: 28px;
+    --_extendable-fab-padding-collapsed-start: 26px;
+    --_extendable-fab-padding-collapsed-end: 26px;
+    --_extendable-fab-padding-extended-start: 26px;
+    --_extendable-fab-padding-extended-end: 20px;
+    --_extendable-fab-gap: 12px;
+    --_extendable-fab-radius: var(--md-sys-shape-corner-large-increased);
+    font-family: var(--md-sys-typescale-title-large-font);
+    font-size: var(--md-sys-typescale-title-large-size);
+    line-height: var(--md-sys-typescale-title-large-line-height);
+    font-weight: var(--md-sys-typescale-title-large-weight);
+    letter-spacing: var(--md-sys-typescale-title-large-tracking);
+  }
+
+  &[data-size="lg"] {
+    --_extendable-fab-height: 96px;
+    --_extendable-fab-icon-size: 36px;
+    --_extendable-fab-padding-collapsed-start: 30px;
+    --_extendable-fab-padding-collapsed-end: 30px;
+    --_extendable-fab-padding-extended-start: 28px;
+    --_extendable-fab-padding-extended-end: 28px;
+    --_extendable-fab-gap: 16px;
+    --_extendable-fab-radius: var(--md-sys-shape-corner-extra-large);
+    font-family: var(--md-sys-typescale-headline-medium-font);
+    font-size: var(--md-sys-typescale-headline-medium-size);
+    line-height: var(--md-sys-typescale-headline-medium-line-height);
+    font-weight: var(--md-sys-typescale-headline-medium-weight);
+    letter-spacing: var(--md-sys-typescale-headline-medium-tracking);
+  }
+
+  &[data-variant="standard"] {
+    background-color: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-primary);
+  }
+
+  &[data-variant="filled"] {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  &[data-variant="elevated"] {
+    background-color: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-primary);
+  }
+
+  &[data-variant="tonal"] {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  &[data-variant="outlined"] {
+    background-color: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-primary);
+    border-width: 1px;
+    border-color: var(--md-sys-color-outline-variant);
+  }
+
+  &[data-variant="text"] {
+    background-color: transparent;
+    color: var(--md-sys-color-primary);
+  }
+
+  &[data-variant="standard"]:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-container-high));
+  }
+
+  &[data-variant="outlined"]:hover,
+  &[data-variant="text"]:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary) var(--md-sys-state-hover-opacity), transparent);
+  }
+
+  &[data-variant="tonal"]:not([data-lowered]) {
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+}
+
+.md-extendable-fab__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  flex-shrink: 0;
+}
+
+.md-extendable-fab__content {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+  margin-inline-start: 0;
+  transition:
+    width var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    margin-inline-start var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+}
+
+.md-extendable-fab[data-extended] .md-extendable-fab__content {
+  margin-inline-start: var(--_extendable-fab-gap);
+}
+
+.md-extendable-fab__label,
+.md-extendable-fab__measure-label {
+  flex-shrink: 0;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.md-extendable-fab__label {
+  opacity: 0;
+  transform: translateX(calc(var(--_extendable-fab-gap) * -0.5));
+  transition:
+    opacity var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+}
+
+.md-extendable-fab[data-extended] .md-extendable-fab__label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.md-extendable-fab__measure {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+}

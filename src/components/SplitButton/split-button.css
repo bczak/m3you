@@ -1,0 +1,178 @@
+/* =============================================================================
+   SplitButton — M3 Expressive Spec
+   Two connected sections: action (leading) + dropdown trigger (trailing)
+   4 variants (filled, tonal, elevated, outlined) × 5 sizes × 2 shapes
+   Action reuses .md-button CSS for variant colors/sizes.
+   Trigger reuses .md-button CSS for variant colors; sizing overridden here.
+   Trigger uses optically centered chevron (closed) → centered (open).
+   Source: m3.material.io/components/split-buttons/specs
+   ============================================================================= */
+
+.md-split-button {
+  display: inline-flex;
+  gap: 2px;
+  align-items: stretch;
+}
+
+/* ── Size + inner radius tokens ── */
+
+.md-split-button[data-size="xs"] {
+  --_split-height: 32px;
+  --_split-inner: var(--md-sys-shape-corner-extra-small);
+}
+
+.md-split-button[data-size="sm"] {
+  --_split-height: 40px;
+  --_split-inner: var(--md-sys-shape-corner-small);
+}
+
+.md-split-button[data-size="md"] {
+  --_split-height: 56px;
+  --_split-inner: var(--md-sys-shape-corner-small);
+}
+
+.md-split-button[data-size="lg"] {
+  --_split-height: 96px;
+  --_split-inner: var(--md-sys-shape-corner-large);
+}
+
+.md-split-button[data-size="xl"] {
+  --_split-height: 136px;
+  --_split-inner: var(--md-sys-shape-corner-large-increased);
+}
+
+/* ── Outer radius: round = pill, square = shape corner ── */
+
+.md-split-button[data-shape="round"] {
+  --_split-outer: calc(var(--_split-height) / 2);
+}
+
+.md-split-button[data-shape="square"][data-size="xs"],
+.md-split-button[data-shape="square"][data-size="sm"] {
+  --_split-outer: var(--md-sys-shape-corner-medium);
+}
+
+.md-split-button[data-shape="square"][data-size="md"] {
+  --_split-outer: var(--md-sys-shape-corner-large);
+}
+
+.md-split-button[data-shape="square"][data-size="lg"],
+.md-split-button[data-shape="square"][data-size="xl"] {
+  --_split-outer: var(--md-sys-shape-corner-extra-large);
+}
+
+/* ── Action: border-radius — outer-left, inner-right ── */
+
+.md-split-button > .md-split-button__action.md-button[data-shape][data-size] {
+  border-radius: var(--_split-outer) var(--_split-inner) var(--_split-inner) var(--_split-outer);
+}
+
+/* ── Action: xs-specific spacing (tighter gap + asymmetric padding) ── */
+
+.md-split-button[data-size="xs"] > .md-split-button__action.md-button {
+  gap: 4px;
+  padding-inline: 12px 10px;
+}
+
+/* ── Trigger: base overrides ── */
+
+.md-split-button > .md-split-button__trigger.md-button {
+  min-width: unset;
+  padding: 0;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+/* ── Trigger: width + optically centered padding (closed state) ──
+   Chevron shifted slightly left for visual balance when pointing down.
+   xs/sm: width 48px (wider than height for touch target)
+   md+:   width = height (square → circle when rounded)               */
+
+.md-split-button[data-size="xs"] > .md-split-button__trigger {
+  width: 48px;
+  padding-inline: 12px 14px;
+}
+
+.md-split-button[data-size="sm"] > .md-split-button__trigger {
+  width: 48px;
+  padding-inline: 12px 14px;
+}
+
+.md-split-button[data-size="md"] > .md-split-button__trigger {
+  width: 56px;
+  padding-inline: 13px 17px;
+}
+
+.md-split-button[data-size="lg"] > .md-split-button__trigger {
+  width: 96px;
+  padding-inline: 26px 32px;
+}
+
+.md-split-button[data-size="xl"] > .md-split-button__trigger {
+  width: 136px;
+  padding-inline: 37px 49px;
+}
+
+/* ── Trigger: centered padding (open state) ── */
+
+.md-split-button[data-open][data-size="xs"] > .md-split-button__trigger,
+.md-split-button[data-open][data-size="sm"] > .md-split-button__trigger {
+  padding-inline: 13px;
+}
+
+.md-split-button[data-open][data-size="md"] > .md-split-button__trigger {
+  padding-inline: 15px;
+}
+
+.md-split-button[data-open][data-size="lg"] > .md-split-button__trigger {
+  padding-inline: 29px;
+}
+
+.md-split-button[data-open][data-size="xl"] > .md-split-button__trigger {
+  padding-inline: 43px;
+}
+
+/* ── Trigger: chevron icon sizes (larger than standard button icons) ── */
+
+.md-split-button[data-size="xs"] > .md-split-button__trigger svg,
+.md-split-button[data-size="sm"] > .md-split-button__trigger svg {
+  width: 22px;
+  height: 22px;
+}
+
+.md-split-button[data-size="md"] > .md-split-button__trigger svg {
+  width: 26px;
+  height: 26px;
+}
+
+.md-split-button[data-size="lg"] > .md-split-button__trigger svg {
+  width: 38px;
+  height: 38px;
+}
+
+.md-split-button[data-size="xl"] > .md-split-button__trigger svg {
+  width: 50px;
+  height: 50px;
+}
+
+/* ── Trigger: border-radius — inner-left, outer-right ── */
+
+.md-split-button > .md-split-button__trigger.md-button[data-shape][data-size] {
+  border-radius: var(--_split-inner) var(--_split-outer) var(--_split-outer) var(--_split-inner);
+}
+
+/* ── Open state: trigger becomes fully rounded ── */
+
+.md-split-button[data-open] > .md-split-button__trigger.md-button[data-shape][data-size] {
+  border-radius: var(--_split-outer);
+}
+
+/* ── Chevron rotation ── */
+
+.md-split-button__trigger svg {
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md-split-button[data-open] .md-split-button__trigger svg {
+  transform: rotate(180deg);
+}

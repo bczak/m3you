@@ -1,6 +1,6 @@
-import { expect, test } from '@rstest/core';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
+import { expect, test } from 'vitest';
 import { TimePicker } from '../src/components/ui/time-picker';
 
 // Helper to render a controlled TimePicker

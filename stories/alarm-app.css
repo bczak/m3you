@@ -1,0 +1,758 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap");
+
+.clock-app {
+  --pixel-10-pro-max-height: 765px;
+  min-height: 100vh;
+  padding: 0 24px;
+  background:
+    radial-gradient(circle at top, rgb(72 63 108 / 28%), transparent 34%),
+    linear-gradient(180deg, #090a0e 0%, #101116 100%);
+}
+
+.clock-app__device {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 360px);
+  height: min(calc(100dvh - 32px), var(--pixel-10-pro-max-height));
+  max-height: var(--pixel-10-pro-max-height);
+  margin: 0 auto;
+  padding: 28px 14px 96px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0e0f14 0%, #111218 100%);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 4%),
+    0 18px 60px rgb(0 0 0 / 40%);
+  color: #f0edf6;
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.clock-app__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 2px 14px;
+}
+
+.clock-app__title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.clock-app__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.clock-app__menu-trigger.md-icon-button {
+  background: transparent;
+  color: #d9d3e5;
+}
+
+.clock-app__menu.md-menu {
+  min-width: 196px;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 20px;
+  background: #1e2029;
+  color: #f0edf6;
+}
+
+.clock-app__menu .md-menu-item {
+  color: inherit;
+}
+
+.clock-app__menu .md-menu-item svg {
+  color: #c6bfd2;
+}
+
+.clock-app__alarm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 16px;
+}
+
+.clock-app__alarm-card.md-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 14px 16px 18px;
+  border-radius: 28px;
+  background: #1a1c24;
+  box-shadow: none;
+}
+
+.clock-app__alarm-card.md-card[data-enabled] {
+  background: #3d3b56;
+}
+
+.clock-app__alarm-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.clock-app__alarm-label {
+  color: #b5b0c3;
+  font-size: 0.92rem;
+}
+
+.clock-app__alarm-time {
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.clock-app__fab.md-fab {
+  position: absolute;
+  right: 18px;
+  bottom: 92px;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: #e7c7ff;
+  color: #563272;
+  box-shadow: 0 18px 32px rgb(0 0 0 / 28%);
+}
+
+.clock-app__nav.md-navigation-bar {
+  right: 0;
+  left: 0;
+  bottom: 0;
+  height: 84px;
+  padding: 6px 4px 8px;
+  border-top: 1px solid rgb(255 255 255 / 4%);
+  background: linear-gradient(180deg, rgb(18 19 26 / 94%), rgb(17 18 24 / 100%));
+  backdrop-filter: blur(14px);
+}
+
+.clock-app__world-clock {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+}
+
+.clock-app__world-clock-now {
+  margin-top: 18px;
+  font-size: 4.5rem;
+  font-weight: 300;
+  line-height: 0.94;
+  letter-spacing: -0.08em;
+}
+
+.clock-app__world-clock-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  color: #cbc5d5;
+  font-size: 1rem;
+}
+
+.clock-app__weather {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.clock-app__weather svg {
+  width: 18px;
+  height: 18px;
+}
+
+.clock-app__weather-source {
+  margin-top: 14px;
+  color: #9d98ab;
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+.clock-app__empty-state {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  color: #8f8a9f;
+  font-size: 2rem;
+  font-weight: 300;
+}
+
+.clock-app__city-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.clock-app__city-card.md-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px;
+  border-radius: 28px;
+  background: #1a1c24;
+  box-shadow: none;
+}
+
+.clock-app__city-name {
+  font-size: 1.06rem;
+}
+
+.clock-app__city-country {
+  color: #ada8bb;
+  font-size: 0.9rem;
+}
+
+.clock-app__city-time-wrap {
+  text-align: right;
+}
+
+.clock-app__city-time {
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: -0.06em;
+}
+
+.clock-app__timers-screen {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clock-app__timer-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 28px;
+  color: #ece6f6;
+}
+
+.clock-app__timer-display span {
+  font-size: 4.25rem;
+  font-weight: 300;
+  letter-spacing: -0.08em;
+}
+
+.clock-app__timer-display small {
+  color: #b9b3c7;
+  font-size: 1.2rem;
+}
+
+.clock-app__timer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 88px);
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.clock-app__timer-key {
+  display: inline-flex;
+  width: 88px;
+  height: 88px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: #242734;
+  color: #f0edf6;
+  font-size: 2rem;
+  font-weight: 500;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    opacity 160ms ease;
+}
+
+.clock-app__timer-key:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #2a2d3b;
+}
+
+.clock-app__timer-key:disabled {
+  opacity: 0.45;
+}
+
+.clock-app__timer-key svg {
+  width: 28px;
+  height: 28px;
+}
+
+.clock-app__timer-primary {
+  display: inline-flex;
+  width: 86px;
+  height: 86px;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  margin-bottom: 10px;
+  border: 0;
+  border-radius: 999px;
+  background: #24252d;
+  color: #d1cae6;
+}
+
+.clock-app__timer-primary:disabled {
+  opacity: 0.48;
+}
+
+.clock-app__timer-primary svg {
+  width: 28px;
+  height: 28px;
+}
+
+.clock-app__timer-running {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 48px;
+  color: #beb8ca;
+}
+
+.clock-app__timer-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.clock-app__stopwatch-screen {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clock-app__stopwatch-time {
+  margin-top: 36px;
+  font-size: 4.9rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.08em;
+}
+
+.clock-app__stopwatch-cta {
+  width: min(100%, 300px);
+  margin-top: 92px;
+  padding: 28px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: #ddc1fb;
+  color: #4b355f;
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+.clock-app__secondary-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #262936;
+  color: #ece6f6;
+  font-size: 0.98rem;
+}
+
+.clock-app__secondary-pill svg {
+  width: 18px;
+  height: 18px;
+}
+
+.clock-app__bedtime-screen {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.clock-app__bedtime-title {
+  margin: 38px 0 0;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.clock-app__bedtime-copy {
+  max-width: 310px;
+  margin: 22px 0 0;
+  color: #beb8ca;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.clock-app__bedtime-illustration {
+  position: relative;
+  width: 280px;
+  height: 240px;
+  margin-top: 36px;
+}
+
+.clock-app__moon {
+  position: absolute;
+  top: 18px;
+  right: 42px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #f3e8ab;
+  box-shadow: inset -10px -1px 0 0 #111218;
+}
+
+.clock-app__phone-illustration {
+  position: absolute;
+  top: 36px;
+  left: 112px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  width: 56px;
+  height: 100px;
+  padding: 16px 10px;
+  border: 3px solid #dcdae4;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #3d3a53 0%, #68607d 100%);
+}
+
+.clock-app__phone-illustration span {
+  align-self: end;
+  border-radius: 999px 999px 2px 2px;
+  background: #c6b8ff;
+}
+
+.clock-app__phone-illustration span:nth-child(1) {
+  height: 34px;
+}
+
+.clock-app__phone-illustration span:nth-child(2) {
+  height: 26px;
+}
+
+.clock-app__phone-illustration span:nth-child(3) {
+  height: 42px;
+}
+
+.clock-app__phone-illustration span:nth-child(4) {
+  height: 30px;
+}
+
+.clock-app__bed {
+  position: absolute;
+  bottom: 18px;
+  left: 28px;
+  width: 224px;
+}
+
+.clock-app__bed-headboard {
+  width: 100%;
+  height: 84px;
+  border: 3px solid #7b7884;
+  border-bottom: 0;
+  border-radius: 44px 44px 0 0;
+}
+
+.clock-app__bed-base {
+  height: 52px;
+  border: 3px solid #7b7884;
+  border-radius: 28px;
+}
+
+.clock-app__bedtime-card.md-card {
+  width: 100%;
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 28px;
+  background: #1a1c24;
+  box-shadow: none;
+  text-align: left;
+}
+
+.clock-app__bedtime-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.clock-app__bedtime-button {
+  margin-top: auto;
+  margin-bottom: 16px;
+  padding: 14px 22px;
+  border: 0;
+  border-radius: 999px;
+  background: #cfccff;
+  color: #393651;
+  font-size: 1rem;
+}
+
+.clock-app__sheet.md-bottom-sheet-content {
+  max-width: 360px;
+  background: #15161d;
+  box-shadow: 0 -20px 60px rgb(0 0 0 / 40%);
+}
+
+@media (min-width: 640px) {
+  .clock-app__sheet.md-bottom-sheet-content {
+    margin-inline: auto;
+  }
+}
+
+.clock-app__sheet-body.md-bottom-sheet-body {
+  padding: 0 14px 20px;
+}
+
+.clock-app__sheet-wakeup-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #b7b0c6;
+  font-size: 0.94rem;
+}
+
+.clock-app__sheet-wakeup-label svg {
+  width: 16px;
+  height: 16px;
+}
+
+.clock-app__sheet-wakeup-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 16px 14px 16px 18px;
+  border-radius: 28px;
+  background: #3e3b5b;
+}
+
+.clock-app__sheet-caption {
+  color: #d0cae0;
+  font-size: 0.92rem;
+}
+
+.clock-app__sheet-time {
+  margin-top: 4px;
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.clock-app__sheet-section {
+  margin-top: 14px;
+  padding: 4px 2px 0;
+}
+
+.clock-app__sheet-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.clock-app__sheet-main-time {
+  font-size: 3.6rem;
+  font-weight: 300;
+  letter-spacing: -0.07em;
+}
+
+.clock-app__edit-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #282b36;
+  color: #f0edf6;
+  font-size: 0.92rem;
+}
+
+.clock-app__edit-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.clock-app__day-row.md-button-group {
+  display: flex;
+  width: 100%;
+  margin-top: 14px;
+  padding: 0;
+  gap: 2px;
+}
+
+.clock-app__day-row > .clock-app__day-pill.md-button {
+  min-width: 0;
+  flex: 1 1 0;
+  padding-inline: 0;
+  border: 0;
+  background: #0c0d12;
+  color: #d4cfde;
+  box-shadow: none;
+  font-size: 0.9rem;
+}
+
+.clock-app__day-row > .clock-app__day-pill.md-button:hover {
+  background: #151721;
+}
+
+.clock-app__day-row > .clock-app__day-pill.md-button[data-selected="true"] {
+  background: #6b6587;
+  color: #f3effa;
+}
+
+.clock-app__day-row > .clock-app__day-pill.md-button[data-selected="true"]:hover {
+  background: #746e91;
+}
+
+.clock-app__status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.clock-app__status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #b6b0c5;
+  font-size: 0.94rem;
+}
+
+.clock-app__status-chip svg {
+  width: 18px;
+  height: 18px;
+}
+
+.clock-app__settings {
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #21242c;
+}
+
+.clock-app__sheet-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgb(255 255 255 / 6%);
+}
+
+.clock-app__sheet-row:last-child {
+  border-bottom: 0;
+}
+
+.clock-app__sheet-row-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.clock-app__sheet-row-label {
+  font-size: 0.96rem;
+}
+
+.clock-app__sheet-row-value {
+  color: #bcb6c9;
+  font-size: 0.88rem;
+}
+
+.clock-app__inline-input,
+.clock-app__inline-select {
+  width: min(200px, 48vw);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #bcb6c9;
+  font: inherit;
+  text-align: right;
+}
+
+.clock-app__inline-input:focus,
+.clock-app__inline-select:focus {
+  outline: none;
+}
+
+.clock-app__inline-select option {
+  background: #1f2028;
+}
+
+.clock-app__routine-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: #e1d4ff;
+  font-size: 0.94rem;
+}
+
+.clock-app__routine-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.clock-app__sheet-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+.clock-app__delete-button,
+.clock-app__save-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 0.96rem;
+}
+
+.clock-app__delete-button {
+  padding: 12px 0;
+  background: transparent;
+  color: #ffb4ab;
+}
+
+.clock-app__save-button {
+  padding: 12px 18px;
+  background: #d2c8ff;
+  color: #35314e;
+}
+
+.clock-app__delete-button svg,
+.clock-app__save-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 420px) {
+  .clock-app {
+    padding: 0;
+  }
+
+  .clock-app__device {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+}

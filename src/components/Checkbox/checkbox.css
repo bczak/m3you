@@ -1,0 +1,118 @@
+/* =============================================================================
+   Checkbox — M3 Spec
+   Box: 18x18px, border-radius 2px
+   State layer: 40px circular
+   Touch target: 48px
+   Source: m3.material.io/components/checkbox/specs
+   ============================================================================= */
+
+/* ── Label / touch target ── */
+.md-checkbox {
+  position: relative;
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+
+  &[data-disabled] {
+    pointer-events: none;
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+}
+
+/* ── State layer (40px) ── */
+.md-checkbox__state-layer {
+  pointer-events: none;
+  position: absolute;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md-checkbox[data-variant="primary"]:hover .md-checkbox__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) var(--md-sys-state-hover-opacity), transparent);
+}
+
+.md-checkbox[data-variant="error"]:hover .md-checkbox__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-error) var(--md-sys-state-hover-opacity), transparent);
+}
+
+.md-checkbox:has(input:focus-visible) .md-checkbox__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) var(--md-sys-state-focus-opacity), transparent);
+}
+
+.md-checkbox[data-variant="error"]:has(input:focus-visible) .md-checkbox__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-error) var(--md-sys-state-focus-opacity), transparent);
+}
+
+/* ── Visual box (18px) ── */
+.md-checkbox__box {
+  pointer-events: none;
+  position: relative;
+  display: flex;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1.5px solid transparent;
+  border-radius: 2px;
+  transition:
+    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  & svg {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2px;
+  }
+
+  /* Unchecked */
+  &[data-checked="false"][data-variant="primary"] {
+    border-color: var(--md-sys-color-outline);
+  }
+
+  &[data-checked="false"][data-variant="error"] {
+    border-color: var(--md-sys-color-error);
+  }
+
+  /* Checked / indeterminate */
+  &[data-checked="true"][data-variant="primary"] {
+    border-color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  &[data-checked="true"][data-variant="error"] {
+    border-color: var(--md-sys-color-error);
+    background-color: var(--md-sys-color-error);
+    color: var(--md-sys-color-on-error);
+  }
+}
+
+/* ── Check / minus icon animation ── */
+.md-checkbox__icon {
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transform: scale(1);
+}
+
+/* ── Hidden native input ── */
+.md-checkbox__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

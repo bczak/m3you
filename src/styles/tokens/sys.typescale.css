@@ -1,0 +1,148 @@
+/* =============================================================================
+   M3 Typography Scale + M3 Expressive Emphasized Variants
+   Source: material-foundation/material-tokens + Android Compose Material3
+   ============================================================================= */
+
+:root {
+  /* Reference typefaces */
+  --md-ref-typeface-brand: "Roboto Flex", "Roboto", system-ui, sans-serif;
+  --md-ref-typeface-plain: "Roboto Flex", "Roboto", system-ui, sans-serif;
+
+  /* ── Display XL (M3 Expressive addition) ── */
+  --md-sys-typescale-display-xlarge-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-display-xlarge-size: 88px;
+  --md-sys-typescale-display-xlarge-line-height: 96px;
+  --md-sys-typescale-display-xlarge-weight: 400;
+  --md-sys-typescale-display-xlarge-tracking: -0.5px;
+
+  /* ── Display Large ── */
+  --md-sys-typescale-display-large-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-display-large-size: 57px;
+  --md-sys-typescale-display-large-line-height: 64px;
+  --md-sys-typescale-display-large-weight: 400;
+  --md-sys-typescale-display-large-tracking: -0.25px;
+
+  /* ── Display Medium ── */
+  --md-sys-typescale-display-medium-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-display-medium-size: 45px;
+  --md-sys-typescale-display-medium-line-height: 52px;
+  --md-sys-typescale-display-medium-weight: 400;
+  --md-sys-typescale-display-medium-tracking: 0px;
+
+  /* ── Display Small ── */
+  --md-sys-typescale-display-small-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-display-small-size: 36px;
+  --md-sys-typescale-display-small-line-height: 44px;
+  --md-sys-typescale-display-small-weight: 400;
+  --md-sys-typescale-display-small-tracking: 0px;
+
+  /* ── Headline Large ── */
+  --md-sys-typescale-headline-large-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-headline-large-size: 32px;
+  --md-sys-typescale-headline-large-line-height: 40px;
+  --md-sys-typescale-headline-large-weight: 400;
+  --md-sys-typescale-headline-large-tracking: 0px;
+
+  /* ── Headline Medium ── */
+  --md-sys-typescale-headline-medium-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-headline-medium-size: 28px;
+  --md-sys-typescale-headline-medium-line-height: 36px;
+  --md-sys-typescale-headline-medium-weight: 400;
+  --md-sys-typescale-headline-medium-tracking: 0px;
+
+  /* ── Headline Small ── */
+  --md-sys-typescale-headline-small-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-headline-small-size: 24px;
+  --md-sys-typescale-headline-small-line-height: 32px;
+  --md-sys-typescale-headline-small-weight: 400;
+  --md-sys-typescale-headline-small-tracking: 0px;
+
+  /* ── Title Large ── */
+  --md-sys-typescale-title-large-font: var(--md-ref-typeface-brand);
+  --md-sys-typescale-title-large-size: 22px;
+  --md-sys-typescale-title-large-line-height: 28px;
+  --md-sys-typescale-title-large-weight: 400;
+  --md-sys-typescale-title-large-tracking: 0px;
+
+  /* ── Title Medium ── */
+  --md-sys-typescale-title-medium-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-title-medium-size: 16px;
+  --md-sys-typescale-title-medium-line-height: 24px;
+  --md-sys-typescale-title-medium-weight: 500;
+  --md-sys-typescale-title-medium-tracking: 0.15px;
+
+  /* ── Title Small ── */
+  --md-sys-typescale-title-small-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-title-small-size: 14px;
+  --md-sys-typescale-title-small-line-height: 20px;
+  --md-sys-typescale-title-small-weight: 500;
+  --md-sys-typescale-title-small-tracking: 0.1px;
+
+  /* ── Body Large ── */
+  --md-sys-typescale-body-large-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-large-size: 16px;
+  --md-sys-typescale-body-large-line-height: 24px;
+  --md-sys-typescale-body-large-weight: 400;
+  --md-sys-typescale-body-large-tracking: 0.5px;
+
+  /* ── Body Medium ── */
+  --md-sys-typescale-body-medium-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-medium-size: 14px;
+  --md-sys-typescale-body-medium-line-height: 20px;
+  --md-sys-typescale-body-medium-weight: 400;
+  --md-sys-typescale-body-medium-tracking: 0.25px;
+
+  /* ── Body Small ── */
+  --md-sys-typescale-body-small-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-body-small-size: 12px;
+  --md-sys-typescale-body-small-line-height: 16px;
+  --md-sys-typescale-body-small-weight: 400;
+  --md-sys-typescale-body-small-tracking: 0.4px;
+
+  /* ── Label Large ── */
+  --md-sys-typescale-label-large-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-label-large-size: 14px;
+  --md-sys-typescale-label-large-line-height: 20px;
+  --md-sys-typescale-label-large-weight: 500;
+  --md-sys-typescale-label-large-tracking: 0.1px;
+
+  /* ── Label Medium ── */
+  --md-sys-typescale-label-medium-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-label-medium-size: 12px;
+  --md-sys-typescale-label-medium-line-height: 16px;
+  --md-sys-typescale-label-medium-weight: 500;
+  --md-sys-typescale-label-medium-tracking: 0.5px;
+
+  /* ── Label Small ── */
+  --md-sys-typescale-label-small-font: var(--md-ref-typeface-plain);
+  --md-sys-typescale-label-small-size: 11px;
+  --md-sys-typescale-label-small-line-height: 16px;
+  --md-sys-typescale-label-small-weight: 500;
+  --md-sys-typescale-label-small-tracking: 0.5px;
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     M3 Expressive "Emphasized" Variants — heavier weights for emphasis
+     Source: Android Compose Material3 Expressive
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  --md-sys-typescale-display-xlarge-emphasized-weight: 475;
+  --md-sys-typescale-display-large-emphasized-weight: 475;
+  --md-sys-typescale-display-medium-emphasized-weight: 475;
+  --md-sys-typescale-display-small-emphasized-weight: 475;
+
+  --md-sys-typescale-headline-large-emphasized-weight: 475;
+  --md-sys-typescale-headline-medium-emphasized-weight: 475;
+  --md-sys-typescale-headline-small-emphasized-weight: 475;
+
+  --md-sys-typescale-title-large-emphasized-weight: 550;
+  --md-sys-typescale-title-medium-emphasized-weight: 600;
+  --md-sys-typescale-title-small-emphasized-weight: 600;
+
+  --md-sys-typescale-body-large-emphasized-weight: 500;
+  --md-sys-typescale-body-medium-emphasized-weight: 500;
+  --md-sys-typescale-body-small-emphasized-weight: 500;
+
+  --md-sys-typescale-label-large-emphasized-weight: 600;
+  --md-sys-typescale-label-medium-emphasized-weight: 600;
+  --md-sys-typescale-label-small-emphasized-weight: 600;
+}

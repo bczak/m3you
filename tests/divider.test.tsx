@@ -1,6 +1,6 @@
-import { afterEach, expect, test } from '@rstest/core';
 import { cleanup, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { afterEach, expect, test } from 'vitest';
 import { Divider } from '../src/components/ui/divider';
 
 afterEach(() => {
@@ -14,31 +14,30 @@ test('renders as hr with implicit separator role', async () => {
   expect(divider).toHaveRole('separator');
 });
 
-test('full-width variant has border-outline-variant and no margin classes', async () => {
+test('full-width variant sets data-variant="full-width"', async () => {
   render(<Divider variant="full-width" data-testid="divider" />);
   const divider = screen.getByTestId('divider');
-  expect(divider).toHaveClass('border-outline-variant');
-  expect(divider).not.toHaveClass('ml-4');
-  expect(divider).not.toHaveClass('mx-4');
+  expect(divider).toHaveClass('md-divider');
+  expect(divider).toHaveAttribute('data-variant', 'full-width');
 });
 
-test('inset variant has mx-4', async () => {
+test('inset variant sets data-variant="inset"', async () => {
   render(<Divider variant="inset" data-testid="divider" />);
   const divider = screen.getByTestId('divider');
-  expect(divider).toHaveClass('mx-4');
+  expect(divider).toHaveAttribute('data-variant', 'inset');
 });
 
-test('vertical orientation has border-l and aria-orientation="vertical"', async () => {
+test('vertical orientation sets data-orientation and aria-orientation', async () => {
   render(<Divider orientation="vertical" data-testid="divider" />);
   const divider = screen.getByTestId('divider');
-  expect(divider).toHaveClass('border-l');
+  expect(divider).toHaveAttribute('data-orientation', 'vertical');
   expect(divider).toHaveAttribute('aria-orientation', 'vertical');
 });
 
-test('horizontal orientation (default) has border-t', async () => {
+test('horizontal orientation (default) sets data-orientation="horizontal"', async () => {
   render(<Divider data-testid="divider" />);
   const divider = screen.getByTestId('divider');
-  expect(divider).toHaveClass('border-t');
+  expect(divider).toHaveAttribute('data-orientation', 'horizontal');
 });
 
 test('horizontal orientation does not set aria-orientation', async () => {
@@ -57,6 +56,7 @@ test('accepts custom className', async () => {
   render(<Divider className="custom-class" data-testid="divider" />);
   const divider = screen.getByTestId('divider');
   expect(divider).toHaveClass('custom-class');
+  expect(divider).toHaveClass('md-divider');
 });
 
 test('passes through extra props', async () => {

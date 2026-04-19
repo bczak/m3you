@@ -1,0 +1,126 @@
+/* =============================================================================
+   RadioButton — M3 Spec
+   Outer circle: 20px, 2px border
+   Inner dot: 10px when selected
+   State layer: 40px, touch target: 48px
+   Source: m3.material.io/components/radio-button/specs
+   ============================================================================= */
+
+/* ── Label / touch target ── */
+.md-radio {
+  position: relative;
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+
+  &[data-disabled] {
+    pointer-events: none;
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+}
+
+/* ── Ripple overlay (48px — full touch target) ── */
+.md-radio__ripple {
+  pointer-events: none;
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+/* ── State layer (40px — hover/focus bg) ── */
+.md-radio__state-layer {
+  pointer-events: none;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+/* Hover state layers */
+.md-radio[data-variant="primary"][data-selected="true"]:hover .md-radio__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) var(--md-sys-state-hover-opacity), transparent);
+}
+
+.md-radio[data-variant="primary"][data-selected="false"]:hover .md-radio__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-outline) var(--md-sys-state-hover-opacity), transparent);
+}
+
+.md-radio[data-variant="error"]:hover .md-radio__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-error) var(--md-sys-state-hover-opacity), transparent);
+}
+
+/* ── Outer circle (20px) ── */
+.md-radio__outer {
+  pointer-events: none;
+  position: relative;
+  display: flex;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid;
+  transition: border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  &[data-selected="false"][data-variant="primary"] {
+    border-color: var(--md-sys-color-outline);
+  }
+
+  &[data-selected="false"][data-variant="error"] {
+    border-color: var(--md-sys-color-error);
+  }
+
+  &[data-selected="true"][data-variant="primary"] {
+    border-color: var(--md-sys-color-primary);
+  }
+
+  &[data-selected="true"][data-variant="error"] {
+    border-color: var(--md-sys-color-error);
+  }
+}
+
+/* ── Inner dot (10px) ── */
+.md-radio__inner {
+  border-radius: 50%;
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  &[data-variant="primary"] {
+    background-color: var(--md-sys-color-primary);
+  }
+
+  &[data-variant="error"] {
+    background-color: var(--md-sys-color-error);
+  }
+
+  &[data-selected="true"] {
+    width: 12px;
+    height: 12px;
+    transform: scale(1);
+  }
+
+  &[data-selected="false"] {
+    width: 12px;
+    height: 12px;
+    transform: scale(0);
+  }
+}
+
+/* ── Hidden native input ── */
+.md-radio__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

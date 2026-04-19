@@ -1,0 +1,49 @@
+/* =============================================================================
+   Circular Progress — M3 Spec
+   Diameter: 40px (md), Thickness: 4px, Color: primary
+   Source: m3.material.io/components/progress-indicators/specs
+   ============================================================================= */
+
+.md-circular-progress {
+  display: inline-flex;
+  flex-shrink: 0;
+
+  &[data-size="sm"] {
+    width: 24px;
+    height: 24px;
+  }
+  &[data-size="md"] {
+    width: 40px;
+    height: 40px;
+  }
+  &[data-size="lg"] {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.md-circular-progress__svg {
+  width: 100%;
+  height: 100%;
+
+  &[data-indeterminate] {
+    animation: circular-progress-rotate 2s linear infinite;
+  }
+}
+
+.md-circular-progress__track {
+  stroke: transparent;
+}
+
+.md-circular-progress__indicator {
+  stroke: var(--md-sys-color-primary);
+  transition: stroke-dashoffset var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+
+  &[data-indeterminate] {
+    animation: circular-progress-dash 1.5s ease-in-out infinite;
+    stroke-dasharray: 89, 126;
+    stroke-dashoffset: -35;
+    transform: rotate(-90deg);
+    transform-origin: center;
+  }
+}

@@ -1,6 +1,6 @@
-import { expect, test } from '@rstest/core';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { expect, test } from 'vitest';
 import { NavigationBar, NavigationBarItem } from '../src/components/ui/navigation-bar';
 
 // Mock icon component for testing
@@ -40,24 +40,15 @@ test('NavigationBar accepts custom aria-label', async () => {
   expect(nav).toHaveAttribute('aria-label', 'Custom navigation');
 });
 
-test('NavigationBar applies flat elevation by default', async () => {
+test('NavigationBar does not expose an elevation attribute', async () => {
   render(
     <NavigationBar value="home" onValueChange={() => {}}>
       <NavigationBarItem value="home" icon={<MockIcon />} label="Home" />
     </NavigationBar>,
   );
   const nav = screen.getByRole('navigation');
-  expect(nav).not.toHaveClass('shadow-md');
-});
-
-test('NavigationBar applies elevated elevation class', async () => {
-  render(
-    <NavigationBar value="home" onValueChange={() => {}} elevation="elevated">
-      <NavigationBarItem value="home" icon={<MockIcon />} label="Home" />
-    </NavigationBar>,
-  );
-  const nav = screen.getByRole('navigation');
-  expect(nav).toHaveClass('shadow-md');
+  expect(nav).not.toHaveAttribute('elevation');
+  expect(nav).not.toHaveAttribute('data-elevation');
 });
 
 test('NavigationBar forwards ref correctly', async () => {

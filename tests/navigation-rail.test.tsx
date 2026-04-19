@@ -1,6 +1,6 @@
-import { expect, test } from '@rstest/core';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { expect, test } from 'vitest';
 import {
   NavigationRail,
   NavigationRailItem,

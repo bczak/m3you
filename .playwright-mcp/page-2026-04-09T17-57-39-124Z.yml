@@ -1,0 +1,204 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - banner "Storybook" [ref=e6]:
+      - heading "Storybook" [level=1] [ref=e7]
+      - img
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - link "Skip to content" [ref=e14] [cursor=pointer]:
+              - /url: "#storybook-preview-wrapper"
+            - link "Storybook" [ref=e16] [cursor=pointer]:
+              - /url: ./
+              - img "Storybook" [ref=e17]
+            - switch "Settings" [ref=e22] [cursor=pointer]:
+              - img [ref=e23]
+          - generic [ref=e28]:
+            - generic [ref=e30] [cursor=pointer]:
+              - button "Open onboarding guide" [ref=e34]:
+                - img [ref=e36]
+                - strong [ref=e38]: Level up
+              - generic [ref=e39]:
+                - button "Collapse onboarding guide" [expanded] [ref=e40]:
+                  - img [ref=e41]
+                - button "56% completed" [ref=e43]:
+                  - generic [ref=e44]:
+                    - img [ref=e45]
+                    - img [ref=e47]
+                  - generic [ref=e50]: 56%
+            - list [ref=e52]:
+              - listitem [ref=e53]
+              - listitem [ref=e54]:
+                - button "Open onboarding guide for Install Vitest addon" [ref=e55] [cursor=pointer]:
+                  - img [ref=e57]
+                  - generic [ref=e60]: Install Vitest addon
+              - listitem [ref=e61]
+        - generic [ref=e62]: Search for components
+        - search [ref=e63]:
+          - combobox "Search for components" [ref=e64]:
+            - generic:
+              - img
+            - searchbox "Search for components" [ref=e65]
+            - code:
+              - generic: ⌘
+              - text: K
+            - button "Tag filters" [ref=e67] [cursor=pointer]:
+              - img [ref=e68]
+          - button "Create a new story" [ref=e70] [cursor=pointer]:
+            - img [ref=e71]
+        - navigation "Stories" [ref=e74]:
+          - heading "Stories" [level=2] [ref=e75]
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - button "Collapse" [expanded] [ref=e79] [cursor=pointer]:
+                - img [ref=e81]
+                - text: Components
+              - button "Expand all" [ref=e83] [cursor=pointer]:
+                - img [ref=e84]
+            - button "Button" [ref=e87] [cursor=pointer]:
+              - generic [ref=e88]:
+                - img [ref=e90]
+                - img [ref=e92]
+              - text: Button
+            - button "ConnectedButtonGroup" [ref=e95] [cursor=pointer]:
+              - generic [ref=e96]:
+                - img [ref=e98]
+                - img [ref=e100]
+              - text: ConnectedButtonGroup
+            - button "ExtendedFAB" [ref=e103] [cursor=pointer]:
+              - generic [ref=e104]:
+                - img [ref=e106]
+                - img [ref=e108]
+              - text: ExtendedFAB
+            - button "FAB" [ref=e111] [cursor=pointer]:
+              - generic [ref=e112]:
+                - img [ref=e114]
+                - img [ref=e116]
+              - text: FAB
+            - button "FABMenu" [ref=e119] [cursor=pointer]:
+              - generic [ref=e120]:
+                - img [ref=e122]
+                - img [ref=e124]
+              - text: FABMenu
+            - button "IconButton" [ref=e127] [cursor=pointer]:
+              - generic [ref=e128]:
+                - img [ref=e130]
+                - img [ref=e132]
+              - text: IconButton
+            - button "LoadingIndicator" [expanded] [ref=e135] [cursor=pointer]:
+              - generic [ref=e136]:
+                - img [ref=e138]
+                - img [ref=e140]
+              - text: LoadingIndicator
+            - link "Docs" [ref=e143] [cursor=pointer]:
+              - /url: /?path=/docs/components-loadingindicator--docs
+              - img [ref=e145]
+              - text: Docs
+            - generic [ref=e147]:
+              - link "Default" [ref=e148] [cursor=pointer]:
+                - /url: /?path=/story/components-loadingindicator--default
+                - img [ref=e150]
+                - text: Default
+              - link "Skip to content" [ref=e152] [cursor=pointer]:
+                - /url: "#storybook-preview-wrapper"
+            - link "All Sizes" [ref=e154] [cursor=pointer]:
+              - /url: /?path=/story/components-loadingindicator--all-sizes
+              - img [ref=e156]
+              - text: All Sizes
+            - link "Custom Colors" [ref=e159] [cursor=pointer]:
+              - /url: /?path=/story/components-loadingindicator--custom-colors
+              - img [ref=e161]
+              - text: Custom Colors
+            - link "Extra Large" [ref=e164] [cursor=pointer]:
+              - /url: /?path=/story/components-loadingindicator--extra-large
+              - img [ref=e166]
+              - text: Extra Large
+            - link "Shapes Preview" [ref=e169] [cursor=pointer]:
+              - /url: /?path=/story/components-loadingindicator--shapes-preview
+              - img [ref=e171]
+              - text: Shapes Preview
+            - button "Menu" [ref=e174] [cursor=pointer]:
+              - generic [ref=e175]:
+                - img [ref=e177]
+                - img [ref=e179]
+              - text: Menu
+            - button "SplitButton" [ref=e182] [cursor=pointer]:
+              - generic [ref=e183]:
+                - img [ref=e185]
+                - img [ref=e187]
+              - text: SplitButton
+            - button "StandardButtonGroup" [ref=e190] [cursor=pointer]:
+              - generic [ref=e191]:
+                - img [ref=e193]
+                - img [ref=e195]
+              - text: StandardButtonGroup
+            - button "ToggleButton" [ref=e198] [cursor=pointer]:
+              - generic [ref=e199]:
+                - img [ref=e201]
+                - img [ref=e203]
+              - text: ToggleButton
+            - button "ToggleIconButton" [ref=e206] [cursor=pointer]:
+              - generic [ref=e207]:
+                - img [ref=e209]
+                - img [ref=e211]
+              - text: ToggleIconButton
+            - button "Switch" [ref=e214] [cursor=pointer]:
+              - generic [ref=e215]:
+                - img [ref=e217]
+                - img [ref=e219]
+              - text: Switch
+    - separator "Sidebar resize handle" [ref=e221]
+  - generic [ref=e223]:
+    - region "Toolbar" [ref=e224]:
+      - heading "Toolbar" [level=2] [ref=e225]
+      - toolbar [ref=e226]:
+        - generic [ref=e227]:
+          - button "Reload story" [ref=e228] [cursor=pointer]:
+            - img [ref=e229]
+          - switch "Measure tool" [ref=e231] [cursor=pointer]:
+            - img [ref=e232]
+          - switch "Outline tool" [ref=e235] [cursor=pointer]:
+            - img [ref=e236]
+          - button "Viewport size" [ref=e238] [cursor=pointer]:
+            - img [ref=e239]
+          - button "Vision filter" [ref=e243] [cursor=pointer]:
+            - img [ref=e244]
+        - generic [ref=e248]:
+          - switch "Change zoom level" [ref=e249] [cursor=pointer]: 100%
+          - button "Enter full screen" [ref=e250] [cursor=pointer]:
+            - img [ref=e251]
+          - button "Share" [ref=e253] [cursor=pointer]:
+            - img [ref=e254]
+          - button "Open in editor" [ref=e257] [cursor=pointer]:
+            - img [ref=e258]
+    - main "Main preview area" [ref=e261]:
+      - heading "Main preview area" [level=2] [ref=e262]
+      - generic [ref=e263]:
+        - progressbar "Content is loading..." [ref=e265]
+        - generic [ref=e266]:
+          - link "Skip to sidebar" [ref=e267] [cursor=pointer]:
+            - /url: "#components-loadingindicator--default"
+          - iframe [ref=e271]:
+            
+  - generic [ref=e272]:
+    - separator "Addon panel resize handle" [ref=e273]
+    - region "Addon panel" [ref=e275]:
+      - heading "Addon panel" [level=2] [ref=e276]
+      - generic [ref=e277]:
+        - generic [ref=e278]:
+          - generic [ref=e279]:
+            - button "Move addon panel to right" [ref=e280] [cursor=pointer]:
+              - img [ref=e281]
+            - button "Hide addon panel" [ref=e284] [cursor=pointer]:
+              - img [ref=e285]
+          - tablist "Available addons" [ref=e290]:
+            - tab "Controls" [selected] [ref=e291] [cursor=pointer]:
+              - generic [ref=e293]: Controls
+            - tab "Actions" [ref=e294] [cursor=pointer]:
+              - generic [ref=e296]: Actions
+            - tab "Interactions" [ref=e297] [cursor=pointer]:
+              - generic [ref=e299]: Interactions
+            - tab "Code" [ref=e300] [cursor=pointer]
+            - tab "Accessibility" [ref=e301] [cursor=pointer]:
+              - generic [ref=e303]: Accessibility
+        - tabpanel "Controls" [ref=e304]

@@ -1,40 +1,39 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  ChevronDown,
-  Cloud,
-  Copy,
-  Download,
-  Edit,
-  Eye,
-  FileText,
-  HelpCircle,
-  Image,
-  MoreVertical,
-  Pencil,
-  RefreshCw,
-  Settings,
-  Share,
-  Trash2,
+  BellIcon,
+  ChevronRightIcon,
+  CopyIcon,
+  DownloadIcon,
+  EditIcon,
+  EllipsisVerticalIcon,
+  FileIcon,
+  LinkIcon,
+  MailIcon,
+  ScissorsIcon,
+  SettingsIcon,
+  ShareIcon,
+  StarIcon,
+  Trash2Icon,
+  UserIcon,
 } from 'lucide-react';
+import { Ripple } from 'm3-ripple';
 import { useState } from 'react';
-import { Badge } from '../src/components/ui/badge';
-import { Button } from '../src/components/ui/button';
-import { IconButton } from '../src/components/ui/icon-button';
+import { Button } from '../src/components/Button/button';
+import { IconButton } from '../src/components/IconButton/icon-button';
 import {
   Menu,
   MenuContent,
   MenuDivider,
   MenuGroup,
   MenuItem,
-  MenuLabel,
   MenuSub,
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
-} from '../src/components/ui/menu';
+} from '../src/components/Menu/menu';
 
 const meta = {
-  title: 'Components/Menu',
+  title: 'Containment/Menu',
   component: Menu,
   parameters: {
     layout: 'centered',
@@ -46,605 +45,646 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // =============================================================================
-// Default
+// Showcase — static render (no portal) to display all features inline
+// =============================================================================
+
+export const Showcase: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+      {/* Basic items — no icons */}
+      <div className="md-menu" style={{ width: 200 }}>
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          Cut
+        </div>
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          Copy
+        </div>
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          Paste
+        </div>
+      </div>
+
+      {/* Items with icons */}
+      <div className="md-menu" style={{ width: 200 }}>
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          <ScissorsIcon /> Cut
+        </div>
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          <CopyIcon /> Copy
+        </div>
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          <EditIcon /> Paste
+        </div>
+      </div>
+
+      {/* Mixed — icons, supporting text, divider, disabled */}
+      <div className="md-menu" style={{ width: 240 }}>
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          <EditIcon /> Edit
+        </div>
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          <CopyIcon /> Duplicate
+        </div>
+        <div className="md-menu-divider" role="separator" />
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          <UserIcon />
+          <span className="md-menu-item__content">
+            <span className="md-menu-item__label">Profile</span>
+            <span className="md-menu-item__supporting">View your profile</span>
+          </span>
+        </div>
+        <div className="md-menu-item" role="menuitem">
+          <Ripple hoverOpacity={0} />
+          <SettingsIcon />
+          <span className="md-menu-item__content">
+            <span className="md-menu-item__label">Settings</span>
+            <span className="md-menu-item__supporting">Manage preferences</span>
+          </span>
+        </div>
+        <div className="md-menu-divider" role="separator" />
+        <div className="md-menu-item" role="menuitem" data-disabled>
+          <Ripple hoverOpacity={0} />
+          <Trash2Icon /> Delete
+        </div>
+      </div>
+
+      {/* With submenu — main menu + expanded submenu side by side */}
+      <div style={{ display: 'flex', gap: 4, alignItems: 'flex-start' }}>
+        <div className="md-menu" style={{ width: 200 }}>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <EditIcon /> Edit
+          </div>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <CopyIcon /> Copy
+          </div>
+          <div
+            className="md-menu-item"
+            role="menuitem"
+            style={{
+              backgroundColor: 'color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent)',
+            }}
+          >
+            <Ripple hoverOpacity={0} />
+            <ShareIcon /> Share
+            <span className="md-menu-item__chevron" aria-hidden="true">
+              <ChevronRightIcon />
+            </span>
+          </div>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <Trash2Icon /> Delete
+          </div>
+        </div>
+        <div className="md-menu" style={{ width: 180, marginTop: 100 }}>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <LinkIcon /> Copy Link
+          </div>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <MailIcon /> Email
+          </div>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <DownloadIcon /> Download
+          </div>
+        </div>
+      </div>
+
+      {/* Grouped — two groups */}
+      <div className="md-menu" style={{ width: 200 }}>
+        <div className="md-menu-group">
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <StarIcon /> Favorite
+          </div>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <ShareIcon /> Share
+          </div>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <CopyIcon /> Copy
+          </div>
+        </div>
+        <div className="md-menu-group">
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <Trash2Icon /> Delete
+          </div>
+        </div>
+      </div>
+
+      {/* Grouped — three groups */}
+      <div className="md-menu" style={{ width: 200 }}>
+        <div className="md-menu-group">
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <UserIcon /> Profile
+          </div>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <SettingsIcon /> Settings
+          </div>
+        </div>
+        <div className="md-menu-group">
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <MailIcon /> Inbox
+          </div>
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <FileIcon /> Files
+          </div>
+        </div>
+        <div className="md-menu-group">
+          <div className="md-menu-item" role="menuitem">
+            <Ripple hoverOpacity={0} />
+            <DownloadIcon /> Export
+          </div>
+          <div className="md-menu-item" role="menuitem" data-disabled>
+            <Ripple hoverOpacity={0} />
+            <Trash2Icon /> Delete
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+// =============================================================================
+// Interactive — With Trigger
 // =============================================================================
 
 export const Default: Story = {
   render: () => (
     <Menu>
       <MenuTrigger asChild>
-        <IconButton variant="text">
-          <MoreVertical aria-hidden="true" />
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
         </IconButton>
       </MenuTrigger>
       <MenuContent>
-        <MenuItem leadingIcon={<RefreshCw className="size-5" />}>Refresh</MenuItem>
-        <MenuItem leadingIcon={<Settings className="size-5" />}>Settings</MenuItem>
-        <MenuItem leadingIcon={<HelpCircle className="size-5" />}>Help</MenuItem>
-        <MenuItem leadingIcon={<MoreVertical className="size-5" />}>More</MenuItem>
+        <MenuItem>Cut</MenuItem>
+        <MenuItem>Copy</MenuItem>
+        <MenuItem>Paste</MenuItem>
       </MenuContent>
     </Menu>
   ),
 };
 
-// =============================================================================
-// Standard Colors
-// =============================================================================
-
-export const StandardColor: Story = {
-  name: 'Standard Color',
+export const WithIcons: Story = {
   render: () => (
-    <Menu color="standard">
+    <Menu>
       <MenuTrigger asChild>
-        <IconButton variant="text">
-          <MoreVertical aria-hidden="true" />
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
         </IconButton>
       </MenuTrigger>
       <MenuContent>
-        <MenuItem leadingIcon={<Eye className="size-5" />}>Item 1</MenuItem>
-        <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
-          Item 2
+        <MenuItem>
+          <ScissorsIcon /> Cut
         </MenuItem>
-        <MenuItem leadingIcon={<Pencil className="size-5" />}>Item 3</MenuItem>
-        <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
+        <MenuItem>
+          <CopyIcon /> Copy
+        </MenuItem>
+        <MenuItem>
+          <EditIcon /> Paste
+        </MenuItem>
       </MenuContent>
     </Menu>
   ),
 };
 
-// =============================================================================
-// Vibrant Colors
-// =============================================================================
-
-export const VibrantColor: Story = {
-  name: 'Vibrant Color',
+export const WithSupportingText: Story = {
   render: () => (
-    <Menu color="vibrant">
+    <Menu>
       <MenuTrigger asChild>
-        <IconButton variant="text">
-          <MoreVertical aria-hidden="true" />
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
         </IconButton>
       </MenuTrigger>
       <MenuContent>
-        <MenuItem leadingIcon={<Eye className="size-5" />}>Item 1</MenuItem>
-        <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
-          Item 2
+        <MenuItem supportingText="View your profile">
+          <UserIcon /> Profile
         </MenuItem>
-        <MenuItem leadingIcon={<Pencil className="size-5" />}>Item 3</MenuItem>
-        <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
+        <MenuItem supportingText="Manage preferences">
+          <SettingsIcon /> Settings
+        </MenuItem>
+        <MenuItem supportingText="3 unread">
+          <BellIcon /> Notifications
+        </MenuItem>
+      </MenuContent>
+    </Menu>
+  ),
+};
+
+export const WithDividers: Story = {
+  render: () => (
+    <Menu>
+      <MenuTrigger asChild>
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
+        </IconButton>
+      </MenuTrigger>
+      <MenuContent>
+        <MenuItem>
+          <EditIcon /> Edit
+        </MenuItem>
+        <MenuItem>
+          <CopyIcon /> Duplicate
+        </MenuItem>
+        <MenuItem>
+          <ShareIcon /> Share
+        </MenuItem>
+        <MenuDivider />
+        <MenuItem>
+          <DownloadIcon /> Download
+        </MenuItem>
+        <MenuItem>
+          <Trash2Icon /> Delete
+        </MenuItem>
+      </MenuContent>
+    </Menu>
+  ),
+};
+
+export const WithDisabledItems: Story = {
+  render: () => (
+    <Menu>
+      <MenuTrigger asChild>
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
+        </IconButton>
+      </MenuTrigger>
+      <MenuContent>
+        <MenuItem disabled>Undo</MenuItem>
+        <MenuItem disabled>Redo</MenuItem>
+        <MenuDivider />
+        <MenuItem>Cut</MenuItem>
+        <MenuItem>Copy</MenuItem>
+        <MenuItem>Paste</MenuItem>
+      </MenuContent>
+    </Menu>
+  ),
+};
+
+export const FullFeatured: Story = {
+  render: () => (
+    <Menu>
+      <MenuTrigger asChild>
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
+        </IconButton>
+      </MenuTrigger>
+      <MenuContent>
+        <MenuItem supportingText="View your profile">
+          <UserIcon /> Profile
+        </MenuItem>
+        <MenuItem supportingText="Manage preferences">
+          <SettingsIcon /> Settings
+        </MenuItem>
+        <MenuDivider />
+        <MenuSub>
+          <MenuSubTrigger>
+            <ShareIcon /> Share
+          </MenuSubTrigger>
+          <MenuSubContent>
+            <MenuItem>
+              <LinkIcon /> Copy Link
+            </MenuItem>
+            <MenuItem>
+              <MailIcon /> Email
+            </MenuItem>
+          </MenuSubContent>
+        </MenuSub>
+        <MenuDivider />
+        <MenuItem disabled>
+          <Trash2Icon /> Delete
+        </MenuItem>
       </MenuContent>
     </Menu>
   ),
 };
 
 // =============================================================================
-// Color Comparison
-// =============================================================================
-
-export const ColorComparison: Story = {
-  name: 'Color Comparison',
-  parameters: { layout: 'fullscreen' },
-  render: () => (
-    <div className="flex min-h-screen items-start justify-center gap-16 bg-surface-container-lowest p-12">
-      <div className="flex flex-col items-center gap-4">
-        <p className="text-on-background/60 text-sm">Standard</p>
-        <Menu color="standard">
-          <MenuTrigger asChild>
-            <IconButton variant="text">
-              <MoreVertical aria-hidden="true" />
-            </IconButton>
-          </MenuTrigger>
-          <MenuContent>
-            <MenuItem leadingIcon={<Eye className="size-5" />}>Item 1</MenuItem>
-            <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
-              Item 2
-            </MenuItem>
-            <MenuItem>Item 3</MenuItem>
-            <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
-          </MenuContent>
-        </Menu>
-      </div>
-      <div className="flex flex-col items-center gap-4">
-        <p className="text-on-background/60 text-sm">Vibrant</p>
-        <Menu color="vibrant">
-          <MenuTrigger asChild>
-            <IconButton variant="text">
-              <MoreVertical aria-hidden="true" />
-            </IconButton>
-          </MenuTrigger>
-          <MenuContent>
-            <MenuItem leadingIcon={<Eye className="size-5" />}>Item 1</MenuItem>
-            <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
-              Item 2
-            </MenuItem>
-            <MenuItem>Item 3</MenuItem>
-            <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
-          </MenuContent>
-        </Menu>
-      </div>
-    </div>
-  ),
-};
-
-// =============================================================================
-// With Submenu
+// Submenus
 // =============================================================================
 
 export const WithSubmenu: Story = {
-  name: 'With Submenu',
   render: () => (
     <Menu>
       <MenuTrigger asChild>
-        <IconButton variant="text">
-          <MoreVertical aria-hidden="true" />
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
         </IconButton>
       </MenuTrigger>
       <MenuContent>
-        <MenuItem leadingIcon={<Copy className="size-5" />}>Make a copy</MenuItem>
+        <MenuItem>
+          <EditIcon /> Edit
+        </MenuItem>
+        <MenuItem>
+          <CopyIcon /> Copy
+        </MenuItem>
         <MenuSub>
-          <MenuSubTrigger leadingIcon={<Pencil className="size-5" />}>Create</MenuSubTrigger>
+          <MenuSubTrigger>
+            <ShareIcon /> Share
+          </MenuSubTrigger>
           <MenuSubContent>
-            <MenuItem leadingIcon={<FileText className="size-5" />}>Document</MenuItem>
-            <MenuItem leadingIcon={<Image className="size-5" />}>Image</MenuItem>
+            <MenuItem>
+              <LinkIcon /> Copy Link
+            </MenuItem>
+            <MenuItem>
+              <MailIcon /> Email
+            </MenuItem>
+            <MenuItem>
+              <DownloadIcon /> Download
+            </MenuItem>
           </MenuSubContent>
         </MenuSub>
-        <MenuItem>Offline mode</MenuItem>
-        <MenuSub>
-          <MenuSubTrigger leadingIcon={<Share className="size-5" />}>Share</MenuSubTrigger>
-          <MenuSubContent>
-            <MenuItem>Email</MenuItem>
-            <MenuItem>Message</MenuItem>
-            <MenuItem>Copy link</MenuItem>
-          </MenuSubContent>
-        </MenuSub>
-        <MenuItem leadingIcon={<Download className="size-5" />}>Download</MenuItem>
+        <MenuItem>
+          <Trash2Icon /> Delete
+        </MenuItem>
       </MenuContent>
     </Menu>
   ),
 };
 
-// =============================================================================
-// With Divider
-// =============================================================================
-
-export const WithDivider: Story = {
-  name: 'With Divider',
+export const NestedSubmenus: Story = {
   render: () => (
     <Menu>
       <MenuTrigger asChild>
-        <IconButton variant="text">
-          <MoreVertical aria-hidden="true" />
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
         </IconButton>
       </MenuTrigger>
       <MenuContent>
-        <MenuItem leadingIcon={<Eye className="size-5" />}>View</MenuItem>
-        <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
-          Copy
-        </MenuItem>
-        <MenuItem leadingIcon={<Edit className="size-5" />} trailingText="⌘E">
-          Edit
-        </MenuItem>
+        <MenuItem>Bold</MenuItem>
+        <MenuItem>Italic</MenuItem>
         <MenuDivider />
-        <MenuItem leadingIcon={<Trash2 className="size-5" />}>Delete</MenuItem>
+        <MenuSub>
+          <MenuSubTrigger>Alignment</MenuSubTrigger>
+          <MenuSubContent>
+            <MenuItem>Left</MenuItem>
+            <MenuItem>Center</MenuItem>
+            <MenuItem>Right</MenuItem>
+            <MenuSub>
+              <MenuSubTrigger>Vertical</MenuSubTrigger>
+              <MenuSubContent>
+                <MenuItem>Top</MenuItem>
+                <MenuItem>Middle</MenuItem>
+                <MenuItem>Bottom</MenuItem>
+              </MenuSubContent>
+            </MenuSub>
+          </MenuSubContent>
+        </MenuSub>
+        <MenuSub>
+          <MenuSubTrigger>Spacing</MenuSubTrigger>
+          <MenuSubContent>
+            <MenuItem>Single</MenuItem>
+            <MenuItem>1.5</MenuItem>
+            <MenuItem>Double</MenuItem>
+          </MenuSubContent>
+        </MenuSub>
       </MenuContent>
     </Menu>
   ),
 };
 
 // =============================================================================
-// Grouped Layout
+// Positioning — visible triggers to show anchor relationship
 // =============================================================================
 
-export const GroupedLayout: Story = {
-  name: 'Grouped Layout',
-  parameters: { layout: 'fullscreen' },
-  render: () => (
-    <div className="flex min-h-screen items-start justify-center gap-16 bg-surface-container-lowest p-12">
-      <div className="flex flex-col items-center gap-4">
-        <p className="text-on-background/60 text-sm">Standard Grouped</p>
-        <Menu color="standard">
-          <MenuTrigger asChild>
-            <Button variant="outlined">
-              <Pencil className="size-4" aria-hidden="true" />
-              Options
-              <ChevronDown className="size-4" aria-hidden="true" />
-            </Button>
-          </MenuTrigger>
-          <MenuContent grouped>
-            <MenuGroup>
-              <MenuItem leadingIcon={<Eye className="size-5" />}>Item 1</MenuItem>
-              <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
-                Item 2
-              </MenuItem>
-            </MenuGroup>
-            <MenuGroup>
-              <MenuItem leadingIcon={<Pencil className="size-5" />}>Item 3</MenuItem>
-            </MenuGroup>
-            <MenuGroup>
-              <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
-              <MenuItem leadingIcon={<Settings className="size-5" />}>Item 5</MenuItem>
-            </MenuGroup>
-          </MenuContent>
-        </Menu>
-      </div>
-      <div className="flex flex-col items-center gap-4">
-        <p className="text-on-background/60 text-sm">Vibrant Grouped</p>
-        <Menu color="vibrant">
-          <MenuTrigger asChild>
-            <Button variant="outlined">
-              <Pencil className="size-4" aria-hidden="true" />
-              Options
-              <ChevronDown className="size-4" aria-hidden="true" />
-            </Button>
-          </MenuTrigger>
-          <MenuContent grouped>
-            <MenuGroup>
-              <MenuItem leadingIcon={<Eye className="size-5" />}>Item 1</MenuItem>
-              <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
-                Item 2
-              </MenuItem>
-            </MenuGroup>
-            <MenuGroup>
-              <MenuItem leadingIcon={<Pencil className="size-5" />}>Item 3</MenuItem>
-            </MenuGroup>
-            <MenuGroup>
-              <MenuItem leadingIcon={<Cloud className="size-5" />}>Item 4</MenuItem>
-              <MenuItem leadingIcon={<Settings className="size-5" />}>Item 5</MenuItem>
-            </MenuGroup>
-          </MenuContent>
-        </Menu>
-      </div>
-    </div>
-  ),
-};
-
-// =============================================================================
-// With Labels
-// =============================================================================
-
-export const WithLabels: Story = {
-  name: 'With Labels',
+export const PositionTop: Story = {
   render: () => (
     <Menu>
       <MenuTrigger asChild>
-        <IconButton variant="text">
-          <MoreVertical aria-hidden="true" />
+        <IconButton variant="filled" size="sm">
+          <EllipsisVerticalIcon />
         </IconButton>
       </MenuTrigger>
-      <MenuContent grouped>
-        <MenuGroup label="File">
-          <MenuItem leadingIcon={<FileText className="size-5" />}>New Document</MenuItem>
-          <MenuItem leadingIcon={<Copy className="size-5" />}>Duplicate</MenuItem>
-        </MenuGroup>
-        <MenuGroup label="Edit">
-          <MenuItem leadingIcon={<Edit className="size-5" />} trailingText="⌘E">
-            Edit
-          </MenuItem>
-          <MenuItem leadingIcon={<Trash2 className="size-5" />}>Delete</MenuItem>
-        </MenuGroup>
+      <MenuContent side="top" align="start">
+        <MenuItem>Item One</MenuItem>
+        <MenuItem>Item Two</MenuItem>
+        <MenuItem>Item Three</MenuItem>
       </MenuContent>
     </Menu>
   ),
 };
 
-// =============================================================================
-// With Supporting Text
-// =============================================================================
-
-export const WithSupportingText: Story = {
-  name: 'With Supporting Text',
+export const AlignEnd: Story = {
   render: () => (
     <Menu>
       <MenuTrigger asChild>
-        <IconButton variant="text">
-          <MoreVertical aria-hidden="true" />
+        <IconButton variant="filled" size="sm">
+          <EllipsisVerticalIcon />
         </IconButton>
       </MenuTrigger>
-      <MenuContent className="min-w-56">
-        <MenuItem leadingIcon={<Cloud className="size-5" />} supportingText="Save to cloud">
-          Backup
-        </MenuItem>
-        <MenuItem leadingIcon={<Download className="size-5" />} supportingText="Download locally">
-          Export
-        </MenuItem>
-        <MenuItem leadingIcon={<Share className="size-5" />} supportingText="Share with others">
-          Share
-        </MenuItem>
+      <MenuContent side="bottom" align="end">
+        <MenuItem>Item One</MenuItem>
+        <MenuItem>Item Two</MenuItem>
+        <MenuItem>Item Three</MenuItem>
       </MenuContent>
     </Menu>
   ),
 };
 
 // =============================================================================
-// Disabled Items
+// Trigger Variants
 // =============================================================================
 
-export const DisabledItems: Story = {
-  name: 'Disabled Items',
+export const ButtonTrigger: Story = {
   render: () => (
     <Menu>
       <MenuTrigger asChild>
-        <IconButton variant="text">
-          <MoreVertical aria-hidden="true" />
-        </IconButton>
+        <Button variant="filled" size="sm" shape="round">
+          Open Menu
+        </Button>
       </MenuTrigger>
       <MenuContent>
-        <MenuItem leadingIcon={<Copy className="size-5" />}>Copy</MenuItem>
-        <MenuItem leadingIcon={<Edit className="size-5" />} disabled>
-          Edit (disabled)
+        <MenuItem>
+          <EditIcon /> Edit
         </MenuItem>
-        <MenuItem leadingIcon={<Trash2 className="size-5" />} disabled>
-          Delete (disabled)
+        <MenuItem>
+          <CopyIcon /> Duplicate
         </MenuItem>
-        <MenuItem leadingIcon={<Settings className="size-5" />}>Settings</MenuItem>
+        <MenuItem>
+          <Trash2Icon /> Delete
+        </MenuItem>
       </MenuContent>
     </Menu>
   ),
 };
 
 // =============================================================================
-// Selectable Items (Stateful)
+// Controlled
 // =============================================================================
 
-export const SelectableItems: Story = {
-  name: 'Selectable Items',
+export const Controlled: Story = {
   render: () => {
-    const [selected, setSelected] = useState('item3');
+    const [open, setOpen] = useState(false);
     return (
-      <Menu>
-        <MenuTrigger asChild>
-          <IconButton variant="text">
-            <MoreVertical aria-hidden="true" />
-          </IconButton>
-        </MenuTrigger>
-        <MenuContent>
-          <MenuItem selected={selected === 'item1'} closeOnSelect={false} onClick={() => setSelected('item1')}>
-            Item 1
-          </MenuItem>
-          <MenuItem selected={selected === 'item2'} closeOnSelect={false} onClick={() => setSelected('item2')}>
-            Item 2
-          </MenuItem>
-          <MenuItem selected={selected === 'item3'} closeOnSelect={false} onClick={() => setSelected('item3')}>
-            Item 3
-          </MenuItem>
-          <MenuItem selected={selected === 'item4'} closeOnSelect={false} onClick={() => setSelected('item4')}>
-            Item 4
-          </MenuItem>
-        </MenuContent>
-      </Menu>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Button variant="tonal" size="sm" shape="round" onClick={() => setOpen(true)}>
+            Open
+          </Button>
+          <Button variant="outlined" size="sm" shape="round" onClick={() => setOpen(false)}>
+            Close
+          </Button>
+        </div>
+        <Menu open={open} onOpenChange={setOpen}>
+          <MenuTrigger asChild>
+            <IconButton variant="standard" size="sm">
+              <EllipsisVerticalIcon />
+            </IconButton>
+          </MenuTrigger>
+          <MenuContent>
+            <MenuItem>Cut</MenuItem>
+            <MenuItem>Copy</MenuItem>
+            <MenuItem>Paste</MenuItem>
+          </MenuContent>
+        </Menu>
+      </div>
     );
   },
 };
 
 // =============================================================================
-// With Badge
+// Groups — With Trigger
 // =============================================================================
 
-export const WithBadge: Story = {
-  name: 'With Badge',
+export const Grouped: Story = {
   render: () => (
     <Menu>
       <MenuTrigger asChild>
-        <IconButton variant="text">
-          <MoreVertical aria-hidden="true" />
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
         </IconButton>
       </MenuTrigger>
       <MenuContent>
-        <MenuItem leadingIcon={<Pencil className="size-5" />} badge={<Badge>New</Badge>}>
-          Create
-        </MenuItem>
-        <MenuItem leadingIcon={<Copy className="size-5" />} trailingText="⌘C">
-          Copy
-        </MenuItem>
-        <MenuItem leadingIcon={<Settings className="size-5" />}>Settings</MenuItem>
+        <MenuGroup>
+          <MenuItem>
+            <StarIcon /> Favorite
+          </MenuItem>
+          <MenuItem>
+            <ShareIcon /> Share
+          </MenuItem>
+          <MenuItem>
+            <CopyIcon /> Copy
+          </MenuItem>
+        </MenuGroup>
+        <MenuGroup>
+          <MenuItem>
+            <EditIcon /> Edit
+          </MenuItem>
+          <MenuItem>
+            <DownloadIcon /> Download
+          </MenuItem>
+        </MenuGroup>
+      </MenuContent>
+    </Menu>
+  ),
+};
+
+export const GroupedThreeGroups: Story = {
+  render: () => (
+    <Menu>
+      <MenuTrigger asChild>
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
+        </IconButton>
+      </MenuTrigger>
+      <MenuContent>
+        <MenuGroup>
+          <MenuItem>
+            <StarIcon /> Favorite
+          </MenuItem>
+          <MenuItem>
+            <ShareIcon /> Share
+          </MenuItem>
+          <MenuItem>
+            <CopyIcon /> Copy
+          </MenuItem>
+          <MenuItem>
+            <EditIcon /> Edit
+          </MenuItem>
+        </MenuGroup>
+        <MenuGroup>
+          <MenuItem>
+            <UserIcon /> Profile
+          </MenuItem>
+          <MenuItem>
+            <SettingsIcon /> Settings
+          </MenuItem>
+          <MenuItem>
+            <MailIcon /> Email
+          </MenuItem>
+          <MenuItem>
+            <DownloadIcon /> Export
+          </MenuItem>
+        </MenuGroup>
+        <MenuGroup>
+          <MenuItem>
+            <FileIcon /> Documents
+          </MenuItem>
+          <MenuItem>
+            <StarIcon /> Starred
+          </MenuItem>
+          <MenuItem>
+            <Trash2Icon /> Trash
+          </MenuItem>
+        </MenuGroup>
       </MenuContent>
     </Menu>
   ),
 };
 
 // =============================================================================
-// Positioning
+// Long List
 // =============================================================================
 
-export const Positioning: Story = {
-  name: 'Positioning',
-  parameters: { layout: 'fullscreen' },
+export const LongList: Story = {
   render: () => (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-16 bg-surface-container-lowest p-12">
-      <div className="flex items-start gap-16">
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-on-background/60 text-xs">Bottom / Start</p>
-          <Menu>
-            <MenuTrigger asChild>
-              <IconButton variant="text">
-                <MoreVertical aria-hidden="true" />
-              </IconButton>
-            </MenuTrigger>
-            <MenuContent side="bottom" align="start">
-              <MenuItem>Item 1</MenuItem>
-              <MenuItem>Item 2</MenuItem>
-            </MenuContent>
-          </Menu>
-        </div>
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-on-background/60 text-xs">Bottom / End</p>
-          <Menu>
-            <MenuTrigger asChild>
-              <IconButton variant="text">
-                <MoreVertical aria-hidden="true" />
-              </IconButton>
-            </MenuTrigger>
-            <MenuContent side="bottom" align="end">
-              <MenuItem>Item 1</MenuItem>
-              <MenuItem>Item 2</MenuItem>
-            </MenuContent>
-          </Menu>
-        </div>
-      </div>
-      <div className="flex items-end gap-16">
-        <div className="flex flex-col items-center gap-2">
-          <Menu>
-            <MenuTrigger asChild>
-              <IconButton variant="text">
-                <MoreVertical aria-hidden="true" />
-              </IconButton>
-            </MenuTrigger>
-            <MenuContent side="top" align="start">
-              <MenuItem>Item 1</MenuItem>
-              <MenuItem>Item 2</MenuItem>
-            </MenuContent>
-          </Menu>
-          <p className="text-on-background/60 text-xs">Top / Start</p>
-        </div>
-        <div className="flex flex-col items-center gap-2">
-          <Menu>
-            <MenuTrigger asChild>
-              <IconButton variant="text">
-                <MoreVertical aria-hidden="true" />
-              </IconButton>
-            </MenuTrigger>
-            <MenuContent side="top" align="end">
-              <MenuItem>Item 1</MenuItem>
-              <MenuItem>Item 2</MenuItem>
-            </MenuContent>
-          </Menu>
-          <p className="text-on-background/60 text-xs">Top / End</p>
-        </div>
-      </div>
-    </div>
+    <Menu>
+      <MenuTrigger asChild>
+        <IconButton variant="standard" size="sm">
+          <EllipsisVerticalIcon />
+        </IconButton>
+      </MenuTrigger>
+      <MenuContent style={{ maxHeight: 300 }}>
+        {[
+          'Argentina',
+          'Australia',
+          'Brazil',
+          'Canada',
+          'China',
+          'France',
+          'Germany',
+          'India',
+          'Italy',
+          'Japan',
+          'Mexico',
+          'South Korea',
+          'Spain',
+          'United Kingdom',
+          'United States',
+          'Uzbekistan',
+        ].map((country) => (
+          <MenuItem key={country}>{country}</MenuItem>
+        ))}
+      </MenuContent>
+    </Menu>
   ),
-};
-
-// =============================================================================
-// States Showcase
-// =============================================================================
-
-export const StatesShowcase: Story = {
-  name: 'States Showcase',
-  parameters: { layout: 'fullscreen' },
-  render: () => (
-    <div className="flex min-h-screen flex-col items-center gap-8 bg-surface-container-lowest p-12">
-      <h2 className="text-on-background/60 text-sm">Menu Item States</h2>
-      <div className="flex gap-12">
-        {/* Light theme */}
-        <div className="flex flex-col gap-4">
-          <p className="text-center text-on-background/60 text-xs">Standard</p>
-          <div className="rounded-2xl bg-surface-container-low p-1 shadow-md">
-            <Menu color="standard">
-              <MenuTrigger className="hidden">Open</MenuTrigger>
-              <MenuContent className="static flex shadow-none">
-                <MenuItem>Item 1</MenuItem>
-                <MenuItem>Item 2</MenuItem>
-                <MenuItem>Item 3</MenuItem>
-                <MenuItem>Item 4</MenuItem>
-              </MenuContent>
-            </Menu>
-          </div>
-        </div>
-        <div className="flex flex-col gap-4">
-          <p className="text-center text-on-background/60 text-xs">Vibrant</p>
-          <div className="rounded-2xl bg-tertiary-container p-1 shadow-md">
-            <Menu color="vibrant">
-              <MenuTrigger className="hidden">Open</MenuTrigger>
-              <MenuContent className="static flex shadow-none">
-                <MenuItem>Item 1</MenuItem>
-                <MenuItem>Item 2</MenuItem>
-                <MenuItem>Item 3</MenuItem>
-                <MenuItem>Item 4</MenuItem>
-              </MenuContent>
-            </Menu>
-          </div>
-        </div>
-      </div>
-    </div>
-  ),
-};
-
-// =============================================================================
-// Complete Showcase
-// =============================================================================
-
-export const CompleteShowcase: Story = {
-  name: 'Complete Showcase',
-  parameters: { layout: 'fullscreen' },
-  render: () => {
-    return (
-      <div className="flex min-h-screen items-start justify-center gap-16 bg-surface-container-lowest p-12 pt-24">
-        {/* Standard menu with icon button trigger */}
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-on-background/60 text-xs">Standard + Icons</p>
-          <Menu color="standard">
-            <MenuTrigger asChild>
-              <IconButton variant="text">
-                <MoreVertical aria-hidden="true" />
-              </IconButton>
-            </MenuTrigger>
-            <MenuContent>
-              <MenuItem leadingIcon={<RefreshCw className="size-5" />}>Refresh</MenuItem>
-              <MenuItem leadingIcon={<Settings className="size-5" />} trailingText="⌘,">
-                Settings
-              </MenuItem>
-              <MenuItem leadingIcon={<HelpCircle className="size-5" />}>Help</MenuItem>
-              <MenuDivider />
-              <MenuItem leadingIcon={<Trash2 className="size-5" />}>Delete</MenuItem>
-            </MenuContent>
-          </Menu>
-        </div>
-
-        {/* Vibrant with submenu */}
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-on-background/60 text-xs">Vibrant + Submenu</p>
-          <Menu color="vibrant">
-            <MenuTrigger asChild>
-              <IconButton variant="text">
-                <MoreVertical aria-hidden="true" />
-              </IconButton>
-            </MenuTrigger>
-            <MenuContent>
-              <MenuItem leadingIcon={<Copy className="size-5" />}>Make a copy</MenuItem>
-              <MenuSub>
-                <MenuSubTrigger leadingIcon={<Pencil className="size-5" />}>Create</MenuSubTrigger>
-                <MenuSubContent>
-                  <MenuItem leadingIcon={<FileText className="size-5" />}>Document</MenuItem>
-                  <MenuItem leadingIcon={<Image className="size-5" />}>Image</MenuItem>
-                </MenuSubContent>
-              </MenuSub>
-              <MenuItem>Offline mode</MenuItem>
-              <MenuSub>
-                <MenuSubTrigger leadingIcon={<Share className="size-5" />}>Share</MenuSubTrigger>
-                <MenuSubContent>
-                  <MenuItem>Email</MenuItem>
-                  <MenuItem>Message</MenuItem>
-                </MenuSubContent>
-              </MenuSub>
-              <MenuItem leadingIcon={<Download className="size-5" />}>Download</MenuItem>
-            </MenuContent>
-          </Menu>
-        </div>
-
-        {/* Button trigger with labels */}
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-on-background/60 text-xs">Button Trigger + Labels</p>
-          <Menu>
-            <MenuTrigger asChild>
-              <Button variant="outlined">
-                Options
-                <ChevronDown className="size-4" aria-hidden="true" />
-              </Button>
-            </MenuTrigger>
-            <MenuContent className="min-w-48">
-              <MenuLabel>Actions</MenuLabel>
-              <MenuItem leadingIcon={<Eye className="size-5" />}>View</MenuItem>
-              <MenuItem leadingIcon={<Edit className="size-5" />} trailingText="⌘E">
-                Edit
-              </MenuItem>
-              <MenuDivider />
-              <MenuLabel>Danger Zone</MenuLabel>
-              <MenuItem leadingIcon={<Trash2 className="size-5" />}>Delete</MenuItem>
-            </MenuContent>
-          </Menu>
-        </div>
-      </div>
-    );
-  },
 };

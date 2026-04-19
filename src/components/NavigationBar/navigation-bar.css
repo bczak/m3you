@@ -1,0 +1,285 @@
+/* =============================================================================
+   NavigationBar — M3 Spec
+   Container: height 80px (vertical) / 64px (horizontal), bg surface
+   Active indicator: 56x32 secondary-container, corner-full
+   Icons: 24px, Label: title-small, Active weight bold (700)
+   Inactive: on-surface-variant
+   Source: m3.material.io/components/navigation-bar/specs
+   ============================================================================= */
+
+/* ── Container ── */
+.md-navigation-bar {
+  box-sizing: border-box;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  justify-content: flex-start;
+  background-color: var(--md-sys-color-surface);
+
+  &[data-orientation="vertical"] {
+    height: 80px;
+    padding-block: 6px;
+  }
+
+  &[data-orientation="horizontal"] {
+    height: 64px;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding-block: 12px;
+  }
+}
+
+/* ── Item ── */
+.md-navigation-bar-item {
+  --md-navigation-bar-indicator-color: var(--md-sys-color-secondary-container);
+  --md-navigation-bar-state-layer-color: var(--md-sys-color-on-surface-variant);
+  position: relative;
+  display: flex;
+  min-width: 64px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  outline: none;
+  transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+
+  & svg {
+    pointer-events: none;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  &[data-active="true"] {
+    color: var(--md-sys-color-on-surface);
+    --md-navigation-bar-state-layer-color: var(--md-sys-color-on-secondary-container);
+  }
+
+  &[data-active="true"] svg {
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  &:not([data-active="true"]):hover {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  &[data-orientation="vertical"] {
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  &[data-orientation="horizontal"] {
+    flex: 0 0 auto;
+    height: 40px;
+    flex-direction: row;
+    gap: 4px;
+    padding-inline: 20px;
+    white-space: nowrap;
+  }
+}
+
+/* ── Icon wrapper (vertical) ── */
+.md-navigation-bar-item__icon-container {
+  position: relative;
+  display: flex;
+  height: 32px;
+  width: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background-color: transparent;
+  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  isolation: isolate;
+}
+
+/* ── Active indicator (vertical) ── */
+.md-navigation-bar-item__indicator {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--md-navigation-bar-indicator-color);
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  transform: scaleX(0);
+  z-index: 0;
+  pointer-events: none;
+
+  &[data-active="true"] {
+    transform: scaleX(1);
+  }
+}
+
+/* ── Hover state layer (vertical) ── */
+.md-navigation-bar-item__state-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--md-navigation-bar-state-layer-color);
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── Icon + badge wrapper ── */
+.md-navigation-bar-item__icon-inner {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  height: 32px;
+  width: 56px;
+  align-items: center;
+  justify-content: center;
+}
+
+.md-navigation-bar-item__icon-relative {
+  position: relative;
+  display: flex;
+  height: 24px;
+  width: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Badge ── */
+.md-navigation-bar-item__badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  z-index: 20;
+  display: flex;
+  min-width: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.md-navigation-bar-item__badge--horizontal {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  z-index: 20;
+  display: flex;
+  min-width: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Label ── */
+.md-navigation-bar-item__label {
+  z-index: 10;
+  font-family: var(--md-sys-typescale-title-small-font);
+  font-size: var(--md-sys-typescale-title-small-size);
+  line-height: var(--md-sys-typescale-title-small-line-height);
+  font-weight: var(--md-sys-typescale-title-small-weight);
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  &[data-hidden="true"] {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+.md-navigation-bar-item__label--horizontal {
+  z-index: 10;
+  font-family: var(--md-sys-typescale-title-small-font);
+  font-size: var(--md-sys-typescale-title-small-size);
+  line-height: var(--md-sys-typescale-title-small-line-height);
+  font-weight: var(--md-sys-typescale-title-small-weight);
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  &[data-hidden="true"] {
+    width: 0;
+    opacity: 0;
+  }
+}
+
+/* ── Horizontal indicator (full item bg) ── */
+.md-navigation-bar-item__indicator--horizontal {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background-color: var(--md-navigation-bar-indicator-color);
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  transform: scaleX(0);
+  z-index: 0;
+  pointer-events: none;
+
+  &[data-active="true"] {
+    transform: scaleX(1);
+  }
+}
+
+/* ── Hover state layer (horizontal) ── */
+.md-navigation-bar-item__state-layer--horizontal {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background-color: var(--md-navigation-bar-state-layer-color);
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.md-navigation-bar-item[data-orientation="vertical"]:hover .md-navigation-bar-item__state-layer,
+.md-navigation-bar-item[data-orientation="vertical"]:focus-visible .md-navigation-bar-item__state-layer,
+.md-navigation-bar-item[data-orientation="horizontal"]:hover .md-navigation-bar-item__state-layer--horizontal,
+.md-navigation-bar-item[data-orientation="horizontal"]:focus-visible .md-navigation-bar-item__state-layer--horizontal {
+  opacity: var(--md-sys-state-hover-opacity);
+}
+
+/* ── Horizontal icon ── */
+.md-navigation-bar-item__icon--horizontal {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  height: 24px;
+  width: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Fixed glyph box ── */
+.md-navigation-bar-item__icon-glyph {
+  display: flex;
+  height: 24px;
+  width: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Icon toggle (stacked grid) ── */
+.md-navigation-bar-item__icon-toggle {
+  display: grid;
+  height: 24px;
+  width: 24px;
+
+  & > * {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+.md-navigation-bar-item__icon-fade {
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}

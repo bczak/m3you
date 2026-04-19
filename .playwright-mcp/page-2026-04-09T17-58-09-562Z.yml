@@ -1,0 +1,183 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - banner "Storybook" [ref=e6]:
+      - heading "Storybook" [level=1] [ref=e7]
+      - img
+      - generic [ref=e11]:
+        - generic [ref=e13]:
+          - link "Skip to content" [ref=e14] [cursor=pointer]:
+            - /url: "#storybook-preview-wrapper"
+          - link "Storybook" [ref=e16] [cursor=pointer]:
+            - /url: ./
+            - img "Storybook" [ref=e17]
+          - switch "Settings" [ref=e22] [cursor=pointer]:
+            - img [ref=e23]
+        - generic [ref=e26]: Search for components
+        - search [ref=e27]:
+          - combobox "Search for components" [ref=e28]:
+            - generic:
+              - img
+            - searchbox "Search for components" [ref=e29]
+            - code:
+              - generic: ⌘
+              - text: K
+            - button "Tag filters" [ref=e31] [cursor=pointer]:
+              - img [ref=e32]
+          - button "Create a new story" [ref=e34] [cursor=pointer]:
+            - img [ref=e35]
+        - navigation "Stories" [ref=e38]:
+          - heading "Stories" [level=2] [ref=e39]
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - button "Collapse" [expanded] [ref=e43] [cursor=pointer]:
+                - img [ref=e45]
+                - text: Components
+              - button "Expand all" [ref=e47] [cursor=pointer]:
+                - img [ref=e48]
+            - button "Button" [ref=e51] [cursor=pointer]:
+              - generic [ref=e52]:
+                - img [ref=e54]
+                - img [ref=e56]
+              - text: Button
+            - button "ConnectedButtonGroup" [ref=e59] [cursor=pointer]:
+              - generic [ref=e60]:
+                - img [ref=e62]
+                - img [ref=e64]
+              - text: ConnectedButtonGroup
+            - button "ExtendedFAB" [ref=e67] [cursor=pointer]:
+              - generic [ref=e68]:
+                - img [ref=e70]
+                - img [ref=e72]
+              - text: ExtendedFAB
+            - button "FAB" [ref=e75] [cursor=pointer]:
+              - generic [ref=e76]:
+                - img [ref=e78]
+                - img [ref=e80]
+              - text: FAB
+            - button "FABMenu" [ref=e83] [cursor=pointer]:
+              - generic [ref=e84]:
+                - img [ref=e86]
+                - img [ref=e88]
+              - text: FABMenu
+            - button "IconButton" [ref=e91] [cursor=pointer]:
+              - generic [ref=e92]:
+                - img [ref=e94]
+                - img [ref=e96]
+              - text: IconButton
+            - button "LoadingIndicator" [expanded] [ref=e99] [cursor=pointer]:
+              - generic [ref=e100]:
+                - img [ref=e102]
+                - img [ref=e104]
+              - text: LoadingIndicator
+            - link "Docs" [ref=e107] [cursor=pointer]:
+              - /url: /?path=/docs/components-loadingindicator--docs
+              - img [ref=e109]
+              - text: Docs
+            - link "Default" [ref=e112] [cursor=pointer]:
+              - /url: /?path=/story/components-loadingindicator--default
+              - img [ref=e114]
+              - text: Default
+            - link "All Sizes" [ref=e117] [cursor=pointer]:
+              - /url: /?path=/story/components-loadingindicator--all-sizes
+              - img [ref=e119]
+              - text: All Sizes
+            - link "Custom Colors" [ref=e122] [cursor=pointer]:
+              - /url: /?path=/story/components-loadingindicator--custom-colors
+              - img [ref=e124]
+              - text: Custom Colors
+            - generic [ref=e126]:
+              - link "Extra Large" [ref=e127] [cursor=pointer]:
+                - /url: /?path=/story/components-loadingindicator--extra-large
+                - img [ref=e129]
+                - text: Extra Large
+              - link "Skip to content" [ref=e131] [cursor=pointer]:
+                - /url: "#storybook-preview-wrapper"
+            - link "Shapes Preview" [ref=e133] [cursor=pointer]:
+              - /url: /?path=/story/components-loadingindicator--shapes-preview
+              - img [ref=e135]
+              - text: Shapes Preview
+            - button "Menu" [ref=e138] [cursor=pointer]:
+              - generic [ref=e139]:
+                - img [ref=e141]
+                - img [ref=e143]
+              - text: Menu
+            - button "SplitButton" [ref=e146] [cursor=pointer]:
+              - generic [ref=e147]:
+                - img [ref=e149]
+                - img [ref=e151]
+              - text: SplitButton
+            - button "StandardButtonGroup" [ref=e154] [cursor=pointer]:
+              - generic [ref=e155]:
+                - img [ref=e157]
+                - img [ref=e159]
+              - text: StandardButtonGroup
+            - button "ToggleButton" [ref=e162] [cursor=pointer]:
+              - generic [ref=e163]:
+                - img [ref=e165]
+                - img [ref=e167]
+              - text: ToggleButton
+            - button "ToggleIconButton" [ref=e170] [cursor=pointer]:
+              - generic [ref=e171]:
+                - img [ref=e173]
+                - img [ref=e175]
+              - text: ToggleIconButton
+            - button "Switch" [ref=e178] [cursor=pointer]:
+              - generic [ref=e179]:
+                - img [ref=e181]
+                - img [ref=e183]
+              - text: Switch
+    - separator "Sidebar resize handle" [ref=e185]
+  - generic [ref=e187]:
+    - region "Toolbar" [ref=e188]:
+      - heading "Toolbar" [level=2] [ref=e189]
+      - toolbar [ref=e190]:
+        - generic [ref=e191]:
+          - button "Reload story" [ref=e192] [cursor=pointer]:
+            - img [ref=e193]
+          - switch "Measure tool" [ref=e195] [cursor=pointer]:
+            - img [ref=e196]
+          - switch "Outline tool" [ref=e199] [cursor=pointer]:
+            - img [ref=e200]
+          - button "Viewport size" [ref=e202] [cursor=pointer]:
+            - img [ref=e203]
+          - button "Vision filter" [ref=e207] [cursor=pointer]:
+            - img [ref=e208]
+        - generic [ref=e212]:
+          - switch "Change zoom level" [ref=e213] [cursor=pointer]: 100%
+          - button "Enter full screen" [ref=e214] [cursor=pointer]:
+            - img [ref=e215]
+          - button "Share" [ref=e217] [cursor=pointer]:
+            - img [ref=e218]
+          - button "Open in editor" [ref=e221] [cursor=pointer]:
+            - img [ref=e222]
+    - main "Main preview area" [ref=e225]:
+      - heading "Main preview area" [level=2] [ref=e226]
+      - generic [ref=e227]:
+        - progressbar "Content is loading..." [ref=e229]
+        - generic [ref=e230]:
+          - link "Skip to sidebar" [ref=e231] [cursor=pointer]:
+            - /url: "#components-loadingindicator--extra-large"
+          - iframe [ref=e235]:
+            
+  - generic [ref=e236]:
+    - separator "Addon panel resize handle" [ref=e237]
+    - region "Addon panel" [ref=e239]:
+      - heading "Addon panel" [level=2] [ref=e240]
+      - generic [ref=e241]:
+        - generic [ref=e242]:
+          - generic [ref=e243]:
+            - button "Move addon panel to right" [ref=e244] [cursor=pointer]:
+              - img [ref=e245]
+            - button "Hide addon panel" [ref=e248] [cursor=pointer]:
+              - img [ref=e249]
+          - tablist "Available addons" [ref=e254]:
+            - tab "Controls" [selected] [ref=e255] [cursor=pointer]:
+              - generic [ref=e257]: Controls
+            - tab "Actions" [ref=e258] [cursor=pointer]:
+              - generic [ref=e260]: Actions
+            - tab "Interactions" [ref=e261] [cursor=pointer]:
+              - generic [ref=e263]: Interactions
+            - tab "Code" [ref=e264] [cursor=pointer]
+            - tab "Accessibility" [ref=e265] [cursor=pointer]:
+              - generic [ref=e267]: Accessibility
+        - tabpanel "Controls" [ref=e268]

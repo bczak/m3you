@@ -1,0 +1,225 @@
+/* =============================================================================
+   Switch — M3 Spec
+   Track: 52x32px, corner-full, 2px outline
+   Handle off: 16px, Handle on: 24px
+   State layer: 40px, touch target: 48x68px
+   Source: m3.material.io/components/switch/specs
+   ============================================================================= */
+
+/* ── Label / touch target ── */
+.md-switch {
+  position: relative;
+  display: inline-flex;
+  height: 48px;
+  width: 68px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+
+  &[data-disabled] {
+    pointer-events: none;
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+}
+
+/* ── State layer (36px = 1.5x thumb, follows thumb) ── */
+.md-switch__state-layer {
+  position: absolute;
+  display: flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition:
+    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  &[data-checked="false"] {
+    transform: translateX(-12px);
+  }
+
+  &[data-checked="true"] {
+    transform: translateX(12px);
+  }
+}
+
+/* State layer hover colors */
+.md-switch[data-variant="primary"][data-checked="true"]:hover .md-switch__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) var(--md-sys-state-hover-opacity), transparent);
+}
+
+.md-switch[data-variant="primary"][data-checked="false"]:hover .md-switch__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-outline) var(--md-sys-state-hover-opacity), transparent);
+}
+
+.md-switch[data-variant="error"]:hover .md-switch__state-layer {
+  background-color: color-mix(in srgb, var(--md-sys-color-error) var(--md-sys-state-hover-opacity), transparent);
+}
+
+/* ── Track (52x32px) ── */
+.md-switch__track {
+  pointer-events: none;
+  position: relative;
+  display: inline-flex;
+  height: 32px;
+  width: 52px;
+  flex-shrink: 0;
+  align-items: center;
+  border-radius: 24px;
+  outline: 1.5px solid;
+  outline-offset: -2px;
+  transition:
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    outline-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  /* Unchecked */
+  &[data-checked="false"][data-variant="primary"] {
+    outline-color: var(--md-sys-color-outline);
+    background-color: var(--md-sys-color-surface-container-highest);
+  }
+
+  &[data-checked="false"][data-variant="error"] {
+    outline-color: var(--md-sys-color-error);
+    background-color: var(--md-sys-color-surface-container-highest);
+  }
+
+  /* Checked */
+  &[data-checked="true"][data-variant="primary"] {
+    outline-color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-primary);
+  }
+
+  &[data-checked="true"][data-variant="error"] {
+    outline-color: var(--md-sys-color-error);
+    background-color: var(--md-sys-color-error);
+  }
+}
+
+/* ── Thumb ── */
+.md-switch__thumb {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: var(--md-sys-elevation-1);
+  transition:
+    width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  & svg {
+    transition:
+      color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  /* Unchecked, no icon */
+  &[data-checked="false"][data-with-icon="false"] {
+    width: 18px;
+    height: 18px;
+    transform: translateX(8px);
+    background-color: var(--md-sys-color-outline);
+  }
+
+  /* Unchecked, with icon */
+  &[data-checked="false"][data-with-icon="true"] {
+    width: 24px;
+    height: 24px;
+    transform: translateX(4px);
+    background-color: var(--md-sys-color-outline);
+  }
+
+  /* Checked, no icon */
+  &[data-checked="true"][data-with-icon="false"][data-variant="primary"] {
+    width: 24px;
+    height: 24px;
+    transform: translateX(24px);
+    background-color: var(--md-sys-color-on-primary);
+  }
+
+  &[data-checked="true"][data-with-icon="false"][data-variant="error"] {
+    width: 24px;
+    height: 24px;
+    transform: translateX(24px);
+    background-color: var(--md-sys-color-on-error);
+  }
+
+  /* Checked, with icon */
+  &[data-checked="true"][data-with-icon="true"][data-variant="primary"] {
+    width: 24px;
+    height: 24px;
+    transform: translateX(24px);
+    background-color: var(--md-sys-color-on-primary);
+  }
+
+  &[data-checked="true"][data-with-icon="true"][data-variant="error"] {
+    width: 24px;
+    height: 24px;
+    transform: translateX(24px);
+    background-color: var(--md-sys-color-on-error);
+  }
+}
+
+/* ── Thumb icon colors ── */
+.md-switch__thumb[data-checked="false"][data-variant="primary"] svg {
+  color: var(--md-sys-color-surface-container-highest);
+}
+
+.md-switch__thumb[data-checked="false"][data-variant="error"] svg {
+  color: var(--md-sys-color-surface-container-highest);
+}
+
+.md-switch__thumb[data-checked="true"][data-variant="primary"] svg {
+  color: var(--md-sys-color-primary);
+}
+
+.md-switch__thumb[data-checked="true"][data-variant="error"] svg {
+  color: var(--md-sys-color-error);
+}
+
+/* ── Icon crossfade ── */
+.md-switch__icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  & svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 3;
+  }
+
+  &[data-visible="true"] {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  &[data-visible="false"] {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* ── Hidden native input ── */
+.md-switch__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

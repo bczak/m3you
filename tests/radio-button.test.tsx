@@ -1,6 +1,6 @@
-import { afterEach, beforeAll, expect, test } from '@rstest/core';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { afterEach, beforeAll, expect, test } from 'vitest';
 import { RadioButton, RadioGroup, RadioGroupItem } from '../src/components/ui/radio-button';
 
 // Polyfill Element.animate for m3-ripple (happy-dom lacks it)

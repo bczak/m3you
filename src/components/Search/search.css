@@ -1,0 +1,230 @@
+/* =============================================================================
+   Search — M3 Spec
+   Bar: height 56px, shape full, bg surface-container-high, elevation level3
+   Avatar: 30px corner-full
+   Font: body-large
+   Source: m3.material.io/components/search/specs
+   ============================================================================= */
+
+/* ── SearchBar ── */
+.md-search-bar {
+  position: relative;
+  display: flex;
+  height: 56px;
+  width: 100%;
+  align-items: center;
+  border-radius: 28px;
+  background-color: var(--md-sys-color-surface-container-high);
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  border: none;
+  cursor: pointer;
+}
+
+/* ── SearchBar leading icon ── */
+.md-search-bar__leading {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-left: 16px;
+  color: var(--md-sys-color-on-surface-variant);
+
+  & svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ── SearchBar text / placeholder ── */
+.md-search-bar__text {
+  flex: 1;
+  min-width: 0;
+  padding-inline: 16px;
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &[data-empty="true"] {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  &[data-empty="false"] {
+    color: var(--md-sys-color-on-surface);
+  }
+}
+
+/* ── SearchBar input ── */
+.md-search-bar__input {
+  flex: 1;
+  min-width: 0;
+  padding-inline: 16px;
+  background-color: transparent;
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  color: var(--md-sys-color-on-surface);
+  caret-color: var(--md-sys-color-primary);
+  outline: none;
+  border: none;
+
+  &::placeholder {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+}
+
+/* ── SearchBar trailing (icon button container) ── */
+.md-search-bar__trailing {
+  margin-right: 4px;
+  pointer-events: none;
+}
+
+/* ── SearchView ── */
+.md-search-view {
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--md-sys-color-surface-container-high);
+
+  &[data-mode="fullScreen"] {
+    position: fixed;
+    inset: 0;
+  }
+
+  &[data-mode="docked"] {
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    box-shadow: var(--md-sys-elevation-5);
+  }
+}
+
+/* ── SearchView header ── */
+.md-search-view__header {
+  display: flex;
+  height: 72px;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  padding-inline: 8px;
+
+  @media (min-width: 768px) {
+    height: 56px;
+  }
+}
+
+/* ── SearchView input ── */
+.md-search-view__input {
+  flex: 1;
+  min-width: 0;
+  background-color: transparent;
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  color: var(--md-sys-color-on-surface);
+  caret-color: var(--md-sys-color-primary);
+  outline: none;
+  border: none;
+
+  &::placeholder {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+}
+
+/* ── SearchView divider ── */
+.md-search-view__divider {
+  flex-shrink: 0;
+  border-color: var(--md-sys-color-outline-variant);
+}
+
+/* ── SearchView content ── */
+.md-search-view__content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ── SearchView backdrop (docked click-away) ── */
+.md-search-view__backdrop {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+  }
+}
+
+/* ── SearchView wrapper (expanded overlay) ── */
+.md-search-view--expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+
+  @media (min-width: 768px) {
+    position: absolute;
+    inset: auto;
+    top: 0;
+    right: 0;
+    left: 0;
+    max-height: min(70vh, 600px);
+  }
+}
+
+/* ── SearchSuggestionItem ── */
+.md-search-suggestion-item {
+  position: relative;
+  display: flex;
+  height: 56px;
+  width: 100%;
+  cursor: pointer;
+  align-items: center;
+  gap: 16px;
+  padding-inline: 16px;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  color: var(--md-sys-color-on-surface);
+  transition: background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  }
+}
+
+.md-search-suggestion-item__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  color: var(--md-sys-color-on-surface-variant);
+
+  & svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.md-search-suggestion-item__text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.md-search-suggestion-item__trailing {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  color: var(--md-sys-color-on-surface-variant);
+
+  & svg {
+    width: 24px;
+    height: 24px;
+  }
+}

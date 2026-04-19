@@ -1,293 +1,24 @@
-@import "tailwindcss";
+/* =============================================================================
+   m3you — Material Design 3 Expressive Component Library
+   Global stylesheet: imports all design tokens, utilities, and component styles
+   ============================================================================= */
+
+/* Design Tokens */
+@import "./tokens/_index.css";
+
+/* Utilities */
+@import "./utilities.css";
+
+/* External */
 @import "m3-ripple/ripple.css";
 
-@theme {
-  /* Custom spacing for M3 checkbox (18px) */
-  --spacing-4_5: 1.125rem;
+/* =============================================================================
+   Component Styles — co-located with components, imported via their .tsx files
+   ============================================================================= */
 
-  /* Override text-xs to 11px (M3 spec) */
-  --text-xs: 0.6875rem;
-  --text-xs--line-height: 1rem;
-
-  /* M3 Shape Scale */
-  --radius-xs: 0.125rem; /* 2px — checkbox */
-  --radius-3xl: 1.75rem; /* 28px — M3 extra-large */
-
-  /* M3 State Opacity */
-  --opacity-38: 0.38; /* disabled state */
-
-  /* =========================================================================
-     M3 Color System — Generated from seed #416699 via SchemeContent
-     ========================================================================= */
-
-  /* Primary */
-  --color-primary: #274e7f;
-  --color-on-primary: #ffffff;
-  --color-primary-container: #416699;
-  --color-on-primary-container: #d5e3ff;
-  --color-primary-fixed: #d4e3ff;
-  --color-primary-fixed-dim: #a6c8ff;
-  --color-on-primary-fixed: #001c3a;
-  --color-on-primary-fixed-variant: #1f4879;
-  --color-inverse-primary: #a6c8ff;
-
-  /* Secondary */
-  --color-secondary: #525f74;
-  --color-on-secondary: #ffffff;
-  --color-secondary-container: #d6e3fd;
-  --color-on-secondary-container: #58657b;
-  --color-secondary-fixed: #d6e3fd;
-  --color-secondary-fixed-dim: #bac7e0;
-  --color-on-secondary-fixed: #0e1c2e;
-  --color-on-secondary-fixed-variant: #3b475c;
-
-  /* Tertiary */
-  --color-tertiary: #693c6e;
-  --color-on-tertiary: #ffffff;
-  --color-tertiary-container: #835488;
-  --color-on-tertiary-container: #ffd6ff;
-  --color-tertiary-fixed: #ffd6ff;
-  --color-tertiary-fixed-dim: #ecb4ef;
-  --color-on-tertiary-fixed: #310839;
-  --color-on-tertiary-fixed-variant: #623668;
-
-  /* Error */
-  --color-error: #ba1a1a;
-  --color-on-error: #ffffff;
-  --color-error-container: #ffdad6;
-  --color-on-error-container: #93000a;
-
-  /* Surface */
-  --color-surface: #f9f9fe;
-  --color-on-surface: #1a1c1f;
-  --color-surface-variant: #dfe2ed;
-  --color-on-surface-variant: #43474f;
-  --color-surface-dim: #dad9de;
-  --color-surface-bright: #f9f9fe;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f4f3f8;
-  --color-surface-container: #eeedf2;
-  --color-surface-container-high: #e8e8ec;
-  --color-surface-container-highest: #e2e2e7;
-  --color-surface-tint: #3a5f92;
-
-  /* Outline */
-  --color-outline: #737780;
-  --color-outline-variant: #c3c6d0;
-
-  /* Inverse */
-  --color-inverse-surface: #2f3034;
-  --color-inverse-on-surface: #f1f0f5;
-
-  /* Background */
-  --color-background: #f9f9fe;
-  --color-on-background: #1a1c1f;
-
-  /* Shadow & Scrim */
-  --color-shadow: #000000;
-  --color-scrim: #000000;
-
-  /* =========================================================================
-     Backward-compatible aliases (*-foreground -> on-*)
-     ========================================================================= */
-  --color-primary-foreground: var(--color-on-primary);
-  --color-primary-container-foreground: var(--color-on-primary-container);
-  --color-secondary-foreground: var(--color-on-secondary);
-  --color-secondary-container-foreground: var(--color-on-secondary-container);
-  --color-tertiary-foreground: var(--color-on-tertiary);
-  --color-tertiary-container-foreground: var(--color-on-tertiary-container);
-  --color-error-foreground: var(--color-on-error);
-  --color-error-container-foreground: var(--color-on-error-container);
-  --color-foreground: var(--color-on-background);
-  --color-surface-foreground: var(--color-on-surface);
-  --color-surface-variant-foreground: var(--color-on-surface-variant);
-  --color-inverse-surface-foreground: var(--color-inverse-on-surface);
-  --color-outline-foreground: var(--color-on-primary);
-
-  /* Semantic aliases */
-  --color-destructive: var(--color-error);
-  --color-destructive-foreground: var(--color-on-error);
-  --color-muted: var(--color-surface-variant);
-  --color-muted-foreground: var(--color-on-surface-variant);
-  --color-accent: var(--color-tertiary);
-  --color-accent-foreground: var(--color-on-tertiary);
-  --color-border: var(--color-outline-variant);
-  --color-input: var(--color-outline-variant);
-  --color-ring: var(--color-primary);
-
-  /* Radius */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-
-  /* Animations */
-  --animate-snackbar-slide-up: snackbar-slide-up 300ms cubic-bezier(0, 0, 0, 1);
-  --animate-calendar-slide-left: calendar-slide-left 200ms cubic-bezier(0.2, 0, 0, 1);
-  --animate-calendar-slide-right: calendar-slide-right 200ms cubic-bezier(0.2, 0, 0, 1);
-  --animate-menu-in: menu-in 200ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-/* ===========================================================================
-   Dark Mode — Generated from seed #416699 via SchemeContent (dark)
-   =========================================================================== */
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --color-primary: #a6c8ff;
-    --color-on-primary: #00315f;
-    --color-primary-container: #416699;
-    --color-on-primary-container: #d5e3ff;
-    --color-primary-fixed: #d4e3ff;
-    --color-primary-fixed-dim: #a6c8ff;
-    --color-on-primary-fixed: #001c3a;
-    --color-on-primary-fixed-variant: #1f4879;
-    --color-inverse-primary: #3a5f92;
-    --color-secondary: #bac7e0;
-    --color-on-secondary: #243144;
-    --color-secondary-container: #3b475c;
-    --color-on-secondary-container: #a8b6ce;
-    --color-secondary-fixed: #d6e3fd;
-    --color-secondary-fixed-dim: #bac7e0;
-    --color-on-secondary-fixed: #0e1c2e;
-    --color-on-secondary-fixed-variant: #3b475c;
-    --color-tertiary: #ecb4ef;
-    --color-on-tertiary: #491f50;
-    --color-tertiary-container: #835488;
-    --color-on-tertiary-container: #ffd6ff;
-    --color-tertiary-fixed: #ffd6ff;
-    --color-tertiary-fixed-dim: #ecb4ef;
-    --color-on-tertiary-fixed: #310839;
-    --color-on-tertiary-fixed-variant: #623668;
-    --color-error: #ffb4ab;
-    --color-on-error: #690005;
-    --color-error-container: #93000a;
-    --color-on-error-container: #ffdad6;
-    --color-surface: #121317;
-    --color-on-surface: #e2e2e7;
-    --color-surface-variant: #43474f;
-    --color-on-surface-variant: #c3c6d0;
-    --color-surface-dim: #121317;
-    --color-surface-bright: #38393d;
-    --color-surface-container-lowest: #0c0e12;
-    --color-surface-container-low: #1a1c1f;
-    --color-surface-container: #1e2023;
-    --color-surface-container-high: #282a2e;
-    --color-surface-container-highest: #333538;
-    --color-surface-tint: #a6c8ff;
-    --color-outline: #8d919a;
-    --color-outline-variant: #43474f;
-    --color-inverse-surface: #e2e2e7;
-    --color-inverse-on-surface: #2f3034;
-    --color-background: #121317;
-    --color-on-background: #e2e2e7;
-    --color-shadow: #000000;
-    --color-scrim: #000000;
-  }
-}
-
-.dark {
-  --color-primary: #a6c8ff;
-  --color-on-primary: #00315f;
-  --color-primary-container: #416699;
-  --color-on-primary-container: #d5e3ff;
-  --color-primary-fixed: #d4e3ff;
-  --color-primary-fixed-dim: #a6c8ff;
-  --color-on-primary-fixed: #001c3a;
-  --color-on-primary-fixed-variant: #1f4879;
-  --color-inverse-primary: #3a5f92;
-  --color-secondary: #bac7e0;
-  --color-on-secondary: #243144;
-  --color-secondary-container: #3b475c;
-  --color-on-secondary-container: #a8b6ce;
-  --color-secondary-fixed: #d6e3fd;
-  --color-secondary-fixed-dim: #bac7e0;
-  --color-on-secondary-fixed: #0e1c2e;
-  --color-on-secondary-fixed-variant: #3b475c;
-  --color-tertiary: #ecb4ef;
-  --color-on-tertiary: #491f50;
-  --color-tertiary-container: #835488;
-  --color-on-tertiary-container: #ffd6ff;
-  --color-tertiary-fixed: #ffd6ff;
-  --color-tertiary-fixed-dim: #ecb4ef;
-  --color-on-tertiary-fixed: #310839;
-  --color-on-tertiary-fixed-variant: #623668;
-  --color-error: #ffb4ab;
-  --color-on-error: #690005;
-  --color-error-container: #93000a;
-  --color-on-error-container: #ffdad6;
-  --color-surface: #121317;
-  --color-on-surface: #e2e2e7;
-  --color-surface-variant: #43474f;
-  --color-on-surface-variant: #c3c6d0;
-  --color-surface-dim: #121317;
-  --color-surface-bright: #38393d;
-  --color-surface-container-lowest: #0c0e12;
-  --color-surface-container-low: #1a1c1f;
-  --color-surface-container: #1e2023;
-  --color-surface-container-high: #282a2e;
-  --color-surface-container-highest: #333538;
-  --color-surface-tint: #a6c8ff;
-  --color-outline: #8d919a;
-  --color-outline-variant: #43474f;
-  --color-inverse-surface: #e2e2e7;
-  --color-inverse-on-surface: #2f3034;
-  --color-background: #121317;
-  --color-on-background: #e2e2e7;
-  --color-shadow: #000000;
-  --color-scrim: #000000;
-}
-
-.light {
-  --color-primary: #274e7f;
-  --color-on-primary: #ffffff;
-  --color-primary-container: #416699;
-  --color-on-primary-container: #d5e3ff;
-  --color-primary-fixed: #d4e3ff;
-  --color-primary-fixed-dim: #a6c8ff;
-  --color-on-primary-fixed: #001c3a;
-  --color-on-primary-fixed-variant: #1f4879;
-  --color-inverse-primary: #a6c8ff;
-  --color-secondary: #525f74;
-  --color-on-secondary: #ffffff;
-  --color-secondary-container: #d6e3fd;
-  --color-on-secondary-container: #58657b;
-  --color-secondary-fixed: #d6e3fd;
-  --color-secondary-fixed-dim: #bac7e0;
-  --color-on-secondary-fixed: #0e1c2e;
-  --color-on-secondary-fixed-variant: #3b475c;
-  --color-tertiary: #693c6e;
-  --color-on-tertiary: #ffffff;
-  --color-tertiary-container: #835488;
-  --color-on-tertiary-container: #ffd6ff;
-  --color-tertiary-fixed: #ffd6ff;
-  --color-tertiary-fixed-dim: #ecb4ef;
-  --color-on-tertiary-fixed: #310839;
-  --color-on-tertiary-fixed-variant: #623668;
-  --color-error: #ba1a1a;
-  --color-on-error: #ffffff;
-  --color-error-container: #ffdad6;
-  --color-on-error-container: #93000a;
-  --color-surface: #f9f9fe;
-  --color-on-surface: #1a1c1f;
-  --color-surface-variant: #dfe2ed;
-  --color-on-surface-variant: #43474f;
-  --color-surface-dim: #dad9de;
-  --color-surface-bright: #f9f9fe;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f4f3f8;
-  --color-surface-container: #eeedf2;
-  --color-surface-container-high: #e8e8ec;
-  --color-surface-container-highest: #e2e2e7;
-  --color-surface-tint: #3a5f92;
-  --color-outline: #737780;
-  --color-outline-variant: #c3c6d0;
-  --color-inverse-surface: #2f3034;
-  --color-inverse-on-surface: #f1f0f5;
-  --color-background: #f9f9fe;
-  --color-on-background: #1a1c1f;
-  --color-shadow: #000000;
-  --color-scrim: #000000;
-}
+/* =============================================================================
+   Keyframe Animations
+   ============================================================================= */
 
 @keyframes calendar-slide-left {
   from {
@@ -326,174 +57,123 @@
 }
 
 /* =============================================================================
-   ConnectedButtonGroup - CSS-based shape rules using pseudo-selectors
-   Horizontal: left/right edges, Vertical: top/bottom edges
-   - First button: outer edge from shape, inner edge squared
-   - Last button: outer edge from shape, inner edge squared
-   - Middle buttons: all corners squared
-   - Selected buttons: always full circle (overrides all above)
+   ConnectedButtonGroup — CSS-based shape rules using pseudo-selectors
    ============================================================================= */
 
-/* Radius values per size */
 [data-connected-group][data-size="xs"] {
-  --square-radius: 0.5rem;
-  --round-radius: 1rem;
+  --square-radius: var(--md-sys-shape-corner-small);
+  --round-radius: 16px; /* 32/2 */
 }
 [data-connected-group][data-size="sm"] {
-  --square-radius: 0.5rem;
-  --round-radius: 1.25rem;
+  --square-radius: var(--md-sys-shape-corner-small);
+  --round-radius: 20px; /* 40/2 */
 }
 [data-connected-group][data-size="md"] {
-  --square-radius: 0.75rem;
-  --round-radius: 1.75rem;
+  --square-radius: var(--md-sys-shape-corner-medium);
+  --round-radius: 28px; /* 56/2 */
 }
 [data-connected-group][data-size="lg"] {
-  --square-radius: 1rem;
-  --round-radius: 3rem;
+  --square-radius: var(--md-sys-shape-corner-extra-large);
+  --round-radius: 48px; /* 96/2 */
 }
 [data-connected-group][data-size="xl"] {
-  --square-radius: 1rem;
-  --round-radius: 3.75rem;
+  --square-radius: var(--md-sys-shape-corner-extra-large);
+  --round-radius: 68px; /* 136/2 */
 }
 
-/* -----------------------------------------------------------------------------
-   Horizontal orientation (default)
-   ----------------------------------------------------------------------------- */
-
-/* First button: right side squared, left keeps shape */
+/* Horizontal orientation */
 [data-connected-group][data-orientation="horizontal"] > *:first-child:not(:last-child):not([data-selected]) {
   border-top-right-radius: var(--square-radius);
   border-bottom-right-radius: var(--square-radius);
 }
-
-/* Last button: left side squared, right keeps shape */
 [data-connected-group][data-orientation="horizontal"] > *:last-child:not(:first-child):not([data-selected]) {
   border-top-left-radius: var(--square-radius);
   border-bottom-left-radius: var(--square-radius);
 }
-
-/* Middle buttons: all corners squared */
 [data-connected-group][data-orientation="horizontal"] > *:not(:first-child):not(:last-child):not([data-selected]) {
   border-radius: var(--square-radius);
 }
 
-/* -----------------------------------------------------------------------------
-   Vertical orientation
-   ----------------------------------------------------------------------------- */
-
-/* First button: bottom side squared, top keeps shape */
+/* Vertical orientation */
 [data-connected-group][data-orientation="vertical"] > *:first-child:not(:last-child):not([data-selected]) {
   border-bottom-left-radius: var(--square-radius);
   border-bottom-right-radius: var(--square-radius);
 }
-
-/* Last button: top side squared, bottom keeps shape */
 [data-connected-group][data-orientation="vertical"] > *:last-child:not(:first-child):not([data-selected]) {
   border-top-left-radius: var(--square-radius);
   border-top-right-radius: var(--square-radius);
 }
-
-/* Middle buttons: all corners squared */
 [data-connected-group][data-orientation="vertical"] > *:not(:first-child):not(:last-child):not([data-selected]) {
   border-radius: var(--square-radius);
 }
 
-/* -----------------------------------------------------------------------------
-   Selected & Morph (applies to both orientations)
-   ----------------------------------------------------------------------------- */
-
-/* Selected buttons -> always full circle (overrides all above) */
+/* Selected & Morph */
 [data-connected-group] > *[data-selected] {
   border-radius: var(--round-radius);
 }
-
-/* Selected middle buttons with morph: active state -> squared (first/last don't morph) */
 [data-connected-group][data-morph] > *[data-selected]:not(:first-child):not(:last-child):active {
   border-radius: var(--square-radius);
 }
 
 /* =============================================================================
    MenuGroup — Vertical connected shape rules
-   Items inside a menu group share corners: first/last keep outer rounded,
-   middle items get squared corners. Selected items get full pill shape.
    ============================================================================= */
 
 [data-menu-group] {
-  --menu-square: 0.5rem; /* 8px — squared inner corners */
-  --menu-round: 1rem; /* 16px — round selected override */
+  --menu-square: var(--md-sys-shape-corner-small);
+  --menu-round: var(--md-sys-shape-corner-large);
 }
 
-/* First item: bottom (inner) side squared, top keeps item default */
 [data-menu-group] > [role="menuitem"]:first-child:not(:last-child):not([data-selected]) {
   border-bottom-left-radius: var(--menu-square);
   border-bottom-right-radius: var(--menu-square);
 }
-
-/* Last item: top (inner) side squared, bottom keeps item default */
 [data-menu-group] > [role="menuitem"]:last-child:not(:first-child):not([data-selected]) {
   border-top-left-radius: var(--menu-square);
   border-top-right-radius: var(--menu-square);
 }
-
-/* Middle items: all corners squared */
 [data-menu-group] > [role="menuitem"]:not(:first-child):not(:last-child):not([data-selected]) {
   border-radius: var(--menu-square);
 }
-
-/* Selected items -> full round (overrides all above) */
 [data-menu-group] > [role="menuitem"][data-selected] {
   border-radius: var(--menu-round);
 }
-
-/* Morph transition for smooth corner animations */
 [data-menu-group] > [role="menuitem"] {
   transition:
-    border-radius 200ms cubic-bezier(0.2, 0, 0, 1),
-    background-color 150ms cubic-bezier(0.2, 0, 0, 1),
-    color 150ms cubic-bezier(0.2, 0, 0, 1);
+    border-radius var(--md-sys-motion-duration-extra-short4) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
 }
-
-/* Morph on press: selected middle items squish to squared (first/last don't morph) */
 [data-menu-group] > [role="menuitem"][data-selected]:not(:first-child):not(:last-child):active {
   border-radius: var(--menu-square);
 }
 
 /* =============================================================================
    MenuGrouped — Connected group container shape rules
-   Group boxes within a grouped menu share corners vertically,
-   matching ConnectedButtonGroup vertical orientation.
    ============================================================================= */
 
 [data-menu-grouped] {
-  --group-round: 1.125rem; /* 18px — outer corners */
-  --group-square: 0.5rem; /* 8px — inner corners */
+  --group-round: 18px;
+  --group-square: var(--md-sys-shape-corner-small);
 }
 
-/* All groups: base outer radius */
 [data-menu-grouped] [data-menu-group] {
   border-radius: var(--group-round);
 }
-
-/* First group: bottom (inner) side squared, top keeps round */
 [data-menu-grouped] > :first-child:not(:last-child) > [data-menu-group] {
   border-bottom-left-radius: var(--group-square);
   border-bottom-right-radius: var(--group-square);
 }
-
-/* Last group: top (inner) side squared, bottom keeps round */
 [data-menu-grouped] > :last-child:not(:first-child) > [data-menu-group] {
   border-top-left-radius: var(--group-square);
   border-top-right-radius: var(--group-square);
 }
-
-/* Middle groups: all corners squared */
 [data-menu-grouped] > :not(:first-child):not(:last-child) > [data-menu-group] {
   border-radius: var(--group-square);
 }
 
 /* =============================================================================
-   Linear Progress Indicator Animation
-   Indeterminate sliding bar animation
+   Progress Indicator Animations
    ============================================================================= */
 
 @keyframes linear-progress-indeterminate {
@@ -514,11 +194,6 @@
 .animate-linear-progress-indeterminate {
   animation: linear-progress-indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
 }
-
-/* =============================================================================
-   Circular Progress Indicator Animations
-   Rotation and dash offset animations for indeterminate state
-   ============================================================================= */
 
 @keyframes circular-progress-rotate {
   100% {
@@ -555,12 +230,11 @@
 
 /* =============================================================================
    Bottom Sheet — CSS variable-based transforms for Base UI Drawer
-   Uses --drawer-snap-point-offset and --drawer-swipe-movement-y for drag/snap
    ============================================================================= */
 
 [data-slot="bottom-sheet-content"] {
   transform: translateY(calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px)));
-  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1);
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
 }
 
 [data-slot="bottom-sheet-content"][data-starting-style],
@@ -574,13 +248,11 @@
 
 /* =============================================================================
    Side Sheet — CSS variable-based transforms for Base UI Drawer
-   Uses --drawer-swipe-movement-x for drag
    ============================================================================= */
 
-/* Right side sheet */
 [data-slot="side-sheet-content"][data-swipe-direction="right"] {
   transform: translateX(var(--drawer-swipe-movement-x, 0px));
-  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1);
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
 }
 
 [data-slot="side-sheet-content"][data-swipe-direction="right"][data-starting-style],
@@ -588,10 +260,9 @@
   transform: translateX(100%);
 }
 
-/* Left side sheet */
 [data-slot="side-sheet-content"][data-swipe-direction="left"] {
   transform: translateX(var(--drawer-swipe-movement-x, 0px));
-  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1);
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
 }
 
 [data-slot="side-sheet-content"][data-swipe-direction="left"][data-starting-style],

@@ -1,9 +1,10 @@
 import type { Preview } from '@storybook/react';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import { generateM3Theme } from '../src/lib/color';
 import '../src/styles/globals.css';
+import './storybook.css';
 
 const DEFAULT_SEED = '#416699';
-
 function applyTheme(seed: string, isDark: boolean) {
   const { light, dark } = generateM3Theme(seed);
   const tokens = isDark ? dark : light;
@@ -47,6 +48,7 @@ const preview: Preview = {
   initialGlobals: {
     theme: 'light',
     seed: DEFAULT_SEED,
+    viewport: { value: undefined, isRotated: false },
   },
   decorators: [
     (Story, context) => {
@@ -54,9 +56,13 @@ const preview: Preview = {
       const seed = context.globals.seed ?? DEFAULT_SEED;
       const isDark = theme === 'dark';
       const root = document.documentElement;
+      const body = document.body;
 
-      root.classList.remove('light', 'dark');
-      root.classList.add(isDark ? 'dark' : 'light');
+      root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      root.style.colorScheme = isDark ? 'dark' : 'light';
+      root.style.setProperty('--sb-m3-seed', seed);
+      body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      body.style.colorScheme = isDark ? 'dark' : 'light';
 
       applyTheme(seed, isDark);
 
@@ -64,10 +70,50 @@ const preview: Preview = {
     },
   ],
   parameters: {
+    viewport: {
+      options: INITIAL_VIEWPORTS,
+    },
+    layout: 'padded',
     controls: {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
+      },
+    },
+    docs: {
+      canvas: {
+        sourceState: 'hidden',
+      },
+      toc: true,
+    },
+    options: {
+      storySort: {
+        method: 'alphabetical',
+        order: [
+          'Actions',
+          [
+            'Button',
+            'Icon Button',
+            'Standard Button Group',
+            'Connected Button Group',
+            'Toggle Button',
+            'Toggle Icon Button',
+            'Split Button',
+            'FAB',
+            'Extended FAB',
+            'FAB Menu',
+          ],
+          'Communication',
+          ['Badge', 'Circular Progress', 'Linear Progress', 'Loading Indicator', 'Snackbar'],
+          'Containment',
+          ['Card', 'Dialog', 'Divider', 'Menu', 'Tooltip'],
+          'Navigation',
+          ['App Bar', 'Navigation Bar', 'Navigation Rail', 'Tabs', 'Toolbar'],
+          'Selection',
+          ['Checkbox', 'Chip', 'Radio Button', 'Slider', 'Switch'],
+          'Inputs',
+          ['Text Field'],
+        ],
       },
     },
   },

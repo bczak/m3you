@@ -1,0 +1,195 @@
+/* =============================================================================
+   Chip — M3 Spec
+   Height: 32px, shape: small (8px), label-large, icon 18px
+   4 types (assist, filter, input, suggestion) × 2 variants (outlined, elevated)
+   Source: m3.material.io/components/chips/specs
+   ============================================================================= */
+
+.md-chip {
+  position: relative;
+  display: inline-flex;
+  height: 32px;
+  cursor: pointer;
+  align-items: center;
+  border-radius: var(--md-sys-shape-corner-small);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: 12px;
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  border: none;
+  outline: none;
+  overflow: hidden;
+  --_base-padding: 16px;
+  --_press-expand: 6px;
+  --_press-squeeze: 3px;
+  transition:
+    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    padding-inline var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-default-spatial);
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+
+  & svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ── Padding: default (no leading/trailing icon) ── */
+  padding-left: var(--_base-padding);
+  padding-right: var(--_base-padding);
+
+  &[data-has-leading-icon] {
+    --_base-padding-left: 8px;
+    padding-left: var(--_base-padding-left);
+  }
+
+  &[data-has-trailing-icon] {
+    --_base-padding-right: 8px;
+    padding-right: var(--_base-padding-right);
+  }
+
+  /* ── Press animation: expand pressed chip, squeeze neighbors ── */
+  &[data-press-group]:active {
+    padding-left: calc(var(--_base-padding-left, var(--_base-padding)) + var(--_press-expand));
+    padding-right: calc(var(--_base-padding-right, var(--_base-padding)) + var(--_press-expand));
+  }
+
+  &[data-press-group]:has(+ .md-chip[data-press-group]:active),
+  &[data-press-group]:active + .md-chip[data-press-group] {
+    padding-left: calc(var(--_base-padding-left, var(--_base-padding)) - var(--_press-squeeze));
+    padding-right: calc(var(--_base-padding-right, var(--_base-padding)) - var(--_press-squeeze));
+  }
+
+  /* ── Variant: outlined ── */
+  &[data-variant="outlined"] {
+    background-color: transparent;
+    color: var(--md-sys-color-on-surface-variant);
+    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 30%, transparent);
+
+    &:hover {
+      background-color: color-mix(
+        in srgb,
+        var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity),
+        transparent
+      );
+    }
+  }
+
+  /* ── Variant: elevated ── */
+  &[data-variant="elevated"] {
+    background-color: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-on-surface);
+    box-shadow: var(--md-sys-elevation-1);
+    border: none;
+
+    &:hover {
+      box-shadow: var(--md-sys-elevation-2);
+      background-color: var(--md-sys-color-surface-container);
+    }
+  }
+
+  /* ── Filter selected ── */
+  &[data-type="filter"][data-selected="true"][data-variant="outlined"] {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    border-color: transparent;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--md-sys-color-secondary-container) 90%, transparent);
+    }
+  }
+
+  &[data-type="filter"][data-selected="true"][data-variant="elevated"] {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    box-shadow: var(--md-sys-elevation-2);
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--md-sys-color-secondary-container) 90%, transparent);
+    }
+  }
+}
+
+/* ── Filter check icon container ── */
+.md-chip__filter-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  width: 0;
+  margin-right: 8px;
+
+  &[data-selected="true"] {
+    width: 18px;
+  }
+
+  & svg {
+    transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    transform: scale(0);
+  }
+
+  &[data-selected="true"] svg {
+    transform: scale(1);
+  }
+}
+
+/* ── Leading icon ── */
+.md-chip__leading-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+}
+
+/* ── Trailing icon ── */
+.md-chip__trailing-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+}
+
+/* ── Close button (input chips) ── */
+.md-chip__close {
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 2px;
+  margin-left: 8px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  outline: none;
+  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  &:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) var(--md-sys-state-pressed-opacity),
+      transparent
+    );
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--md-sys-color-primary);
+  }
+
+  & svg {
+    width: 18px;
+    height: 18px;
+  }
+}

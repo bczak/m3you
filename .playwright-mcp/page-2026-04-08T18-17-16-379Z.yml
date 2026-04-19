@@ -1,0 +1,332 @@
+- generic [ref=e3]:
+  - banner "Storybook" [ref=e7]:
+    - heading "Storybook" [level=1] [ref=e8]
+    - img
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]:
+            - link "Skip to content" [ref=e15] [cursor=pointer]:
+              - /url: "#storybook-preview-wrapper"
+            - link "Storybook" [ref=e17] [cursor=pointer]:
+              - /url: ./
+              - img "Storybook" [ref=e18]
+            - switch "Settings" [ref=e23] [cursor=pointer]:
+              - img [ref=e24]
+          - generic [ref=e73]:
+            - generic [ref=e75] [cursor=pointer]:
+              - button "Open onboarding guide" [ref=e79]:
+                - img [ref=e81]
+                - strong [ref=e83]: Level up
+              - generic [ref=e84]:
+                - button "Collapse onboarding checklist" [expanded] [ref=e85]:
+                  - img [ref=e86]
+                - button "67% completed" [ref=e88]:
+                  - generic [ref=e89]:
+                    - img [ref=e90]
+                    - img [ref=e92]
+                  - generic [ref=e95]: 67%
+            - list [ref=e97]:
+              - listitem [ref=e98]:
+                - button "Open onboarding guide for Install Vitest addon" [ref=e99] [cursor=pointer]:
+                  - img [ref=e101]
+                  - generic [ref=e104]: Install Vitest addon
+              - listitem [ref=e105]:
+                - button "Open onboarding guide for Run accessibility tests" [ref=e106] [cursor=pointer]:
+                  - img [ref=e108]
+                  - generic [ref=e111]: Run accessibility tests
+              - listitem [ref=e112]:
+                - button "Open onboarding guide for Publish your Storybook to share" [ref=e113] [cursor=pointer]:
+                  - img [ref=e115]
+                  - generic [ref=e118]: Publish your Storybook to share
+        - generic [ref=e27]: Search for components
+        - search [ref=e28]:
+          - combobox "Search for components" [ref=e29]:
+            - generic:
+              - img
+            - searchbox "Search for components" [ref=e30]
+            - code:
+              - generic: ⌘
+              - text: K
+            - button "Tag filters" [ref=e120] [cursor=pointer]:
+              - img [ref=e121]
+          - button "Create a new story" [ref=e31] [cursor=pointer]:
+            - img [ref=e32]
+        - navigation "Stories" [ref=e35]:
+          - heading "Stories" [level=2] [ref=e36]
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - button "Collapse" [expanded] [ref=e125] [cursor=pointer]:
+                - img [ref=e127]
+                - text: Examples
+              - button "Collapse all" [ref=e129] [cursor=pointer]:
+                - img [ref=e130]
+            - button "Alarm App" [expanded] [ref=e133] [cursor=pointer]:
+              - generic [ref=e134]:
+                - img [ref=e136]
+                - img [ref=e138]
+              - text: Alarm App
+            - link "Docs" [ref=e141] [cursor=pointer]:
+              - /url: /?path=/docs/examples-alarm-app--docs
+              - img [ref=e143]
+              - text: Docs
+            - link "Alarms" [ref=e147] [cursor=pointer]:
+              - /url: /?path=/story/examples-alarm-app--alarms
+              - img [ref=e149]
+              - text: Alarms
+            - link "Timers" [ref=e152] [cursor=pointer]:
+              - /url: /?path=/story/examples-alarm-app--timers
+              - img [ref=e154]
+              - text: Timers
+            - generic [ref=e156]:
+              - button "Collapse" [expanded] [ref=e157] [cursor=pointer]:
+                - img [ref=e159]
+                - text: Components
+              - button "Expand all" [ref=e161] [cursor=pointer]:
+                - img [ref=e162]
+            - button "AppBar" [ref=e165] [cursor=pointer]:
+              - generic [ref=e166]:
+                - img [ref=e168]
+                - img [ref=e170]
+              - text: AppBar
+            - button "Badge" [ref=e173] [cursor=pointer]:
+              - generic [ref=e174]:
+                - img [ref=e176]
+                - img [ref=e178]
+              - text: Badge
+            - button "BottomSheet" [ref=e181] [cursor=pointer]:
+              - generic [ref=e182]:
+                - img [ref=e184]
+                - img [ref=e186]
+              - text: BottomSheet
+            - generic [ref=e188]:
+              - button "Button" [expanded] [active] [ref=e189] [cursor=pointer]:
+                - generic [ref=e190]:
+                  - img [ref=e192]
+                  - img [ref=e194]
+                - text: Button
+              - button "Open context menu" [ref=e466] [cursor=pointer]:
+                - img [ref=e467]
+            - generic [ref=e469]:
+              - link "Docs" [ref=e470] [cursor=pointer]:
+                - /url: /?path=/docs/components-button--docs
+                - img [ref=e472]
+                - text: Docs
+              - link "Skip to content" [ref=e474] [cursor=pointer]:
+                - /url: "#storybook-preview-wrapper"
+            - link "Default" [ref=e476] [cursor=pointer]:
+              - /url: /?path=/story/components-button--default
+              - img [ref=e478]
+              - text: Default
+            - link "Filled Showcase" [ref=e481] [cursor=pointer]:
+              - /url: /?path=/story/components-button--filled-showcase
+              - img [ref=e483]
+              - text: Filled Showcase
+            - link "Filled Selectable Showcase" [ref=e486] [cursor=pointer]:
+              - /url: /?path=/story/components-button--filled-selectable-showcase
+              - img [ref=e488]
+              - text: Filled Selectable Showcase
+            - link "Elevated Showcase" [ref=e491] [cursor=pointer]:
+              - /url: /?path=/story/components-button--elevated-showcase
+              - img [ref=e493]
+              - text: Elevated Showcase
+            - link "Elevated Selectable Showcase" [ref=e496] [cursor=pointer]:
+              - /url: /?path=/story/components-button--elevated-selectable-showcase
+              - img [ref=e498]
+              - text: Elevated Selectable Showcase
+            - link "Tonal Showcase" [ref=e501] [cursor=pointer]:
+              - /url: /?path=/story/components-button--tonal-showcase
+              - img [ref=e503]
+              - text: Tonal Showcase
+            - link "Tonal Selectable Showcase" [ref=e506] [cursor=pointer]:
+              - /url: /?path=/story/components-button--tonal-selectable-showcase
+              - img [ref=e508]
+              - text: Tonal Selectable Showcase
+            - link "Outlined Showcase" [ref=e511] [cursor=pointer]:
+              - /url: /?path=/story/components-button--outlined-showcase
+              - img [ref=e513]
+              - text: Outlined Showcase
+            - link "Outlined Selectable Showcase" [ref=e516] [cursor=pointer]:
+              - /url: /?path=/story/components-button--outlined-selectable-showcase
+              - img [ref=e518]
+              - text: Outlined Selectable Showcase
+            - link "Text Showcase" [ref=e521] [cursor=pointer]:
+              - /url: /?path=/story/components-button--text-showcase
+              - img [ref=e523]
+              - text: Text Showcase
+            - button "ButtonGroup" [ref=e197] [cursor=pointer]:
+              - generic [ref=e198]:
+                - img [ref=e200]
+                - img [ref=e202]
+              - text: ButtonGroup
+            - button "Card" [ref=e205] [cursor=pointer]:
+              - generic [ref=e206]:
+                - img [ref=e208]
+                - img [ref=e210]
+              - text: Card
+            - button "Checkbox" [ref=e213] [cursor=pointer]:
+              - generic [ref=e214]:
+                - img [ref=e216]
+                - img [ref=e218]
+              - text: Checkbox
+            - button "Chip" [ref=e221] [cursor=pointer]:
+              - generic [ref=e222]:
+                - img [ref=e224]
+                - img [ref=e226]
+              - text: Chip
+            - button "CircularProgress" [ref=e229] [cursor=pointer]:
+              - generic [ref=e230]:
+                - img [ref=e232]
+                - img [ref=e234]
+              - text: CircularProgress
+            - button "ConnectedButtonGroup" [ref=e237] [cursor=pointer]:
+              - generic [ref=e238]:
+                - img [ref=e240]
+                - img [ref=e242]
+              - text: ConnectedButtonGroup
+            - button "DatePicker" [ref=e245] [cursor=pointer]:
+              - generic [ref=e246]:
+                - img [ref=e248]
+                - img [ref=e250]
+              - text: DatePicker
+            - button "Dialog" [ref=e253] [cursor=pointer]:
+              - generic [ref=e254]:
+                - img [ref=e256]
+                - img [ref=e258]
+              - text: Dialog
+            - button "Divider" [ref=e261] [cursor=pointer]:
+              - generic [ref=e262]:
+                - img [ref=e264]
+                - img [ref=e266]
+              - text: Divider
+            - button "ExtendedFAB" [ref=e269] [cursor=pointer]:
+              - generic [ref=e270]:
+                - img [ref=e272]
+                - img [ref=e274]
+              - text: ExtendedFAB
+            - button "FABMenu" [ref=e277] [cursor=pointer]:
+              - generic [ref=e278]:
+                - img [ref=e280]
+                - img [ref=e282]
+              - text: FABMenu
+            - button "IconButton" [ref=e285] [cursor=pointer]:
+              - generic [ref=e286]:
+                - img [ref=e288]
+                - img [ref=e290]
+              - text: IconButton
+            - button "LinearProgress" [ref=e293] [cursor=pointer]:
+              - generic [ref=e294]:
+                - img [ref=e296]
+                - img [ref=e298]
+              - text: LinearProgress
+            - button "Menu" [ref=e301] [cursor=pointer]:
+              - generic [ref=e302]:
+                - img [ref=e304]
+                - img [ref=e306]
+              - text: Menu
+            - button "NavigationBar" [ref=e309] [cursor=pointer]:
+              - generic [ref=e310]:
+                - img [ref=e312]
+                - img [ref=e314]
+              - text: NavigationBar
+            - button "NavigationRail" [ref=e317] [cursor=pointer]:
+              - generic [ref=e318]:
+                - img [ref=e320]
+                - img [ref=e322]
+              - text: NavigationRail
+            - button "RadioButton" [ref=e325] [cursor=pointer]:
+              - generic [ref=e326]:
+                - img [ref=e328]
+                - img [ref=e330]
+              - text: RadioButton
+            - button "SearchBar" [ref=e333] [cursor=pointer]:
+              - generic [ref=e334]:
+                - img [ref=e336]
+                - img [ref=e338]
+              - text: SearchBar
+            - button "SideSheet" [ref=e341] [cursor=pointer]:
+              - generic [ref=e342]:
+                - img [ref=e344]
+                - img [ref=e346]
+              - text: SideSheet
+            - button "Slider" [ref=e349] [cursor=pointer]:
+              - generic [ref=e350]:
+                - img [ref=e352]
+                - img [ref=e354]
+              - text: Slider
+            - button "Snackbar" [ref=e357] [cursor=pointer]:
+              - generic [ref=e358]:
+                - img [ref=e360]
+                - img [ref=e362]
+              - text: Snackbar
+            - button "Switch" [ref=e365] [cursor=pointer]:
+              - generic [ref=e366]:
+                - img [ref=e368]
+                - img [ref=e370]
+              - text: Switch
+            - button "Tabs" [ref=e373] [cursor=pointer]:
+              - generic [ref=e374]:
+                - img [ref=e376]
+                - img [ref=e378]
+              - text: Tabs
+            - button "TextField" [ref=e381] [cursor=pointer]:
+              - generic [ref=e382]:
+                - img [ref=e384]
+                - img [ref=e386]
+              - text: TextField
+            - button "TimePicker" [ref=e389] [cursor=pointer]:
+              - generic [ref=e390]:
+                - img [ref=e392]
+                - img [ref=e394]
+              - text: TimePicker
+            - button "Toolbar" [ref=e397] [cursor=pointer]:
+              - generic [ref=e398]:
+                - img [ref=e400]
+                - img [ref=e402]
+              - text: Toolbar
+            - button "Tooltip" [ref=e405] [cursor=pointer]:
+              - generic [ref=e406]:
+                - img [ref=e408]
+                - img [ref=e410]
+              - text: Tooltip
+      - region "Component tests" [ref=e413]:
+        - generic [ref=e414]:
+          - heading "Component tests" [level=2] [ref=e415]
+          - generic [ref=e416] [cursor=pointer]:
+            - button "Run tests" [ref=e420]:
+              - img [ref=e422]
+              - text: Run tests
+            - button "Expand testing module" [ref=e426]:
+              - img [ref=e427]
+          - generic [ref=e432]:
+            - generic [ref=e433]: Visual tests
+            - generic [ref=e435]: Login required
+  - generic [ref=e57]:
+    - region "Toolbar" [ref=e58]:
+      - heading "Toolbar" [level=2] [ref=e59]
+      - toolbar [ref=e60]:
+        - generic [ref=e436]:
+          - switch "Grid visibility" [ref=e437] [cursor=pointer]:
+            - img [ref=e438]
+          - button "Preview background" [ref=e440] [cursor=pointer]:
+            - img [ref=e441]
+          - switch "Outline tool" [ref=e444] [cursor=pointer]:
+            - img [ref=e445]
+          - button "M3 color scheme Light" [ref=e448] [cursor=pointer]:
+            - img [ref=e449]
+            - text: Light
+          - button "M3 seed color Blue (default)" [ref=e454] [cursor=pointer]:
+            - img [ref=e455]
+            - text: Blue (default)
+        - generic [ref=e457]:
+          - button "Enter full screen" [ref=e458] [cursor=pointer]:
+            - img [ref=e459]
+          - button "Open in editor" [ref=e461] [cursor=pointer]:
+            - img [ref=e462]
+    - main "Main preview area" [ref=e61]:
+      - heading "Main preview area" [level=2] [ref=e62]
+      - generic [ref=e66]:
+        - link "Skip to sidebar" [ref=e465] [cursor=pointer]:
+          - /url: "#components-button--docs"
+        - iframe [ref=e70]:
+          

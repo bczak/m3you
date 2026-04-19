@@ -1,0 +1,102 @@
+/* =============================================================================
+   Card — M3 Spec
+   Shape: medium (12px), 3 variants
+   Source: m3.material.io/components/cards/specs
+   ============================================================================= */
+
+.md-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--md-sys-shape-corner-medium);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background-color: var(--md-sys-color-on-surface);
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-extra-short4) var(--md-sys-motion-easing-standard);
+  }
+
+  & > .salty-ripple {
+    z-index: 0;
+  }
+
+  & > :not(.salty-ripple) {
+    position: relative;
+    z-index: 1;
+  }
+
+  &[data-variant="elevated"] {
+    background-color: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-on-surface);
+    box-shadow: var(--md-sys-elevation-1);
+  }
+
+  &[data-variant="filled"] {
+    background-color: var(--md-sys-color-surface-container-highest);
+    color: var(--md-sys-color-on-surface);
+  }
+
+  &[data-variant="outlined"] {
+    border: 1px solid var(--md-sys-color-outline-variant);
+    background-color: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+  }
+
+  /* Interactive state */
+  &[data-interactive] {
+    cursor: pointer;
+    transition: box-shadow var(--md-sys-motion-duration-extra-short4) var(--md-sys-motion-easing-standard);
+
+    &:focus-visible {
+      outline: 2px solid var(--md-sys-color-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &[data-interactive]:hover::before {
+      opacity: var(--md-sys-state-hover-opacity);
+    }
+  }
+
+  &[data-interactive][data-variant="elevated"]:hover {
+    box-shadow: none;
+  }
+
+  &[data-interactive][data-variant="filled"]:hover,
+  &[data-interactive][data-variant="outlined"]:hover {
+    box-shadow: var(--md-sys-elevation-1);
+  }
+
+  &[data-interactive]:not([data-nested-interactive])[data-variant="elevated"]:active {
+    box-shadow: var(--md-sys-elevation-2);
+  }
+
+  &[data-interactive]:not([data-nested-interactive])[data-variant="filled"]:active,
+  &[data-interactive]:not([data-nested-interactive])[data-variant="outlined"]:active {
+    box-shadow: none;
+  }
+
+  &[data-interactive]:not([data-nested-interactive]):active {
+    background-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) var(--md-sys-state-pressed-opacity),
+      transparent
+    );
+  }
+
+  &[data-nested-interactive] > .salty-ripple .salty-ripple-surface.--press::after {
+    opacity: 0;
+  }
+
+  &[data-disabled] {
+    pointer-events: none;
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+}

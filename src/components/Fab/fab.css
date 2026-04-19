@@ -1,0 +1,53 @@
+/* =============================================================================
+   FAB — M3 Expressive Spec
+   Icon-only floating action button. Wraps IconButton with elevation + shape.
+   Sizes: sm (40×40), md (56×56), lg (96×96)
+   Source: m3.material.io/components/floating-action-button/specs
+   ============================================================================= */
+
+/* Compound selector ensures correct specificity vs IconButton base rules */
+.md-icon-button.md-fab {
+  box-shadow: var(--md-sys-elevation-3);
+
+  &:hover {
+    box-shadow: var(--md-sys-elevation-4);
+  }
+
+  /* ── Shape: corner-large for sm/md ── */
+  &[data-size="xs"],
+  &[data-size="sm"],
+  &[data-size="md"] {
+    border-radius: var(--md-sys-shape-corner-large);
+  }
+
+  /* ── Shape + size override: corner-extra-large for lg (96×96) ── */
+  &[data-size="lg"][data-shape="square"] {
+    --_height: 96px;
+    height: var(--_height);
+    width: 96px;
+    border-radius: var(--md-sys-shape-corner-extra-large);
+
+    & svg {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  /* ── Tonal uses no default elevation unless lowered is explicit ── */
+  &[data-variant="tonal"]:not([data-lowered]) {
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+
+  /* ── Lowered elevation ── */
+  &[data-lowered] {
+    box-shadow: var(--md-sys-elevation-1);
+
+    &:hover {
+      box-shadow: var(--md-sys-elevation-2);
+    }
+  }
+}

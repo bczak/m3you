@@ -1,0 +1,10 @@
+- menu [active] [ref=e5]:
+  - menuitem "Favorite" [ref=e6] [cursor=pointer]:
+    - img [ref=e7]
+    - text: Favorite
+  - menuitem "Share" [ref=e9] [cursor=pointer]:
+    - img [ref=e10]
+    - text: Share
+  - menuitem "Download" [ref=e13] [cursor=pointer]:
+    - img [ref=e14]
+    - text: Download

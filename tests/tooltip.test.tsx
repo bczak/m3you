@@ -1,5 +1,5 @@
-import { afterEach, expect, test } from '@rstest/core';
 import { cleanup, render, screen } from '@testing-library/react';
+import { afterEach, expect, test } from 'vitest';
 import { Button } from '../src/components/ui/button';
 import {
   RichTooltip,
@@ -56,9 +56,7 @@ test('tooltip content has correct M3 styling classes', () => {
   );
 
   const popup = screen.getByText('Styled');
-  expect(popup).toHaveClass('bg-inverse-surface');
-  expect(popup).toHaveClass('text-inverse-on-surface');
-  expect(popup).toHaveClass('rounded');
+  expect(popup).toHaveClass('md-tooltip');
 });
 
 test('tooltip content supports custom className', () => {
@@ -127,8 +125,7 @@ test('rich tooltip content has correct M3 styling', () => {
   );
 
   const headline = screen.getByText('Styled');
-  expect(headline).toHaveClass('font-medium');
-  expect(headline).toHaveClass('text-on-surface-variant');
+  expect(headline).toHaveClass('md-rich-tooltip__headline');
 });
 
 test('rich tooltip content supports custom className', () => {

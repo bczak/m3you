@@ -1,6 +1,6 @@
-import { expect, test } from '@rstest/core';
 import { render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { expect, test } from 'vitest';
 import { Button } from '../src/components/ui/button';
 
 // Variant tests
@@ -8,134 +8,99 @@ test('renders with default variant (filled)', async () => {
   render(<Button>Click me</Button>);
   const button = screen.getByRole('button', { name: 'Click me' });
   expect(button).toBeInTheDocument();
-  expect(button).toHaveClass('bg-primary');
+  expect(button).toHaveClass('md-button');
+  expect(button).toHaveAttribute('data-variant', 'filled');
 });
 
-test('applies filled variant classes correctly', async () => {
+test('applies filled variant correctly', async () => {
   render(<Button variant="filled">Filled</Button>);
   const button = screen.getByRole('button', { name: 'Filled' });
-  expect(button).toHaveClass('bg-primary');
-  expect(button).toHaveClass('text-on-primary');
+  expect(button).toHaveClass('md-button');
+  expect(button).toHaveAttribute('data-variant', 'filled');
 });
 
-test('applies elevated variant classes correctly', async () => {
+test('applies elevated variant correctly', async () => {
   render(<Button variant="elevated">Elevated</Button>);
   const button = screen.getByRole('button', { name: 'Elevated' });
-  expect(button).toHaveClass('bg-surface-container');
-  expect(button).toHaveClass('text-on-background');
-  expect(button).toHaveClass('shadow-lg');
+  expect(button).toHaveClass('md-button');
+  expect(button).toHaveAttribute('data-variant', 'elevated');
 });
 
-test('applies tonal variant classes correctly', async () => {
+test('applies tonal variant correctly', async () => {
   render(<Button variant="tonal">Tonal</Button>);
   const button = screen.getByRole('button', { name: 'Tonal' });
-  expect(button).toHaveClass('bg-secondary-container');
-  expect(button).toHaveClass('text-on-secondary-container');
+  expect(button).toHaveClass('md-button');
+  expect(button).toHaveAttribute('data-variant', 'tonal');
 });
 
-test('applies outlined variant classes correctly', async () => {
+test('applies outlined variant correctly', async () => {
   render(<Button variant="outlined">Outlined</Button>);
   const button = screen.getByRole('button', { name: 'Outlined' });
-  expect(button).toHaveClass('border');
-  expect(button).toHaveClass('border-outline/40');
-  expect(button).toHaveClass('bg-transparent');
+  expect(button).toHaveClass('md-button');
+  expect(button).toHaveAttribute('data-variant', 'outlined');
 });
 
-test('applies text variant classes correctly', async () => {
+test('applies text variant correctly', async () => {
   render(<Button variant="text">Text</Button>);
   const button = screen.getByRole('button', { name: 'Text' });
-  expect(button).toHaveClass('bg-transparent');
-  expect(button).toHaveClass('text-primary');
+  expect(button).toHaveClass('md-button');
+  expect(button).toHaveAttribute('data-variant', 'text');
 });
 
 // Shape tests
 test('renders with default shape (round)', async () => {
   render(<Button>Round Button</Button>);
   const button = screen.getByRole('button', { name: 'Round Button' });
-  // Default size is sm, so round radius is 1.25rem (height/2)
-  expect(button).toHaveClass('rounded-[1.25rem]');
+  expect(button).toHaveAttribute('data-shape', 'round');
 });
 
-test('applies round shape classes correctly', async () => {
+test('applies round shape correctly', async () => {
   render(<Button shape="round">Round</Button>);
   const button = screen.getByRole('button', { name: 'Round' });
-  // Default size is sm, so round radius is 1.25rem (height/2)
-  expect(button).toHaveClass('rounded-[1.25rem]');
+  expect(button).toHaveAttribute('data-shape', 'round');
 });
 
-test('applies square shape classes correctly for sm size (default)', async () => {
+test('applies square shape correctly', async () => {
   render(<Button shape="square">Square</Button>);
   const button = screen.getByRole('button', { name: 'Square' });
-  expect(button).toHaveClass('rounded-lg');
-});
-
-test('applies square shape classes correctly for xs size', async () => {
-  render(
-    <Button shape="square" size="xs">
-      Square XS
-    </Button>,
-  );
-  const button = screen.getByRole('button', { name: 'Square XS' });
-  expect(button).toHaveClass('rounded-lg');
-});
-
-test('applies square shape classes correctly for lg size', async () => {
-  render(
-    <Button shape="square" size="lg">
-      Square LG
-    </Button>,
-  );
-  const button = screen.getByRole('button', { name: 'Square LG' });
-  expect(button).toHaveClass('rounded-2xl');
+  expect(button).toHaveAttribute('data-shape', 'square');
 });
 
 // Size tests
 test('renders with default size (sm)', async () => {
   render(<Button>Default Button</Button>);
   const button = screen.getByRole('button', { name: 'Default Button' });
-  expect(button).toHaveClass('h-10');
-  expect(button).toHaveClass('px-4');
-  expect(button).toHaveClass('text-sm');
+  expect(button).toHaveAttribute('data-size', 'sm');
 });
 
-test('applies xs size classes correctly', async () => {
+test('applies xs size correctly', async () => {
   render(<Button size="xs">XS Button</Button>);
   const button = screen.getByRole('button', { name: 'XS Button' });
-  expect(button).toHaveClass('h-8');
-  expect(button).toHaveClass('px-3');
-  expect(button).toHaveClass('text-xs');
+  expect(button).toHaveAttribute('data-size', 'xs');
 });
 
-test('applies sm size classes correctly', async () => {
+test('applies sm size correctly', async () => {
   render(<Button size="sm">SM Button</Button>);
   const button = screen.getByRole('button', { name: 'SM Button' });
-  expect(button).toHaveClass('h-10');
-  expect(button).toHaveClass('px-4');
-  expect(button).toHaveClass('text-sm');
+  expect(button).toHaveAttribute('data-size', 'sm');
 });
 
-test('applies md size classes correctly', async () => {
+test('applies md size correctly', async () => {
   render(<Button size="md">MD Button</Button>);
   const button = screen.getByRole('button', { name: 'MD Button' });
-  expect(button).toHaveClass('px-6');
-  expect(button).toHaveClass('py-4');
-  expect(button).toHaveClass('text-base');
+  expect(button).toHaveAttribute('data-size', 'md');
 });
 
-test('applies lg size classes correctly', async () => {
+test('applies lg size correctly', async () => {
   render(<Button size="lg">LG Button</Button>);
   const button = screen.getByRole('button', { name: 'LG Button' });
-  expect(button).toHaveClass('px-12');
-  expect(button).toHaveClass('py-8');
-  expect(button).toHaveClass('text-lg');
+  expect(button).toHaveAttribute('data-size', 'lg');
 });
 
-test('applies xl size classes correctly', async () => {
+test('applies xl size correctly', async () => {
   render(<Button size="xl">XL Button</Button>);
   const button = screen.getByRole('button', { name: 'XL Button' });
-  expect(button).toHaveClass('px-16');
-  expect(button).toHaveClass('py-12');
-  expect(button).toHaveClass('text-xl');
+  expect(button).toHaveAttribute('data-size', 'xl');
 });
 
 // Ref forwarding test
@@ -146,17 +111,29 @@ test('forwards ref correctly', async () => {
 });
 
 // Disabled state test
-test('applies disabled state classes correctly', async () => {
+test('applies disabled state correctly', async () => {
   render(<Button disabled>Disabled Button</Button>);
   const button = screen.getByRole('button', { name: 'Disabled Button' });
   expect(button).toBeDisabled();
-  expect(button).toHaveClass('disabled:opacity-50');
-  expect(button).toHaveClass('disabled:pointer-events-none');
 });
 
-// Ripple positioning test
-test('has relative class for ripple positioning', async () => {
-  render(<Button>Ripple Button</Button>);
-  const button = screen.getByRole('button', { name: 'Ripple Button' });
-  expect(button).toHaveClass('relative');
+// Morph test
+test('applies morph data attribute when enabled', async () => {
+  render(<Button morph>Morph Button</Button>);
+  const button = screen.getByRole('button', { name: 'Morph Button' });
+  expect(button).toHaveAttribute('data-morph');
+});
+
+test('does not apply morph data attribute when disabled', async () => {
+  render(<Button morph={false}>No Morph</Button>);
+  const button = screen.getByRole('button', { name: 'No Morph' });
+  expect(button).not.toHaveAttribute('data-morph');
+});
+
+// Custom className merge
+test('merges custom className', async () => {
+  render(<Button className="custom-class">Custom</Button>);
+  const button = screen.getByRole('button', { name: 'Custom' });
+  expect(button).toHaveClass('md-button');
+  expect(button).toHaveClass('custom-class');
 });

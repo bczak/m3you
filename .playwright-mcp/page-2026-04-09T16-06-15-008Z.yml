@@ -1,0 +1,11 @@
+- generic [ref=e3]:
+  - progressbar "Loading" [ref=e4]:
+    - img [ref=e5]
+  - progressbar "Loading" [ref=e7]:
+    - img [ref=e8]
+  - progressbar "Loading" [ref=e10]:
+    - img [ref=e11]
+  - progressbar "Loading" [ref=e13]:
+    - img [ref=e14]
+  - progressbar "Loading" [ref=e16]:
+    - img [ref=e17]

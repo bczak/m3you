@@ -11,9 +11,9 @@
     "moduleResolution": "bundler",
     "useDefineForClassFields": true,
     "paths": {
-      "m3-lib": ["."],
+      "m3you": ["."],
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "docs", "rspress.config.ts"]
+  "include": ["src", "tests", "stories"]
 }

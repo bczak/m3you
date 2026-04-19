@@ -1,19 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  BookmarkIcon,
-  CopyIcon,
-  DeleteIcon,
-  EditIcon,
-  HeartIcon,
-  InfoIcon,
-  SettingsIcon,
-  ShareIcon,
-  StarIcon,
-} from 'lucide-react';
-import { Button } from '../src/components/ui/button';
-import { Chip } from '../src/components/ui/chip';
-import { ExtendedFAB } from '../src/components/ui/extended-fab';
-import { IconButton } from '../src/components/ui/icon-button';
+import { InfoIcon, SaveIcon } from 'lucide-react';
+import { Button } from '../src/components/Button/button';
 import {
   RichTooltip,
   RichTooltipContent,
@@ -22,271 +9,354 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '../src/components/ui/tooltip';
+} from '../src/components/Tooltip/tooltip';
 
 const meta = {
-  title: 'Components/Tooltip',
-  component: Tooltip,
-  decorators: [
-    (Story) => (
-      <TooltipProvider>
-        <Story />
-      </TooltipProvider>
-    ),
-  ],
+  title: 'Containment/Tooltip',
   parameters: {
-    layout: 'centered',
+    layout: 'padded',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Tooltip>;
+} satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  render: () => (
-    <Tooltip>
-      <TooltipTrigger render={<IconButton />}>
-        <StarIcon aria-hidden="true" />
-      </TooltipTrigger>
-      <TooltipContent>Save to favorites</TooltipContent>
-    </Tooltip>
-  ),
-};
+// =============================================================================
+// Plain Tooltip
+// =============================================================================
 
-export const Placements: Story = {
-  render: () => (
-    <div className="flex items-center gap-12 p-16">
+const PlainStory = () => (
+  <TooltipProvider>
+    <div style={{ display: 'flex', gap: '32px', alignItems: 'center', padding: '64px', justifyContent: 'center' }}>
       <Tooltip>
-        <TooltipTrigger render={<IconButton variant="tonal" />}>
-          <InfoIcon aria-hidden="true" />
+        <TooltipTrigger render={<Button variant="tonal" />}>
+          <SaveIcon />
+          Save to favorites
         </TooltipTrigger>
-        <TooltipContent side="top">Top placement</TooltipContent>
+        <TooltipContent>Plain tooltip</TooltipContent>
       </Tooltip>
+
       <Tooltip>
-        <TooltipTrigger render={<IconButton variant="tonal" />}>
-          <InfoIcon aria-hidden="true" />
+        <TooltipTrigger render={<Button variant="tonal" />}>
+          <InfoIcon />
+          Grant value
         </TooltipTrigger>
-        <TooltipContent side="bottom">Bottom placement</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger render={<IconButton variant="tonal" />}>
-          <InfoIcon aria-hidden="true" />
-        </TooltipTrigger>
-        <TooltipContent side="left">Left placement</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger render={<IconButton variant="tonal" />}>
-          <InfoIcon aria-hidden="true" />
-        </TooltipTrigger>
-        <TooltipContent side="right">Right placement</TooltipContent>
+        <TooltipContent>
+          Grant value is calculated using the closing stock price from the day before the grant date. Amounts do not
+          reflect tax withholdings.
+        </TooltipContent>
       </Tooltip>
     </div>
-  ),
+  </TooltipProvider>
+);
+
+export const Plain: Story = {
+  render: () => <PlainStory />,
 };
 
-export const MultiLine: Story = {
-  render: () => (
-    <Tooltip>
-      <TooltipTrigger render={<IconButton variant="filled" />}>
-        <InfoIcon aria-hidden="true" />
-      </TooltipTrigger>
-      <TooltipContent>
-        Grant access to a Google Drive account so that the application can view and manage your files
-      </TooltipContent>
-    </Tooltip>
-  ),
+// =============================================================================
+// Plain Tooltip — Placements
+// =============================================================================
+
+const PlainPlacementsStory = () => (
+  <TooltipProvider>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gap: '48px',
+        padding: '80px',
+        justifyItems: 'center',
+      }}
+    >
+      {(['top', 'bottom', 'left', 'right'] as const).map((side) => (
+        <Tooltip key={side}>
+          <TooltipTrigger render={<Button variant="outlined" />}>
+            <InfoIcon />
+            {side.charAt(0).toUpperCase() + side.slice(1)}
+          </TooltipTrigger>
+          <TooltipContent side={side}>Plain tooltip ({side})</TooltipContent>
+        </Tooltip>
+      ))}
+    </div>
+  </TooltipProvider>
+);
+
+export const PlainPlacements: Story = {
+  render: () => <PlainPlacementsStory />,
 };
 
-export const RichDefault: Story = {
-  render: () => (
-    <RichTooltip>
-      <RichTooltipTrigger render={<IconButton variant="tonal" />}>
-        <SettingsIcon aria-hidden="true" />
-      </RichTooltipTrigger>
-      <RichTooltipContent
-        headline="Permissions"
-        actions={
-          <Button variant="text" size="xs">
-            Learn more
-          </Button>
-        }
-      >
-        Configure permissions for selected service accounts. Permissions determine what actions service accounts can
-        take.
-      </RichTooltipContent>
-    </RichTooltip>
-  ),
-};
+// =============================================================================
+// Rich Tooltip — Subhead + Body + Two Actions
+// =============================================================================
 
-export const RichConfigurations: Story = {
-  render: () => (
-    <div className="flex flex-wrap items-start gap-12 p-8">
-      {/* Headline + text + 2 actions */}
+const RichSubheadTwoButtonsStory = () => (
+  <TooltipProvider>
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '80px' }}>
       <RichTooltip>
-        <RichTooltipTrigger render={<IconButton />}>
-          <InfoIcon aria-hidden="true" />
+        <RichTooltipTrigger render={<Button variant="tonal" />}>
+          <InfoIcon />
+          Rich tooltip
         </RichTooltipTrigger>
         <RichTooltipContent
-          headline="Auto-delete"
+          headline="Rich tooltip"
           actions={
             <>
               <Button variant="text" size="xs">
-                Dismiss
+                Action
               </Button>
               <Button variant="text" size="xs">
-                Learn more
+                Action
               </Button>
             </>
           }
         >
-          Items in the trash will be permanently deleted after 30 days.
+          Rich tooltips bring attention to a particular element of feature that warrants the user's focus.
         </RichTooltipContent>
       </RichTooltip>
+    </div>
+  </TooltipProvider>
+);
 
-      {/* Headline + text + 1 action */}
+export const RichSubheadTwoButtons: Story = {
+  render: () => <RichSubheadTwoButtonsStory />,
+};
+
+// =============================================================================
+// Rich Tooltip — Subhead + Body + One Action
+// =============================================================================
+
+const RichSubheadOneButtonStory = () => (
+  <TooltipProvider>
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '80px' }}>
       <RichTooltip>
-        <RichTooltipTrigger render={<IconButton />}>
-          <SettingsIcon aria-hidden="true" />
+        <RichTooltipTrigger render={<Button variant="tonal" />}>
+          <InfoIcon />
+          Rich tooltip
         </RichTooltipTrigger>
         <RichTooltipContent
-          headline="Permissions"
+          headline="Rich tooltip"
           actions={
             <Button variant="text" size="xs">
-              Learn more
+              Action
             </Button>
           }
         >
-          Configure permissions for selected service accounts.
+          Rich tooltips bring attention to a particular element of feature that warrants the user's focus.
         </RichTooltipContent>
       </RichTooltip>
+    </div>
+  </TooltipProvider>
+);
 
-      {/* Headline + text only */}
+export const RichSubheadOneButton: Story = {
+  render: () => <RichSubheadOneButtonStory />,
+};
+
+// =============================================================================
+// Rich Tooltip — Subhead + Body (no actions)
+// =============================================================================
+
+const RichSubheadNoButtonsStory = () => (
+  <TooltipProvider>
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '80px' }}>
       <RichTooltip>
-        <RichTooltipTrigger render={<IconButton />}>
-          <BookmarkIcon aria-hidden="true" />
+        <RichTooltipTrigger render={<Button variant="tonal" />}>
+          <InfoIcon />
+          Rich tooltip
         </RichTooltipTrigger>
-        <RichTooltipContent headline="Bookmarks">
-          Save items to your bookmarks for quick access later.
+        <RichTooltipContent headline="Rich tooltip">
+          Rich tooltips bring attention to a particular element of feature that warrants the user's focus.
         </RichTooltipContent>
       </RichTooltip>
+    </div>
+  </TooltipProvider>
+);
 
-      {/* Text + 1 action */}
+export const RichSubheadNoButtons: Story = {
+  render: () => <RichSubheadNoButtonsStory />,
+};
+
+// =============================================================================
+// Rich Tooltip — Body + One Action (no subhead)
+// =============================================================================
+
+const RichBodyOneButtonStory = () => (
+  <TooltipProvider>
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '80px' }}>
       <RichTooltip>
-        <RichTooltipTrigger render={<IconButton />}>
-          <ShareIcon aria-hidden="true" />
+        <RichTooltipTrigger render={<Button variant="tonal" />}>
+          <InfoIcon />
+          Rich tooltip
         </RichTooltipTrigger>
         <RichTooltipContent
           actions={
             <Button variant="text" size="xs">
-              Go to settings
+              Action
             </Button>
           }
         >
-          Share this item with others in your organization.
+          Rich tooltips bring attention to a particular element of feature that warrants the user's focus.
         </RichTooltipContent>
       </RichTooltip>
+    </div>
+  </TooltipProvider>
+);
 
-      {/* Text + 2 actions */}
+export const RichBodyOneButton: Story = {
+  render: () => <RichBodyOneButtonStory />,
+};
+
+// =============================================================================
+// Rich Tooltip — Body + Two Actions (no subhead)
+// =============================================================================
+
+const RichBodyTwoButtonsStory = () => (
+  <TooltipProvider>
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '80px' }}>
       <RichTooltip>
-        <RichTooltipTrigger render={<IconButton />}>
-          <DeleteIcon aria-hidden="true" />
+        <RichTooltipTrigger render={<Button variant="tonal" />}>
+          <InfoIcon />
+          Rich tooltip
         </RichTooltipTrigger>
         <RichTooltipContent
           actions={
             <>
               <Button variant="text" size="xs">
-                Cancel
+                Action
               </Button>
               <Button variant="text" size="xs">
-                Delete
+                Action
               </Button>
             </>
           }
         >
-          This action will permanently delete the selected items.
+          Rich tooltips bring attention to a particular element of feature that warrants the user's focus.
         </RichTooltipContent>
       </RichTooltip>
     </div>
-  ),
+  </TooltipProvider>
+);
+
+export const RichBodyTwoButtons: Story = {
+  render: () => <RichBodyTwoButtonsStory />,
 };
 
-export const WithIconButtons: Story = {
-  render: () => (
-    <div className="flex items-center gap-2">
-      <Tooltip>
-        <TooltipTrigger render={<IconButton />}>
-          <EditIcon aria-hidden="true" />
-        </TooltipTrigger>
-        <TooltipContent>Edit</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger render={<IconButton />}>
-          <CopyIcon aria-hidden="true" />
-        </TooltipTrigger>
-        <TooltipContent>Copy</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger render={<IconButton />}>
-          <ShareIcon aria-hidden="true" />
-        </TooltipTrigger>
-        <TooltipContent>Share</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger render={<IconButton />}>
-          <HeartIcon aria-hidden="true" />
-        </TooltipTrigger>
-        <TooltipContent>Favorite</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger render={<IconButton />}>
-          <DeleteIcon aria-hidden="true" />
-        </TooltipTrigger>
-        <TooltipContent>Delete</TooltipContent>
-      </Tooltip>
-    </div>
-  ),
+// =============================================================================
+// Showcase — All Variants × All Positions, forced open
+// =============================================================================
+
+const BODY = "Rich tooltips bring attention to a particular element of feature that warrants the user's focus.";
+const TwoActions = () => (
+  <>
+    <Button variant="text" size="xs">
+      Action
+    </Button>
+    <Button variant="text" size="xs">
+      Action
+    </Button>
+  </>
+);
+const OneAction = () => (
+  <Button variant="text" size="xs">
+    Action
+  </Button>
+);
+
+type Side = 'top' | 'bottom' | 'left' | 'right';
+
+const sectionPadding: Record<Side, string> = {
+  top: '160px 32px 32px',
+  bottom: '32px 32px 160px',
+  left: '32px 32px 32px 380px',
+  right: '32px 380px 32px 32px',
 };
 
-export const IntegrationDemo: Story = {
-  parameters: { layout: 'padded' },
-  render: () => (
-    <div className="flex flex-wrap items-center gap-6 p-12">
-      <Tooltip>
-        <TooltipTrigger render={<Button variant="filled" />}>Save</TooltipTrigger>
-        <TooltipContent side="top">Save document</TooltipContent>
+const ShowcaseSection = ({ side }: { side: Side }) => (
+  <div>
+    <p
+      style={{
+        margin: '0 0 4px',
+        fontSize: '11px',
+        fontWeight: 600,
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase',
+        color: '#888',
+      }}
+    >
+      Position: {side}
+    </p>
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '200px',
+        padding: sectionPadding[side],
+        border: '1px solid color-mix(in srgb, currentColor 10%, transparent)',
+        borderRadius: '12px',
+      }}
+    >
+      {/* Plain */}
+      <Tooltip open>
+        <TooltipTrigger render={<Button variant="tonal" size="xs" />}>Plain</TooltipTrigger>
+        <TooltipContent side={side}>Plain tooltip</TooltipContent>
       </Tooltip>
 
-      <Tooltip>
-        <TooltipTrigger render={<IconButton variant="outlined" />}>
-          <InfoIcon aria-hidden="true" />
-        </TooltipTrigger>
-        <TooltipContent side="bottom">More info</TooltipContent>
-      </Tooltip>
+      {/* Rich: Subhead + Body + 2 actions */}
+      <RichTooltip open>
+        <RichTooltipTrigger render={<Button variant="tonal" size="xs" />}>Subhead + 2 actions</RichTooltipTrigger>
+        <RichTooltipContent side={side} headline="Rich tooltip" actions={<TwoActions />}>
+          {BODY}
+        </RichTooltipContent>
+      </RichTooltip>
 
-      <Tooltip>
-        <TooltipTrigger render={<Chip />}>Filters</TooltipTrigger>
-        <TooltipContent side="right">Filter results</TooltipContent>
-      </Tooltip>
+      {/* Rich: Subhead + Body + 1 action */}
+      <RichTooltip open>
+        <RichTooltipTrigger render={<Button variant="tonal" size="xs" />}>Subhead + 1 action</RichTooltipTrigger>
+        <RichTooltipContent side={side} headline="Rich tooltip" actions={<OneAction />}>
+          {BODY}
+        </RichTooltipContent>
+      </RichTooltip>
 
-      <Tooltip>
-        <TooltipTrigger render={<ExtendedFAB icon={<EditIcon aria-hidden="true" />} label="Compose" />} />
-        <TooltipContent side="top">Create new item</TooltipContent>
-      </Tooltip>
+      {/* Rich: Subhead + Body (no actions) */}
+      <RichTooltip open>
+        <RichTooltipTrigger render={<Button variant="tonal" size="xs" />}>Subhead only</RichTooltipTrigger>
+        <RichTooltipContent side={side} headline="Rich tooltip">
+          {BODY}
+        </RichTooltipContent>
+      </RichTooltip>
 
-      <RichTooltip>
-        <RichTooltipTrigger render={<Button variant="tonal" />}>Settings</RichTooltipTrigger>
-        <RichTooltipContent
-          headline="App settings"
-          actions={
-            <Button variant="text" size="xs">
-              Open settings
-            </Button>
-          }
-        >
-          Manage your application preferences, notifications, and account details.
+      {/* Rich: Body + 1 action (no subhead) */}
+      <RichTooltip open>
+        <RichTooltipTrigger render={<Button variant="tonal" size="xs" />}>Body + 1 action</RichTooltipTrigger>
+        <RichTooltipContent side={side} actions={<OneAction />}>
+          {BODY}
+        </RichTooltipContent>
+      </RichTooltip>
+
+      {/* Rich: Body + 2 actions (no subhead) */}
+      <RichTooltip open>
+        <RichTooltipTrigger render={<Button variant="tonal" size="xs" />}>Body + 2 actions</RichTooltipTrigger>
+        <RichTooltipContent side={side} actions={<TwoActions />}>
+          {BODY}
         </RichTooltipContent>
       </RichTooltip>
     </div>
-  ),
+  </div>
+);
+
+const ShowcaseStory = () => (
+  <TooltipProvider>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', padding: '24px' }}>
+      <ShowcaseSection side="top" />
+      <ShowcaseSection side="bottom" />
+      <ShowcaseSection side="left" />
+      <ShowcaseSection side="right" />
+    </div>
+  </TooltipProvider>
+);
+
+export const Showcase: Story = {
+  render: () => <ShowcaseStory />,
 };

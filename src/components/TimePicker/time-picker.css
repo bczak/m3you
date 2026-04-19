@@ -1,0 +1,339 @@
+/* =============================================================================
+   TimePicker — M3 Spec
+   Container: shape extra-large (28px), surface-container-high bg.
+   Time boxes: 96x80 or 96x72 (input mode), rounded-lg.
+   Clock dial: 256px, surface-container-highest bg.
+   Period buttons: 52px wide, rounded-lg, outline border.
+   Source: m3.material.io/components/time-pickers/specs
+   ============================================================================= */
+
+/* ── Time display area ── */
+.md-time-picker__display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &[data-layout="column"] {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.md-time-picker__display-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Time box (hour/minute selector button) ── */
+.md-time-picker__time-box {
+  display: flex;
+  min-width: 96px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--md-sys-shape-corner-large);
+  border: 2px solid transparent;
+  font-weight: 400;
+  font-size: 45px;
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    color 150ms;
+
+  &[data-mode="dial"] {
+    height: 80px;
+  }
+
+  &[data-mode="input"] {
+    height: 72px;
+  }
+
+  &[data-selected="true"] {
+    border-color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+  }
+
+  &[data-selected="false"] {
+    border-color: transparent;
+    background-color: var(--md-sys-color-surface-container-highest);
+    color: var(--md-sys-color-on-background);
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
+    }
+  }
+}
+
+/* ── Time box as input ── */
+.md-time-picker__time-input {
+  width: 96px;
+  text-align: center;
+  caret-color: var(--md-sys-color-primary);
+  outline: none;
+  /* Inherits from .md-time-picker__time-box */
+}
+
+/* ── Time separator colon ── */
+.md-time-picker__colon {
+  font-weight: 400;
+  font-size: 45px;
+  line-height: 1;
+  color: var(--md-sys-color-on-background);
+}
+
+.md-time-picker__colon[data-offset="true"] {
+  margin-top: -20px;
+}
+
+/* ── Input field label (below input) ── */
+.md-time-picker__field-label {
+  font-weight: 500;
+  font-size: var(--md-sys-typescale-body-small-size);
+  color: var(--md-sys-color-on-surface-variant);
+  letter-spacing: 0.1px;
+}
+
+.md-time-picker__field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Period selector (AM/PM) ── */
+.md-time-picker__period {
+  display: flex;
+  overflow: hidden;
+  border-radius: var(--md-sys-shape-corner-small);
+  border: 1px solid var(--md-sys-color-outline);
+}
+
+.md-time-picker__period[data-orientation="vertical"] {
+  width: 52px;
+  flex-direction: column;
+
+  &[data-mode="dial"] {
+    height: 80px;
+  }
+
+  &[data-mode="input"] {
+    height: 72px;
+  }
+}
+
+.md-time-picker__period[data-orientation="horizontal"] {
+  height: 38px;
+  width: 100%;
+  flex-direction: row;
+}
+
+/* ── Period divider ── */
+.md-time-picker__period-divider {
+  background-color: var(--md-sys-color-outline);
+}
+
+.md-time-picker__period[data-orientation="vertical"] .md-time-picker__period-divider {
+  height: 1px;
+  width: 100%;
+}
+
+.md-time-picker__period[data-orientation="horizontal"] .md-time-picker__period-divider {
+  width: 1px;
+  height: 100%;
+}
+
+/* ── Period button ── */
+.md-time-picker__period-btn {
+  display: flex;
+  flex: 1;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  transition:
+    background-color 150ms,
+    color 150ms;
+
+  &[data-selected="true"] {
+    background-color: var(--md-sys-color-tertiary-container);
+    color: var(--md-sys-color-on-tertiary-container);
+  }
+
+  &[data-selected="false"] {
+    color: var(--md-sys-color-on-surface-variant);
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--md-sys-color-on-background) 4%, transparent);
+    }
+  }
+}
+
+/* ── Clock dial ── */
+.md-time-picker__dial {
+  position: relative;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  border-radius: 50%;
+  background-color: var(--md-sys-color-surface-container-highest);
+}
+
+/* ── Clock SVG overlay ── */
+.md-time-picker__dial-svg {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ── Clock number ── */
+.md-time-picker__number {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 400;
+  transition:
+    background-color 150ms,
+    color 150ms;
+
+  &[data-selected="true"] {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  &[data-selected="false"] {
+    color: var(--md-sys-color-on-background);
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
+    }
+  }
+
+  &[data-inner="true"] {
+    font-size: 13px;
+  }
+
+  &[data-inner="false"] {
+    font-size: 15px;
+  }
+}
+
+/* ── Clock SVG elements ── */
+.md-time-picker__hand-center {
+  fill: var(--md-sys-color-primary);
+}
+
+.md-time-picker__hand-line {
+  stroke: var(--md-sys-color-primary);
+}
+
+.md-time-picker__hand-end {
+  fill: var(--md-sys-color-primary);
+}
+
+/* ── Landscape dial body ── */
+.md-time-picker__dial-body {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.md-time-picker__dial-body-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.md-time-picker__dial-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Header text ── */
+.md-time-picker__header-text {
+  font-weight: 500;
+  font-size: var(--md-sys-typescale-body-small-size);
+  color: var(--md-sys-color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.1px;
+}
+
+/* ── Footer ── */
+.md-time-picker__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Mode toggle button (clock/keyboard icon) ── */
+.md-time-picker__mode-btn {
+  position: relative;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  transition: background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
+  }
+
+  & svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ── Footer action buttons ── */
+.md-time-picker__footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.md-time-picker__action-btn {
+  position: relative;
+  border: none;
+  border-radius: 16px;
+  background: transparent;
+  padding: 6px 12px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--md-sys-color-primary);
+  cursor: pointer;
+  transition: background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+  }
+}
+
+/* ── Dialog content overrides ── */
+.md-time-picker__dialog {
+  display: flex;
+  width: auto;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.md-time-picker__dialog[data-layout="landscape"] {
+  min-width: 520px;
+}
+
+.md-time-picker__dialog[data-layout="portrait"] {
+  min-width: 328px;
+}

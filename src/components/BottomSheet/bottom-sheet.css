@@ -1,0 +1,71 @@
+/* =============================================================================
+   BottomSheet — M3 Spec
+   Shape: extra-large-top (28px top corners), BG: surface-container-low
+   Scrim: 32% opacity, drag handle: on-surface-variant / 40%
+   Source: m3.material.io/components/bottom-sheets/specs
+   ============================================================================= */
+
+/* ── Backdrop / Scrim ── */
+.md-bottom-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  &[data-ending-style],
+  &[data-starting-style] {
+    opacity: 0;
+  }
+}
+
+/* ── Viewport ── */
+.md-bottom-sheet-viewport {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+/* ── Popup / Content ── */
+.md-bottom-sheet-content {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  max-width: 640px;
+  flex-direction: column;
+  margin-inline: auto;
+  margin-top: 72px;
+  border-radius: var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large) 0 0;
+  background-color: var(--md-sys-color-surface-container-low);
+  box-shadow: var(--md-sys-elevation-1);
+  outline: none;
+
+  @media (min-width: 640px) {
+    margin-inline: 56px;
+    margin-top: 56px;
+  }
+}
+
+/* ── Drag Handle ── */
+.md-bottom-sheet-drag-handle {
+  display: flex;
+  justify-content: center;
+  padding-block: 22px;
+}
+
+.md-bottom-sheet-drag-handle__indicator {
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 40%, transparent);
+}
+
+/* ── Body ── */
+.md-bottom-sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  padding-inline: 24px;
+  padding-bottom: 24px;
+}

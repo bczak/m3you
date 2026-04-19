@@ -1,0 +1,36 @@
+/* =============================================================================
+   Divider — M3 Spec: outline-variant color, 1px thickness
+   Source: m3.material.io/components/divider/specs
+   ============================================================================= */
+
+.md-divider {
+  flex-shrink: 0;
+  border-width: 0;
+  border-style: solid;
+  border-color: var(--md-sys-color-outline-variant);
+
+  &[data-orientation="horizontal"] {
+    border-top-width: 1px;
+  }
+
+  &[data-orientation="vertical"] {
+    align-self: stretch;
+    border-left-width: 1px;
+  }
+
+  &[data-variant="inset"] {
+    margin-inline: 16px;
+  }
+
+  &[data-variant="heavy"] {
+    border-width: 0;
+
+    &[data-orientation="horizontal"] {
+      border-top-width: 8px;
+    }
+
+    &[data-orientation="vertical"] {
+      border-left-width: 8px;
+    }
+  }
+}

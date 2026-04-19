@@ -5,71 +5,71 @@ type TokenMap = Record<string, string>;
 
 const TOKEN_GETTERS: [string, (s: DynamicScheme) => number][] = [
   // Primary
-  ['--color-primary', (s) => s.primary],
-  ['--color-on-primary', (s) => s.onPrimary],
-  ['--color-primary-container', (s) => s.primaryContainer],
-  ['--color-on-primary-container', (s) => s.onPrimaryContainer],
-  ['--color-primary-fixed', (s) => s.primaryFixed],
-  ['--color-primary-fixed-dim', (s) => s.primaryFixedDim],
-  ['--color-on-primary-fixed', (s) => s.onPrimaryFixed],
-  ['--color-on-primary-fixed-variant', (s) => s.onPrimaryFixedVariant],
-  ['--color-inverse-primary', (s) => s.inversePrimary],
+  ['--md-sys-color-primary', (s) => s.primary],
+  ['--md-sys-color-on-primary', (s) => s.onPrimary],
+  ['--md-sys-color-primary-container', (s) => s.primaryContainer],
+  ['--md-sys-color-on-primary-container', (s) => s.onPrimaryContainer],
+  ['--md-sys-color-primary-fixed', (s) => s.primaryFixed],
+  ['--md-sys-color-primary-fixed-dim', (s) => s.primaryFixedDim],
+  ['--md-sys-color-on-primary-fixed', (s) => s.onPrimaryFixed],
+  ['--md-sys-color-on-primary-fixed-variant', (s) => s.onPrimaryFixedVariant],
+  ['--md-sys-color-inverse-primary', (s) => s.inversePrimary],
 
   // Secondary
-  ['--color-secondary', (s) => s.secondary],
-  ['--color-on-secondary', (s) => s.onSecondary],
-  ['--color-secondary-container', (s) => s.secondaryContainer],
-  ['--color-on-secondary-container', (s) => s.onSecondaryContainer],
-  ['--color-secondary-fixed', (s) => s.secondaryFixed],
-  ['--color-secondary-fixed-dim', (s) => s.secondaryFixedDim],
-  ['--color-on-secondary-fixed', (s) => s.onSecondaryFixed],
-  ['--color-on-secondary-fixed-variant', (s) => s.onSecondaryFixedVariant],
+  ['--md-sys-color-secondary', (s) => s.secondary],
+  ['--md-sys-color-on-secondary', (s) => s.onSecondary],
+  ['--md-sys-color-secondary-container', (s) => s.secondaryContainer],
+  ['--md-sys-color-on-secondary-container', (s) => s.onSecondaryContainer],
+  ['--md-sys-color-secondary-fixed', (s) => s.secondaryFixed],
+  ['--md-sys-color-secondary-fixed-dim', (s) => s.secondaryFixedDim],
+  ['--md-sys-color-on-secondary-fixed', (s) => s.onSecondaryFixed],
+  ['--md-sys-color-on-secondary-fixed-variant', (s) => s.onSecondaryFixedVariant],
 
   // Tertiary
-  ['--color-tertiary', (s) => s.tertiary],
-  ['--color-on-tertiary', (s) => s.onTertiary],
-  ['--color-tertiary-container', (s) => s.tertiaryContainer],
-  ['--color-on-tertiary-container', (s) => s.onTertiaryContainer],
-  ['--color-tertiary-fixed', (s) => s.tertiaryFixed],
-  ['--color-tertiary-fixed-dim', (s) => s.tertiaryFixedDim],
-  ['--color-on-tertiary-fixed', (s) => s.onTertiaryFixed],
-  ['--color-on-tertiary-fixed-variant', (s) => s.onTertiaryFixedVariant],
+  ['--md-sys-color-tertiary', (s) => s.tertiary],
+  ['--md-sys-color-on-tertiary', (s) => s.onTertiary],
+  ['--md-sys-color-tertiary-container', (s) => s.tertiaryContainer],
+  ['--md-sys-color-on-tertiary-container', (s) => s.onTertiaryContainer],
+  ['--md-sys-color-tertiary-fixed', (s) => s.tertiaryFixed],
+  ['--md-sys-color-tertiary-fixed-dim', (s) => s.tertiaryFixedDim],
+  ['--md-sys-color-on-tertiary-fixed', (s) => s.onTertiaryFixed],
+  ['--md-sys-color-on-tertiary-fixed-variant', (s) => s.onTertiaryFixedVariant],
 
   // Error
-  ['--color-error', (s) => s.error],
-  ['--color-on-error', (s) => s.onError],
-  ['--color-error-container', (s) => s.errorContainer],
-  ['--color-on-error-container', (s) => s.onErrorContainer],
+  ['--md-sys-color-error', (s) => s.error],
+  ['--md-sys-color-on-error', (s) => s.onError],
+  ['--md-sys-color-error-container', (s) => s.errorContainer],
+  ['--md-sys-color-on-error-container', (s) => s.onErrorContainer],
 
   // Surface
-  ['--color-surface', (s) => s.surface],
-  ['--color-on-surface', (s) => s.onSurface],
-  ['--color-surface-variant', (s) => s.surfaceVariant],
-  ['--color-on-surface-variant', (s) => s.onSurfaceVariant],
-  ['--color-surface-dim', (s) => s.surfaceDim],
-  ['--color-surface-bright', (s) => s.surfaceBright],
-  ['--color-surface-container-lowest', (s) => s.surfaceContainerLowest],
-  ['--color-surface-container-low', (s) => s.surfaceContainerLow],
-  ['--color-surface-container', (s) => s.surfaceContainer],
-  ['--color-surface-container-high', (s) => s.surfaceContainerHigh],
-  ['--color-surface-container-highest', (s) => s.surfaceContainerHighest],
-  ['--color-surface-tint', (s) => s.surfaceTint],
+  ['--md-sys-color-surface', (s) => s.surface],
+  ['--md-sys-color-on-surface', (s) => s.onSurface],
+  ['--md-sys-color-surface-variant', (s) => s.surfaceVariant],
+  ['--md-sys-color-on-surface-variant', (s) => s.onSurfaceVariant],
+  ['--md-sys-color-surface-dim', (s) => s.surfaceDim],
+  ['--md-sys-color-surface-bright', (s) => s.surfaceBright],
+  ['--md-sys-color-surface-container-lowest', (s) => s.surfaceContainerLowest],
+  ['--md-sys-color-surface-container-low', (s) => s.surfaceContainerLow],
+  ['--md-sys-color-surface-container', (s) => s.surfaceContainer],
+  ['--md-sys-color-surface-container-high', (s) => s.surfaceContainerHigh],
+  ['--md-sys-color-surface-container-highest', (s) => s.surfaceContainerHighest],
+  ['--md-sys-color-surface-tint', (s) => s.surfaceTint],
 
   // Outline
-  ['--color-outline', (s) => s.outline],
-  ['--color-outline-variant', (s) => s.outlineVariant],
+  ['--md-sys-color-outline', (s) => s.outline],
+  ['--md-sys-color-outline-variant', (s) => s.outlineVariant],
 
   // Inverse
-  ['--color-inverse-surface', (s) => s.inverseSurface],
-  ['--color-inverse-on-surface', (s) => s.inverseOnSurface],
+  ['--md-sys-color-inverse-surface', (s) => s.inverseSurface],
+  ['--md-sys-color-inverse-on-surface', (s) => s.inverseOnSurface],
 
   // Background
-  ['--color-background', (s) => s.background],
-  ['--color-on-background', (s) => s.onBackground],
+  ['--md-sys-color-background', (s) => s.background],
+  ['--md-sys-color-on-background', (s) => s.onBackground],
 
   // Shadow & Scrim
-  ['--color-shadow', (s) => s.shadow],
-  ['--color-scrim', (s) => s.scrim],
+  ['--md-sys-color-shadow', (s) => s.shadow],
+  ['--md-sys-color-scrim', (s) => s.scrim],
 ];
 
 function extractTokens(scheme: DynamicScheme): TokenMap {
@@ -93,7 +93,7 @@ export function generateM3Theme(seedHex: string): { light: TokenMap; dark: Token
 
 export function applyM3Theme(seedHex: string, element?: HTMLElement): void {
   const el = element ?? document.documentElement;
-  const isDark = el.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = el.getAttribute('data-theme') === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches;
   const { light, dark } = generateM3Theme(seedHex);
   const tokens = isDark ? dark : light;
 

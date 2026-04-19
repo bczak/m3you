@@ -1,0 +1,323 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - banner "Storybook" [ref=e6]:
+      - heading "Storybook" [level=1] [ref=e7]
+      - img
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - link "Skip to content" [ref=e14] [cursor=pointer]:
+              - /url: "#storybook-preview-wrapper"
+            - link "Storybook" [ref=e16] [cursor=pointer]:
+              - /url: ./
+              - img "Storybook" [ref=e17]
+            - switch "Settings" [ref=e22] [cursor=pointer]:
+              - img [ref=e23]
+          - generic [ref=e28]:
+            - generic [ref=e30] [cursor=pointer]:
+              - button "Open onboarding guide" [ref=e34]:
+                - img [ref=e36]
+                - strong [ref=e38]: Level up
+              - generic [ref=e39]:
+                - button "Collapse onboarding guide" [expanded] [ref=e40]:
+                  - img [ref=e41]
+                - button "56% completed" [ref=e43]:
+                  - generic [ref=e44]:
+                    - img [ref=e45]
+                    - img [ref=e47]
+                  - generic [ref=e50]: 56%
+            - list [ref=e52]:
+              - listitem [ref=e53]:
+                - button "Open onboarding guide for Check responsiveness with Viewports" [ref=e54] [cursor=pointer]:
+                  - img [ref=e56]
+                  - generic [ref=e59]: Check responsiveness with Viewports
+              - listitem [ref=e60]:
+                - button "Open onboarding guide for Install Vitest addon" [ref=e61] [cursor=pointer]:
+                  - img [ref=e63]
+                  - generic [ref=e66]: Install Vitest addon
+              - listitem [ref=e67]:
+                - button "Open onboarding guide for Publish your Storybook to share" [ref=e68] [cursor=pointer]:
+                  - img [ref=e70]
+                  - generic [ref=e73]: Publish your Storybook to share
+        - generic [ref=e74]: Search for components
+        - search [ref=e75]:
+          - combobox "Search for components" [ref=e76]:
+            - generic:
+              - img
+            - searchbox "Search for components" [ref=e77]
+            - code:
+              - generic: ⌘
+              - text: K
+            - button "Tag filters" [ref=e79] [cursor=pointer]:
+              - img [ref=e80]
+          - button "Create a new story" [ref=e82] [cursor=pointer]:
+            - img [ref=e83]
+        - navigation "Stories" [ref=e86]:
+          - heading "Stories" [level=2] [ref=e87]
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - button "Collapse" [expanded] [ref=e91] [cursor=pointer]:
+                - img [ref=e93]
+                - text: Components
+              - button "Expand all" [ref=e95] [cursor=pointer]:
+                - img [ref=e96]
+            - button "Button" [ref=e99] [cursor=pointer]:
+              - generic [ref=e100]:
+                - img [ref=e102]
+                - img [ref=e104]
+              - text: Button
+            - button "ConnectedButtonGroup" [ref=e107] [cursor=pointer]:
+              - generic [ref=e108]:
+                - img [ref=e110]
+                - img [ref=e112]
+              - text: ConnectedButtonGroup
+            - button "ExtendedFAB" [ref=e115] [cursor=pointer]:
+              - generic [ref=e116]:
+                - img [ref=e118]
+                - img [ref=e120]
+              - text: ExtendedFAB
+            - button "FAB" [ref=e123] [cursor=pointer]:
+              - generic [ref=e124]:
+                - img [ref=e126]
+                - img [ref=e128]
+              - text: FAB
+            - button "FABMenu" [expanded] [ref=e131] [cursor=pointer]:
+              - generic [ref=e132]:
+                - img [ref=e134]
+                - img [ref=e136]
+              - text: FABMenu
+            - link "Docs" [ref=e139] [cursor=pointer]:
+              - /url: /?path=/docs/components-fabmenu--docs
+              - img [ref=e141]
+              - text: Docs
+            - generic [ref=e143]:
+              - link "Default" [ref=e144] [cursor=pointer]:
+                - /url: /?path=/story/components-fabmenu--default
+                - img [ref=e146]
+                - text: Default
+              - link "Skip to content" [ref=e148] [cursor=pointer]:
+                - /url: "#storybook-preview-wrapper"
+            - link "With Extended FAB" [ref=e150] [cursor=pointer]:
+              - /url: /?path=/story/components-fabmenu--with-extended-fab
+              - img [ref=e152]
+              - text: With Extended FAB
+            - link "With Scrim" [ref=e155] [cursor=pointer]:
+              - /url: /?path=/story/components-fabmenu--with-scrim
+              - img [ref=e157]
+              - text: With Scrim
+            - link "Filled Variant" [ref=e160] [cursor=pointer]:
+              - /url: /?path=/story/components-fabmenu--filled-variant
+              - img [ref=e162]
+              - text: Filled Variant
+            - link "Controlled" [ref=e165] [cursor=pointer]:
+              - /url: /?path=/story/components-fabmenu--controlled
+              - img [ref=e167]
+              - text: Controlled
+            - button "IconButton" [ref=e170] [cursor=pointer]:
+              - generic [ref=e171]:
+                - img [ref=e173]
+                - img [ref=e175]
+              - text: IconButton
+            - button "StandardButtonGroup" [ref=e178] [cursor=pointer]:
+              - generic [ref=e179]:
+                - img [ref=e181]
+                - img [ref=e183]
+              - text: StandardButtonGroup
+            - button "ToggleButton" [ref=e186] [cursor=pointer]:
+              - generic [ref=e187]:
+                - img [ref=e189]
+                - img [ref=e191]
+              - text: ToggleButton
+            - button "ToggleIconButton" [ref=e194] [cursor=pointer]:
+              - generic [ref=e195]:
+                - img [ref=e197]
+                - img [ref=e199]
+              - text: ToggleIconButton
+    - separator "Sidebar resize handle" [ref=e201]
+  - generic [ref=e203]:
+    - region "Toolbar" [ref=e204]:
+      - heading "Toolbar" [level=2] [ref=e205]
+      - toolbar [ref=e206]:
+        - generic [ref=e207]:
+          - button "Reload story" [ref=e208] [cursor=pointer]:
+            - img [ref=e209]
+          - switch "Grid visibility" [ref=e285] [cursor=pointer]:
+            - img [ref=e286]
+          - button "Preview background" [ref=e288] [cursor=pointer]:
+            - img [ref=e289]
+          - switch "Measure tool" [ref=e211] [cursor=pointer]:
+            - img [ref=e212]
+          - switch "Outline tool" [ref=e215] [cursor=pointer]:
+            - img [ref=e216]
+          - button "Viewport size" [ref=e218] [cursor=pointer]:
+            - img [ref=e219]
+          - button "Vision filter" [ref=e223] [cursor=pointer]:
+            - img [ref=e224]
+          - button "M3 color scheme Light" [ref=e293] [cursor=pointer]:
+            - img [ref=e294]
+            - text: Light
+          - button "M3 seed color Blue (default)" [ref=e299] [cursor=pointer]:
+            - img [ref=e300]
+            - text: Blue (default)
+        - generic [ref=e228]:
+          - switch "Change zoom level" [ref=e229] [cursor=pointer]: 100%
+          - button "Enter full screen" [ref=e230] [cursor=pointer]:
+            - img [ref=e231]
+          - button "Share" [ref=e233] [cursor=pointer]:
+            - img [ref=e234]
+          - button "Open in editor" [ref=e237] [cursor=pointer]:
+            - img [ref=e238]
+    - main "Main preview area" [ref=e241]:
+      - heading "Main preview area" [level=2] [ref=e242]
+      - generic [ref=e246]:
+        - link "Skip to sidebar" [ref=e247] [cursor=pointer]:
+          - /url: "#components-fabmenu--default"
+        - iframe [active] [ref=e251]:
+          - generic [ref=f1e3]:
+            - menu [ref=f1e4]:
+              - menuitem "Favorite" [active] [ref=f1e8] [cursor=pointer]:
+                - img
+                - text: Favorite
+              - menuitem "Share" [ref=f1e9] [cursor=pointer]:
+                - img
+                - text: Share
+              - menuitem "Edit" [ref=f1e10] [cursor=pointer]:
+                - img
+                - text: Edit
+            - generic [ref=f1e5]:
+              - generic:
+                - button [expanded]
+              - button "Close menu" [ref=f1e11] [cursor=pointer]:
+                - img
+  - generic [ref=e252]:
+    - separator "Addon panel resize handle" [ref=e253]
+    - region "Addon panel" [ref=e255]:
+      - heading "Addon panel" [level=2] [ref=e256]
+      - generic [ref=e257]:
+        - generic [ref=e258]:
+          - generic [ref=e259]:
+            - button "Move addon panel to right" [ref=e260] [cursor=pointer]:
+              - img [ref=e261]
+            - button "Hide addon panel" [ref=e264] [cursor=pointer]:
+              - img [ref=e265]
+          - tablist "Available addons" [ref=e270]:
+            - tab "Controls 7" [selected] [ref=e302] [cursor=pointer]:
+              - generic [ref=e272]:
+                - generic [ref=e273]: Controls
+                - generic [ref=e303]: "7"
+            - tab "Actions" [ref=e274] [cursor=pointer]:
+              - generic [ref=e276]: Actions
+            - tab "Interactions" [ref=e277] [cursor=pointer]:
+              - generic [ref=e279]: Interactions
+            - tab "Accessibility 2" [ref=e304] [cursor=pointer]:
+              - generic [ref=e282]:
+                - generic [ref=e283]: Accessibility
+                - generic [ref=e305]: "2"
+        - tabpanel "Controls 7" [ref=e306]:
+          - generic [ref=e313]:
+            - button "Reset controls" [ref=e315] [cursor=pointer]:
+              - img [ref=e316]
+            - table [ref=e318]:
+              - rowgroup [ref=e319]:
+                - row "Name Control" [ref=e320]:
+                  - columnheader "Name" [ref=e321]
+                  - columnheader "Control" [ref=e322]
+              - rowgroup [ref=e323]:
+                - row "items* Edit items as JSON items :" [ref=e324]:
+                  - cell "items*" [ref=e325]
+                  - cell "Edit items as JSON items :" [ref=e326]:
+                    - generic [ref=e327]:
+                      - switch "Edit items as JSON" [ref=e328] [cursor=pointer]:
+                        - img [ref=e329]
+                      - listitem [ref=e332]:
+                        - button "items :" [expanded] [ref=e333]
+                        - group "items :" [ref=e334]:
+                          - text: "["
+                          - button "add a new item to the 'items' array" [ref=e335] [cursor=pointer]:
+                            - img [ref=e336]
+                          - list [ref=e339]:
+                            - listitem [ref=e340]:
+                              - button "0 :" [ref=e341]
+                              - group "0 :" [ref=e342]:
+                                - generic [ref=e343]: "{...} 2 keys"
+                                - button "remove the object '0'" [ref=e344] [cursor=pointer]:
+                                  - img [ref=e345]
+                            - listitem [ref=e348]:
+                              - button "1 :" [ref=e349]
+                              - group "1 :" [ref=e350]:
+                                - generic [ref=e351]: "{...} 2 keys"
+                                - button "remove the object '1'" [ref=e352] [cursor=pointer]:
+                                  - img [ref=e353]
+                            - listitem [ref=e356]:
+                              - button "2 :" [ref=e357]
+                              - group "2 :" [ref=e358]:
+                                - generic [ref=e359]: "{...} 2 keys"
+                                - button "remove the object '2'" [ref=e360] [cursor=pointer]:
+                                  - img [ref=e361]
+                          - text: "]"
+                          - button "remove the array 'items'" [ref=e364] [cursor=pointer]:
+                            - img [ref=e365]
+                - row "children Edit children as JSON children :" [ref=e368]:
+                  - cell "children" [ref=e369]
+                  - cell "Edit children as JSON children :" [ref=e370]:
+                    - generic [ref=e371]:
+                      - switch "Edit children as JSON" [ref=e372] [cursor=pointer]:
+                        - img [ref=e373]
+                      - generic [ref=e376]:
+                        - button "children :" [expanded] [ref=e377]
+                        - group "children :" [ref=e378]:
+                          - text: "{"
+                          - button "add a new property to the object 'children'" [ref=e379] [cursor=pointer]:
+                            - img [ref=e380]
+                          - list [ref=e383]:
+                            - listitem [ref=e384]:
+                              - generic [ref=e385]: "$$typeof :"
+                              - generic [ref=e386]: Symbol(react.transitional.element)
+                            - listitem [ref=e387]:
+                              - generic [ref=e388]: "key :"
+                              - generic [ref=e389]: "null"
+                              - button "remove the property 'key' with value 'null' from 'undefined'" [ref=e390] [cursor=pointer]:
+                                - img [ref=e391]
+                            - listitem [ref=e394]:
+                              - button "props :" [ref=e395]
+                              - group "props :" [ref=e396]:
+                                - generic [ref=e397]: "{...} 1 key"
+                                - button "remove the object 'props'" [ref=e398] [cursor=pointer]:
+                                  - img [ref=e399]
+                            - listitem [ref=e402]:
+                              - generic [ref=e403]: "_owner :"
+                              - generic [ref=e404]: "null"
+                              - button "remove the property '_owner' with value 'null' from 'undefined'" [ref=e405] [cursor=pointer]:
+                                - img [ref=e406]
+                            - listitem [ref=e409]:
+                              - button "_store :" [ref=e410]
+                              - group "_store :" [ref=e411]:
+                                - generic [ref=e412]: "{...} 0 keys"
+                                - button "remove the object '_store'" [ref=e413] [cursor=pointer]:
+                                  - img [ref=e414]
+                          - text: "}"
+                          - button "remove the object 'children'" [ref=e417] [cursor=pointer]:
+                            - img [ref=e418]
+                - row "open Set boolean" [ref=e421]:
+                  - cell "open" [ref=e422]
+                  - cell "Set boolean" [ref=e423]:
+                    - button "Set boolean" [ref=e424] [cursor=pointer]
+                - row "defaultOpen Set boolean" [ref=e425]:
+                  - cell "defaultOpen" [ref=e426]
+                  - cell "Set boolean" [ref=e427]:
+                    - button "Set boolean" [ref=e428] [cursor=pointer]
+                - row "onOpenChange -" [ref=e429]:
+                  - cell "onOpenChange" [ref=e430]
+                  - cell "-" [ref=e431]
+                - row "scrim Set boolean" [ref=e432]:
+                  - cell "scrim" [ref=e433]
+                  - cell "Set boolean" [ref=e434]:
+                    - button "Set boolean" [ref=e435] [cursor=pointer]
+                - row "closeIcon Set object" [ref=e436]:
+                  - cell "closeIcon" [ref=e437]
+                  - cell "Set object" [ref=e438]:
+                    - button "Set object" [ref=e439] [cursor=pointer]
+                - row "ref Set object" [ref=e440]:
+                  - cell "ref" [ref=e441]
+                  - cell "Set object" [ref=e442]:
+                    - button "Set object" [ref=e443] [cursor=pointer]

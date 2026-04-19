@@ -1,0 +1,102 @@
+/* =============================================================================
+   Snackbar — M3 Spec
+   Shape: extra-small (4px), BG: inverse-surface, Elevation: level5
+   Single-line: 48px, Two-line: 68px
+   Source: m3.material.io/components/snackbar/specs
+   ============================================================================= */
+
+.md-snackbar {
+  display: flex;
+  width: 100%;
+  min-width: 288px;
+  max-width: 568px;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  background-color: var(--md-sys-color-inverse-surface);
+  color: var(--md-sys-color-inverse-on-surface);
+  box-shadow: var(--md-sys-elevation-5);
+  animation: snackbar-slide-up var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard-decelerate);
+
+  &[data-layout="singleLine"] {
+    min-height: 48px;
+    align-items: center;
+  }
+
+  &[data-layout="twoLine"] {
+    min-height: 68px;
+    align-items: center;
+  }
+
+  &[data-layout="longerAction"] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.md-snackbar__message {
+  flex: 1;
+  padding: 14px 0 14px 16px;
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+}
+
+.md-snackbar[data-layout="longerAction"] .md-snackbar__message {
+  flex: none;
+  padding: 14px 16px 4px;
+}
+
+.md-snackbar__actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-right: 8px;
+}
+
+.md-snackbar[data-layout="longerAction"] .md-snackbar__actions {
+  justify-content: flex-end;
+  padding: 0 8px 2px;
+}
+
+/* Action button — 3-class specificity (0,3,0) beats button.css's (0,2,0) */
+.md-snackbar .md-snackbar__action.md-button {
+  color: var(--md-sys-color-inverse-primary);
+
+  &:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--md-sys-color-inverse-primary) var(--md-sys-state-hover-opacity),
+      transparent
+    );
+  }
+
+  &:active {
+    background-color: color-mix(
+      in srgb,
+      var(--md-sys-color-inverse-primary) var(--md-sys-state-pressed-opacity),
+      transparent
+    );
+  }
+}
+
+/* Close button — 3-class specificity beats icon-button.css's (0,2,0) */
+.md-snackbar .md-snackbar__close.md-icon-button {
+  color: var(--md-sys-color-inverse-on-surface);
+
+  &:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--md-sys-color-inverse-on-surface) var(--md-sys-state-hover-opacity),
+      transparent
+    );
+  }
+
+  &:active {
+    background-color: color-mix(
+      in srgb,
+      var(--md-sys-color-inverse-on-surface) var(--md-sys-state-pressed-opacity),
+      transparent
+    );
+  }
+}

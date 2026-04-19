@@ -1,0 +1,70 @@
+/* =============================================================================
+   Loading Indicator — M3 Expressive
+   Shape morphing through geometric forms with layered rotation:
+   - Constant slow spin via CSS animation (outer wrapper)
+   - Full-cycle quarter turns via Web Animations API (inner SVG)
+   ============================================================================= */
+
+.md-loading-indicator {
+  display: inline-flex;
+  flex-shrink: 0;
+
+  --_color: var(--md-loading-indicator-color, var(--md-sys-color-primary));
+  --_container-color: var(--md-loading-indicator-container-color, var(--md-sys-color-primary-container));
+
+  &[data-container] {
+    --_color: var(--md-loading-indicator-color, var(--md-sys-color-primary-container));
+    --_container-color: var(--md-loading-indicator-container-color, var(--md-sys-color-on-primary-container));
+  }
+
+  &[data-size="sm"] {
+    width: 24px;
+    height: 24px;
+  }
+  &[data-size="md"] {
+    width: 48px;
+    height: 48px;
+  }
+  &[data-size="lg"] {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* Constant background rotation — full 360° loop */
+.md-loading-indicator__rotator {
+  width: 100%;
+  height: 100%;
+  animation: loading-indicator-spin 6s linear infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Per-cycle rotation layer controlled by JS Web Animations API */
+.md-loading-indicator__svg {
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  transform-box: fill-box;
+  will-change: transform;
+}
+
+.md-loading-indicator__container {
+  fill: var(--_container-color);
+}
+
+.md-loading-indicator__shape {
+  fill: var(--_color);
+}
+
+@keyframes loading-indicator-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-loading-indicator__rotator {
+    animation: none;
+  }
+}

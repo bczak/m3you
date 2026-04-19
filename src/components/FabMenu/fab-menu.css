@@ -1,0 +1,105 @@
+/* =============================================================================
+   FABMenu — M3 Expressive Motion
+   Single-element trigger morph + staggered item animations.
+   Enter: emphasized-decelerate (long, gentle arrival)
+   Exit: emphasized-accelerate (short, quick departure)
+   ============================================================================= */
+
+/* ── Root ── */
+.md-fab-menu {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* ── Scrim ── */
+.md-fab-menu__scrim {
+  position: fixed;
+  inset: 0;
+  cursor: default;
+  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 40%, transparent);
+
+  &[data-state="open"] {
+    opacity: 1;
+    transition: opacity var(--md-sys-motion-duration-short1) var(--md-sys-motion-easing-emphasized-decelerate);
+  }
+
+  &[data-state="closed"] {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-extra-short4) var(--md-sys-motion-easing-emphasized-accelerate);
+  }
+}
+
+/* ── Trigger: z-index above scrim ── */
+.md-fab-menu-trigger {
+  z-index: 10;
+}
+
+/* ── Trigger morph: FAB (IconButton) → round when open ──
+   Specificity 0,4,0 beats .md-icon-button.md-fab[data-size] at 0,3,0 */
+.md-icon-button.md-fab.md-fab-menu-trigger[data-menu-state="open"] {
+  border-radius: calc(var(--_height) / 2);
+}
+
+/* ── Trigger morph: ExtendedFAB (Button) → round 56dp when open ──
+   Adds width/padding/gap transitions for the collapse animation */
+.md-button.md-extended-fab.md-fab-menu-trigger {
+  width: var(--_natural-width, auto);
+  transition:
+    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial),
+    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial),
+    padding var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial),
+    gap var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial);
+}
+
+.md-button.md-extended-fab.md-fab-menu-trigger[data-menu-state="open"] {
+  width: var(--_height);
+  padding: 0;
+  gap: 0;
+  border-radius: calc(var(--_height) / 2);
+}
+
+/* ── Content ── */
+.md-fab-menu__content {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+/* ── Menu Item enter/exit ──
+   Compound selector (.md-button.md-fab-menu-item) overrides .md-button transition.
+   Enter: emphasized-decelerate + spring scale (M3 Expressive arrival)
+   Exit: emphasized-accelerate (quick departure) */
+.md-button.md-fab-menu-item {
+  &[data-state="open"] {
+    transform: translateY(0);
+    scale: 1;
+    opacity: 1;
+    transition:
+      transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized-decelerate),
+      scale var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial),
+      opacity var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-emphasized-decelerate),
+      color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      border-radius var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial),
+      box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  }
+
+  &[data-state="closed"] {
+    pointer-events: none;
+    transform: translateY(16px);
+    scale: 0.8;
+    opacity: 0;
+    transition:
+      transform var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-emphasized-accelerate),
+      scale var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-emphasized-accelerate),
+      opacity var(--md-sys-motion-duration-extra-short2) var(--md-sys-motion-easing-emphasized-accelerate);
+  }
+}

@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Headphones, Mic, Radio, Settings, Volume2, Wifi } from 'lucide-react';
-import { Divider } from '../src/components/ui/divider';
-import { IconButton } from '../src/components/ui/icon-button';
+import { Divider } from '../src/components/Divider/divider';
+import { ShowcaseGrid, ShowcasePanel } from './_helpers/storybook-showcase';
 
 const meta = {
-  title: 'Components/Divider',
+  title: 'Containment/Divider',
   component: Divider,
   parameters: {
     layout: 'centered',
@@ -18,218 +17,66 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/* ---------------------------------------------------------------------------
-   Default
-   --------------------------------------------------------------------------- */
-
-export const Default: Story = {
-  render: () => (
-    <div className="w-80">
-      <Divider />
-    </div>
-  ),
-};
-
-/* ---------------------------------------------------------------------------
-   Variants
-   --------------------------------------------------------------------------- */
-
-export const Variants: Story = {
-  parameters: { layout: 'fullscreen' },
-  render: () => (
-    <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-on-background/60 text-sm">Divider Variants</h2>
-      <div className="mx-auto flex max-w-md flex-col gap-8">
-        {/* Full-width */}
-        <div className="overflow-hidden rounded-xl bg-surface-container">
-          <p className="px-4 pt-4 pb-2 text-on-background/60 text-xs">full-width (default)</p>
-          <p className="px-4 text-on-background text-sm">Content above</p>
-          <Divider className="my-3" />
-          <p className="px-4 pb-4 text-on-background text-sm">Content below</p>
-        </div>
-
-        {/* Inset */}
-        <div className="overflow-hidden rounded-xl bg-surface-container">
-          <p className="px-4 pt-4 pb-2 text-on-background/60 text-xs">inset</p>
-          <p className="px-4 text-on-background text-sm">Content above</p>
-          <Divider variant="inset" className="my-3" />
-          <p className="px-4 pb-4 text-on-background text-sm">Content below</p>
-        </div>
+export const Playground: Story = {
+  args: {
+    variant: 'full-width',
+    orientation: 'horizontal',
+  },
+  render: (args) =>
+    args.orientation === 'vertical' ? (
+      <div className="sb-m3-demo-row" style={{ height: 72 }}>
+        <span>Left</span>
+        <Divider {...args} style={{ height: '100%' }} />
+        <span>Right</span>
       </div>
-    </div>
-  ),
-};
-
-/* ---------------------------------------------------------------------------
-   Vertical
-   --------------------------------------------------------------------------- */
-
-export const Vertical: Story = {
-  render: () => (
-    <div className="flex h-10 items-center gap-3">
-      <IconButton variant="text" size="sm">
-        <Volume2 />
-      </IconButton>
-      <Divider orientation="vertical" />
-      <IconButton variant="text" size="sm">
-        <Mic />
-      </IconButton>
-      <Divider orientation="vertical" />
-      <IconButton variant="text" size="sm">
-        <Headphones />
-      </IconButton>
-    </div>
-  ),
-};
-
-/* ---------------------------------------------------------------------------
-   List Example — Podcast list with inset dividers
-   --------------------------------------------------------------------------- */
-
-const ListItem = ({ title, subtitle, icon: Icon }: { title: string; subtitle: string; icon: React.ElementType }) => (
-  <div className="flex items-center gap-4 px-4 py-3">
-    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
-      <Icon className="size-5" />
-    </div>
-    <div className="min-w-0 flex-1">
-      <p className="font-medium text-on-background text-sm">{title}</p>
-      <p className="text-on-background/60 text-xs">{subtitle}</p>
-    </div>
-  </div>
-);
-
-export const ListExample: Story = {
-  parameters: { layout: 'fullscreen' },
-  render: () => (
-    <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-on-background/60 text-sm">List with Inset Dividers</h2>
-      <div className="mx-auto max-w-sm overflow-hidden rounded-xl bg-surface-container">
-        <ListItem icon={Radio} title="The Daily Mix" subtitle="Updated today" />
-        <Divider variant="inset" />
-        <ListItem icon={Headphones} title="Deep Focus" subtitle="50 songs" />
-        <Divider variant="inset" />
-        <ListItem icon={Mic} title="Tech Talk Weekly" subtitle="New episode" />
-        <Divider variant="inset" />
-        <ListItem icon={Volume2} title="Ambient Sounds" subtitle="3 hours" />
+    ) : (
+      <div style={{ width: 320 }}>
+        <Divider {...args} />
       </div>
-    </div>
-  ),
+    ),
 };
 
-/* ---------------------------------------------------------------------------
-   Grouping Example — Settings-style list with full-width dividers
-   --------------------------------------------------------------------------- */
-
-export const GroupingExample: Story = {
-  parameters: { layout: 'fullscreen' },
+export const InContent: Story = {
   render: () => (
-    <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-on-background/60 text-sm">Grouping with Full-width Dividers</h2>
-      <div className="mx-auto max-w-sm overflow-hidden rounded-xl bg-surface-container">
-        {/* Section 1 */}
-        <div className="px-4 pt-4 pb-1">
-          <p className="font-medium text-primary text-xs">Network</p>
-        </div>
-        <div className="flex items-center gap-4 px-4 py-3">
-          <Wifi className="size-5 text-on-background/60" />
-          <p className="text-on-background text-sm">Wi-Fi</p>
-        </div>
-        <div className="flex items-center gap-4 px-4 py-3">
-          <Radio className="size-5 text-on-background/60" />
-          <p className="text-on-background text-sm">Bluetooth</p>
-        </div>
-
-        <Divider />
-
-        {/* Section 2 */}
-        <div className="px-4 pt-4 pb-1">
-          <p className="font-medium text-primary text-xs">Sound</p>
-        </div>
-        <div className="flex items-center gap-4 px-4 py-3">
-          <Volume2 className="size-5 text-on-background/60" />
-          <p className="text-on-background text-sm">Volume</p>
-        </div>
-        <div className="flex items-center gap-4 px-4 py-3">
-          <Mic className="size-5 text-on-background/60" />
-          <p className="text-on-background text-sm">Microphone</p>
-        </div>
-
-        <Divider />
-
-        {/* Section 3 */}
-        <div className="px-4 pt-4 pb-1">
-          <p className="font-medium text-primary text-xs">General</p>
-        </div>
-        <div className="flex items-center gap-4 px-4 py-3 pb-4">
-          <Settings className="size-5 text-on-background/60" />
-          <p className="text-on-background text-sm">Advanced settings</p>
-        </div>
-      </div>
-    </div>
-  ),
-};
-
-/* ---------------------------------------------------------------------------
-   Complete Showcase
-   --------------------------------------------------------------------------- */
-
-export const CompleteShowcase: Story = {
-  parameters: { layout: 'fullscreen' },
-  render: () => (
-    <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-on-background/60 text-sm">Complete Divider Showcase</h2>
-
-      <div className="mx-auto flex max-w-3xl flex-col gap-10">
-        {/* Horizontal variants */}
-        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-on-background/60 text-xs">Horizontal Variants</h3>
-          <div className="flex flex-col gap-6">
-            {(['full-width', 'inset'] as const).map((v) => (
-              <div key={v} className="overflow-hidden rounded-xl bg-surface-container">
-                <p className="px-4 pt-4 pb-1 text-on-background/40 text-xs">{v}</p>
-                <p className="px-4 text-on-background text-sm">Above</p>
-                <Divider variant={v} className="my-3" />
-                <p className="px-4 pb-4 text-on-background text-sm">Below</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Vertical */}
-        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-on-background/60 text-xs">Vertical Orientation</h3>
-          <div className="rounded-xl bg-surface-container p-4">
-            <div className="flex h-10 items-center gap-3">
-              <span className="text-on-background text-sm">Item A</span>
-              <Divider orientation="vertical" />
-              <span className="text-on-background text-sm">Item B</span>
-              <Divider orientation="vertical" />
-              <span className="text-on-background text-sm">Item C</span>
+    <div style={{ maxWidth: 820 }}>
+      <ShowcaseGrid>
+        <ShowcasePanel
+          eyebrow="Sections"
+          title="Horizontal separators"
+          description="Use full-width and inset dividers to create a clear content rhythm."
+        >
+          <div className="sb-m3-demo-stack">
+            <div className="sb-m3-demo-stack" style={{ gap: 8 }}>
+              <strong>Account</strong>
+              <span className="sb-m3-muted">Personal details and preferences</span>
+            </div>
+            <Divider />
+            <div className="sb-m3-demo-stack" style={{ gap: 8 }}>
+              <strong>Notifications</strong>
+              <span className="sb-m3-muted">Alerts, email cadence, and digest frequency</span>
+            </div>
+            <Divider variant="inset" />
+            <div className="sb-m3-demo-stack" style={{ gap: 8 }}>
+              <strong>Security</strong>
+              <span className="sb-m3-muted">Passkeys, sessions, and device history</span>
             </div>
           </div>
-        </div>
+        </ShowcasePanel>
 
-        {/* On different backgrounds */}
-        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-on-background/60 text-xs">On Different Backgrounds</h3>
-          <div className="flex flex-col gap-4">
-            {(
-              [
-                ['bg-surface', 'Surface'],
-                ['bg-surface-container-low', 'Surface Container Low'],
-                ['bg-surface-container', 'Surface Container'],
-                ['bg-surface-container-high', 'Surface Container High'],
-              ] as const
-            ).map(([bg, label]) => (
-              <div key={bg} className={`rounded-xl ${bg} p-4`}>
-                <p className="mb-1 text-on-background/40 text-xs">{label}</p>
-                <Divider className="my-2" />
-                <p className="text-on-background/40 text-xs">Content below divider</p>
-              </div>
-            ))}
+        <ShowcasePanel
+          eyebrow="Toolbar"
+          title="Vertical separators"
+          description="A vertical divider quietly separates controls in dense command rows."
+        >
+          <div className="sb-m3-demo-row" style={{ height: 48 }}>
+            <span>Undo</span>
+            <Divider orientation="vertical" style={{ height: '100%' }} />
+            <span>Redo</span>
+            <Divider orientation="vertical" variant="heavy" style={{ height: '100%' }} />
+            <span>Share</span>
           </div>
-        </div>
-      </div>
+        </ShowcasePanel>
+      </ShowcaseGrid>
     </div>
   ),
 };

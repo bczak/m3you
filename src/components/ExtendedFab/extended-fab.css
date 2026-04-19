@@ -1,0 +1,35 @@
+/* =============================================================================
+   ExtendedFAB — M3 Spec
+   Wraps Button with FAB-specific overrides: shape large (16px), elevation
+   Source: m3.material.io/components/extended-fab/specs
+   ============================================================================= */
+
+.md-extended-fab {
+  gap: 12px;
+  box-shadow: var(--md-sys-elevation-3);
+
+  /* ── Size-dependent shape (EFAB small=corner-large, large=corner-extra-large) ── */
+  &[data-size="xs"],
+  &[data-size="sm"],
+  &[data-size="md"] {
+    border-radius: var(--md-sys-shape-corner-large);
+    gap: 8px;
+  }
+
+  &[data-size="lg"] {
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    gap: 16px;
+  }
+
+  &:hover {
+    box-shadow: var(--md-sys-elevation-4);
+  }
+
+  &[data-lowered] {
+    box-shadow: var(--md-sys-elevation-1);
+
+    &:hover {
+      box-shadow: var(--md-sys-elevation-2);
+    }
+  }
+}

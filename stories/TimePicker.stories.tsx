@@ -1,15 +1,111 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import * as React from 'react';
-import { Button } from '../src/components/ui/button';
-import { TimePicker } from '../src/components/ui/time-picker';
+import { type ComponentProps, type ReactNode, useRef, useState } from 'react';
+
+import { Button } from '../src/components/Button/button';
+import { TimePicker } from '../src/components/TimePicker/time-picker';
+
+const DEFAULT_TIME = { hours: 14, minutes: 30 };
+
+const stackStyle = {
+  display: 'grid',
+  gap: '16px',
+  justifyItems: 'start',
+} as const;
+
+const frameStyle = {
+  position: 'relative',
+  width: 640,
+  minHeight: 560,
+  overflow: 'hidden',
+  borderRadius: '28px',
+  border: '1px solid var(--md-sys-color-outline-variant)',
+  background: 'var(--md-sys-color-surface)',
+  boxShadow: 'var(--md-sys-elevation-1)',
+  transform: 'scale(1)',
+} as const;
+
+const frameBodyStyle = {
+  minHeight: 560,
+} as const;
+
+const selectionStyle = {
+  color: 'var(--md-sys-color-on-surface-variant)',
+  font: 'var(--md-sys-typescale-body-medium)',
+} as const;
+
+function formatStoryTime(
+  time: { hours: number; minutes: number } | null,
+  format: NonNullable<ComponentProps<typeof TimePicker>['format']>,
+) {
+  if (!time) return 'None';
+
+  if (format === '24h') {
+    return `${time.hours.toString().padStart(2, '0')}:${time.minutes.toString().padStart(2, '0')}`;
+  }
+
+  const period = time.hours >= 12 ? 'PM' : 'AM';
+  const hour = time.hours % 12 === 0 ? 12 : time.hours % 12;
+
+  return `${hour.toString().padStart(2, '0')}:${time.minutes.toString().padStart(2, '0')} ${period}`;
+}
+
+function PickerFrame({ children }: { children: (container: React.RefObject<HTMLDivElement | null>) => ReactNode }) {
+  const frameRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div ref={frameRef} style={frameStyle}>
+      <div style={frameBodyStyle}>{children(frameRef)}</div>
+    </div>
+  );
+}
+
+type TriggeredTimePickerProps = Omit<
+  ComponentProps<typeof TimePicker>,
+  'open' | 'onOpenChange' | 'value' | 'onChange' | 'defaultValue'
+> & {
+  triggerLabel?: string;
+  initialValue?: { hours: number; minutes: number };
+};
+
+function TriggeredTimePicker({
+  triggerLabel = 'Open time picker',
+  initialValue = DEFAULT_TIME,
+  format = '12h',
+  ...props
+}: TriggeredTimePickerProps) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(initialValue);
+
+  return (
+    <div style={stackStyle}>
+      <Button variant="filled" size="sm" shape="round" onClick={() => setOpen(true)}>
+        {triggerLabel}
+      </Button>
+      <span style={selectionStyle}>Selected: {formatStoryTime(value, format)}</span>
+      <PickerFrame>
+        {(container) => (
+          <TimePicker
+            open={open}
+            onOpenChange={setOpen}
+            value={value}
+            onChange={setValue}
+            format={format}
+            portalProps={{ container }}
+            {...props}
+          />
+        )}
+      </PickerFrame>
+    </div>
+  );
+}
 
 const meta = {
-  title: 'Components/TimePicker',
+  title: 'Selection/Time Picker',
   component: TimePicker,
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['format', 'headerLabel', 'orientation', 'defaultMode'],
+      include: ['format', 'orientation', 'defaultMode', 'headerLabel'],
     },
   },
   tags: ['autodocs'],
@@ -18,324 +114,70 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// =============================================================================
-// Helpers
-// =============================================================================
-
-const format12Display = (t: { hours: number; minutes: number } | null) => {
-  if (!t) return 'None';
-  const period = t.hours >= 12 ? 'PM' : 'AM';
-  const h = t.hours === 0 ? 12 : t.hours > 12 ? t.hours - 12 : t.hours;
-  return `${h}:${t.minutes.toString().padStart(2, '0')} ${period}`;
+export const WithTrigger: Story = {
+  render: () => <TriggeredTimePicker headerLabel="Select time" triggerLabel="Open 12-hour picker" />,
 };
 
-const format24Display = (t: { hours: number; minutes: number } | null) => {
-  if (!t) return 'None';
-  return `${t.hours.toString().padStart(2, '0')}:${t.minutes.toString().padStart(2, '0')}`;
+export const TwentyFourHourWithTrigger: Story = {
+  render: () => (
+    <TriggeredTimePicker
+      format="24h"
+      headerLabel="Select time"
+      initialValue={{ hours: 18, minutes: 45 }}
+      triggerLabel="Open 24-hour picker"
+    />
+  ),
 };
 
-// =============================================================================
-// 12-Hour Format — Dial Mode (Portrait)
-// =============================================================================
+export const InputModeWithTrigger: Story = {
+  render: () => (
+    <TriggeredTimePicker
+      defaultMode="input"
+      headerLabel="Enter time"
+      initialValue={{ hours: 9, minutes: 15 }}
+      triggerLabel="Open input mode picker"
+    />
+  ),
+};
 
-export const Default: Story = {
+export const LandscapeWithTrigger: Story = {
+  render: () => (
+    <TriggeredTimePicker
+      orientation="landscape"
+      headerLabel="Select time"
+      initialValue={{ hours: 16, minutes: 20 }}
+      triggerLabel="Open landscape picker"
+    />
+  ),
+};
+
+export const WithoutTrigger: Story = {
   render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number } | null>(null);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(true);
+    const [value, setValue] = useState(DEFAULT_TIME);
 
     return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="filled" onClick={() => setOpen(true)}>
-          Select Time
-        </Button>
-        <p className="text-on-background text-sm">Selected: {format12Display(time)}</p>
-        <TimePicker open={open} onOpenChange={setOpen} value={time} onChange={setTime} />
-      </div>
-    );
-  },
-};
-
-export const WithInitialValue: Story = {
-  render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number }>({ hours: 10, minutes: 30 });
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="outlined" onClick={() => setOpen(true)}>
-          {format12Display(time)}
-        </Button>
-        <TimePicker open={open} onOpenChange={setOpen} value={time} onChange={setTime} />
-      </div>
-    );
-  },
-};
-
-export const PMTime: Story = {
-  render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number }>({ hours: 14, minutes: 45 });
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="tonal" onClick={() => setOpen(true)}>
-          {format12Display(time)}
-        </Button>
-        <TimePicker open={open} onOpenChange={setOpen} value={time} onChange={setTime} />
-      </div>
-    );
-  },
-};
-
-// =============================================================================
-// 24-Hour Format — Dial Mode (Portrait)
-// =============================================================================
-
-export const Format24h: Story = {
-  render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number }>({ hours: 14, minutes: 45 });
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="filled" onClick={() => setOpen(true)}>
-          {format24Display(time)}
-        </Button>
-        <TimePicker open={open} onOpenChange={setOpen} value={time} onChange={setTime} format="24h" />
-      </div>
-    );
-  },
-};
-
-export const Format24hMidnight: Story = {
-  render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number }>({ hours: 0, minutes: 0 });
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="outlined" onClick={() => setOpen(true)}>
-          {format24Display(time)}
-        </Button>
-        <TimePicker open={open} onOpenChange={setOpen} value={time} onChange={setTime} format="24h" />
-      </div>
-    );
-  },
-};
-
-// =============================================================================
-// Landscape Orientation — Dial Mode
-// =============================================================================
-
-export const Landscape12h: Story = {
-  render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number }>({ hours: 10, minutes: 30 });
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="filled" onClick={() => setOpen(true)}>
-          Landscape 12h — {format12Display(time)}
-        </Button>
-        <TimePicker open={open} onOpenChange={setOpen} value={time} onChange={setTime} orientation="landscape" />
-      </div>
-    );
-  },
-};
-
-export const Landscape24h: Story = {
-  render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number }>({ hours: 14, minutes: 45 });
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="outlined" onClick={() => setOpen(true)}>
-          Landscape 24h — {format24Display(time)}
-        </Button>
-        <TimePicker
-          open={open}
-          onOpenChange={setOpen}
-          value={time}
-          onChange={setTime}
-          format="24h"
-          orientation="landscape"
-        />
-      </div>
-    );
-  },
-};
-
-// =============================================================================
-// Input Mode (Keyboard)
-// =============================================================================
-
-export const InputMode12h: Story = {
-  render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number }>({ hours: 10, minutes: 30 });
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="filled" onClick={() => setOpen(true)}>
-          Input 12h — {format12Display(time)}
-        </Button>
-        <TimePicker open={open} onOpenChange={setOpen} value={time} onChange={setTime} defaultMode="input" />
-      </div>
-    );
-  },
-};
-
-export const InputMode24h: Story = {
-  render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number }>({ hours: 14, minutes: 45 });
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="outlined" onClick={() => setOpen(true)}>
-          Input 24h — {format24Display(time)}
-        </Button>
-        <TimePicker
-          open={open}
-          onOpenChange={setOpen}
-          value={time}
-          onChange={setTime}
-          format="24h"
-          defaultMode="input"
-        />
-      </div>
-    );
-  },
-};
-
-// =============================================================================
-// Uncontrolled
-// =============================================================================
-
-export const Uncontrolled: Story = {
-  render: () => {
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="outlined" onClick={() => setOpen(true)}>
-          Open Uncontrolled Picker
-        </Button>
-        <TimePicker
-          open={open}
-          onOpenChange={setOpen}
-          defaultValue={{ hours: 9, minutes: 15 }}
-          onChange={(t) => console.log('Time changed:', t)}
-        />
-      </div>
-    );
-  },
-};
-
-// =============================================================================
-// Custom Header Label
-// =============================================================================
-
-export const CustomHeaderLabel: Story = {
-  render: () => {
-    const [time, setTime] = React.useState<{ hours: number; minutes: number } | null>(null);
-    const [open, setOpen] = React.useState(false);
-
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <Button variant="tonal" onClick={() => setOpen(true)}>
-          Set Alarm
-        </Button>
-        <TimePicker open={open} onOpenChange={setOpen} value={time} onChange={setTime} headerLabel="Set alarm time" />
-      </div>
-    );
-  },
-};
-
-// =============================================================================
-// Showcase — All Configurations
-// =============================================================================
-
-export const AllStatesShowcase: Story = {
-  parameters: { layout: 'fullscreen' },
-  render: () => {
-    const PickerCard = ({
-      label,
-      initialTime,
-      format = '12h' as '12h' | '24h',
-      orientation = 'portrait' as 'portrait' | 'landscape' | 'auto',
-      defaultMode = 'dial' as 'dial' | 'input',
-    }) => {
-      const [time, setTime] = React.useState<{ hours: number; minutes: number }>(initialTime);
-      const [open, setOpen] = React.useState(false);
-      const display = format === '24h' ? format24Display(time) : format12Display(time);
-      return (
-        <div className="space-y-2">
-          <span className="text-on-background/40 text-xs">{label}</span>
-          <div>
-            <Button variant="outlined" onClick={() => setOpen(true)}>
-              {display}
-            </Button>
-          </div>
-          <TimePicker
-            open={open}
-            onOpenChange={setOpen}
-            value={time}
-            onChange={setTime}
-            format={format}
-            orientation={orientation}
-            defaultMode={defaultMode}
-          />
-        </div>
-      );
-    };
-
-    return (
-      <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-on-background/60 text-sm">TimePicker — All Configurations</h2>
-        <div className="mx-auto max-w-[900px] space-y-8">
-          {/* Dial mode */}
-          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 font-medium text-on-background text-sm">Dial Mode — Portrait</h3>
-            <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-              <PickerCard label="12h AM" initialTime={{ hours: 10, minutes: 30 }} />
-              <PickerCard label="12h PM" initialTime={{ hours: 14, minutes: 45 }} />
-              <PickerCard label="24h" initialTime={{ hours: 14, minutes: 45 }} format="24h" />
-              <PickerCard label="24h Midnight" initialTime={{ hours: 0, minutes: 0 }} format="24h" />
-            </div>
-          </div>
-
-          {/* Landscape */}
-          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 font-medium text-on-background text-sm">Dial Mode — Landscape</h3>
-            <div className="grid grid-cols-2 gap-8">
-              <PickerCard label="12h Landscape" initialTime={{ hours: 10, minutes: 30 }} orientation="landscape" />
-              <PickerCard
-                label="24h Landscape"
-                initialTime={{ hours: 14, minutes: 45 }}
-                format="24h"
-                orientation="landscape"
-              />
-            </div>
-          </div>
-
-          {/* Input mode */}
-          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-6 font-medium text-on-background text-sm">Input Mode (Keyboard)</h3>
-            <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-              <PickerCard label="12h Input" initialTime={{ hours: 10, minutes: 30 }} defaultMode="input" />
-              <PickerCard label="12h PM Input" initialTime={{ hours: 14, minutes: 45 }} defaultMode="input" />
-              <PickerCard label="24h Input" initialTime={{ hours: 14, minutes: 45 }} format="24h" defaultMode="input" />
-              <PickerCard
-                label="24h Midnight Input"
-                initialTime={{ hours: 0, minutes: 0 }}
-                format="24h"
-                defaultMode="input"
-              />
-            </div>
-          </div>
-        </div>
+      <div style={stackStyle}>
+        {!open && (
+          <Button variant="outlined" size="sm" shape="round" onClick={() => setOpen(true)}>
+            Reopen picker
+          </Button>
+        )}
+        <span style={selectionStyle}>Selected: {formatStoryTime(value, '12h')}</span>
+        <PickerFrame>
+          {(container) => (
+            <TimePicker
+              open={open}
+              onOpenChange={setOpen}
+              value={value}
+              onChange={setValue}
+              format="12h"
+              orientation="portrait"
+              headerLabel="Select time"
+              portalProps={{ container }}
+            />
+          )}
+        </PickerFrame>
       </div>
     );
   },

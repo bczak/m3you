@@ -1,0 +1,192 @@
+/* =============================================================================
+   Menu — M3 Expressive Spec
+   Container: surface-container, elevation level 2, shape corner-large (16px)
+   Items: 48px height, body-large text, on-surface color
+   Source: m3.material.io/components/menus/specs
+   ============================================================================= */
+
+/* ── Menu popup container ── */
+.md-menu {
+  display: flex;
+  min-width: 112px;
+  max-width: 280px;
+  flex-direction: column;
+  outline: none;
+  animation: menu-in var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  /* Default (non-grouped): single container */
+  overflow-y: auto;
+  gap: 2px;
+  border-radius: var(--md-sys-shape-corner-large);
+  padding: 4px;
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  box-shadow: var(--md-sys-elevation-2);
+
+  /* Grouped: transparent wrapper, groups provide their own container */
+  &:has(.md-menu-group) {
+    overflow: visible;
+    gap: 2px;
+    border-radius: 0;
+    padding: 0;
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+/* ── Menu group ── */
+.md-menu-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  box-shadow: var(--md-sys-elevation-2);
+
+  /* Middle groups: all corners inner radius */
+  border-radius: var(--md-sys-shape-corner-small);
+
+  /* First group: top corners outer radius */
+  &:first-child {
+    border-top-left-radius: var(--md-sys-shape-corner-large);
+    border-top-right-radius: var(--md-sys-shape-corner-large);
+  }
+
+  /* Last group: bottom corners outer radius */
+  &:last-child {
+    border-bottom-left-radius: var(--md-sys-shape-corner-large);
+    border-bottom-right-radius: var(--md-sys-shape-corner-large);
+  }
+
+  /* Only group: all corners outer radius */
+  &:only-child {
+    border-radius: var(--md-sys-shape-corner-large);
+  }
+}
+
+/* ── Menu item ── */
+.md-menu-item {
+  --_outer-radius: var(--md-sys-shape-corner-medium); /* 12px */
+  --_inner-radius: var(--md-sys-shape-corner-extra-small); /* 4px */
+
+  position: relative;
+  display: flex;
+  height: 48px;
+  cursor: pointer;
+  user-select: none;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  border-radius: var(--_inner-radius);
+  padding-inline: 12px;
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-body-medium-font);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  outline: none;
+  transition:
+    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+
+  /* ── Non-grouped: connected corners within .md-menu ── */
+
+  &:first-child {
+    border-top-left-radius: var(--_outer-radius);
+    border-top-right-radius: var(--_outer-radius);
+  }
+
+  &:last-child {
+    border-bottom-left-radius: var(--_outer-radius);
+    border-bottom-right-radius: var(--_outer-radius);
+  }
+
+  &:only-child {
+    border-radius: var(--_outer-radius);
+  }
+
+  /* ── States ── */
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  }
+
+  &:focus-visible {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  }
+
+  &[data-disabled] {
+    pointer-events: none;
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+
+  /* Icon sizing — direct SVG children */
+  & > svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+}
+
+/* ── Menu item content wrapper (when supportingText is present) ── */
+.md-menu-item__content {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.md-menu-item__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.md-menu-item__supporting {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* ── Menu divider ── */
+.md-menu-divider {
+  border: none;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  margin-inline: 8px;
+}
+
+/* ── Submenu trigger chevron ── */
+.md-menu-item__chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--md-sys-color-on-surface-variant);
+
+  & svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ── Grouped: reset all items to inner radius ── */
+.md-menu-group .md-menu-item {
+  border-radius: var(--md-sys-shape-corner-extra-small);
+}
+
+/* Very first item across all groups: top corners outer */
+.md-menu-group:first-child > .md-menu-item:first-child {
+  border-top-left-radius: var(--md-sys-shape-corner-medium);
+  border-top-right-radius: var(--md-sys-shape-corner-medium);
+}
+
+/* Very last item across all groups: bottom corners outer */
+.md-menu-group:last-child > .md-menu-item:last-child {
+  border-bottom-left-radius: var(--md-sys-shape-corner-medium);
+  border-bottom-right-radius: var(--md-sys-shape-corner-medium);
+}

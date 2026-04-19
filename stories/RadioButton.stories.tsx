@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import * as React from 'react';
-import { RadioButton, RadioGroup, RadioGroupItem } from '../src/components/ui/radio-button';
+import { useState } from 'react';
+import { RadioButton, RadioGroup, RadioGroupItem } from '../src/components/RadioButton/radio-button';
 
 const meta = {
-  title: 'Components/RadioButton',
+  title: 'Selection/Radio Button',
   component: RadioButton,
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['checked', 'variant', 'disabled'],
+      include: ['variant', 'checked', 'disabled'],
     },
   },
   tags: ['autodocs'],
@@ -17,395 +17,190 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  render: () => {
-    const [checked, setChecked] = React.useState(false);
-    return <RadioButton checked={checked} onChange={() => setChecked(!checked)} />;
-  },
+// ─── Interactive Wrappers ────────────────────────────────────────
+
+const InteractiveRadio = (props: React.ComponentProps<typeof RadioButton>) => {
+  const [checked, setChecked] = useState(props.checked ?? false);
+  return (
+    <RadioButton
+      {...props}
+      checked={checked}
+      onChange={(e) => {
+        setChecked(e.target.checked);
+        props.onChange?.(e);
+      }}
+    />
+  );
 };
 
-export const AllStatesShowcase: Story = {
-  parameters: { layout: 'fullscreen' },
-  render: () => (
-    <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-on-background/60 text-sm">Radio Button States</h2>
-      <div className="mx-auto max-w-3xl space-y-8">
-        {/* Primary Variant */}
-        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Primary Variant</h3>
-          <div className="grid grid-cols-4 gap-6">
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-on-background/40 text-xs">Unselected</span>
-              <RadioButton />
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-on-background/40 text-xs">Selected</span>
-              <RadioButton checked />
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-on-background/40 text-xs">Disabled Unselected</span>
-              <RadioButton disabled />
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-on-background/40 text-xs">Disabled Selected</span>
-              <RadioButton checked disabled />
-            </div>
+const InteractiveRadioGroup = ({
+  variant,
+  disabled,
+  options = ['Option A', 'Option B', 'Option C'],
+}: {
+  variant?: 'primary' | 'error';
+  disabled?: boolean;
+  options?: string[];
+}) => {
+  const [value, setValue] = useState(options[0]);
+  return (
+    <RadioGroup value={value} onValueChange={setValue} variant={variant} disabled={disabled}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {options.map((option) => (
+          <div key={option} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <RadioGroupItem value={option} />
+            <span style={{ fontSize: '14px' }}>{option}</span>
           </div>
-        </div>
+        ))}
+      </div>
+    </RadioGroup>
+  );
+};
 
-        {/* Error Variant */}
-        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-6 text-center font-medium text-on-background/80 text-sm">Error Variant</h3>
-          <div className="grid grid-cols-4 gap-6">
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-on-background/40 text-xs">Unselected</span>
-              <RadioButton variant="error" />
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-on-background/40 text-xs">Selected</span>
-              <RadioButton variant="error" checked />
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-on-background/40 text-xs">Disabled Unselected</span>
-              <RadioButton variant="error" disabled />
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-on-background/40 text-xs">Disabled Selected</span>
-              <RadioButton variant="error" checked disabled />
-            </div>
-          </div>
-        </div>
+// ─── Default ─────────────────────────────────────────────────────
+
+export const Default: Story = {
+  args: {
+    variant: 'primary',
+    checked: false,
+    disabled: false,
+  },
+  render: (args) => <InteractiveRadio {...args} />,
+};
+
+// ─── Variant Stories ─────────────────────────────────────────────
+
+const VariantStory = ({ variant }: { variant: 'primary' | 'error' }) => {
+  return (
+    <div style={{ display: 'flex', gap: '64px' }}>
+      {/* Unselected */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+        <span style={{ fontSize: '12px', color: '#888' }}>Unselected</span>
+        <RadioButton variant={variant} checked={false} readOnly />
+        <RadioButton variant={variant} checked={false} disabled readOnly />
+      </div>
+
+      {/* Selected */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+        <span style={{ fontSize: '12px', color: '#888' }}>Selected</span>
+        <RadioButton variant={variant} checked readOnly />
+        <RadioButton variant={variant} checked disabled readOnly />
       </div>
     </div>
-  ),
+  );
 };
 
-export const RadioGroupBasic: Story = {
-  parameters: { layout: 'fullscreen' },
-  render: () => {
-    const BasicGroup = () => {
-      const [value, setValue] = React.useState('option1');
-      return (
-        <div className="space-y-4">
-          <RadioGroup value={value} onValueChange={setValue} className="space-y-1">
-            {['option1', 'option2', 'option3'].map((opt) => {
-              const id = `basic-${opt}`;
-              return (
-                <div key={opt} className="flex items-center">
-                  <RadioGroupItem value={opt} id={id} />
-                  <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-on-background text-sm capitalize">
-                    {opt.replace('option', 'Option ')}
-                  </label>
-                </div>
-              );
-            })}
-          </RadioGroup>
-          <p className="text-on-background/60 text-xs">Selected: {value}</p>
-        </div>
-      );
-    };
-
-    return (
-      <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-on-background/60 text-sm">Radio Group — Basic</h2>
-        <div className="mx-auto max-w-md">
-          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <BasicGroup />
-          </div>
-        </div>
-      </div>
-    );
-  },
-};
-
-export const WithLabels: Story = {
-  parameters: { layout: 'fullscreen' },
-  render: () => {
-    const ShippingMethod = () => {
-      const [value, setValue] = React.useState('standard');
-      return (
-        <RadioGroup value={value} onValueChange={setValue} className="space-y-1">
-          {[
-            { value: 'standard', label: 'Standard shipping', description: 'Arrives in 5-7 business days' },
-            { value: 'express', label: 'Express shipping', description: 'Arrives in 2-3 business days' },
-            { value: 'overnight', label: 'Overnight shipping', description: 'Arrives next business day' },
-          ].map((option) => {
-            const id = `shipping-${option.value}`;
-            return (
-              <div key={option.value} className="flex items-start">
-                <RadioGroupItem value={option.value} id={id} className="mt-0.5" />
-                <label htmlFor={id} className="-ml-2 cursor-pointer py-2 pr-3">
-                  <span className="block text-on-background text-sm">{option.label}</span>
-                  <span className="block text-on-background/50 text-xs">{option.description}</span>
-                </label>
-              </div>
-            );
-          })}
-        </RadioGroup>
-      );
-    };
-
-    const PaymentMethod = () => {
-      const [value, setValue] = React.useState('card');
-      return (
-        <RadioGroup value={value} onValueChange={setValue} className="space-y-1">
-          {[
-            { value: 'card', label: 'Credit / Debit Card' },
-            { value: 'paypal', label: 'PayPal' },
-            { value: 'bank', label: 'Bank Transfer' },
-            { value: 'crypto', label: 'Cryptocurrency' },
-          ].map((option) => {
-            const id = `payment-${option.value}`;
-            return (
-              <div key={option.value} className="flex items-center">
-                <RadioGroupItem value={option.value} id={id} />
-                <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-on-background text-sm">
-                  {option.label}
-                </label>
-              </div>
-            );
-          })}
-        </RadioGroup>
-      );
-    };
-
-    return (
-      <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-on-background/60 text-sm">Radio Buttons with Labels</h2>
-        <div className="mx-auto max-w-md space-y-8">
-          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-on-background/60 text-xs">Shipping Method</h3>
-            <ShippingMethod />
-          </div>
-          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-on-background/60 text-xs">Payment Method</h3>
-            <PaymentMethod />
-          </div>
-        </div>
-      </div>
-    );
-  },
+export const Primary: Story = {
+  render: () => <VariantStory variant="primary" />,
 };
 
 export const ErrorVariant: Story = {
-  parameters: { layout: 'fullscreen' },
+  name: 'Error',
+  render: () => <VariantStory variant="error" />,
+};
+
+// ─── Grouped ─────────────────────────────────────────────────────
+
+export const Grouped: Story = {
   render: () => {
-    const ValidationExample = () => {
-      const [value, setValue] = React.useState('');
-      const [submitted, setSubmitted] = React.useState(false);
-      const showError = submitted && !value;
-
-      return (
-        <div className="space-y-4">
-          <RadioGroup
-            value={value}
-            onValueChange={(v) => {
-              setValue(v);
-              if (submitted) setSubmitted(false);
-            }}
-            variant={showError ? 'error' : 'primary'}
-            className="space-y-1"
-          >
-            {[
-              { value: 'agree', label: 'I agree' },
-              { value: 'disagree', label: 'I disagree' },
-            ].map((option) => {
-              const id = `validate-${option.value}`;
-              return (
-                <div key={option.value} className="flex items-center">
-                  <RadioGroupItem value={option.value} id={id} />
-                  <label
-                    htmlFor={id}
-                    className={`-ml-2 cursor-pointer py-3 pr-3 text-sm ${showError ? 'text-error' : 'text-on-background'}`}
-                  >
-                    {option.label}
-                  </label>
-                </div>
-              );
-            })}
-          </RadioGroup>
-          {showError && <p className="ml-12 text-error text-xs">Please select an option</p>}
-          <button
-            type="button"
-            onClick={() => setSubmitted(true)}
-            className="mt-4 rounded-full bg-primary px-6 py-2 text-on-primary text-sm hover:bg-primary/90"
-          >
-            Submit
-          </button>
-        </div>
-      );
-    };
-
+    const [value, setValue] = useState('');
+    const options = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
     return (
-      <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-on-background/60 text-sm">Error Variant (Form Validation)</h2>
-        <div className="mx-auto max-w-md">
-          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-on-background/60 text-xs">Required Selection</h3>
-            <ValidationExample />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '240px' }}>
+        <RadioGroup value={value} onValueChange={setValue}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {options.map((option) => (
+              <div key={option} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <RadioGroupItem value={option} />
+                <span style={{ fontSize: '14px' }}>{option}</span>
+              </div>
+            ))}
           </div>
-        </div>
+        </RadioGroup>
+        <span style={{ fontSize: '12px', color: '#888' }}>
+          Selected: <strong>{value || 'none'}</strong>
+        </span>
       </div>
     );
   },
 };
 
-export const SettingsExample: Story = {
-  parameters: { layout: 'fullscreen' },
+// ─── RadioGroup Stories ──────────────────────────────────────────
+
+export const Group: Story = {
+  render: () => <InteractiveRadioGroup />,
+};
+
+export const GroupError: Story = {
+  render: () => <InteractiveRadioGroup variant="error" />,
+};
+
+export const GroupDisabled: Story = {
+  render: () => <InteractiveRadioGroup disabled />,
+};
+
+// ─── With Labels ─────────────────────────────────────────────────
+
+export const WithLabels: Story = {
   render: () => {
-    const ThemeSettings = () => {
-      const [theme, setTheme] = React.useState('system');
-      const [density, setDensity] = React.useState('comfortable');
-
-      return (
-        <div className="space-y-8">
-          <div>
-            <h4 className="mb-3 font-medium text-on-background text-sm">Appearance</h4>
-            <RadioGroup value={theme} onValueChange={setTheme} className="space-y-1">
-              {[
-                { value: 'light', label: 'Light', description: 'Always use light theme' },
-                { value: 'dark', label: 'Dark', description: 'Always use dark theme' },
-                { value: 'system', label: 'System', description: 'Match system preference' },
-              ].map((option) => {
-                const id = `theme-${option.value}`;
-                return (
-                  <div key={option.value} className="flex items-start">
-                    <RadioGroupItem value={option.value} id={id} className="mt-0.5" />
-                    <label htmlFor={id} className="-ml-2 cursor-pointer py-2 pr-3">
-                      <span className="block text-on-background text-sm">{option.label}</span>
-                      <span className="block text-on-background/50 text-xs">{option.description}</span>
-                    </label>
-                  </div>
-                );
-              })}
-            </RadioGroup>
-          </div>
-
-          <div>
-            <h4 className="mb-3 font-medium text-on-background text-sm">Display Density</h4>
-            <RadioGroup value={density} onValueChange={setDensity} className="space-y-1">
-              {[
-                { value: 'comfortable', label: 'Comfortable' },
-                { value: 'compact', label: 'Compact' },
-              ].map((option) => {
-                const id = `density-${option.value}`;
-                return (
-                  <div key={option.value} className="flex items-center">
-                    <RadioGroupItem value={option.value} id={id} />
-                    <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-3 text-on-background text-sm">
-                      {option.label}
-                    </label>
-                  </div>
-                );
-              })}
-            </RadioGroup>
-          </div>
-        </div>
-      );
-    };
-
+    const [value, setValue] = useState('comfortable');
     return (
-      <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-on-background/60 text-sm">Settings Page Example</h2>
-        <div className="mx-auto max-w-md">
-          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <ThemeSettings />
-          </div>
+      <RadioGroup value={value} onValueChange={setValue}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {[
+            { value: 'compact', label: 'Compact', description: 'Smaller spacing between items' },
+            { value: 'comfortable', label: 'Comfortable', description: 'Default spacing' },
+            { value: 'spacious', label: 'Spacious', description: 'More room between items' },
+          ].map((item) => (
+            <div key={item.value} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+              <RadioGroupItem value={item.value} style={{ marginTop: '2px' }} />
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.label}</div>
+                <div style={{ fontSize: '12px', color: '#888' }}>{item.description}</div>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      </RadioGroup>
     );
   },
 };
 
-export const DisabledGroup: Story = {
-  parameters: { layout: 'fullscreen' },
-  render: () => (
-    <div className="min-h-screen bg-surface-container-lowest p-8">
-      <h2 className="mb-8 text-center text-on-background/60 text-sm">Disabled Radio Group</h2>
-      <div className="mx-auto max-w-md space-y-8">
-        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-on-background/60 text-xs">Entire group disabled</h3>
-          <RadioGroup value="option2" disabled className="space-y-1">
-            {['option1', 'option2', 'option3'].map((opt) => {
-              const id = `disabled-${opt}`;
-              return (
-                <div key={opt} className="flex items-center">
-                  <RadioGroupItem value={opt} id={id} />
-                  <label htmlFor={id} className="-ml-2 py-3 pr-3 text-on-background/38 text-sm capitalize">
-                    {opt.replace('option', 'Option ')}
-                  </label>
-                </div>
-              );
-            })}
-          </RadioGroup>
-        </div>
+// ─── All Combinations ────────────────────────────────────────────
 
-        <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-          <h3 className="mb-4 text-on-background/60 text-xs">Individual item disabled</h3>
-          <RadioGroup defaultValue="free" className="space-y-1">
-            {[
-              { value: 'free', label: 'Free tier', disabled: false },
-              { value: 'pro', label: 'Pro tier', disabled: false },
-              { value: 'enterprise', label: 'Enterprise (coming soon)', disabled: true },
-            ].map((option) => {
-              const id = `individual-${option.value}`;
-              return (
-                <div key={option.value} className="flex items-center">
-                  <RadioGroupItem value={option.value} id={id} disabled={option.disabled} />
-                  <label
-                    htmlFor={id}
-                    className={`-ml-2 py-3 pr-3 text-sm ${option.disabled ? 'text-on-background/38' : 'cursor-pointer text-on-background'}`}
-                  >
-                    {option.label}
-                  </label>
-                </div>
-              );
-            })}
-          </RadioGroup>
+const AllCombinations = () => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+      {(['primary', 'error'] as const).map((variant) => (
+        <div key={variant}>
+          <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 600, textTransform: 'capitalize' }}>
+            {variant}
+          </h3>
+          <VariantStory variant={variant} />
+        </div>
+      ))}
+
+      <div>
+        <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 600 }}>RadioGroup</h3>
+        <div style={{ display: 'flex', gap: '64px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#888' }}>Primary</span>
+            <InteractiveRadioGroup variant="primary" />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#888' }}>Error</span>
+            <InteractiveRadioGroup variant="error" />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#888' }}>Disabled</span>
+            <InteractiveRadioGroup disabled />
+          </div>
         </div>
       </div>
     </div>
-  ),
+  );
 };
 
-export const HorizontalLayout: Story = {
-  parameters: { layout: 'fullscreen' },
-  render: () => {
-    const SizeSelector = () => {
-      const [size, setSize] = React.useState('md');
-      return (
-        <RadioGroup value={size} onValueChange={setSize} className="flex flex-wrap gap-4">
-          {[
-            { value: 'xs', label: 'XS' },
-            { value: 'sm', label: 'S' },
-            { value: 'md', label: 'M' },
-            { value: 'lg', label: 'L' },
-            { value: 'xl', label: 'XL' },
-          ].map((option) => {
-            const id = `size-${option.value}`;
-            return (
-              <div key={option.value} className="flex items-center">
-                <RadioGroupItem value={option.value} id={id} />
-                <label htmlFor={id} className="-ml-2 cursor-pointer py-3 pr-1 font-medium text-on-background text-sm">
-                  {option.label}
-                </label>
-              </div>
-            );
-          })}
-        </RadioGroup>
-      );
-    };
-
-    return (
-      <div className="min-h-screen bg-surface-container-lowest p-8">
-        <h2 className="mb-8 text-center text-on-background/60 text-sm">Horizontal Layout</h2>
-        <div className="mx-auto max-w-md">
-          <div className="rounded-lg border-2 border-outline-variant border-dashed p-6">
-            <h3 className="mb-4 text-on-background/60 text-xs">Select Size</h3>
-            <SizeSelector />
-          </div>
-        </div>
-      </div>
-    );
-  },
+export const All: Story = {
+  render: () => <AllCombinations />,
 };
