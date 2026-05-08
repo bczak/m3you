@@ -27,13 +27,13 @@ export type { CheckboxProps } from './components/Checkbox/checkbox';
 export { Checkbox } from './components/Checkbox/checkbox';
 export type { ChipProps } from './components/Chip/chip';
 export { Chip } from './components/Chip/chip';
-export type { CircularProgressProps } from './components/CircularProgress/circular-progress';
+export type {
+  CircularProgressProps,
+  CircularProgressVariant,
+} from './components/CircularProgress/circular-progress';
 export { CircularProgress } from './components/CircularProgress/circular-progress';
-export type { DatePickerModalProps, DatePickerProps } from './components/DatePicker/date-picker';
-export {
-  DatePicker,
-  DatePickerModal,
-} from './components/DatePicker/date-picker';
+export type { DatePickerProps } from './components/DatePicker/date-picker';
+export { DatePicker } from './components/DatePicker/date-picker';
 export type { DialogContentProps, DialogHeaderProps, FullScreenDialogHeaderProps } from './components/Dialog/dialog';
 export {
   Dialog,
@@ -68,11 +68,17 @@ export type { FABMenuItemOption, FABMenuProps } from './components/FabMenu/fab-m
 export { FABMenu } from './components/FabMenu/fab-menu';
 export type { IconButtonProps } from './components/IconButton/icon-button';
 export { IconButton } from './components/IconButton/icon-button';
-export type { LinearProgressProps } from './components/LinearProgress/linear-progress';
+export type {
+  LinearProgressProps,
+  LinearProgressVariant,
+} from './components/LinearProgress/linear-progress';
 export { LinearProgress } from './components/LinearProgress/linear-progress';
-export type { LoadingIndicatorProps } from './components/LoadingIndicator/loading-indicator';
+export type {
+  LoadingIndicatorProps,
+  LoadingIndicatorVariant,
+} from './components/LoadingIndicator/loading-indicator';
 export { LoadingIndicator } from './components/LoadingIndicator/loading-indicator';
-export { SHAPE_NAMES, SHAPE_SEQUENCE } from './components/LoadingIndicator/shapes';
+export { SHAPE_NAMES, SHAPE_POLYGONS, type ShapeName } from './components/LoadingIndicator/shapes';
 export type {
   MenuContentProps,
   MenuDividerProps,

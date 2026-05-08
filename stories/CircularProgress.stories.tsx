@@ -8,7 +8,17 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['size', 'value', 'indeterminate', 'strokeWidth'],
+      include: ['size', 'value', 'type', 'strokeWidth', 'variant'],
+    },
+  },
+  argTypes: {
+    type: {
+      control: 'inline-radio',
+      options: ['determinate', 'indeterminate'],
+    },
+    variant: {
+      control: 'inline-radio',
+      options: ['flat', 'wavy'],
     },
   },
   tags: ['autodocs'],
@@ -21,8 +31,9 @@ export const Playground: Story = {
   args: {
     size: 'md',
     value: 64,
-    indeterminate: false,
+    type: 'determinate',
     strokeWidth: 4,
+    variant: 'wavy',
   },
 };
 
@@ -47,9 +58,45 @@ export const Sizes: Story = {
         description="Use indeterminate progress when there is no meaningful completion value yet."
       >
         <div className="sb-m3-demo-row">
-          <CircularProgress size="sm" indeterminate />
-          <CircularProgress size="md" indeterminate />
-          <CircularProgress size="lg" indeterminate />
+          <CircularProgress size="sm" type="indeterminate" />
+          <CircularProgress size="md" type="indeterminate" />
+          <CircularProgress size="lg" type="indeterminate" />
+        </div>
+      </ShowcasePanel>
+    </ShowcaseGrid>
+  ),
+};
+
+export const Wavy: Story = {
+  parameters: {
+    controls: {
+      disable: true,
+    },
+  },
+  render: () => (
+    <ShowcaseGrid dense>
+      <ShowcasePanel
+        eyebrow="Expressive · Determinate"
+        title="Wavy ring"
+        description="The Material 3 Expressive circular indicator uses a sine-wave active arc with a flat track and a small gap. The ring flattens at 100%."
+      >
+        <div className="sb-m3-demo-row">
+          <CircularProgress variant="wavy" size="sm" value={28} />
+          <CircularProgress variant="wavy" size="md" value={64} />
+          <CircularProgress variant="wavy" size="lg" value={88} />
+          <CircularProgress variant="wavy" size="md" value={100} />
+        </div>
+      </ShowcasePanel>
+
+      <ShowcasePanel
+        eyebrow="Expressive · Indeterminate"
+        title="Wavy spinner"
+        description="The active arc grows, holds, and shrinks while the whole spinner rotates — the M3 Expressive pattern."
+      >
+        <div className="sb-m3-demo-row">
+          <CircularProgress variant="wavy" size="sm" type="indeterminate" />
+          <CircularProgress variant="wavy" size="md" type="indeterminate" />
+          <CircularProgress variant="wavy" size="lg" type="indeterminate" />
         </div>
       </ShowcasePanel>
     </ShowcaseGrid>

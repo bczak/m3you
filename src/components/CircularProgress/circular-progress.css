@@ -1,34 +1,44 @@
 /* =============================================================================
-   Circular Progress — M3 Spec
-   Diameter: 40px (md), Thickness: 4px, Color: primary
-   Source: m3.material.io/components/progress-indicators/specs
+   Circular Progress — M3 Expressive
+   Two appearance variants: `flat` (classic ring) and `wavy` (sine-wave arc
+   with flat inactive track + gap, per Material 3 Expressive).
    ============================================================================= */
 
 .md-circular-progress {
+  --_color: var(--md-circular-progress-color, var(--md-sys-color-primary));
+  --_track-color: var(--md-circular-progress-track-color, var(--md-sys-color-secondary-container));
+
   display: inline-flex;
   flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--_color);
+}
 
-  &[data-size="sm"] {
-    width: 24px;
-    height: 24px;
-  }
-  &[data-size="md"] {
-    width: 40px;
-    height: 40px;
-  }
-  &[data-size="lg"] {
-    width: 48px;
-    height: 48px;
-  }
+/* -------------------------------------------------------------------------- */
+/* Flat variant                                                               */
+/* -------------------------------------------------------------------------- */
+
+.md-circular-progress[data-variant="flat"][data-size="sm"] {
+  width: 24px;
+  height: 24px;
+}
+.md-circular-progress[data-variant="flat"][data-size="md"] {
+  width: 40px;
+  height: 40px;
+}
+.md-circular-progress[data-variant="flat"][data-size="lg"] {
+  width: 48px;
+  height: 48px;
 }
 
 .md-circular-progress__svg {
   width: 100%;
   height: 100%;
+}
 
-  &[data-indeterminate] {
-    animation: circular-progress-rotate 2s linear infinite;
-  }
+.md-circular-progress__svg[data-indeterminate] {
+  animation: md-circular-progress-rotate 2s linear infinite;
 }
 
 .md-circular-progress__track {
@@ -36,14 +46,72 @@
 }
 
 .md-circular-progress__indicator {
-  stroke: var(--md-sys-color-primary);
+  stroke: currentColor;
   transition: stroke-dashoffset var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+}
 
-  &[data-indeterminate] {
-    animation: circular-progress-dash 1.5s ease-in-out infinite;
-    stroke-dasharray: 89, 126;
+.md-circular-progress__indicator[data-indeterminate] {
+  animation: md-circular-progress-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 89, 126;
+  stroke-dashoffset: -35;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+@keyframes md-circular-progress-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes md-circular-progress-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 200;
     stroke-dashoffset: -35;
-    transform: rotate(-90deg);
-    transform-origin: center;
+  }
+  100% {
+    stroke-dasharray: 90, 200;
+    stroke-dashoffset: -125;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Wavy variant — M3 Expressive                                               */
+/* -------------------------------------------------------------------------- */
+
+.md-circular-progress__wavy-active {
+  color: var(--_color);
+}
+
+.md-circular-progress__wavy-track {
+  color: var(--_track-color);
+  stroke: currentColor;
+}
+
+.md-circular-progress__svg--wavy-spin {
+  transform-origin: 50% 50%;
+  animation: md-circular-progress-wavy-spin 1.575s linear infinite;
+}
+
+@keyframes md-circular-progress-wavy-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(90deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (forced-colors: active) {
+  .md-circular-progress {
+    --_color: CanvasText;
+    --_track-color: GrayText;
   }
 }

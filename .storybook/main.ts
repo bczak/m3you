@@ -15,6 +15,7 @@ const config: StorybookConfig = {
     '@storybook/addon-onboarding',
     getAbsolutePath('@storybook/addon-a11y'),
     'storybook/viewport',
+    getAbsolutePath("@storybook/addon-vitest")
   ],
   framework: {
     name: getAbsolutePath('@storybook/react-vite'),

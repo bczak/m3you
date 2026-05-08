@@ -1,203 +1,16 @@
 /* =============================================================================
    DatePicker — M3 Spec
-   Container: 328px, shape extra-large (28px), surface-container-high bg.
-   Calendar grid: 7-col, day cells 40px circle. Year grid: 3-col.
+   Plain calendar surface. Container: 328px, shape extra-large (28px),
+   surface-container-high bg. Calendar grid: 7-col, day cells 40px circle.
    Source: m3.material.io/components/date-pickers/specs
    ============================================================================= */
 
-/* ── Docked picker: outer wrapper ── */
+/* ── Root: plain calendar surface. No bg/shadow/radius — consumer provides
+   the container (Dialog, Card, or custom wrapper). Width matches M3 spec. */
 .md-date-picker {
   display: inline-flex;
   width: 328px;
   flex-direction: column;
-
-  &[data-disabled] {
-    pointer-events: none;
-  }
-}
-
-/* ── Docked: Input container (outlined text field style) ── */
-.md-date-picker__input-container {
-  position: relative;
-  display: flex;
-  height: 56px;
-  align-items: center;
-  border-radius: var(--md-sys-shape-corner-extra-small);
-  font-family: var(--md-sys-typescale-body-large-font);
-  font-size: var(--md-sys-typescale-body-large-size);
-  line-height: var(--md-sys-typescale-body-large-line-height);
-}
-
-/* ── Docked: Input label (floating) ── */
-.md-date-picker__label {
-  pointer-events: none;
-  position: absolute;
-  z-index: 10;
-  transform-origin: top left;
-  transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
-
-  &[data-floating="false"] {
-    top: 50%;
-    left: 16px;
-    transform: translateY(-50%);
-    font-family: var(--md-sys-typescale-body-large-font);
-    font-size: var(--md-sys-typescale-body-large-size);
-    line-height: var(--md-sys-typescale-body-large-line-height);
-    color: var(--md-sys-color-on-surface-variant);
-  }
-
-  &[data-floating="true"] {
-    top: -8px;
-    left: 16px;
-    padding-inline: 4px;
-    font-family: var(--md-sys-typescale-body-small-font);
-    font-size: var(--md-sys-typescale-body-small-size);
-    line-height: var(--md-sys-typescale-body-small-line-height);
-  }
-
-  &[data-floating="true"][data-focused="true"][data-error="false"] {
-    color: var(--md-sys-color-primary);
-  }
-
-  &[data-floating="true"][data-focused="false"] {
-    color: var(--md-sys-color-on-surface-variant);
-  }
-
-  &[data-floating="true"][data-error="true"] {
-    color: var(--md-sys-color-error);
-  }
-
-  &[data-disabled] {
-    opacity: var(--md-sys-state-disabled-opacity);
-  }
-}
-
-/* ── Docked: text input ── */
-.md-date-picker__input {
-  min-width: 0;
-  flex: 1;
-  background-color: transparent;
-  padding: 0 12px 0 16px;
-  font-family: var(--md-sys-typescale-body-large-font);
-  font-size: var(--md-sys-typescale-body-large-size);
-  line-height: var(--md-sys-typescale-body-large-line-height);
-  color: var(--md-sys-color-on-background);
-  caret-color: var(--md-sys-color-primary);
-  outline: none;
-
-  &::placeholder {
-    color: var(--md-sys-color-on-surface-variant);
-  }
-}
-
-/* ── Docked: calendar toggle button ── */
-.md-date-picker__toggle {
-  position: relative;
-  display: flex;
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--md-sys-color-on-surface-variant);
-  cursor: pointer;
-  margin-right: 4px;
-  transition: background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
-  }
-
-  & svg {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-/* ── Docked: outline (fieldset) ── */
-.md-date-picker__outline {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  border-radius: inherit;
-  border: 1px solid var(--md-sys-color-outline);
-  padding: 0;
-  padding-inline: 12px;
-  transition: all 150ms;
-
-  &[data-focused="true"][data-error="false"] {
-    border: 2px solid var(--md-sys-color-primary);
-  }
-
-  &[data-error="true"] {
-    border: 2px solid var(--md-sys-color-error);
-  }
-
-  &[data-disabled] {
-    border-color: color-mix(in srgb, var(--md-sys-color-outline) 38%, transparent);
-  }
-}
-
-/* ── Outline legend ── */
-.md-date-picker__outline-legend {
-  visibility: hidden;
-  height: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  font-family: var(--md-sys-typescale-body-small-font);
-  font-size: var(--md-sys-typescale-body-small-size);
-  line-height: var(--md-sys-typescale-body-small-line-height);
-  transition: all 150ms;
-
-  &[data-floating="false"] {
-    max-width: 0.01px;
-    padding-inline: 0;
-  }
-
-  &[data-floating="true"] {
-    max-width: 100%;
-    padding-inline: 4px;
-  }
-}
-
-/* ── Supporting text ── */
-.md-date-picker__supporting {
-  padding: 4px 16px 0;
-  font-family: var(--md-sys-typescale-body-small-font);
-  font-size: var(--md-sys-typescale-body-small-size);
-  line-height: var(--md-sys-typescale-body-small-line-height);
-
-  &[data-disabled] {
-    opacity: var(--md-sys-state-disabled-opacity);
-  }
-}
-
-.md-date-picker__supporting-text {
-  color: var(--md-sys-color-on-surface-variant);
-
-  &[data-error] {
-    color: var(--md-sys-color-error);
-  }
-}
-
-/* ── Dropdown panel (below input) ── */
-.md-date-picker__dropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 50;
-}
-
-/* ── Docked calendar panel ── */
-.md-date-picker__panel {
-  width: 328px;
-  border-radius: var(--md-sys-shape-corner-extra-large);
-  background-color: var(--md-sys-color-surface-container-high);
-  box-shadow: var(--md-sys-elevation-2);
 }
 
 /* ── Nav header (prev/next, month/year selectors) ── */
@@ -273,18 +86,28 @@
   flex: 1;
 }
 
-/* ── Dropdown list (month/year list) ── */
+/* ── Body wrapper (hosts the day grid or the month/year list view) ── */
+.md-date-picker__body {
+  position: relative;
+  padding-bottom: 12px;
+}
+
+/* When a list view is active, the nav gets a divider below to signal that
+   the body area has switched modes (M3 spec: docked month/year picker). */
+.md-date-picker__nav[data-list-open="true"] {
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  padding-bottom: 8px;
+}
+
+/* ── Month/year list view — seamless mode swap, no floating chrome ── */
 .md-date-picker__list {
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  z-index: 20;
-  max-height: 320px;
+  /* Pinned to the day grid's footprint (6 rows × 40px + weekday row = 280px)
+     so the panel doesn't resize when switching between grid and list views.
+     border-box makes padding count inside the height, not on top of it. */
+  box-sizing: border-box;
+  height: 280px;
   overflow-y: auto;
-  border-radius: var(--md-sys-shape-corner-large);
-  background-color: var(--md-sys-color-surface-container-high);
   padding-block: 8px;
-  box-shadow: var(--md-sys-elevation-2);
 }
 
 .md-date-picker__list-item {
@@ -408,240 +231,25 @@
   }
 }
 
-/* ── Year grid (3-col, for modal) ── */
-.md-date-picker__year-grid-wrap {
-  max-height: 300px;
-  overflow-y: auto;
-  padding: 16px 12px;
-}
-
-.md-date-picker__year-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  row-gap: 4px;
-}
-
-/* ── Year cell ── */
-.md-date-picker__year {
-  position: relative;
-  display: flex;
-  height: 36px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  border-radius: 18px;
-  border: none;
-  background: transparent;
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--md-sys-color-on-background);
-  transition:
-    background-color 150ms,
-    color 150ms;
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
+/* ── Slide animations for month navigation ── */
+@keyframes calendar-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
   }
-
-  &[data-state="selected"] {
-    background-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
-
-    &:hover {
-      background-color: color-mix(in srgb, var(--md-sys-color-primary) 90%, transparent);
-    }
-  }
-
-  &[data-state="current"] {
-    color: var(--md-sys-color-primary);
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
-/* ── Actions row ── */
-.md-date-picker__actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 8px 12px 12px;
-}
-
-.md-date-picker__action-btn {
-  position: relative;
-  border: none;
-  border-radius: 16px;
-  background: transparent;
-  padding: 6px 12px;
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--md-sys-color-primary);
-  cursor: pointer;
-  transition: background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+@keyframes calendar-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
   }
-}
-
-/* ── Modal container ── */
-.md-date-picker-modal__backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.md-date-picker-modal__scrim {
-  position: absolute;
-  inset: 0;
-  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
-}
-
-.md-date-picker-modal {
-  position: relative;
-  z-index: 10;
-  width: 328px;
-  border-radius: var(--md-sys-shape-corner-extra-large);
-  background-color: var(--md-sys-color-surface-container-high);
-  box-shadow: var(--md-sys-elevation-2);
-}
-
-/* ── Modal header ── */
-.md-date-picker-modal__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 16px 24px 0;
-}
-
-.md-date-picker-modal__header-text {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-top: 8px;
-}
-
-.md-date-picker-modal__header-label {
-  font-size: 14px;
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-.md-date-picker-modal__header-date {
-  padding-bottom: 16px;
-  font-weight: 400;
-  font-size: 30px;
-  color: var(--md-sys-color-on-background);
-}
-
-/* ── Modal toggle button (calendar/pencil) ── */
-.md-date-picker-modal__toggle-btn {
-  position: relative;
-  display: flex;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--md-sys-color-on-surface-variant);
-  cursor: pointer;
-  margin-top: 12px;
-  transition: background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
-
-  & svg {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-/* ── Modal divider ── */
-.md-date-picker-modal__divider {
-  margin-inline: 24px;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
-}
-
-/* ── Modal input view ── */
-.md-date-picker-modal__input-view {
-  padding: 16px 24px 0;
-}
-
-.md-date-picker-modal__input-wrapper {
-  position: relative;
-  display: flex;
-  height: 56px;
-  align-items: center;
-  border-radius: var(--md-sys-shape-corner-extra-small);
-}
-
-.md-date-picker-modal__input {
-  min-width: 0;
-  flex: 1;
-  background-color: transparent;
-  padding: 0 12px 0 16px;
-  font-family: var(--md-sys-typescale-body-large-font);
-  font-size: var(--md-sys-typescale-body-large-size);
-  line-height: var(--md-sys-typescale-body-large-line-height);
-  color: var(--md-sys-color-on-background);
-  caret-color: var(--md-sys-color-primary);
-  outline: none;
-
-  &::placeholder {
-    color: var(--md-sys-color-on-surface-variant);
-  }
-}
-
-.md-date-picker-modal__input-outline {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  border-radius: inherit;
-  border: 1px solid var(--md-sys-color-outline);
-  padding: 0;
-  padding-inline: 12px;
-}
-
-.md-date-picker-modal__input-legend {
-  visibility: hidden;
-  height: 0;
-  max-width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  padding-inline: 4px;
-  font-family: var(--md-sys-typescale-body-small-font);
-  font-size: var(--md-sys-typescale-body-small-size);
-  line-height: var(--md-sys-typescale-body-small-line-height);
-}
-
-.md-date-picker-modal__input-label {
-  pointer-events: none;
-  position: absolute;
-  top: -8px;
-  left: 16px;
-  padding-inline: 4px;
-  font-family: var(--md-sys-typescale-body-small-font);
-  font-size: var(--md-sys-typescale-body-small-size);
-  line-height: var(--md-sys-typescale-body-small-line-height);
-  color: var(--md-sys-color-primary);
-}
-
-/* ── Modal nav (calendar/year view) ── */
-.md-date-picker-modal__nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 12px 4px;
-}
-
-.md-date-picker-modal__nav-arrows {
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }

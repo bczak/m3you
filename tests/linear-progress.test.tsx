@@ -31,7 +31,7 @@ test('clamps determinate values to the valid range', async () => {
 });
 
 test('renders indeterminate progress without determinate aria values', async () => {
-  const { container } = render(<LinearProgress indeterminate />);
+  const { container } = render(<LinearProgress type="indeterminate" />);
   const progress = screen.getByRole('progressbar', { name: 'Loading' });
   const indicator = container.querySelector('.md-linear-progress__indicator') as HTMLDivElement;
 
@@ -56,4 +56,55 @@ test('forwards refs to the root div', async () => {
   render(<LinearProgress ref={ref} />);
 
   expect(ref.current).toBeInstanceOf(HTMLDivElement);
+});
+
+test('wavy determinate renders active wave, gap, track, gap, stop', async () => {
+  const { container } = render(<LinearProgress variant="wavy" value={42} />);
+  const progress = screen.getByRole('progressbar', { name: 'Progress: 42%' });
+
+  expect(progress).toHaveAttribute('data-variant', 'wavy');
+  expect(container.querySelector('.md-linear-progress__active')).not.toBeNull();
+  expect(container.querySelector('.md-linear-progress__track')).not.toBeNull();
+  expect(container.querySelector('.md-linear-progress__stop')).not.toBeNull();
+
+  const row = container.querySelector('.md-linear-progress__row') as HTMLElement;
+  expect(row.style.getPropertyValue('--_value')).toBe('42%');
+
+  // The SVG path is present and well-formed (quadratic beziers in the content).
+  const path = container.querySelector('.md-linear-progress__active svg path') as SVGPathElement;
+  expect(path).not.toBeNull();
+  expect(path.getAttribute('d') ?? '').toMatch(/^M 0,/);
+  expect(path.getAttribute('d') ?? '').toContain('Q ');
+});
+
+test('wavy determinate at 100% flattens to a complete bar (no wave)', async () => {
+  const { container } = render(<LinearProgress variant="wavy" value={100} />);
+  const progress = screen.getByRole('progressbar', { name: 'Progress: 100%' });
+
+  expect(progress).toHaveAttribute('data-complete');
+  expect(container.querySelector('.md-linear-progress__complete')).not.toBeNull();
+  expect(container.querySelector('.md-linear-progress__active')).toBeNull();
+  expect(container.querySelector('svg path')).toBeNull();
+});
+
+test('wavy determinate at 0% renders only the track (no stop/active)', async () => {
+  const { container } = render(<LinearProgress variant="wavy" value={0} />);
+
+  expect(container.querySelector('.md-linear-progress__active')).toBeNull();
+  expect(container.querySelector('.md-linear-progress__stop')).toBeNull();
+  expect(container.querySelector('.md-linear-progress__track')).not.toBeNull();
+});
+
+test('wavy indeterminate renders masked wave with animated bands', async () => {
+  const { container } = render(<LinearProgress variant="wavy" type="indeterminate" />);
+  const progress = screen.getByRole('progressbar', { name: 'Loading' });
+
+  expect(progress).toHaveAttribute('data-variant', 'wavy');
+  expect(progress).toHaveAttribute('data-indeterminate', 'true');
+  expect(progress).not.toHaveAttribute('aria-valuenow');
+
+  expect(container.querySelector('svg path')).not.toBeNull();
+  expect(container.querySelector('.md-linear-progress__band-primary')).not.toBeNull();
+  expect(container.querySelector('.md-linear-progress__band-secondary')).not.toBeNull();
+  expect(container.querySelector('.md-linear-progress__wave-track')).not.toBeNull();
 });

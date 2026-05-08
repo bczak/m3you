@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '../src/components/Button/button';
-import { DatePicker, DatePickerModal } from '../src/components/DatePicker/date-picker';
+import { DatePicker } from '../src/components/DatePicker/date-picker';
+import { Dialog, DialogContent, DialogFooter, DialogTrigger } from '../src/components/Dialog/dialog';
 
 const DEFAULT_DATE = new Date(2026, 3, 14);
 const MIN_DATE = new Date(2026, 3, 1);
@@ -11,12 +12,6 @@ const MAX_DATE = new Date(2026, 3, 30);
 const stackStyle = {
   display: 'grid',
   gap: '24px',
-  width: 'min(100vw - 48px, 420px)',
-} as const;
-
-const triggerStackStyle = {
-  display: 'grid',
-  gap: '16px',
   justifyItems: 'start',
 } as const;
 
@@ -29,98 +24,108 @@ function formatStoryDate(date: Date | null) {
   return date ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'None';
 }
 
-type TriggeredDatePickerModalProps = Omit<
-  ComponentProps<typeof DatePickerModal>,
-  'open' | 'onOpenChange' | 'value' | 'onChange' | 'defaultValue'
-> & {
-  triggerLabel?: string;
-  initialValue?: Date | null;
-};
-
-function TriggeredDatePickerModal({
-  triggerLabel = 'Open modal date picker',
-  initialValue = DEFAULT_DATE,
-  ...props
-}: TriggeredDatePickerModalProps) {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<Date | null>(initialValue);
-
-  return (
-    <div style={triggerStackStyle}>
-      <Button variant="filled" size="sm" shape="round" onClick={() => setOpen(true)}>
-        {triggerLabel}
-      </Button>
-      <span style={selectionStyle}>Selected: {formatStoryDate(value)}</span>
-      <DatePickerModal open={open} onOpenChange={setOpen} value={value} onChange={setValue} {...props} />
-    </div>
-  );
-}
-
 const meta = {
   title: 'Selection/Date Picker',
   component: DatePicker,
-  parameters: {
-    layout: 'centered',
-    controls: {
-      include: ['label', 'supportingText', 'error', 'errorText', 'disabled'],
-    },
-  },
+  parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta<typeof DatePicker>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// =============================================================================
+// Plain inline usage
+// =============================================================================
+
 export const Default: Story = {
-  args: {
-    label: 'Date',
-    supportingText: 'MM/DD/YYYY',
-    error: false,
-    disabled: false,
+  render: () => {
+    const [value, setValue] = useState<Date | null>(DEFAULT_DATE);
+    return (
+      <div style={stackStyle}>
+        <DatePicker value={value} onChange={setValue} />
+        <span style={selectionStyle}>Selected: {formatStoryDate(value)}</span>
+      </div>
+    );
   },
-  render: (args) => <DatePicker {...args} defaultValue={DEFAULT_DATE} />,
 };
 
-export const DockedVariants: Story = {
+export const Uncontrolled: Story = {
+  render: () => <DatePicker defaultValue={DEFAULT_DATE} />,
+};
+
+export const WithRangeBounds: Story = {
+  render: () => <DatePicker defaultValue={new Date(2026, 3, 18)} minDate={MIN_DATE} maxDate={MAX_DATE} />,
+};
+
+// Docked pattern per M3 spec: consumer wraps the plain calendar in an
+// elevated surface (surface-container-high + elevation-2 + extra-large radius).
+export const Docked: Story = {
   render: () => (
-    <div style={stackStyle}>
-      <DatePicker label="Start date" supportingText="MM/DD/YYYY" defaultValue={DEFAULT_DATE} />
-      <DatePicker
-        label="Travel date"
-        supportingText="Choose a date in April 2026"
-        defaultValue={new Date(2026, 3, 18)}
-        minDate={MIN_DATE}
-        maxDate={MAX_DATE}
-      />
-      <DatePicker label="Invoice date" error errorText="Enter a valid date" />
-      <DatePicker label="Archived date" supportingText="Unavailable" defaultValue={DEFAULT_DATE} disabled />
+    <div
+      style={{
+        display: 'inline-flex',
+        borderRadius: 'var(--md-sys-shape-corner-extra-large)',
+        backgroundColor: 'var(--md-sys-color-surface-container-high)',
+        boxShadow: 'var(--md-sys-elevation-2)',
+        paddingBottom: 12,
+      }}
+    >
+      <DatePicker defaultValue={DEFAULT_DATE} />
     </div>
   ),
 };
 
-export const ModalWithTrigger: Story = {
-  render: () => (
-    <TriggeredDatePickerModal
-      headerLabel="Select travel date"
-      minDate={MIN_DATE}
-      maxDate={MAX_DATE}
-      triggerLabel="Open modal date picker"
-    />
-  ),
-};
+// =============================================================================
+// Wrapped in Dialog — consumer composes their own modal
+// =============================================================================
 
-export const ModalWithoutTrigger: Story = {
-  parameters: {
-    layout: 'fullscreen',
+export const InsideDialog: Story = {
+  render: () => {
+    const [open, setOpen] = useState(false);
+    const [committed, setCommitted] = useState<Date | null>(DEFAULT_DATE);
+    const [draft, setDraft] = useState<Date | null>(DEFAULT_DATE);
+
+    const handleOpen = (next: boolean) => {
+      if (next) setDraft(committed);
+      setOpen(next);
+    };
+
+    return (
+      <div style={stackStyle}>
+        <span style={selectionStyle}>Committed: {formatStoryDate(committed)}</span>
+        <Dialog open={open} onOpenChange={handleOpen}>
+          <DialogTrigger
+            render={
+              <Button variant="filled" size="sm" shape="round">
+                Pick a date
+              </Button>
+            }
+          />
+          <DialogContent
+            aria-label="Select date"
+            style={{ width: 'fit-content', maxWidth: 'none', padding: '8px 0 0' }}
+          >
+            <DatePicker value={draft} onChange={setDraft} />
+            <DialogFooter style={{ marginTop: 0, padding: '8px 12px 12px' }}>
+              <Button variant="text" size="sm" shape="round" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="text"
+                size="sm"
+                shape="round"
+                onClick={() => {
+                  setCommitted(draft);
+                  setOpen(false);
+                }}
+              >
+                OK
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
   },
-  render: () => (
-    <DatePickerModal
-      open
-      onOpenChange={() => {}}
-      value={DEFAULT_DATE}
-      headerLabel="Select travel date"
-      minDate={MIN_DATE}
-      maxDate={MAX_DATE}
-    />
-  ),
 };

@@ -60,30 +60,30 @@
   }
 
   @media (hover: hover) and (pointer: fine) {
-    &[data-interactive]:hover::before {
+    &[data-interactive][data-ripple]:hover::before {
       opacity: var(--md-sys-state-hover-opacity);
     }
   }
 
-  &[data-interactive][data-variant="elevated"]:hover {
+  &[data-interactive][data-ripple][data-variant="elevated"]:hover {
     box-shadow: none;
   }
 
-  &[data-interactive][data-variant="filled"]:hover,
-  &[data-interactive][data-variant="outlined"]:hover {
+  &[data-interactive][data-ripple][data-variant="filled"]:hover,
+  &[data-interactive][data-ripple][data-variant="outlined"]:hover {
     box-shadow: var(--md-sys-elevation-1);
   }
 
-  &[data-interactive]:not([data-nested-interactive])[data-variant="elevated"]:active {
+  &[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="elevated"]:active {
     box-shadow: var(--md-sys-elevation-2);
   }
 
-  &[data-interactive]:not([data-nested-interactive])[data-variant="filled"]:active,
-  &[data-interactive]:not([data-nested-interactive])[data-variant="outlined"]:active {
+  &[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="filled"]:active,
+  &[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="outlined"]:active {
     box-shadow: none;
   }
 
-  &[data-interactive]:not([data-nested-interactive]):active {
+  &[data-interactive][data-ripple]:not([data-nested-interactive]):active {
     background-color: color-mix(
       in srgb,
       var(--md-sys-color-on-surface) var(--md-sys-state-pressed-opacity),

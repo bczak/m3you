@@ -21,13 +21,10 @@
   outline: none;
   overflow: hidden;
   --_base-padding: 16px;
-  --_press-expand: 6px;
-  --_press-squeeze: 3px;
   transition:
     color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    padding-inline var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-default-spatial);
+    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
   &:focus-visible {
     outline: 2px solid var(--md-sys-color-primary);
@@ -57,18 +54,6 @@
   &[data-has-trailing-icon] {
     --_base-padding-right: 8px;
     padding-right: var(--_base-padding-right);
-  }
-
-  /* ── Press animation: expand pressed chip, squeeze neighbors ── */
-  &[data-press-group]:active {
-    padding-left: calc(var(--_base-padding-left, var(--_base-padding)) + var(--_press-expand));
-    padding-right: calc(var(--_base-padding-right, var(--_base-padding)) + var(--_press-expand));
-  }
-
-  &[data-press-group]:has(+ .md-chip[data-press-group]:active),
-  &[data-press-group]:active + .md-chip[data-press-group] {
-    padding-left: calc(var(--_base-padding-left, var(--_base-padding)) - var(--_press-squeeze));
-    padding-right: calc(var(--_base-padding-right, var(--_base-padding)) - var(--_press-squeeze));
   }
 
   /* ── Variant: outlined ── */

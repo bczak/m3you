@@ -55,13 +55,13 @@
   background-color: color-mix(in srgb, var(--md-sys-color-error) var(--md-sys-state-hover-opacity), transparent);
 }
 
-/* ── Outer circle (20px) ── */
+/* ── Outer circle (18px — matches Checkbox box) ── */
 .md-radio__outer {
   pointer-events: none;
   position: relative;
   display: flex;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
@@ -86,7 +86,7 @@
   }
 }
 
-/* ── Inner dot (10px) ── */
+/* ── Inner dot (10px when selected, scale(0) when not) ── */
 .md-radio__inner {
   border-radius: 50%;
   transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
@@ -100,14 +100,14 @@
   }
 
   &[data-selected="true"] {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     transform: scale(1);
   }
 
   &[data-selected="false"] {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     transform: scale(0);
   }
 }

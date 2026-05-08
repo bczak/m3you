@@ -322,18 +322,18 @@
   }
 }
 
-/* ── Dialog content overrides ── */
-.md-time-picker__dialog {
+/* ── Root container ── */
+.md-time-picker {
   display: flex;
   width: auto;
   flex-direction: column;
   gap: 20px;
 }
 
-.md-time-picker__dialog[data-layout="landscape"] {
+.md-time-picker[data-layout="landscape"] {
   min-width: 520px;
 }
 
-.md-time-picker__dialog[data-layout="portrait"] {
+.md-time-picker[data-layout="portrait"] {
   min-width: 328px;
 }

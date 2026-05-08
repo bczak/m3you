@@ -129,6 +129,7 @@ const Card = ({
       className={cx('md-card', className)}
       data-variant={variant}
       data-interactive={isInteractive || undefined}
+      data-ripple={shouldRenderRipple && !disabled ? '' : undefined}
       data-disabled={disabled || undefined}
       {...props}
     >

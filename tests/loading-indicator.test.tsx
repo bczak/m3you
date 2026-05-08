@@ -1,78 +1,70 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { createRef } from 'react';
-import { afterEach, expect, test, vi } from 'vitest';
+import { expect, test } from 'vitest';
 import { LoadingIndicator } from '../src/components/LoadingIndicator/loading-indicator';
-import { SHAPE_SEQUENCE } from '../src/components/LoadingIndicator/shapes';
+import { SHAPE_NAMES, SHAPE_POLYGONS } from '../src/components/LoadingIndicator/shapes';
 
-afterEach(() => {
-  vi.restoreAllMocks();
-  vi.useRealTimers();
-});
-
-test('renders the layered loading indicator structure', async () => {
+test('renders contained variant with correct DOM structure and accessibility', () => {
   const ref = createRef<HTMLDivElement>();
   const { container } = render(
-    <LoadingIndicator ref={ref} size="lg" container className="custom-class" data-testid="loader" />,
+    <LoadingIndicator ref={ref} size="lg" variant="contained" className="custom-class" data-testid="loader" />,
   );
 
   const loader = screen.getByTestId('loader');
-  const rotator = container.querySelector('.md-loading-indicator__rotator');
-  const shape = container.querySelector('.md-loading-indicator__shape');
-  const circle = container.querySelector('.md-loading-indicator__container');
+  const containerEl = container.querySelector('.md-loading-indicator__container');
+  const indicator = container.querySelector('.md-loading-indicator__indicator');
 
   expect(loader).toHaveClass('md-loading-indicator');
   expect(loader).toHaveClass('custom-class');
   expect(loader).toHaveAttribute('data-size', 'lg');
-  expect(loader).toHaveAttribute('data-container');
+  expect(loader).toHaveAttribute('data-variant', 'contained');
+  expect(loader).toHaveAttribute('role', 'progressbar');
   expect(loader).toHaveAttribute('aria-label', 'Loading');
-  expect(rotator).toBeInTheDocument();
-  expect(shape).toHaveAttribute('d', SHAPE_SEQUENCE[0]);
-  expect(circle).toBeInTheDocument();
+  expect(loader).toHaveAttribute('aria-valuemin', '0');
+  expect(loader).toHaveAttribute('aria-valuemax', '100');
+  expect(containerEl).toBeInTheDocument();
+  expect(indicator).toBeInTheDocument();
   expect(ref.current).toBeInstanceOf(HTMLDivElement);
 });
 
-test('animates shape morphs and keeps rotation moving through the full cycle', async () => {
-  vi.useFakeTimers();
+test('defaults variant to "uncontained" and size to "md"', () => {
+  render(<LoadingIndicator data-testid="loader" />);
+  const loader = screen.getByTestId('loader');
+  expect(loader).toHaveAttribute('data-variant', 'uncontained');
+  expect(loader).toHaveAttribute('data-size', 'md');
+});
 
-  const animateSpy = vi.spyOn(Element.prototype, 'animate').mockImplementation(
-    () =>
-      ({
-        onfinish: null,
-        cancel: () => {},
-        finished: Promise.resolve(),
-      }) as unknown as Animation,
-  );
+test('deprecated `container` prop maps to variant="contained"', () => {
+  render(<LoadingIndicator container data-testid="loader" />);
+  expect(screen.getByTestId('loader')).toHaveAttribute('data-variant', 'contained');
+});
 
+test('explicit variant overrides the deprecated container prop', () => {
+  render(<LoadingIndicator container variant="uncontained" data-testid="loader" />);
+  expect(screen.getByTestId('loader')).toHaveAttribute('data-variant', 'uncontained');
+});
+
+test('applies custom color via CSS custom property', () => {
+  render(<LoadingIndicator color="#ff0000" data-testid="loader" />);
+  const loader = screen.getByTestId('loader');
+  expect(loader.style.getPropertyValue('--md-loading-indicator-color')).toBe('#ff0000');
+});
+
+test('injects polygon CSS variables once into document.head', () => {
   render(<LoadingIndicator />);
+  render(<LoadingIndicator />);
+  const styles = document.querySelectorAll('#md-loading-indicator-polygons');
+  expect(styles).toHaveLength(1);
+  expect(styles[0].textContent).toContain('--_polygon-soft-burst');
+  expect(styles[0].textContent).toContain('--_polygon-oval');
+});
 
-  act(() => {
-    vi.advanceTimersByTime(500);
-  });
-
-  expect(animateSpy).toHaveBeenCalledTimes(2);
-
-  const [shapeFrames, shapeOptions] = animateSpy.mock.calls[0] as [
-    Array<Record<string, string>>,
-    KeyframeAnimationOptions,
-  ];
-  const [rotationFrames, rotationOptions] = animateSpy.mock.calls[1] as [
-    Array<Record<string, string>>,
-    KeyframeAnimationOptions,
-  ];
-
-  expect(shapeFrames[0]).toMatchObject({ d: `path("${SHAPE_SEQUENCE[0]}")` });
-  expect(shapeFrames[1]).toMatchObject({ d: `path("${SHAPE_SEQUENCE[1]}")` });
-  expect(shapeOptions).toMatchObject({
-    duration: 585,
-    easing: 'cubic-bezier(0.39, 1.29, 0.35, 0.98)',
-    fill: 'forwards',
-  });
-
-  expect(rotationFrames[0]).toMatchObject({ transform: 'rotate(0deg)' });
-  expect(rotationFrames[1]).toMatchObject({ transform: 'rotate(90deg)' });
-  expect(rotationOptions).toMatchObject({
-    duration: 650,
-    easing: 'linear',
-    fill: 'forwards',
-  });
+test('SHAPE_POLYGONS contains a polygon() string for every named shape', () => {
+  for (const name of SHAPE_NAMES) {
+    const polygon = SHAPE_POLYGONS[name];
+    expect(polygon).toMatch(/^polygon\(/);
+    expect(polygon).toMatch(/\)$/);
+    // 300 points → 299 comma separators
+    expect(polygon.split(',').length).toBe(300);
+  }
 });

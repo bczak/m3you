@@ -1,100 +1,71 @@
 import './loading-indicator.css';
-import { useEffect, useRef } from 'react';
 
 import { cx } from '../../lib/cx';
-import { SHAPE_SEQUENCE } from './shapes';
+import { SHAPE_NAMES, SHAPE_POLYGONS } from './shapes';
+
+export type LoadingIndicatorVariant = 'uncontained' | 'contained';
 
 export type LoadingIndicatorProps = React.ComponentProps<'div'> & {
   size?: 'sm' | 'md' | 'lg';
   color?: string;
+  /** M3 appearance variant. Defaults to 'uncontained'. */
+  variant?: LoadingIndicatorVariant;
+  /** @deprecated use `variant="contained"` instead. */
   container?: boolean;
 };
 
-// Timing from materialshapes-python loading_indicator.py
-const CYCLE_DURATION = 650;
-const MORPH_DURATION = CYCLE_DURATION * 0.9; // 585ms — shape transition
-const ROTATION_DURATION = CYCLE_DURATION; // keep each quarter-turn moving for the full morph cycle
-const ROTATION_PER_CYCLE = 90; // degrees per morph cycle
+const STYLE_ELEMENT_ID = 'md-loading-indicator-polygons';
 
-// Spring-overshoot for shape morph (mimics materialshapes spring physics)
-const SPRING_EASING = 'cubic-bezier(0.39, 1.29, 0.35, 0.98)';
+// The 7 polygon strings weigh ~30 KB — inject them once into document.head so
+// CSS custom-property inheritance makes them visible to every instance. The
+// injection must happen BEFORE first paint: the CSS @keyframes reference
+// var(--_polygon-*) and browsers resolve var() values at animation start;
+// injecting inside useEffect leaves the first frame with undefined vars and
+// some engines then refuse to re-evaluate the keyframes after they're set.
+const ensurePolygonStyles = (): void => {
+  if (typeof document === 'undefined' || !document.head) return;
+  if (document.getElementById(STYLE_ELEMENT_ID)) return;
+  const vars = SHAPE_NAMES.map((name) => `  --_polygon-${name}: ${SHAPE_POLYGONS[name]};`).join('\n');
+  const style = document.createElement('style');
+  style.id = STYLE_ELEMENT_ID;
+  style.textContent = `.md-loading-indicator {\n${vars}\n}`;
+  document.head.appendChild(style);
+};
+
+// Run at module import time (client only). This happens during React's render
+// phase, before any <LoadingIndicator> element mounts.
+ensurePolygonStyles();
 
 const LoadingIndicator = ({
   className,
   size = 'md',
   color,
-  container = false,
+  variant,
+  container,
   ref,
   ...props
 }: LoadingIndicatorProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const pathRef = useRef<SVGPathElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
+  const resolvedVariant: LoadingIndicatorVariant = variant ?? (container ? 'contained' : 'uncontained');
 
-  useEffect(() => {
-    const path = pathRef.current;
-    const svg = svgRef.current;
-    if (!path || !svg) return;
-
-    let currentIndex = 0;
-    let rotation = 0;
-    let cancelled = false;
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    const runCycle = () => {
-      if (cancelled) return;
-
-      const nextIndex = (currentIndex + 1) % SHAPE_SEQUENCE.length;
-
-      // Shape morph with spring easing
-      path.animate([{ d: `path("${SHAPE_SEQUENCE[currentIndex]}")` }, { d: `path("${SHAPE_SEQUENCE[nextIndex]}")` }], {
-        duration: MORPH_DURATION,
-        easing: SPRING_EASING,
-        fill: 'forwards',
-      });
-
-      // Layer a full-cycle linear turn on top of the slower CSS spin so the
-      // indicator keeps rotating between shape transitions instead of pausing.
-      const targetRotation = rotation + ROTATION_PER_CYCLE;
-      svg.animate([{ transform: `rotate(${rotation}deg)` }, { transform: `rotate(${targetRotation}deg)` }], {
-        duration: ROTATION_DURATION,
-        easing: 'linear',
-        fill: 'forwards',
-      });
-      rotation = targetRotation;
-
-      currentIndex = nextIndex;
-      timeoutId = setTimeout(runCycle, CYCLE_DURATION);
-    };
-
-    timeoutId = setTimeout(runCycle, 500);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(timeoutId);
-    };
-  }, []);
+  // Re-inject on render too — covers hot-module-reload and cases where the
+  // parent document replaces <head> (Storybook docs frames, test teardown).
+  ensurePolygonStyles();
 
   return (
     <div
       ref={ref}
       role="progressbar"
       aria-label="Loading"
+      aria-valuemin={0}
+      aria-valuemax={100}
       className={cx('md-loading-indicator', className)}
       data-size={size}
-      data-container={container || undefined}
+      data-variant={resolvedVariant}
       style={color ? ({ '--md-loading-indicator-color': color } as React.CSSProperties) : undefined}
       {...props}
     >
-      <div className="md-loading-indicator__rotator">
-        <svg
-          ref={svgRef}
-          aria-hidden="true"
-          viewBox={container ? '-8 -8 64 64' : '0 0 48 48'}
-          className="md-loading-indicator__svg"
-        >
-          {container && <circle cx="24" cy="24" r="32" className="md-loading-indicator__container" />}
-          <path ref={pathRef} d={SHAPE_SEQUENCE[0]} className="md-loading-indicator__shape" />
-        </svg>
+      <div className="md-loading-indicator__container" aria-hidden="true">
+        <div className="md-loading-indicator__indicator" />
       </div>
     </div>
   );

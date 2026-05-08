@@ -2,7 +2,7 @@ import './chip.css';
 import { Check, X } from 'lucide-react';
 import { Ripple } from 'm3-ripple';
 import type * as React from 'react';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -30,7 +30,6 @@ const Chip = ({
   ...props
 }: ChipProps & { ref?: React.Ref<HTMLButtonElement> }) => {
   const innerRef = useRef<HTMLButtonElement>(null);
-  const [pressGroupEnabled, setPressGroupEnabled] = useState(false);
 
   // For filter chips: always render check icon container for animation
   const isFilterChip = type === 'filter';
@@ -71,33 +70,6 @@ const Chip = ({
     animateClose();
   };
 
-  useLayoutEffect(() => {
-    const chip = innerRef.current;
-    const parent = chip?.parentElement;
-
-    if (!chip || !parent) {
-      setPressGroupEnabled(false);
-      return;
-    }
-
-    const updatePressGroupState = () => {
-      const chipCount = Array.from(parent.children).filter((node) =>
-        (node as HTMLElement).classList.contains('md-chip'),
-      ).length;
-
-      setPressGroupEnabled(chipCount > 3);
-    };
-
-    updatePressGroupState();
-
-    const observer = new MutationObserver(updatePressGroupState);
-    observer.observe(parent, { childList: true });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
   return (
     <button
       ref={(node) => {
@@ -115,7 +87,6 @@ const Chip = ({
       data-selected={String(selected)}
       data-has-leading-icon={hasLeadingIcon || undefined}
       data-has-trailing-icon={hasTrailingIcon || undefined}
-      data-press-group={pressGroupEnabled || undefined}
       {...props}
     >
       <Ripple />

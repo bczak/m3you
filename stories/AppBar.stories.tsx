@@ -92,19 +92,7 @@ function AppBarPreview(args: ComponentProps<typeof AppBar>) {
 }
 
 function StoryStack({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        display: 'grid',
-        gap: 24,
-        padding: 24,
-        borderRadius: 16,
-        background: 'var(--md-sys-color-surface-container)',
-      }}
-    >
-      {children}
-    </div>
-  );
+  return children;
 }
 
 export const Playground: Story = {

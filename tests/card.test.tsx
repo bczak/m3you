@@ -20,27 +20,61 @@ test('outlined card uses the softer outline-variant border token', async () => {
 });
 
 test('filled and outlined interactive cards clear elevation while pressed', async () => {
-  expect(cardCss).toContain('&[data-interactive]:not([data-nested-interactive])[data-variant="filled"]:active');
-  expect(cardCss).toContain('&[data-interactive]:not([data-nested-interactive])[data-variant="outlined"]:active');
+  expect(cardCss).toContain(
+    '&[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="filled"]:active',
+  );
+  expect(cardCss).toContain(
+    '&[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="outlined"]:active',
+  );
   expect(cardCss).toContain('box-shadow: none;');
 });
 
 test('interactive cards use a css hover state layer on the card itself', async () => {
   expect(cardCss).toContain('&::before');
-  expect(cardCss).toContain('&[data-interactive]:hover::before');
+  expect(cardCss).toContain('&[data-interactive][data-ripple]:hover::before');
   expect(cardCss).toContain('opacity: var(--md-sys-state-hover-opacity);');
 });
 
 test('elevated interactive card lifts on press instead of hover', async () => {
-  expect(cardCss).toContain('&[data-interactive][data-variant="elevated"]:hover');
-  expect(cardCss).toContain('&[data-interactive]:not([data-nested-interactive])[data-variant="elevated"]:active');
+  expect(cardCss).toContain('&[data-interactive][data-ripple][data-variant="elevated"]:hover');
   expect(cardCss).toContain(
-    '&[data-interactive]:not([data-nested-interactive])[data-variant="elevated"]:active {\n    box-shadow: var(--md-sys-elevation-2);',
+    '&[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="elevated"]:active',
   );
-  expect(cardCss).toContain('&[data-interactive][data-variant="elevated"]:hover {\n    box-shadow: none;');
+  expect(cardCss).toContain(
+    '&[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="elevated"]:active {\n    box-shadow: var(--md-sys-elevation-2);',
+  );
+  expect(cardCss).toContain('&[data-interactive][data-ripple][data-variant="elevated"]:hover {\n    box-shadow: none;');
   expect(cardCss).not.toContain(
-    '&[data-interactive][data-variant="elevated"]:hover {\n    box-shadow: var(--md-sys-elevation-2);',
+    '&[data-interactive][data-ripple][data-variant="elevated"]:hover {\n    box-shadow: var(--md-sys-elevation-2);',
   );
+});
+
+test('ripple={false} strips data-ripple so hover/active surface feedback is suppressed', async () => {
+  render(
+    <Card data-testid="silent-card" ripple={false} onClick={() => {}}>
+      Quiet
+    </Card>,
+  );
+  const card = screen.getByTestId('silent-card');
+  expect(card).toHaveAttribute('data-interactive');
+  expect(card).not.toHaveAttribute('data-ripple');
+  expect(card.querySelector(':scope > .salty-ripple')).toBeNull();
+});
+
+test('default interactive card carries data-ripple; disabled card drops it', async () => {
+  const { rerender } = render(
+    <Card data-testid="card" onClick={() => {}}>
+      Loud
+    </Card>,
+  );
+  expect(screen.getByTestId('card')).toHaveAttribute('data-ripple', '');
+
+  rerender(
+    <Card data-testid="card" disabled onClick={() => {}}>
+      Loud
+    </Card>,
+  );
+  expect(screen.getByTestId('card')).not.toHaveAttribute('data-ripple');
 });
 
 test('nested interactive descendants suppress only the card pressed ripple visuals', async () => {
