@@ -56,7 +56,7 @@ const TextField = ({
   const displaySupportingText = hasError ? errorText : supportingText;
   const charCount = String(currentValue).length;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateTextValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isControlled) {
       setInternalValue(e.target.value);
     }
@@ -64,12 +64,12 @@ const TextField = ({
     onChange?.(e);
   };
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const showFloatingLabel = (e: React.FocusEvent<HTMLInputElement>) => {
     setFocused(true);
     onFocus?.(e);
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const hideFloatingLabel = (e: React.FocusEvent<HTMLInputElement>) => {
     setFocused(false);
     onBlur?.(e);
   };
@@ -141,9 +141,9 @@ const TextField = ({
             type={type}
             disabled={disabled}
             value={currentValue}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
+            onChange={updateTextValue}
+            onFocus={showFloatingLabel}
+            onBlur={hideFloatingLabel}
             aria-invalid={hasError || undefined}
             aria-describedby={displaySupportingText || maxCharCount ? supportingTextId : undefined}
             className="md-text-field__input"

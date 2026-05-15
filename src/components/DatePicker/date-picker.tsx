@@ -362,8 +362,8 @@ const DatePicker = ({
   const selectedDate = isControlled ? controlledValue : internalValue;
 
   const initial = selectedDate ?? new Date();
-  const [viewMonth, setViewMonth] = React.useState(initial.getMonth());
-  const [viewYear, setViewYear] = React.useState(initial.getFullYear());
+  const [viewMonth, setViewMonth] = React.useState(() => initial.getMonth());
+  const [viewYear, setViewYear] = React.useState(() => initial.getFullYear());
   const [showMonthDropdown, setShowMonthDropdown] = React.useState(false);
   const [showYearDropdown, setShowYearDropdown] = React.useState(false);
   const [slideDirection, setSlideDirection] = React.useState<SlideDirection>(null);

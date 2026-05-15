@@ -93,7 +93,7 @@ export const ShapesPreview: Story = {
                 clipPath: SHAPE_POLYGONS[name],
               }}
             />
-            <div style={{ fontSize: 11, opacity: 0.5, marginTop: 4 }}>{name}</div>
+            <div style={{ fontSize: 12, opacity: 0.5, marginTop: 4 }}>{name}</div>
           </div>
         ))}
       </div>

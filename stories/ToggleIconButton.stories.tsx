@@ -45,7 +45,7 @@ const VariantStory = ({ variant }: { variant: 'standard' | 'filled' | 'elevated'
           <span style={{ fontSize: '14px', fontWeight: 600 }}>{width}</span>
           {shapes.map((shape) => (
             <div key={shape} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '11px', color: '#888' }}>{shape}</span>
+              <span style={{ fontSize: '12px', color: '#888' }}>{shape}</span>
               {sizes.map((size) => (
                 <ToggleIconButton key={size} variant={variant} shape={shape} size={size} width={width} morph>
                   <StarIcon />

@@ -376,13 +376,13 @@ test('NavigationBarItem has focus-visible styles', async () => {
 
 test('NavigationBarItem custom onClick handler is called', async () => {
   let clickCount = 0;
-  const handleClick = () => {
+  const recordItemClick = () => {
     clickCount++;
   };
 
   render(
     <NavigationBar value="home" onValueChange={() => {}}>
-      <NavigationBarItem value="home" icon={<MockIcon />} label="Home" onClick={handleClick} />
+      <NavigationBarItem value="home" icon={<MockIcon />} label="Home" onClick={recordItemClick} />
     </NavigationBar>,
   );
 

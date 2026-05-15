@@ -562,7 +562,7 @@ function DockedMixedButtonRow(args: ComponentProps<typeof Toolbar>) {
         <SplitButtonAction onClick={() => toggle('maybe')}>Maybe</SplitButtonAction>
         <SplitButtonMenu>
           <MenuItem>Maybe</MenuItem>
-          <MenuItem>Yes</MenuItem>
+          <MenuItem>Confirm selection</MenuItem>
           <MenuItem>No</MenuItem>
         </SplitButtonMenu>
       </SplitButton>

@@ -1,6 +1,7 @@
 import './bottom-sheet.css';
 import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
 import * as React from 'react';
+import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -57,7 +58,7 @@ export interface BottomSheetContentProps extends DrawerPrimitive.Popup.Props {
 }
 
 function BottomSheetContent({ className, children, showDragHandle = true, ...props }: BottomSheetContentProps) {
-  const { isModal } = React.useContext(BottomSheetContext);
+  const { isModal } = use(BottomSheetContext);
 
   return (
     <DrawerPrimitive.Portal>

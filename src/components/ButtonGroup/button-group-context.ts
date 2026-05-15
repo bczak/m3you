@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 
 interface ButtonGroupContextValue {
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -16,8 +16,8 @@ const ButtonGroupContext = createContext<ButtonGroupContextValue | null>(null);
 const ButtonGroupItemContext = createContext<ButtonGroupItemContextValue | null>(null);
 
 export function useButtonGroup() {
-  const group = useContext(ButtonGroupContext);
-  const item = useContext(ButtonGroupItemContext);
+  const group = use(ButtonGroupContext);
+  const item = use(ButtonGroupItemContext);
 
   if (!group || !item) return null;
 

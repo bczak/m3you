@@ -12,7 +12,7 @@ const meta = {
 } satisfies Meta<typeof Snackbar>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj;
 
 // =============================================================================
 // Showcase — static render to display all layout variants

@@ -50,12 +50,13 @@
     "storybook": "storybook dev -p 6006",
     "test": "vitest run",
     "test:watch": "vitest",
-    "chromatic": "npx chromatic",
-    "prepublishOnly": "bun run build"
+    "chromatic": "bunx chromatic",
+    "prepublishOnly": "bun run build",
+    "react-doctor": "bunx react-doctor@latest . --fail-on warning"
   },
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0"
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

@@ -33,7 +33,7 @@ const Button = ({
   const selected = selectedProp ?? groupProps?.selected;
   const selectedValue = selected !== undefined ? String(selected) : undefined;
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const activateButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     groupProps?.onClick?.();
     onClick?.(e);
   };
@@ -47,7 +47,7 @@ const Button = ({
       data-morph={morph || undefined}
       data-selected={selectedValue}
       aria-pressed={selected !== undefined ? selected : undefined}
-      onClick={handleClick}
+      onClick={activateButton}
       ref={ref}
       {...props}
     >

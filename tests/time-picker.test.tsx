@@ -223,6 +223,25 @@ test('clicking Cancel closes dialog without changing value', async () => {
   expect(screen.getByTestId('time-display')).toHaveTextContent('10:30');
 });
 
+test('cancel discards draft edits while OK commits them', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 30 }} format="24h" />);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Switch to keyboard input' }));
+  fireEvent.change(screen.getByRole('textbox', { name: 'Hours' }), { target: { value: '11' } });
+  fireEvent.change(screen.getByRole('textbox', { name: 'Minutes' }), { target: { value: '45' } });
+  expect(screen.getByTestId('time-display')).toHaveTextContent('10:30');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+  expect(screen.getByTestId('time-display')).toHaveTextContent('10:30');
+
+  fireEvent.click(screen.getByTestId('open-btn'));
+  fireEvent.change(screen.getByRole('textbox', { name: 'Hours' }), { target: { value: '11' } });
+  fireEvent.change(screen.getByRole('textbox', { name: 'Minutes' }), { target: { value: '45' } });
+  fireEvent.click(screen.getByRole('button', { name: 'OK' }));
+
+  expect(screen.getByTestId('time-display')).toHaveTextContent('11:45');
+});
+
 test('confirm calls onChange with correct 12h AM time', async () => {
   render(<ControlledTimePicker value={{ hours: 10, minutes: 30 }} format="12h" />);
   fireEvent.click(screen.getByRole('button', { name: 'OK' }));

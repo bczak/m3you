@@ -29,21 +29,21 @@
    ============================================================================= */
 
 :is(
-    .md-button,
-    .md-icon-button,
-    .md-extended-fab,
-    .md-extendable-fab,
-    .md-fab-menu,
-    .md-fab-menu-trigger,
-    .md-fab-menu-item,
-    .md-split-button,
-    .md-chip,
-    .md-tab,
-    .md-menu-item,
-    .md-navigation-bar-item,
-    .md-navigation-rail-item,
-    .md-navigation-rail-menu-button
-  ) {
+  .md-button,
+  .md-icon-button,
+  .md-extended-fab,
+  .md-extendable-fab,
+  .md-fab-menu,
+  .md-fab-menu-trigger,
+  .md-fab-menu-item,
+  .md-split-button,
+  .md-chip,
+  .md-tab,
+  .md-menu-item,
+  .md-navigation-bar-item,
+  .md-navigation-rail-item,
+  .md-navigation-rail-menu-button
+) {
   -webkit-user-select: none;
   user-select: none;
 }

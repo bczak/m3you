@@ -20,7 +20,7 @@ const ToggleIconButton = ({
   const [internalSelected, setInternalSelected] = useState(defaultSelected);
   const selected = isControlled ? selectedProp : internalSelected;
 
-  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+  const toggleIconSelected = (e: MouseEvent<HTMLButtonElement>) => {
     const newSelected = !selected;
     if (!isControlled) {
       setInternalSelected(newSelected);
@@ -29,7 +29,7 @@ const ToggleIconButton = ({
     onClick?.(e);
   };
 
-  return <IconButton ref={ref} selected={selected} onClick={handleClick} {...props} />;
+  return <IconButton ref={ref} selected={selected} onClick={toggleIconSelected} {...props} />;
 };
 ToggleIconButton.displayName = 'ToggleIconButton';
 

@@ -566,13 +566,13 @@ test('only one item can be active at a time', async () => {
 
 test('NavigationRailItem custom onClick handler is called', async () => {
   let clickCount = 0;
-  const handleClick = () => {
+  const recordItemClick = () => {
     clickCount++;
   };
 
   render(
     <NavigationRail value="home" onValueChange={() => {}}>
-      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" onClick={handleClick} />
+      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" onClick={recordItemClick} />
     </NavigationRail>,
   );
 

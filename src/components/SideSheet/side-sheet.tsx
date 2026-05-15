@@ -2,6 +2,7 @@ import './side-sheet.css';
 import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
 import { ArrowLeft, X } from 'lucide-react';
 import * as React from 'react';
+import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 import { IconButton } from '../IconButton/icon-button';
@@ -62,7 +63,7 @@ function SideSheetClose({ ...props }: DrawerPrimitive.Close.Props) {
 export interface SideSheetContentProps extends DrawerPrimitive.Popup.Props {}
 
 function SideSheetContent({ className, children, ...props }: SideSheetContentProps) {
-  const { variant, side } = React.useContext(SideSheetContext);
+  const { variant, side } = use(SideSheetContext);
   const isModal = variant === 'modal';
 
   return (
@@ -97,7 +98,7 @@ export interface SideSheetHeaderProps extends React.ComponentProps<'div'> {
 }
 
 function SideSheetHeader({ className, children, onBack, showClose = true, ...props }: SideSheetHeaderProps) {
-  const { variant } = React.useContext(SideSheetContext);
+  const { variant } = use(SideSheetContext);
   const hasBack = !!onBack;
 
   return (

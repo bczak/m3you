@@ -101,28 +101,31 @@ export const ErrorVariant: Story = {
 
 // ─── Grouped ─────────────────────────────────────────────────────
 
+const groupedOptions = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
+
+function GroupedStory() {
+  const [value, setValue] = useState('');
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '240px' }}>
+      <RadioGroup value={value} onValueChange={setValue}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {groupedOptions.map((option) => (
+            <div key={option} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <RadioGroupItem value={option} />
+              <span style={{ fontSize: '14px' }}>{option}</span>
+            </div>
+          ))}
+        </div>
+      </RadioGroup>
+      <span style={{ fontSize: '12px', color: '#888' }}>
+        Selected: <strong>{value || 'none'}</strong>
+      </span>
+    </div>
+  );
+}
+
 export const Grouped: Story = {
-  render: () => {
-    const [value, setValue] = useState('');
-    const options = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '240px' }}>
-        <RadioGroup value={value} onValueChange={setValue}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {options.map((option) => (
-              <div key={option} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <RadioGroupItem value={option} />
-                <span style={{ fontSize: '14px' }}>{option}</span>
-              </div>
-            ))}
-          </div>
-        </RadioGroup>
-        <span style={{ fontSize: '12px', color: '#888' }}>
-          Selected: <strong>{value || 'none'}</strong>
-        </span>
-      </div>
-    );
-  },
+  render: () => <GroupedStory />,
 };
 
 // ─── RadioGroup Stories ──────────────────────────────────────────
@@ -141,29 +144,31 @@ export const GroupDisabled: Story = {
 
 // ─── With Labels ─────────────────────────────────────────────────
 
-export const WithLabels: Story = {
-  render: () => {
-    const [value, setValue] = useState('comfortable');
-    return (
-      <RadioGroup value={value} onValueChange={setValue}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {[
-            { value: 'compact', label: 'Compact', description: 'Smaller spacing between items' },
-            { value: 'comfortable', label: 'Comfortable', description: 'Default spacing' },
-            { value: 'spacious', label: 'Spacious', description: 'More room between items' },
-          ].map((item) => (
-            <div key={item.value} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-              <RadioGroupItem value={item.value} style={{ marginTop: '2px' }} />
-              <div>
-                <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.label}</div>
-                <div style={{ fontSize: '12px', color: '#888' }}>{item.description}</div>
-              </div>
+function WithLabelsStory() {
+  const [value, setValue] = useState('comfortable');
+  return (
+    <RadioGroup value={value} onValueChange={setValue}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {[
+          { value: 'compact', label: 'Compact', description: 'Smaller spacing between items' },
+          { value: 'comfortable', label: 'Comfortable', description: 'Default spacing' },
+          { value: 'spacious', label: 'Spacious', description: 'More room between items' },
+        ].map((item) => (
+          <div key={item.value} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <RadioGroupItem value={item.value} style={{ marginTop: '2px' }} />
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.label}</div>
+              <div style={{ fontSize: '12px', color: '#888' }}>{item.description}</div>
             </div>
-          ))}
-        </div>
-      </RadioGroup>
-    );
-  },
+          </div>
+        ))}
+      </div>
+    </RadioGroup>
+  );
+}
+
+export const WithLabels: Story = {
+  render: () => <WithLabelsStory />,
 };
 
 // ─── All Combinations ────────────────────────────────────────────

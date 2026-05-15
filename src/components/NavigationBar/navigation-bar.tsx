@@ -1,5 +1,6 @@
 import './navigation-bar.css';
 import * as React from 'react';
+import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -25,7 +26,7 @@ interface NavigationBarContextValue {
 const NavigationBarContext = React.createContext<NavigationBarContextValue | null>(null);
 
 const useNavigationBar = () => {
-  const context = React.useContext(NavigationBarContext);
+  const context = use(NavigationBarContext);
   if (!context) {
     throw new Error('NavigationBarItem must be used within a NavigationBar');
   }
@@ -47,7 +48,7 @@ const NavigationBar = ({
         ref={ref}
         aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
         data-orientation={orientation}
-        className={cx('md-navigation-bar', className)}
+        className={cx('md-navigation-bar fixed bottom-0 flex h-20', className)}
         {...props}
       >
         {children}
@@ -76,6 +77,31 @@ export type NavigationBarItemProps = Omit<React.ComponentProps<'button'>, 'value
   hideInactiveLabel?: boolean;
 };
 
+type NavigationBarItemIconProps = {
+  icon: React.ReactNode;
+  activeIcon?: React.ReactNode;
+  isActive: boolean;
+};
+
+const NavigationBarItemIcon = ({ icon, activeIcon, isActive }: NavigationBarItemIconProps) => {
+  if (!activeIcon) {
+    return <span className="md-navigation-bar-item__icon-glyph">{icon}</span>;
+  }
+
+  return (
+    <span className="md-navigation-bar-item__icon-glyph">
+      <span className="md-navigation-bar-item__icon-toggle">
+        <span className="md-navigation-bar-item__icon-fade" style={{ opacity: isActive ? 0 : 1 }}>
+          {icon}
+        </span>
+        <span className="md-navigation-bar-item__icon-fade" style={{ opacity: isActive ? 1 : 0 }}>
+          {activeIcon}
+        </span>
+      </span>
+    </span>
+  );
+};
+
 const NavigationBarItem = ({
   className,
   value,
@@ -91,7 +117,7 @@ const NavigationBarItem = ({
   const { value: selectedValue, onValueChange, orientation } = useNavigationBar();
   const isActive = selectedValue === value;
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const selectNavigationItem = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled) {
       onValueChange?.(value);
     }
@@ -107,26 +133,6 @@ const NavigationBarItem = ({
 
   const showLabel = !hideInactiveLabel || isActive;
 
-  // Icon with opacity transition between outline and filled
-  const renderIcon = () => {
-    if (!activeIcon) {
-      return <span className="md-navigation-bar-item__icon-glyph">{icon}</span>;
-    }
-
-    return (
-      <span className="md-navigation-bar-item__icon-glyph">
-        <span className="md-navigation-bar-item__icon-toggle">
-          <span className="md-navigation-bar-item__icon-fade" style={{ opacity: isActive ? 0 : 1 }}>
-            {icon}
-          </span>
-          <span className="md-navigation-bar-item__icon-fade" style={{ opacity: isActive ? 1 : 0 }}>
-            {activeIcon}
-          </span>
-        </span>
-      </span>
-    );
-  };
-
   return (
     <button
       ref={ref}
@@ -136,8 +142,13 @@ const NavigationBarItem = ({
       disabled={disabled}
       data-active={isActive ? 'true' : undefined}
       data-orientation={orientation}
-      className={cx('md-navigation-bar-item', className)}
-      onClick={handleClick}
+      className={cx(
+        'md-navigation-bar-item flex items-center focus-visible:ring-2 focus-visible:ring-ring',
+        orientation === 'vertical' ? 'flex-col' : 'flex-row',
+        isActive && 'text-primary',
+        className,
+      )}
+      onClick={selectNavigationItem}
       onKeyDown={handleKeyDown}
       {...props}
     >
@@ -151,14 +162,17 @@ const NavigationBarItem = ({
             {/* Icon container with badge */}
             <span className="md-navigation-bar-item__icon-inner">
               <span className="md-navigation-bar-item__icon-relative">
-                {renderIcon()}
+                <NavigationBarItemIcon icon={icon} activeIcon={activeIcon} isActive={isActive} />
                 {/* Badge - positioned relative to icon */}
                 {badge && <span className="md-navigation-bar-item__badge">{badge}</span>}
               </span>
             </span>
           </span>
           {/* Label */}
-          <span className="md-navigation-bar-item__label" data-hidden={!showLabel ? 'true' : undefined}>
+          <span
+            className={cx('md-navigation-bar-item__label', showLabel ? 'opacity-100' : 'opacity-0')}
+            data-hidden={!showLabel ? 'true' : undefined}
+          >
             {label}
           </span>
         </>
@@ -169,12 +183,15 @@ const NavigationBarItem = ({
           <span className="md-navigation-bar-item__state-layer--horizontal" />
           {/* Icon with badge */}
           <span className="md-navigation-bar-item__icon--horizontal">
-            {renderIcon()}
+            <NavigationBarItemIcon icon={icon} activeIcon={activeIcon} isActive={isActive} />
             {/* Badge - positioned on icon */}
             {badge && <span className="md-navigation-bar-item__badge--horizontal">{badge}</span>}
           </span>
           {/* Label */}
-          <span className="md-navigation-bar-item__label--horizontal" data-hidden={!showLabel ? 'true' : undefined}>
+          <span
+            className={cx('md-navigation-bar-item__label--horizontal', showLabel ? 'opacity-100' : 'opacity-0')}
+            data-hidden={!showLabel ? 'true' : undefined}
+          >
             {label}
           </span>
         </>

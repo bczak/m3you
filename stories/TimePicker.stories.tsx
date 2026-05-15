@@ -45,28 +45,32 @@ type Story = StoryObj<typeof meta>;
 // Plain inline usage
 // =============================================================================
 
+function DefaultStory() {
+  const [value, setValue] = useState(DEFAULT_TIME);
+  return (
+    <div style={stackStyle}>
+      <TimePicker value={value} onChange={setValue} />
+      <span style={selectionStyle}>Selected: {formatStoryTime(value, '12h')}</span>
+    </div>
+  );
+}
+
 export const Default: Story = {
-  render: () => {
-    const [value, setValue] = useState(DEFAULT_TIME);
-    return (
-      <div style={stackStyle}>
-        <TimePicker value={value} onChange={setValue} />
-        <span style={selectionStyle}>Selected: {formatStoryTime(value, '12h')}</span>
-      </div>
-    );
-  },
+  render: () => <DefaultStory />,
 };
 
+function TwentyFourHourStory() {
+  const [value, setValue] = useState({ hours: 18, minutes: 45 });
+  return (
+    <div style={stackStyle}>
+      <TimePicker value={value} onChange={setValue} format="24h" />
+      <span style={selectionStyle}>Selected: {formatStoryTime(value, '24h')}</span>
+    </div>
+  );
+}
+
 export const TwentyFourHour: Story = {
-  render: () => {
-    const [value, setValue] = useState({ hours: 18, minutes: 45 });
-    return (
-      <div style={stackStyle}>
-        <TimePicker value={value} onChange={setValue} format="24h" />
-        <span style={selectionStyle}>Selected: {formatStoryTime(value, '24h')}</span>
-      </div>
-    );
-  },
+  render: () => <TwentyFourHourStory />,
 };
 
 export const InputMode: Story = {
@@ -81,52 +85,54 @@ export const Landscape: Story = {
 // Wrapped in Dialog — consumer composes their own modal
 // =============================================================================
 
+function InsideDialogStory() {
+  const [open, setOpen] = useState(false);
+  const [committed, setCommitted] = useState(DEFAULT_TIME);
+  const [draft, setDraft] = useState(DEFAULT_TIME);
+
+  const handleOpen = (next: boolean) => {
+    if (next) setDraft(committed);
+    setOpen(next);
+  };
+
+  return (
+    <div style={stackStyle}>
+      <span style={selectionStyle}>Committed: {formatStoryTime(committed, '12h')}</span>
+      <Dialog open={open} onOpenChange={handleOpen}>
+        <DialogTrigger
+          render={
+            <Button variant="filled" size="sm" shape="round">
+              Pick a time
+            </Button>
+          }
+        />
+        <DialogContent
+          aria-label="Select time"
+          style={{ width: 'fit-content', maxWidth: 'none', padding: '20px 24px 12px' }}
+        >
+          <TimePicker value={draft} onChange={setDraft} />
+          <DialogFooter style={{ marginTop: 8 }}>
+            <Button variant="text" size="sm" shape="round" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="text"
+              size="sm"
+              shape="round"
+              onClick={() => {
+                setCommitted(draft);
+                setOpen(false);
+              }}
+            >
+              Apply time
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
 export const InsideDialog: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false);
-    const [committed, setCommitted] = useState(DEFAULT_TIME);
-    const [draft, setDraft] = useState(DEFAULT_TIME);
-
-    const handleOpen = (next: boolean) => {
-      if (next) setDraft(committed);
-      setOpen(next);
-    };
-
-    return (
-      <div style={stackStyle}>
-        <span style={selectionStyle}>Committed: {formatStoryTime(committed, '12h')}</span>
-        <Dialog open={open} onOpenChange={handleOpen}>
-          <DialogTrigger
-            render={
-              <Button variant="filled" size="sm" shape="round">
-                Pick a time
-              </Button>
-            }
-          />
-          <DialogContent
-            aria-label="Select time"
-            style={{ width: 'fit-content', maxWidth: 'none', padding: '20px 24px 12px' }}
-          >
-            <TimePicker value={draft} onChange={setDraft} />
-            <DialogFooter style={{ marginTop: 8 }}>
-              <Button variant="text" size="sm" shape="round" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                variant="text"
-                size="sm"
-                shape="round"
-                onClick={() => {
-                  setCommitted(draft);
-                  setOpen(false);
-                }}
-              >
-                OK
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  },
+  render: () => <InsideDialogStory />,
 };

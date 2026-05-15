@@ -15,7 +15,7 @@ const meta = {
 } satisfies Meta<typeof FABMenu>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj;
 
 const defaultItems = [
   { icon: <StarIcon />, label: 'Favorite', onClick: () => console.log('Favorite') },
@@ -68,20 +68,22 @@ export const FilledVariant: Story = {
   },
 };
 
+function ControlledStory() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+      <button type="button" onClick={() => setOpen(!open)}>
+        Toggle: {open ? 'Open' : 'Closed'}
+      </button>
+      <FABMenu items={defaultItems} open={open} onOpenChange={setOpen}>
+        <FAB>
+          <PlusIcon />
+        </FAB>
+      </FABMenu>
+    </div>
+  );
+}
+
 export const Controlled: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false);
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
-        <button type="button" onClick={() => setOpen(!open)}>
-          Toggle: {open ? 'Open' : 'Closed'}
-        </button>
-        <FABMenu items={defaultItems} open={open} onOpenChange={setOpen}>
-          <FAB>
-            <PlusIcon />
-          </FAB>
-        </FABMenu>
-      </div>
-    );
-  },
+  render: () => <ControlledStory />,
 };

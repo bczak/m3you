@@ -278,7 +278,7 @@ const ShowcaseSection = ({ side }: { side: Side }) => (
     <p
       style={{
         margin: '0 0 4px',
-        fontSize: '11px',
+        fontSize: '12px',
         fontWeight: 600,
         letterSpacing: '0.08em',
         textTransform: 'uppercase',

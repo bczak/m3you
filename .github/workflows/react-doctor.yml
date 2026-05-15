@@ -1,0 +1,27 @@
+name: React Doctor
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [development]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  react-doctor:
+    name: React Doctor
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Run React Doctor
+        uses: millionco/react-doctor@bfaf9c9530a9f8761df6e2d69abcf44c1699ff77
+        with:
+          diff: development
+          github-token: ${{ secrets.GITHUB_TOKEN }}

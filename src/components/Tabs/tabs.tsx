@@ -1,6 +1,7 @@
 import './tabs.css';
 import { Ripple } from 'm3-ripple';
 import * as React from 'react';
+import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -28,7 +29,7 @@ interface TabsContextValue {
 const TabsContext = React.createContext<TabsContextValue | null>(null);
 
 const useTabs = () => {
-  const context = React.useContext(TabsContext);
+  const context = use(TabsContext);
   if (!context) {
     throw new Error('Tab must be used within a Tabs component');
   }
@@ -89,7 +90,7 @@ const Tab = ({
   const hasLabel = React.Children.count(children) > 0;
   const hasIcon = !!icon && (variant === 'primary' || !hasLabel);
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const selectTab = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled) {
       onValueChange?.(value);
     }
@@ -145,7 +146,7 @@ const Tab = ({
       data-has-icon={String(hasIcon)}
       data-full-width={String(fullWidth)}
       className={cx('md-tab', className)}
-      onClick={handleClick}
+      onClick={selectTab}
       onKeyDown={handleKeyDown}
       {...props}
     >
