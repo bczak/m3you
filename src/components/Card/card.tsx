@@ -116,7 +116,7 @@ const Card = ({
     // biome-ignore lint/a11y/noStaticElementInteractions: role="button" is set conditionally when interactive
     <div
       ref={ref}
-      role={isInteractive ? 'button' : undefined}
+      role={isInteractive ? 'button' : shouldRenderRipple ? 'presentation' : undefined}
       tabIndex={isInteractive && !disabled ? 0 : undefined}
       aria-disabled={isInteractive && disabled ? true : undefined}
       onClick={!disabled && onClick ? handleClick : undefined}

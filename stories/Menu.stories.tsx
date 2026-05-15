@@ -532,34 +532,36 @@ export const ButtonTrigger: Story = {
 // Controlled
 // =============================================================================
 
-export const Controlled: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false);
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Button variant="tonal" size="sm" shape="round" onClick={() => setOpen(true)}>
-            Open
-          </Button>
-          <Button variant="outlined" size="sm" shape="round" onClick={() => setOpen(false)}>
-            Close
-          </Button>
-        </div>
-        <Menu open={open} onOpenChange={setOpen}>
-          <MenuTrigger asChild>
-            <IconButton variant="standard" size="sm">
-              <EllipsisVerticalIcon />
-            </IconButton>
-          </MenuTrigger>
-          <MenuContent>
-            <MenuItem>Cut</MenuItem>
-            <MenuItem>Copy</MenuItem>
-            <MenuItem>Paste</MenuItem>
-          </MenuContent>
-        </Menu>
+function ControlledStory() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <Button variant="tonal" size="sm" shape="round" onClick={() => setOpen(true)}>
+          Open
+        </Button>
+        <Button variant="outlined" size="sm" shape="round" onClick={() => setOpen(false)}>
+          Close
+        </Button>
       </div>
-    );
-  },
+      <Menu open={open} onOpenChange={setOpen}>
+        <MenuTrigger asChild>
+          <IconButton variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        </MenuTrigger>
+        <MenuContent>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+          <MenuItem>Paste</MenuItem>
+        </MenuContent>
+      </Menu>
+    </div>
+  );
+}
+
+export const Controlled: Story = {
+  render: () => <ControlledStory />,
 };
 
 // =============================================================================

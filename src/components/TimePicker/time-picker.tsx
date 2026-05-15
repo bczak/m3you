@@ -11,6 +11,10 @@ type TimePickerMode = 'dial' | 'input';
 type Period = 'AM' | 'PM';
 type Selection = 'hours' | 'minutes';
 type ClockFormat = '12h' | '24h';
+type TimeValue = { hours: number; minutes: number };
+type TimePickerChangeHandler =
+  | React.Dispatch<React.SetStateAction<TimeValue>>
+  | React.Dispatch<React.SetStateAction<TimeValue | null>>;
 
 // ── Clock Constants ─────────────────────────────────────────────────────────
 
@@ -266,9 +270,11 @@ const ClockDial = ({
 // =============================================================================
 
 export type TimePickerProps = {
-  value?: { hours: number; minutes: number } | null;
-  defaultValue?: { hours: number; minutes: number } | null;
-  onChange?: (time: { hours: number; minutes: number }) => void;
+  value?: TimeValue | null;
+  defaultValue?: TimeValue | null;
+  onChange?: TimePickerChangeHandler;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   format?: ClockFormat;
   headerLabel?: string;
   orientation?: Orientation;
@@ -280,6 +286,8 @@ const TimePicker = ({
   value: controlledValue,
   defaultValue,
   onChange,
+  open,
+  onOpenChange,
   format = '12h',
   headerLabel,
   orientation = 'auto',
@@ -388,6 +396,10 @@ const TimePicker = ({
   const headerText = headerLabel ?? (mode === 'dial' ? 'Select time' : 'Enter time');
 
   const isInput = mode === 'input';
+
+  if (open === false) {
+    return null;
+  }
   const periodOrientation = landscape && !isInput ? 'horizontal' : 'vertical';
 
   const renderTimeDisplay = () => (
@@ -396,7 +408,7 @@ const TimePicker = ({
         <div className="md-time-picker__display-row">
           <button
             type="button"
-            className="md-time-picker__time-box"
+            className={cx('md-time-picker__time-box', selection === 'hours' && 'border-primary')}
             data-selected={String(selection === 'hours')}
             data-mode="dial"
             onClick={() => setSelection('hours')}
@@ -407,7 +419,7 @@ const TimePicker = ({
           <span className="md-time-picker__colon">:</span>
           <button
             type="button"
-            className="md-time-picker__time-box"
+            className={cx('md-time-picker__time-box', selection === 'minutes' && 'border-primary')}
             data-selected={String(selection === 'minutes')}
             data-mode="dial"
             onClick={() => setSelection('minutes')}
@@ -421,7 +433,10 @@ const TimePicker = ({
           <div className="md-time-picker__field-group">
             <input
               ref={hourInputRef}
-              className="md-time-picker__time-box md-time-picker__time-input"
+              className={cx(
+                'md-time-picker__time-box md-time-picker__time-input',
+                selection === 'hours' && 'border-primary',
+              )}
               data-selected={String(selection === 'hours')}
               data-mode="input"
               value={displayHour()}
@@ -440,7 +455,10 @@ const TimePicker = ({
           <div className="md-time-picker__field-group">
             <input
               ref={minuteInputRef}
-              className="md-time-picker__time-box md-time-picker__time-input"
+              className={cx(
+                'md-time-picker__time-box md-time-picker__time-input',
+                selection === 'minutes' && 'border-primary',
+              )}
               data-selected={String(selection === 'minutes')}
               data-mode="input"
               value={current.minutes.toString().padStart(2, '0')}
@@ -496,6 +514,7 @@ const TimePicker = ({
     <div
       ref={ref}
       className={cx('md-time-picker', className)}
+      role={open !== undefined ? 'dialog' : undefined}
       data-layout={landscape && !isInput ? 'landscape' : 'portrait'}
     >
       {(!landscape || isInput) && (
@@ -517,6 +536,16 @@ const TimePicker = ({
           <Ripple />
           {isInput ? <Clock /> : <Keyboard />}
         </button>
+        {open !== undefined && (
+          <div className="md-time-picker__footer-actions">
+            <button type="button" className="md-time-picker__action-btn" onClick={() => onOpenChange?.(false)}>
+              Cancel
+            </button>
+            <button type="button" className="md-time-picker__action-btn" onClick={() => onOpenChange?.(false)}>
+              OK
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

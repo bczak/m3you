@@ -35,7 +35,7 @@ const IconButton = ({
   const selected = selectedProp ?? groupProps?.selected;
   const selectedValue = selected !== undefined ? String(selected) : undefined;
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const activateIconButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     groupProps?.onClick?.();
     onClick?.(e);
   };
@@ -50,7 +50,7 @@ const IconButton = ({
       data-morph={morph || undefined}
       data-selected={selectedValue}
       aria-pressed={selected !== undefined ? selected : undefined}
-      onClick={handleClick}
+      onClick={activateIconButton}
       ref={ref}
       {...props}
     >

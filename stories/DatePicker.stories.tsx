@@ -38,16 +38,18 @@ type Story = StoryObj<typeof meta>;
 // Plain inline usage
 // =============================================================================
 
+function DefaultStory() {
+  const [value, setValue] = useState<Date | null>(DEFAULT_DATE);
+  return (
+    <div style={stackStyle}>
+      <DatePicker value={value} onChange={setValue} />
+      <span style={selectionStyle}>Selected: {formatStoryDate(value)}</span>
+    </div>
+  );
+}
+
 export const Default: Story = {
-  render: () => {
-    const [value, setValue] = useState<Date | null>(DEFAULT_DATE);
-    return (
-      <div style={stackStyle}>
-        <DatePicker value={value} onChange={setValue} />
-        <span style={selectionStyle}>Selected: {formatStoryDate(value)}</span>
-      </div>
-    );
-  },
+  render: () => <DefaultStory />,
 };
 
 export const Uncontrolled: Story = {
@@ -80,52 +82,51 @@ export const Docked: Story = {
 // Wrapped in Dialog — consumer composes their own modal
 // =============================================================================
 
+function InsideDialogStory() {
+  const [open, setOpen] = useState(false);
+  const [committed, setCommitted] = useState<Date | null>(DEFAULT_DATE);
+  const [draft, setDraft] = useState<Date | null>(DEFAULT_DATE);
+
+  const handleOpen = (next: boolean) => {
+    if (next) setDraft(committed);
+    setOpen(next);
+  };
+
+  return (
+    <div style={stackStyle}>
+      <span style={selectionStyle}>Committed: {formatStoryDate(committed)}</span>
+      <Dialog open={open} onOpenChange={handleOpen}>
+        <DialogTrigger
+          render={
+            <Button variant="filled" size="sm" shape="round">
+              Pick a date
+            </Button>
+          }
+        />
+        <DialogContent aria-label="Select date" style={{ width: 'fit-content', maxWidth: 'none', padding: '8px 0 0' }}>
+          <DatePicker value={draft} onChange={setDraft} />
+          <DialogFooter style={{ marginTop: 0, padding: '8px 12px 12px' }}>
+            <Button variant="text" size="sm" shape="round" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="text"
+              size="sm"
+              shape="round"
+              onClick={() => {
+                setCommitted(draft);
+                setOpen(false);
+              }}
+            >
+              Apply date
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
 export const InsideDialog: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false);
-    const [committed, setCommitted] = useState<Date | null>(DEFAULT_DATE);
-    const [draft, setDraft] = useState<Date | null>(DEFAULT_DATE);
-
-    const handleOpen = (next: boolean) => {
-      if (next) setDraft(committed);
-      setOpen(next);
-    };
-
-    return (
-      <div style={stackStyle}>
-        <span style={selectionStyle}>Committed: {formatStoryDate(committed)}</span>
-        <Dialog open={open} onOpenChange={handleOpen}>
-          <DialogTrigger
-            render={
-              <Button variant="filled" size="sm" shape="round">
-                Pick a date
-              </Button>
-            }
-          />
-          <DialogContent
-            aria-label="Select date"
-            style={{ width: 'fit-content', maxWidth: 'none', padding: '8px 0 0' }}
-          >
-            <DatePicker value={draft} onChange={setDraft} />
-            <DialogFooter style={{ marginTop: 0, padding: '8px 12px 12px' }}>
-              <Button variant="text" size="sm" shape="round" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                variant="text"
-                size="sm"
-                shape="round"
-                onClick={() => {
-                  setCommitted(draft);
-                  setOpen(false);
-                }}
-              >
-                OK
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  },
+  render: () => <InsideDialogStory />,
 };

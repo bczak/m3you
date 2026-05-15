@@ -34,7 +34,7 @@ const Checkbox = ({
     }
   }, [indeterminate]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const reportCheckedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onCheckedChange?.(e.target.checked);
     props.onChange?.(e);
   };
@@ -69,7 +69,7 @@ const Checkbox = ({
         type="checkbox"
         checked={checked}
         disabled={disabled}
-        onChange={handleChange}
+        onChange={reportCheckedChange}
         className="md-checkbox__input"
         {...props}
       />

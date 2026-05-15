@@ -4,7 +4,7 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { ChevronDown } from 'lucide-react';
 import { Ripple } from 'm3-ripple';
 import type * as React from 'react';
-import { createContext, useContext, useState } from 'react';
+import { createContext, use, useState } from 'react';
 import { cx } from '../../lib/cx';
 
 // =============================================================================
@@ -24,7 +24,7 @@ interface SplitButtonContextValue {
 const SplitButtonCtx = createContext<SplitButtonContextValue | null>(null);
 
 function useSplitButton() {
-  const ctx = useContext(SplitButtonCtx);
+  const ctx = use(SplitButtonCtx);
   if (!ctx) throw new Error('SplitButton sub-components must be used within <SplitButton>');
   return ctx;
 }

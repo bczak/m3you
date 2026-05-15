@@ -1,6 +1,6 @@
 import './circular-progress.css';
 import type * as React from 'react';
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 
 import { cx } from '../../lib/cx';
 import { drawCircularArc, drawWavyArc, sizeToDegrees } from './wavy-arc';
@@ -187,12 +187,6 @@ const WavyCircularProgress = ({ rootProps, clampedValue, indeterminate, diameter
   const { ref, ...rest } = rootProps;
   const activeRef = useRef<SVGPathElement>(null);
   const trackRef = useRef<SVGPathElement>(null);
-  const [mounted, setMounted] = useState(false);
-
-  // Only animate on the client — SSR gets the static initial frame.
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const minDegrees = useMemo(
     () => sizeToDegrees(strokeWidth * 2, diameter, strokeWidth, WAVY_AMPLITUDE),
@@ -203,7 +197,7 @@ const WavyCircularProgress = ({ rootProps, clampedValue, indeterminate, diameter
   // oscillation-with-dwell curve cannot be expressed as a CSS keyframe on a
   // `d=` attribute, so we recompute the path every tick.
   useEffect(() => {
-    if (!indeterminate || !mounted) return;
+    if (!indeterminate) return;
     let rafId = 0;
     const start = performance.now();
 
@@ -232,7 +226,7 @@ const WavyCircularProgress = ({ rootProps, clampedValue, indeterminate, diameter
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [indeterminate, mounted, diameter, strokeWidth]);
+  }, [indeterminate, diameter, strokeWidth]);
 
   const viewBox = useMemo(
     () => drawCircularArc({ diameter, strokeWidth, amplitude: WAVY_AMPLITUDE, endAngle: 20 }).viewBox,

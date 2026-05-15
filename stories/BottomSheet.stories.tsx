@@ -62,15 +62,15 @@ export const WithSnapPoints: Story = {
           <p style={{ margin: '0 0 16px', color: 'var(--md-sys-color-on-surface-variant)' }}>
             Snaps at 30%, 60%, and full height. Use the drag handle to move between points.
           </p>
-          {Array.from({ length: 24 }, (_, index) => (
+          {Array.from({ length: 24 }, (_, index) => `snap-row-${index + 1}`).map((rowId) => (
             <div
-              key={index}
+              key={rowId}
               style={{
                 padding: '14px 0',
                 borderBottom: '1px solid var(--md-sys-color-outline-variant)',
               }}
             >
-              Row {index + 1}
+              Row {rowId.replace('snap-row-', '')}
             </div>
           ))}
         </BottomSheetBody>
@@ -91,15 +91,15 @@ export const FullHeight: Story = {
             Opens at 100% of the available viewport. A small top strip remains so the scrim is tappable to dismiss (M3
             spec).
           </p>
-          {Array.from({ length: 40 }, (_, index) => (
+          {Array.from({ length: 40 }, (_, index) => `full-row-${index + 1}`).map((rowId) => (
             <div
-              key={index}
+              key={rowId}
               style={{
                 padding: '14px 0',
                 borderBottom: '1px solid var(--md-sys-color-outline-variant)',
               }}
             >
-              Item {index + 1}
+              Item {rowId.replace('full-row-', '')}
             </div>
           ))}
         </BottomSheetBody>
@@ -131,27 +131,29 @@ export const Standard: Story = {
 };
 
 // ─── Controlled: parent owns open state ───────────────────────────────────
+function ControlledStory() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+      <Button variant="filled" onClick={() => setOpen(true)}>
+        Open
+      </Button>
+      <span style={{ color: 'var(--md-sys-color-on-surface-variant)' }}>open = {open ? 'true' : 'false'}</span>
+      <BottomSheet open={open} onOpenChange={setOpen}>
+        <BottomSheetContent>
+          <BottomSheetBody>
+            <h2 style={{ margin: '0 0 4px', font: 'var(--md-sys-typescale-title-large)' }}>Controlled sheet</h2>
+            <p style={{ margin: '0 0 16px', color: 'var(--md-sys-color-on-surface-variant)' }}>
+              Open state is lifted into the story. Close via the button, escape key, swipe down, or scrim tap.
+            </p>
+            <BottomSheetClose render={<Button variant="outlined">Close</Button>} />
+          </BottomSheetBody>
+        </BottomSheetContent>
+      </BottomSheet>
+    </div>
+  );
+}
+
 export const Controlled: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false);
-    return (
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-        <Button variant="filled" onClick={() => setOpen(true)}>
-          Open
-        </Button>
-        <span style={{ color: 'var(--md-sys-color-on-surface-variant)' }}>open = {open ? 'true' : 'false'}</span>
-        <BottomSheet open={open} onOpenChange={setOpen}>
-          <BottomSheetContent>
-            <BottomSheetBody>
-              <h2 style={{ margin: '0 0 4px', font: 'var(--md-sys-typescale-title-large)' }}>Controlled sheet</h2>
-              <p style={{ margin: '0 0 16px', color: 'var(--md-sys-color-on-surface-variant)' }}>
-                Open state is lifted into the story. Close via the button, escape key, swipe down, or scrim tap.
-              </p>
-              <BottomSheetClose render={<Button variant="outlined">Close</Button>} />
-            </BottomSheetBody>
-          </BottomSheetContent>
-        </BottomSheet>
-      </div>
-    );
-  },
+  render: () => <ControlledStory />,
 };

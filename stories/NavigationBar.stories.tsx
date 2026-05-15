@@ -147,7 +147,11 @@ export const Playground: Story = {
     value: 'home',
   },
   render: (args) => (
-    <ControlledNavigationBar orientation={args.orientation} value={args.value} onValueChange={args.onValueChange} />
+    <ControlledNavigationBar
+      orientation={args.orientation}
+      value={args.value as 'home' | 'browse' | 'radio' | 'library' | undefined}
+      onValueChange={args.onValueChange}
+    />
   ),
 };
 

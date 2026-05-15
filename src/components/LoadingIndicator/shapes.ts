@@ -61,8 +61,10 @@ const parsePath = (d: string) => {
       .slice(1)
       .trim()
       .split(/[\s,]+/)
-      .filter(Boolean)
-      .map(Number),
+      .reduce<number[]>((nums, value) => {
+        if (value) nums.push(Number(value));
+        return nums;
+      }, []),
   }));
 };
 

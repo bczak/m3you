@@ -135,7 +135,7 @@ const Slider = ({
   const handleWidthPx = isDragging ? config.handlePressedWidth : config.handleWidth;
   const isVertical = orientation === 'vertical';
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateSliderValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = Number(e.target.value);
     if (!isControlled) {
       setInternalValue(newValue);
@@ -183,10 +183,12 @@ const Slider = ({
 
   // Show inset icon only for md, lg, xl per M3 spec
   const showIcon = icon && config.iconSize > 0;
+  const sizeClass = { xs: 'h-12', sm: 'h-12', md: 'h-14', lg: 'h-18', xl: 'h-28' }[size];
+  const orientationClass = isVertical ? 'h-full flex-col' : 'w-full items-center';
 
   return (
     <div
-      className={cx('md-slider', className)}
+      className={cx('md-slider', sizeClass, orientationClass, className)}
       data-size={size}
       data-orientation={orientation}
       data-disabled={disabled || undefined}
@@ -269,7 +271,7 @@ const Slider = ({
         value={value}
         disabled={disabled}
         aria-orientation={orientation}
-        onChange={handleChange}
+        onChange={updateSliderValue}
         className="md-slider__input"
         data-orientation={orientation}
         style={

@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - "development"
-      - "claude/**"
+      - "feature/**"
 
 permissions:
   contents: write
@@ -110,8 +110,8 @@ jobs:
           publish_dir: ${{ steps.build-bun.outputs.publish_dir || steps.build-pnpm.outputs.publish_dir || steps.build-yarn.outputs.publish_dir || steps.build-npm.outputs.publish_dir || steps.build-static.outputs.publish_dir }}
           keep_files: true
 
-      # Deploy claude branches to subdirectories for preview
-      - name: Deploy claude branch to GitHub Pages subdirectory
+      # Deploy feature branches to subdirectories for preview
+      - name: Deploy feature branch to GitHub Pages subdirectory
         if: steps.branch.outputs.name != 'development'
         uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847
         with:

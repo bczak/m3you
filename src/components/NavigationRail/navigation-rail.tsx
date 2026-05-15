@@ -1,6 +1,7 @@
 import './navigation-rail.css';
 import { Ripple } from 'm3-ripple';
 import * as React from 'react';
+import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -28,6 +29,8 @@ export type NavigationRailProps = React.ComponentProps<'nav'> & {
   menu?: React.ReactNode;
   /** FAB content (below menu) */
   fab?: React.ReactNode;
+  /** Footer content rendered after navigation items. */
+  footer?: React.ReactNode;
 };
 
 interface NavigationRailContextValue {
@@ -40,7 +43,7 @@ interface NavigationRailContextValue {
 const NavigationRailContext = React.createContext<NavigationRailContextValue | null>(null);
 
 const useNavigationRail = () => {
-  const context = React.useContext(NavigationRailContext);
+  const context = use(NavigationRailContext);
   if (!context) {
     throw new Error('NavigationRailItem must be used within a NavigationRail');
   }
@@ -58,6 +61,7 @@ const NavigationRail = ({
   onStateChange,
   menu,
   fab,
+  footer,
   children,
   ref,
   ...props
@@ -83,7 +87,7 @@ const NavigationRail = ({
         data-state={state}
         data-modality={modality}
         data-position={position}
-        className={cx('md-navigation-rail', className)}
+        className={cx('md-navigation-rail', state === 'expanded' ? 'w-72' : 'w-20', position, className)}
         {...props}
       >
         {/* Header section: Menu button */}
@@ -96,6 +100,8 @@ const NavigationRail = ({
         <div className="md-navigation-rail__items" data-items-alignment={itemsAlignment}>
           {children}
         </div>
+
+        {footer && <div className="md-navigation-rail__footer">{footer}</div>}
       </nav>
     </NavigationRailContext.Provider>
   );
@@ -122,6 +128,31 @@ export type NavigationRailItemProps = Omit<React.ComponentProps<'button'>, 'valu
   badge?: React.ReactNode;
 };
 
+type NavigationRailItemIconProps = {
+  icon: React.ReactNode;
+  activeIcon?: React.ReactNode;
+  isActive: boolean;
+};
+
+const NavigationRailItemIcon = ({ icon, activeIcon, isActive }: NavigationRailItemIconProps) => {
+  if (!activeIcon) {
+    return <span className="md-navigation-rail-item__icon-glyph">{icon}</span>;
+  }
+
+  return (
+    <span className="md-navigation-rail-item__icon-glyph">
+      <span className="md-navigation-rail-item__icon-toggle">
+        <span className="md-navigation-rail-item__icon-fade" style={{ opacity: isActive ? 0 : 1 }}>
+          {icon}
+        </span>
+        <span className="md-navigation-rail-item__icon-fade" style={{ opacity: isActive ? 1 : 0 }}>
+          {activeIcon}
+        </span>
+      </span>
+    </span>
+  );
+};
+
 const NavigationRailItem = ({
   className,
   value,
@@ -136,7 +167,7 @@ const NavigationRailItem = ({
   const { value: selectedValue, onValueChange, state } = useNavigationRail();
   const isActive = selectedValue === value;
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const selectRailItem = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled) {
       onValueChange?.(value);
     }
@@ -150,26 +181,6 @@ const NavigationRailItem = ({
     props.onKeyDown?.(e);
   };
 
-  // Icon with opacity transition between outline and filled
-  const renderIcon = () => {
-    if (!activeIcon) {
-      return <span className="md-navigation-rail-item__icon-glyph">{icon}</span>;
-    }
-
-    return (
-      <span className="md-navigation-rail-item__icon-glyph">
-        <span className="md-navigation-rail-item__icon-toggle">
-          <span className="md-navigation-rail-item__icon-fade" style={{ opacity: isActive ? 0 : 1 }}>
-            {icon}
-          </span>
-          <span className="md-navigation-rail-item__icon-fade" style={{ opacity: isActive ? 1 : 0 }}>
-            {activeIcon}
-          </span>
-        </span>
-      </span>
-    );
-  };
-
   return (
     <button
       ref={ref}
@@ -179,8 +190,13 @@ const NavigationRailItem = ({
       disabled={disabled}
       data-active={isActive ? 'true' : undefined}
       data-state={state}
-      className={cx('md-navigation-rail-item', className)}
-      onClick={handleClick}
+      className={cx(
+        'md-navigation-rail-item focus-visible:ring-2 focus-visible:ring-ring',
+        isActive ? 'text-secondary' : 'text-on-surface-variant',
+        state === 'expanded' ? 'flex-row' : 'flex-col',
+        className,
+      )}
+      onClick={selectRailItem}
       onKeyDown={handleKeyDown}
       {...props}
     >
@@ -190,7 +206,7 @@ const NavigationRailItem = ({
         <Ripple />
         <span className="md-navigation-rail-item__content">
           <span className="md-navigation-rail-item__icon">
-            {renderIcon()}
+            <NavigationRailItemIcon icon={icon} activeIcon={activeIcon} isActive={isActive} />
             {badge && <span className="md-navigation-rail-item__badge">{badge}</span>}
           </span>
           <span className="md-navigation-rail-item__label">{label}</span>
@@ -212,13 +228,15 @@ export type NavigationRailSectionProps = React.ComponentProps<'div'> & {
 
 const NavigationRailSection = ({
   className,
-  title: _title,
+  title,
   children,
   ref,
   ...props
 }: NavigationRailSectionProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const { state } = useNavigationRail();
   return (
     <div ref={ref} className={cx('md-navigation-rail-section', className)} {...props}>
+      {title && state === 'expanded' ? <span className="md-navigation-rail-section__title">{title}</span> : null}
       {children}
     </div>
   );
@@ -246,7 +264,7 @@ const NavigationRailMenuButton = ({
 }: NavigationRailMenuButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
   const { state, onStateChange } = useNavigationRail();
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const toggleRailState = (e: React.MouseEvent<HTMLButtonElement>) => {
     onStateChange?.(state === 'collapsed' ? 'expanded' : 'collapsed');
     props.onClick?.(e);
   };
@@ -262,7 +280,7 @@ const NavigationRailMenuButton = ({
       aria-expanded={state === 'expanded'}
       data-state={state}
       className={cx('md-navigation-rail-menu-button', className)}
-      onClick={handleClick}
+      onClick={toggleRailState}
       {...props}
     >
       <Ripple />

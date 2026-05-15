@@ -79,7 +79,7 @@ export function ShowcasePanel({
 
   if (href) {
     return (
-      <a className={cx('sb-m3-panel', 'sb-m3-panel--link', className)} data-tone={tone} href={href} {...props}>
+      <a className={cx('sb-m3-panel', 'sb-m3-panel--link', className)} data-tone={tone} href={href}>
         {body}
       </a>
     );

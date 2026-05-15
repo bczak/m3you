@@ -541,7 +541,7 @@ export const AllVariants: Story = {
             <DialogClose
               render={
                 <Button variant="text" size="sm" shape="round">
-                  OK
+                  Confirm
                 </Button>
               }
             />
@@ -809,189 +809,191 @@ export const FullScreen: Story = {
 // the inner one with state — base-ui then treats them as two unrelated dialogs.
 // =============================================================================
 
-export const Nested: Story = {
-  render: () => {
-    const [innerOpen, setInnerOpen] = useState(false);
+function NestedStory() {
+  const [innerOpen, setInnerOpen] = useState(false);
 
-    return (
-      <>
-        {/* Outer dialog */}
-        <Dialog>
-          <DialogTrigger
-            render={
-              <Button variant="filled" size="sm" shape="round">
-                Open settings
-              </Button>
-            }
-          />
-          <DialogContent>
-            <DialogHeader>
-              <DialogIcon>
-                <SettingsIcon aria-hidden="true" />
-              </DialogIcon>
-              <DialogTitle>Account settings</DialogTitle>
-            </DialogHeader>
-            <DialogDescription>
-              Manage your account preferences. Some actions are permanent and cannot be undone.
-            </DialogDescription>
+  return (
+    <>
+      {/* Outer dialog */}
+      <Dialog>
+        <DialogTrigger
+          render={
+            <Button variant="filled" size="sm" shape="round">
+              Open settings
+            </Button>
+          }
+        />
+        <DialogContent>
+          <DialogHeader>
+            <DialogIcon>
+              <SettingsIcon aria-hidden="true" />
+            </DialogIcon>
+            <DialogTitle>Account settings</DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
+            Manage your account preferences. Some actions are permanent and cannot be undone.
+          </DialogDescription>
 
-            <DialogBody>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <div
-                  style={{
-                    padding: '12px 16px',
-                    borderRadius: 'var(--md-sys-shape-corner-medium)',
-                    background: 'var(--md-sys-color-surface-container)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <div>
-                    <p
-                      style={{
-                        color: 'var(--md-sys-color-on-surface)',
-                        fontSize: 'var(--md-sys-typescale-body-large-size)',
-                      }}
-                    >
-                      Notifications
-                    </p>
-                    <p
-                      style={{
-                        color: 'var(--md-sys-color-on-surface-variant)',
-                        fontSize: 'var(--md-sys-typescale-body-small-size)',
-                      }}
-                    >
-                      Enabled
-                    </p>
-                  </div>
-                  <Button variant="text" size="sm" shape="round">
-                    Edit
-                  </Button>
+          <DialogBody>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: 'var(--md-sys-shape-corner-medium)',
+                  background: 'var(--md-sys-color-surface-container)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div>
+                  <p
+                    style={{
+                      color: 'var(--md-sys-color-on-surface)',
+                      fontSize: 'var(--md-sys-typescale-body-large-size)',
+                    }}
+                  >
+                    Notifications
+                  </p>
+                  <p
+                    style={{
+                      color: 'var(--md-sys-color-on-surface-variant)',
+                      fontSize: 'var(--md-sys-typescale-body-small-size)',
+                    }}
+                  >
+                    Enabled
+                  </p>
                 </div>
-
-                <div
-                  style={{
-                    padding: '12px 16px',
-                    borderRadius: 'var(--md-sys-shape-corner-medium)',
-                    background: 'var(--md-sys-color-surface-container)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <div>
-                    <p
-                      style={{
-                        color: 'var(--md-sys-color-on-surface)',
-                        fontSize: 'var(--md-sys-typescale-body-large-size)',
-                      }}
-                    >
-                      Email
-                    </p>
-                    <p
-                      style={{
-                        color: 'var(--md-sys-color-on-surface-variant)',
-                        fontSize: 'var(--md-sys-typescale-body-small-size)',
-                      }}
-                    >
-                      alex@example.com
-                    </p>
-                  </div>
-                  <Button variant="text" size="sm" shape="round">
-                    Edit
-                  </Button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setInnerOpen(true)}
-                  style={{
-                    padding: '12px 16px',
-                    borderRadius: 'var(--md-sys-shape-corner-medium)',
-                    background: 'var(--md-sys-color-error-container)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    border: 'none',
-                    font: 'inherit',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  <div>
-                    <p
-                      style={{
-                        color: 'var(--md-sys-color-on-error-container)',
-                        fontSize: 'var(--md-sys-typescale-body-large-size)',
-                      }}
-                    >
-                      Delete account
-                    </p>
-                    <p
-                      style={{
-                        color: 'var(--md-sys-color-on-error-container)',
-                        fontSize: 'var(--md-sys-typescale-body-small-size)',
-                        opacity: 0.7,
-                      }}
-                    >
-                      Permanent — cannot be undone
-                    </p>
-                  </div>
-                  <TrashIcon size={20} aria-hidden="true" style={{ color: 'var(--md-sys-color-on-error-container)' }} />
-                </button>
+                <Button variant="text" size="sm" shape="round">
+                  Edit
+                </Button>
               </div>
-            </DialogBody>
 
-            <DialogFooter>
-              <DialogClose
-                render={
-                  <Button variant="text" size="sm" shape="round">
-                    Close
-                  </Button>
-                }
-              />
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              <div
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: 'var(--md-sys-shape-corner-medium)',
+                  background: 'var(--md-sys-color-surface-container)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div>
+                  <p
+                    style={{
+                      color: 'var(--md-sys-color-on-surface)',
+                      fontSize: 'var(--md-sys-typescale-body-large-size)',
+                    }}
+                  >
+                    Email
+                  </p>
+                  <p
+                    style={{
+                      color: 'var(--md-sys-color-on-surface-variant)',
+                      fontSize: 'var(--md-sys-typescale-body-small-size)',
+                    }}
+                  >
+                    alex@example.com
+                  </p>
+                </div>
+                <Button variant="text" size="sm" shape="round">
+                  Edit
+                </Button>
+              </div>
 
-        {/* Inner dialog is a sibling — NOT inside the outer Dialog.Popup's React tree.
+              <button
+                type="button"
+                onClick={() => setInnerOpen(true)}
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: 'var(--md-sys-shape-corner-medium)',
+                  background: 'var(--md-sys-color-error-container)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  border: 'none',
+                  font: 'inherit',
+                  textAlign: 'left',
+                  width: '100%',
+                }}
+              >
+                <div>
+                  <p
+                    style={{
+                      color: 'var(--md-sys-color-on-error-container)',
+                      fontSize: 'var(--md-sys-typescale-body-large-size)',
+                    }}
+                  >
+                    Delete account
+                  </p>
+                  <p
+                    style={{
+                      color: 'var(--md-sys-color-on-error-container)',
+                      fontSize: 'var(--md-sys-typescale-body-small-size)',
+                      opacity: 0.7,
+                    }}
+                  >
+                    Permanent, cannot be undone
+                  </p>
+                </div>
+                <TrashIcon size={20} aria-hidden="true" style={{ color: 'var(--md-sys-color-on-error-container)' }} />
+              </button>
+            </div>
+          </DialogBody>
+
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button variant="text" size="sm" shape="round">
+                  Close
+                </Button>
+              }
+            />
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Inner dialog is a sibling — NOT inside the outer Dialog.Popup's React tree.
             base-ui only suppresses the backdrop when Dialog.Root is a descendant of
             another Dialog.Popup. As a sibling, it renders its own backdrop independently. */}
-        <Dialog open={innerOpen} onOpenChange={setInnerOpen}>
-          <DialogContent>
-            <DialogHeader centered>
-              <DialogIcon>
-                <AlertCircleIcon aria-hidden="true" style={{ color: 'var(--md-sys-color-error)' }} />
-              </DialogIcon>
-              <DialogTitle>Delete account?</DialogTitle>
-            </DialogHeader>
-            <DialogDescription>
-              This action is permanent. All your data, files, and settings will be deleted immediately and cannot be
-              recovered.
-            </DialogDescription>
-            <DialogFooter>
-              <DialogClose
-                render={
-                  <Button variant="text" size="sm" shape="round">
-                    Cancel
-                  </Button>
-                }
-              />
-              <DialogClose
-                render={
-                  <Button variant="text" size="sm" shape="round" style={{ color: 'var(--md-sys-color-error)' }}>
-                    Delete forever
-                  </Button>
-                }
-              />
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </>
-    );
-  },
+      <Dialog open={innerOpen} onOpenChange={setInnerOpen}>
+        <DialogContent>
+          <DialogHeader centered>
+            <DialogIcon>
+              <AlertCircleIcon aria-hidden="true" style={{ color: 'var(--md-sys-color-error)' }} />
+            </DialogIcon>
+            <DialogTitle>Delete account?</DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
+            This action is permanent. All your data, files, and settings will be deleted immediately and cannot be
+            recovered.
+          </DialogDescription>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button variant="text" size="sm" shape="round">
+                  Cancel
+                </Button>
+              }
+            />
+            <DialogClose
+              render={
+                <Button variant="text" size="sm" shape="round" style={{ color: 'var(--md-sys-color-error)' }}>
+                  Delete forever
+                </Button>
+              }
+            />
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+export const Nested: Story = {
+  render: () => <NestedStory />,
 };
 
 // =============================================================================

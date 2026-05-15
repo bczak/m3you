@@ -41,7 +41,7 @@ const Switch = ({
   // Merge refs
   React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateSwitchChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isControlled) {
       setInternalChecked(e.target.checked);
     }
@@ -53,20 +53,36 @@ const Switch = ({
 
   return (
     <label
-      className={cx('md-switch', className)}
+      className={cx('md-switch', disabled && 'opacity-38 pointer-events-none', className)}
       data-interactive=""
       data-variant={variant}
       data-checked={checkedStr}
       data-disabled={disabled || undefined}
     >
       {/* State layer (centered on thumb, follows thumb position) */}
-      <span className="md-switch__state-layer" data-checked={checkedStr} />
+      <span className="md-switch__state-layer size-10 rounded-full" data-checked={checkedStr} />
 
       {/* Track */}
-      <span aria-hidden="true" className="md-switch__track" data-variant={variant} data-checked={checkedStr}>
+      <span
+        aria-hidden="true"
+        className={cx(
+          'md-switch__track h-8 w-[52px] rounded-full transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-ring',
+          checked
+            ? variant === 'error'
+              ? 'border-error bg-error'
+              : 'border-primary bg-primary'
+            : variant === 'error'
+              ? 'border-error bg-surface-container-highest'
+              : 'border-outline bg-surface-container-highest',
+        )}
+        data-track=""
+        data-variant={variant}
+        data-checked={checkedStr}
+      >
         {/* Thumb */}
         <span
-          className="md-switch__thumb"
+          className={cx('md-switch__thumb', checked || showIcons ? 'size-6' : 'size-4')}
+          data-thumb=""
           data-variant={variant}
           data-checked={checkedStr}
           data-with-icon={String(showIcons)}
@@ -91,9 +107,9 @@ const Switch = ({
         role="switch"
         checked={checked}
         disabled={disabled}
-        onChange={handleChange}
+        onChange={updateSwitchChecked}
         aria-checked={checked}
-        className="md-switch__input"
+        className="md-switch__input sr-only"
         {...props}
       />
     </label>

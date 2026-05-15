@@ -39,7 +39,7 @@ const meta = {
 } satisfies Meta<typeof ExtendableFAB>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj;
 
 export const Default: Story = {
   args: {
@@ -50,7 +50,7 @@ export const Default: Story = {
     extended: false,
     label: 'Create',
   },
-  render: (args) => <ExtendableFAB {...args} icon={<PlusIcon />} />,
+  render: (args) => <ExtendableFAB label="Create" {...args} icon={<PlusIcon />} />,
 };
 
 export const AllSizes: Story = {
@@ -102,26 +102,28 @@ export const Lowered: Story = {
   ),
 };
 
+function TransformStory() {
+  const [extended, setExtended] = useState(false);
+
+  return (
+    <SizeShowcase
+      renderItem={(size) => {
+        const icon = size === 'sm' ? <EditIcon /> : size === 'md' ? <NavigationIcon /> : <PlusIcon />;
+
+        return (
+          <ExtendableFAB
+            size={size}
+            extended={extended}
+            icon={icon}
+            label="Compose"
+            onClick={() => setExtended((current) => !current)}
+          />
+        );
+      }}
+    />
+  );
+}
+
 export const Transform: Story = {
-  render: () => {
-    const [extended, setExtended] = useState(false);
-
-    return (
-      <SizeShowcase
-        renderItem={(size) => {
-          const icon = size === 'sm' ? <EditIcon /> : size === 'md' ? <NavigationIcon /> : <PlusIcon />;
-
-          return (
-            <ExtendableFAB
-              size={size}
-              extended={extended}
-              icon={icon}
-              label="Compose"
-              onClick={() => setExtended((current) => !current)}
-            />
-          );
-        }}
-      />
-    );
-  },
+  render: () => <TransformStory />,
 };
