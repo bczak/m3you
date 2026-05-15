@@ -1,12 +1,14 @@
 name: React Doctor
 
 on:
-  push:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [development]
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   react-doctor:
@@ -14,26 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: actions/checkout@v5
         with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+          fetch-depth: 0
 
       - name: Run React Doctor
-        id: doctor
-        shell: bash
-        run: |
-          set +e
-          bunx react-doctor@latest . --yes --annotations --fail-on warning 2>&1 | tee react-doctor-output.txt
-          status=${PIPESTATUS[0]}
-          echo "status=${status}" >> "$GITHUB_OUTPUT"
-          exit 0
-
-      - name: Fail if React Doctor found issues
-        if: steps.doctor.outputs.status != '0'
-        run: exit 1
+        uses: millionco/react-doctor@main
+        with:
+          diff: development
+          github-token: ${{ secrets.GITHUB_TOKEN }}
