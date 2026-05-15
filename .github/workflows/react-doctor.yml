@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
   issues: write
-  pull-requests: write
+  pull-requests: read
 
 jobs:
   react-doctor:
@@ -30,59 +30,49 @@ jobs:
         id: doctor
         shell: bash
         run: |
-          bun run react-doctor 2>&1 | tee react-doctor-output.txt
+          set +e
+          bunx react-doctor@latest . --yes --annotations --fail-on warning 2>&1 | tee react-doctor-output.txt
+          status=${PIPESTATUS[0]}
+          echo "status=${status}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Prepare React Doctor PR status comment
+        if: always() && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          if [ "${{ steps.doctor.outputs.status }}" = "0" ]; then
+            icon="✅"
+            status="passed"
+          else
+            icon="❌"
+            status="failed"
+          fi
+
+          cat > react-doctor-comment.md <<EOF
+          ## ${icon} React Doctor ${status}
+
+          **Commit:** \`${{ github.event.pull_request.head.sha }}\`
+          **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          <details>
+          <summary>React Doctor output</summary>
+
+          \`\`\`text
+          EOF
+          tail -n 120 react-doctor-output.txt >> react-doctor-comment.md
+          cat >> react-doctor-comment.md <<EOF
+          \`\`\`
+          </details>
+          EOF
 
       - name: Update React Doctor PR status comment
         if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          script: |
-            const fs = require('fs');
-            const marker = '<!-- react-doctor-status-comment -->';
-            const passed = '${{ steps.doctor.outcome }}' === 'success';
-            const icon = passed ? '✅' : '❌';
-            const status = passed ? 'passed' : 'failed';
-            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const outputPath = 'react-doctor-output.txt';
-            const rawOutput = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, 'utf8').trim() : '';
-            const summary = rawOutput.length > 3500 ? rawOutput.slice(rawOutput.length - 3500) : rawOutput;
+          header: react-doctor-status
+          recreate: true
+          path: react-doctor-comment.md
 
-            const body = `${marker}
-            ## ${icon} React Doctor ${status}
-
-            **Commit:** \`${context.payload.pull_request.head.sha.slice(0, 7)}\`
-            **Workflow run:** [#${context.runNumber}](${runUrl})
-
-            <details>
-            <summary>React Doctor output</summary>
-
-            \`\`\`text
-            ${summary || 'No output captured.'}
-            \`\`\`
-            </details>`;
-
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner,
-              repo,
-              issue_number,
-              per_page: 100,
-            });
-            const existing = comments.find((comment) => comment.body?.includes(marker));
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body,
-              });
-            }
+      - name: Fail if React Doctor found issues
+        if: steps.doctor.outputs.status != '0'
+        run: exit 1
