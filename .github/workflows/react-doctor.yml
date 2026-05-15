@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
 
 jobs:
   react-doctor:
@@ -35,43 +33,6 @@ jobs:
           status=${PIPESTATUS[0]}
           echo "status=${status}" >> "$GITHUB_OUTPUT"
           exit 0
-
-      - name: Prepare React Doctor PR status comment
-        if: always() && github.event_name == 'pull_request'
-        shell: bash
-        run: |
-          if [ "${{ steps.doctor.outputs.status }}" = "0" ]; then
-            icon="✅"
-            status="passed"
-          else
-            icon="❌"
-            status="failed"
-          fi
-
-          cat > react-doctor-comment.md <<EOF
-          ## ${icon} React Doctor ${status}
-
-          **Commit:** \`${{ github.event.pull_request.head.sha }}\`
-          **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-          <details>
-          <summary>React Doctor output</summary>
-
-          \`\`\`text
-          EOF
-          tail -n 120 react-doctor-output.txt >> react-doctor-comment.md
-          cat >> react-doctor-comment.md <<EOF
-          \`\`\`
-          </details>
-          EOF
-
-      - name: Update React Doctor PR status comment
-        if: always() && github.event_name == 'pull_request'
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: react-doctor-status
-          recreate: true
-          path: react-doctor-comment.md
 
       - name: Fail if React Doctor found issues
         if: steps.doctor.outputs.status != '0'
