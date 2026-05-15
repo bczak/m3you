@@ -15,7 +15,6 @@
       "react-doctor/rerender-state-only-in-handlers",
       "react-doctor/rendering-hydration-mismatch-time",
       "react-doctor/design-no-vague-button-label",
-      "jsx-a11y/no-static-element-interactions",
       "knip/files",
       "knip/exports",
       "knip/types"

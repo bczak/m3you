@@ -112,29 +112,50 @@ const Card = ({
     onPointerCancelCapture?.(e);
   };
 
+  const content = (
+    <>
+      {shouldRenderRipple && !disabled && <CardRipple hoverOpacity={0} />}
+      {children}
+    </>
+  );
+
+  if (isInteractive) {
+    return (
+      // biome-ignore lint/a11y/useSemanticElements: Card preserves div semantics/styling while supporting button-like behavior.
+      <div
+        ref={ref}
+        role="button"
+        tabIndex={!disabled ? 0 : undefined}
+        aria-disabled={disabled ? true : undefined}
+        onClick={!disabled ? handleClick : undefined}
+        onKeyDown={handleKeyDown}
+        onPointerOverCapture={handlePointerOverCapture}
+        onPointerOutCapture={handlePointerOutCapture}
+        onPointerDownCapture={handlePointerDownCapture}
+        onPointerUpCapture={handlePointerUpCapture}
+        onPointerCancelCapture={handlePointerCancelCapture}
+        className={cx('md-card', className)}
+        data-variant={variant}
+        data-interactive=""
+        data-ripple={shouldRenderRipple && !disabled ? '' : undefined}
+        data-disabled={disabled || undefined}
+        {...props}
+      >
+        {content}
+      </div>
+    );
+  }
+
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: role="button" is set conditionally when interactive
     <div
       ref={ref}
-      role={isInteractive ? 'button' : shouldRenderRipple ? 'presentation' : undefined}
-      tabIndex={isInteractive && !disabled ? 0 : undefined}
-      aria-disabled={isInteractive && disabled ? true : undefined}
-      onClick={!disabled && onClick ? handleClick : undefined}
-      onKeyDown={isInteractive ? handleKeyDown : onKeyDown}
-      onPointerOverCapture={handlePointerOverCapture}
-      onPointerOutCapture={handlePointerOutCapture}
-      onPointerDownCapture={handlePointerDownCapture}
-      onPointerUpCapture={handlePointerUpCapture}
-      onPointerCancelCapture={handlePointerCancelCapture}
       className={cx('md-card', className)}
       data-variant={variant}
-      data-interactive={isInteractive || undefined}
       data-ripple={shouldRenderRipple && !disabled ? '' : undefined}
       data-disabled={disabled || undefined}
       {...props}
     >
-      {shouldRenderRipple && !disabled && <CardRipple hoverOpacity={0} />}
-      {children}
+      {content}
     </div>
   );
 };

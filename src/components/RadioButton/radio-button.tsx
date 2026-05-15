@@ -51,7 +51,7 @@ const RadioButton = ({
 
   return (
     <label
-      className={cx('md-radio size-12', disabled && 'opacity-38 pointer-events-none', className)}
+      className={cx('md-radio group size-12', disabled && 'opacity-38 pointer-events-none', className)}
       data-variant={variant}
       data-selected={String(checked)}
       data-disabled={disabled || undefined}

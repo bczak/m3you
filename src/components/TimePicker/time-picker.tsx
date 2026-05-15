@@ -35,6 +35,7 @@ const HOUR_12 = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 const HOUR_24_OUTER = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 const HOUR_24_INNER = [0, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
 const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+const DEFAULT_TIME: TimeValue = { hours: 12, minutes: 0 };
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -296,8 +297,11 @@ const TimePicker = ({
   ref,
 }: TimePickerProps & { ref?: React.Ref<HTMLDivElement> }) => {
   const isControlled = controlledValue !== undefined;
-  const [internalValue, setInternalValue] = React.useState(defaultValue ?? { hours: 12, minutes: 0 });
-  const current = isControlled ? (controlledValue ?? { hours: 12, minutes: 0 }) : internalValue;
+  const isDialog = open !== undefined;
+  const [internalValue, setInternalValue] = React.useState(defaultValue ?? DEFAULT_TIME);
+  const committedValue = (isControlled ? controlledValue : internalValue) ?? DEFAULT_TIME;
+  const [draftValue, setDraftValue] = React.useState<TimeValue>(committedValue);
+  const current = isDialog ? draftValue : committedValue;
 
   const [mode, setMode] = React.useState<TimePickerMode>(defaultMode);
   const [selection, setSelection] = React.useState<Selection>('hours');
@@ -306,6 +310,12 @@ const TimePicker = ({
 
   const hourInputRef = React.useRef<HTMLInputElement>(null);
   const minuteInputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (open) {
+      setDraftValue(committedValue);
+    }
+  }, [open, committedValue]);
 
   // Detect landscape (only used when orientation='auto')
   React.useEffect(() => {
@@ -323,12 +333,28 @@ const TimePicker = ({
   const period: Period = current.hours >= 12 ? 'PM' : 'AM';
 
   const emit = React.useCallback(
-    (next: { hours: number; minutes: number }) => {
+    (next: TimeValue) => {
+      if (isDialog) {
+        setDraftValue(next);
+        return;
+      }
+
       if (!isControlled) setInternalValue(next);
       onChange?.(next);
     },
-    [isControlled, onChange],
+    [isControlled, isDialog, onChange],
   );
+
+  const handleCancel = React.useCallback(() => {
+    setDraftValue(committedValue);
+    onOpenChange?.(false);
+  }, [committedValue, onOpenChange]);
+
+  const handleConfirm = React.useCallback(() => {
+    if (!isControlled) setInternalValue(draftValue);
+    onChange?.(draftValue);
+    onOpenChange?.(false);
+  }, [draftValue, isControlled, onChange, onOpenChange]);
 
   const setDialHour = React.useCallback(
     (h: number) => {
@@ -538,10 +564,10 @@ const TimePicker = ({
         </button>
         {open !== undefined && (
           <div className="md-time-picker__footer-actions">
-            <button type="button" className="md-time-picker__action-btn" onClick={() => onOpenChange?.(false)}>
+            <button type="button" className="md-time-picker__action-btn" onClick={handleCancel}>
               Cancel
             </button>
-            <button type="button" className="md-time-picker__action-btn" onClick={() => onOpenChange?.(false)}>
+            <button type="button" className="md-time-picker__action-btn" onClick={handleConfirm}>
               OK
             </button>
           </div>
