@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { BellIcon, CompassIcon, EditIcon, FolderIcon, HouseIcon, MenuIcon, PanelLeftCloseIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';

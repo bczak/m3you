@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { BellIcon, MailIcon, UserIcon } from 'lucide-react';
 import { Badge, BadgeAnchor } from '../src/components/Badge/badge';
 import { IconButton } from '../src/components/IconButton/icon-button';

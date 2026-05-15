@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { BookmarkIcon, CircleStarIcon, CopyIcon, DownloadIcon, PrinterIcon, ShareIcon } from 'lucide-react';
 import { MenuItem } from '../src/components/Menu/menu';
 import { SplitButton, SplitButtonAction, SplitButtonMenu } from '../src/components/SplitButton/split-button';

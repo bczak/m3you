@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StarIcon } from 'lucide-react';
 import { ToggleButton } from '../src/components/ToggleButton/toggle-button';
 

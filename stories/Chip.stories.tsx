@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CalendarIcon, MapPinIcon, SparklesIcon, StarIcon, UserIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Chip } from '../src/components/Chip/chip';

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../src/components/Button/button';
 import { Snackbar, SnackbarHost, snackbar } from '../src/components/Snackbar/snackbar';
 

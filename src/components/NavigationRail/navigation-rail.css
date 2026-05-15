@@ -263,10 +263,10 @@
   overflow: hidden;
   white-space: nowrap;
   text-align: left;
-  font-family: var(--md-sys-typescale-title-small-font);
-  font-size: var(--md-sys-typescale-title-small-size);
-  line-height: var(--md-sys-typescale-title-small-line-height);
-  font-weight: var(--md-sys-typescale-title-small-weight);
+  font-family: var(--md-sys-typescale-label-medium-font);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  line-height: var(--md-sys-typescale-label-medium-line-height);
+  font-weight: var(--md-sys-typescale-label-medium-weight);
   transition:
     max-width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CircularProgress } from '../src/components/CircularProgress/circular-progress';
 import { ShowcaseGrid, ShowcasePanel } from './_helpers/storybook-showcase';
 

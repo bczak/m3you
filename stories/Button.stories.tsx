@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CircleStarIcon } from 'lucide-react';
 import { Button } from '../src/components/Button/button';
 

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MapPinIcon, StarIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 

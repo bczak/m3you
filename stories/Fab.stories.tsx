@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { EditIcon, NavigationIcon, PlusIcon } from 'lucide-react';
 import { FAB } from '../src/components/Fab/fab';
 

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MoreHorizontalIcon } from 'lucide-react';
 import { Button } from '../src/components/Button/button';
 import { Card } from '../src/components/Card/card';

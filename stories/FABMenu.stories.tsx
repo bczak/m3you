@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { EditIcon, FileIcon, ImageIcon, PlusIcon, ShareIcon, StarIcon, VideoIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ExtendedFAB } from '../src/components/ExtendedFab/extended-fab';

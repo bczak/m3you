@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { LinearProgress } from '../src/components/LinearProgress/linear-progress';
 import { ShowcaseGrid, ShowcasePanel } from './_helpers/storybook-showcase';
 

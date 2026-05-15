@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Volume2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { Slider } from '../src/components/Slider/slider';

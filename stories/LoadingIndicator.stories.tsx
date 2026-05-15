@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { LoadingIndicator } from '../src/components/LoadingIndicator/loading-indicator';
 import { SHAPE_NAMES, SHAPE_POLYGONS } from '../src/components/LoadingIndicator/shapes';
 

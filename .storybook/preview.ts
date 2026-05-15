@@ -1,9 +1,8 @@
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
 import { createElement } from 'react';
 import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import { generateM3Theme } from '../src/lib/color';
 import '../src/styles/globals.css';
-import './storybook.css';
 
 const DEFAULT_SEED = '#416699';
 

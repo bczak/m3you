@@ -10,7 +10,7 @@ export default defineConfig(async () => {
   });
 
   return {
-    plugins: [react(), dts({ tsconfigPath: './tsconfig.json', include: ['src'] })],
+    plugins: [react(), dts({ tsconfigPath: './tsconfig.json', include: ['src'], entryRoot: 'src' })],
     build: {
       lib: {
         entry: Object.fromEntries(
