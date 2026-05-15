@@ -147,8 +147,17 @@ const Card = ({
   }
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+    // biome-ignore lint/a11y/noStaticElementInteractions: Card capture handlers forward props and track nested interactions for ripple state.
     <div
       ref={ref}
+      role="presentation"
+      onKeyDown={onKeyDown}
+      onPointerOverCapture={handlePointerOverCapture}
+      onPointerOutCapture={handlePointerOutCapture}
+      onPointerDownCapture={handlePointerDownCapture}
+      onPointerUpCapture={handlePointerUpCapture}
+      onPointerCancelCapture={handlePointerCancelCapture}
       className={cx('md-card', className)}
       data-variant={variant}
       data-ripple={shouldRenderRipple && !disabled ? '' : undefined}

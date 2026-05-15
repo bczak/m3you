@@ -170,3 +170,35 @@ test('nested switch clicks do not trigger the card click handler', async () => {
 
   expect(handleCardClick).not.toHaveBeenCalled();
 });
+
+test('non-interactive cards forward keyboard and pointer capture callbacks', async () => {
+  const handleKeyDown = vi.fn();
+  const handlePointerOver = vi.fn();
+
+  render(
+    <Card data-testid="card" onKeyDown={handleKeyDown} onPointerOverCapture={handlePointerOver}>
+      Static content
+    </Card>,
+  );
+
+  const card = screen.getByTestId('card');
+  fireEvent.keyDown(card, { key: 'Tab' });
+  fireEvent.pointerOver(card, { button: 0, buttons: 0, isPrimary: true, pointerId: 4, pointerType: 'mouse' });
+
+  expect(handleKeyDown).toHaveBeenCalledTimes(1);
+  expect(handlePointerOver).toHaveBeenCalledTimes(1);
+});
+
+test('non-interactive ripple cards still track nested interactive hover state', async () => {
+  render(
+    <Card data-testid="card" ripple>
+      <Button data-testid="inner-button">Inner action</Button>
+    </Card>,
+  );
+
+  const card = screen.getByTestId('card');
+  const button = screen.getByTestId('inner-button');
+
+  fireEvent.pointerOver(button, { button: 0, buttons: 0, isPrimary: true, pointerId: 5, pointerType: 'mouse' });
+  expect(card).toHaveAttribute('data-nested-interactive');
+});
