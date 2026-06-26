@@ -10,6 +10,36 @@ const meta = {
     layout: 'centered',
     controls: {
       include: ['type', 'variant', 'selected', 'disabled', 'children'],
+      expanded: true,
+    },
+  },
+  argTypes: {
+    type: {
+      control: 'select',
+      options: ['assist', 'filter', 'input', 'suggestion'],
+      description: 'M3 chip role. `filter` toggles a check, `input` renders a removable close button.',
+      table: { category: 'Appearance', defaultValue: { summary: 'assist' } },
+    },
+    variant: {
+      control: 'inline-radio',
+      options: ['outlined', 'elevated'],
+      description: 'Container emphasis — bordered (`outlined`) or shadowed (`elevated`).',
+      table: { category: 'Appearance', defaultValue: { summary: 'outlined' } },
+    },
+    selected: {
+      control: 'boolean',
+      description: 'Selected state. Most meaningful for `filter` chips (drives the check + container fill).',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disables interaction and applies the disabled state layer.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    children: {
+      control: 'text',
+      description: 'Chip label content.',
+      table: { category: 'Content' },
     },
   },
   tags: ['autodocs'],

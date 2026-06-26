@@ -195,6 +195,7 @@ const FABMenu = ({
         ref={contentRef}
         id={menuId}
         role="menu"
+        tabIndex={-1}
         aria-orientation="vertical"
         aria-hidden={!open}
         className="md-fab-menu__content"

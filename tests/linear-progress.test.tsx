@@ -95,6 +95,17 @@ test('wavy determinate at 0% renders only the track (no stop/active)', async () 
   expect(container.querySelector('.md-linear-progress__track')).not.toBeNull();
 });
 
+test('deprecated `indeterminate` prop resolves to the indeterminate type', async () => {
+  const { container } = render(<LinearProgress indeterminate />);
+  const progress = screen.getByRole('progressbar', { name: 'Loading' });
+
+  expect(progress).toHaveAttribute('data-type', 'indeterminate');
+  expect(progress).toHaveAttribute('data-indeterminate', 'true');
+  expect(progress).not.toHaveAttribute('aria-valuenow');
+  const indicator = container.querySelector('.md-linear-progress__indicator') as HTMLDivElement;
+  expect(indicator).toHaveAttribute('data-indeterminate', 'true');
+});
+
 test('wavy indeterminate renders masked wave with animated bands', async () => {
   const { container } = render(<LinearProgress variant="wavy" type="indeterminate" />);
   const progress = screen.getByRole('progressbar', { name: 'Loading' });

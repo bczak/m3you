@@ -22,16 +22,23 @@
   background-color: var(--md-sys-color-surface);
 
   &[data-orientation="vertical"] {
-    height: 80px;
+    /* min-height (not a fixed height) so the device safe area extends the bar
+       downward instead of being absorbed into the 80px content box under
+       box-sizing: border-box (which would squish/clip the labels). */
+    min-height: 80px;
     padding-block: 6px;
+    /* Reserve the bottom safe area (e.g. iOS home indicator) below the items.
+       Requires viewport-fit=cover on the host page for env() to be non-zero. */
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
   }
 
   &[data-orientation="horizontal"] {
-    height: 64px;
+    min-height: 64px;
     align-items: center;
     justify-content: center;
     gap: 6px;
     padding-block: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
 }
 

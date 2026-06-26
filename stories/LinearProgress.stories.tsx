@@ -9,16 +9,26 @@ const meta = {
     layout: 'centered',
     controls: {
       include: ['value', 'type', 'variant'],
+      expanded: true,
     },
   },
   argTypes: {
-    type: {
-      control: 'inline-radio',
-      options: ['determinate', 'indeterminate'],
-    },
     variant: {
       control: 'inline-radio',
       options: ['flat', 'wavy'],
+      description: 'Appearance: the classic `flat` bar or the M3 Expressive `wavy` indicator.',
+      table: { category: 'Appearance', defaultValue: { summary: 'flat' } },
+    },
+    type: {
+      control: 'inline-radio',
+      options: ['determinate', 'indeterminate'],
+      description: 'Determinate tracks a known `value`; indeterminate animates for unknown durations.',
+      table: { category: 'Behavior', defaultValue: { summary: 'determinate' } },
+    },
+    value: {
+      control: { type: 'range', min: 0, max: 100, step: 1 },
+      description: 'Completion percentage (0–100). Ignored when `type="indeterminate"`.',
+      table: { category: 'Behavior', defaultValue: { summary: '0' } },
     },
   },
   tags: ['autodocs'],

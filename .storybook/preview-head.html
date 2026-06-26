@@ -1,3 +1,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Google+Sans+Text:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet" />
+<style>
+  /* Storybook-only typography.
+     The shipped library defaults its M3 reference typefaces to Roboto Flex/Roboto,
+     but Storybook loads Google Sans (above). Point the reference-typeface tokens at
+     Google Sans so EVERY component — and portaled content like menus/dialogs that
+     render to <body>, outside the per-story theme wrapper — renders in it.
+     `html:root` outranks the library's `:root` declaration regardless of CSS load order. */
+  html:root {
+    --md-ref-typeface-brand: "Google Sans", "Google Sans Text", system-ui, sans-serif;
+    --md-ref-typeface-plain: "Google Sans Text", "Google Sans", system-ui, sans-serif;
+  }
+  /* Base family for plain text written directly in stories (headings, labels, etc.). */
+  body {
+    font-family: var(--md-ref-typeface-plain);
+  }
+</style>

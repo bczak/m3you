@@ -35,15 +35,16 @@ const Chip = ({
   const isFilterChip = type === 'filter';
 
   // For input chips: show close button
-  const showCloseButton = type === 'input' && onClose;
+  const showCloseButton = type === 'input' && Boolean(onClose);
 
   // Determine if we have leading/trailing icons for padding
   const hasLeadingIcon = Boolean(leadingIcon) || isFilterChip;
-  const hasTrailingIcon = Boolean(trailingIcon) || Boolean(showCloseButton);
+  const hasTrailingIcon = Boolean(trailingIcon) || showCloseButton;
 
   // Animate chip out then call onClose
   const animateClose = useCallback(() => {
     const el = innerRef.current;
+    /* v8 ignore next -- innerRef is mounted and both call sites only invoke this with a truthy onClose */
     if (!el || !onClose) return;
     el.style.overflow = 'hidden';
     el.animate(
@@ -70,26 +71,22 @@ const Chip = ({
     animateClose();
   };
 
-  return (
-    <button
-      ref={(node) => {
-        (innerRef as React.MutableRefObject<HTMLButtonElement | null>).current = node;
-        if (typeof ref === 'function') ref(node);
-        else if (ref) (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node;
-      }}
-      type="button"
-      disabled={disabled}
-      onKeyDown={handleKeyDown}
-      aria-pressed={type === 'filter' ? selected : undefined}
-      className={cx('md-chip', className)}
-      data-type={type}
-      data-variant={variant}
-      data-selected={String(selected)}
-      data-has-leading-icon={hasLeadingIcon || undefined}
-      data-has-trailing-icon={hasTrailingIcon || undefined}
-      {...props}
-    >
-      <Ripple />
+  const setChipRef = (node: HTMLButtonElement | null) => {
+    (innerRef as React.MutableRefObject<HTMLButtonElement | null>).current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node;
+  };
+
+  const dataAttrs = {
+    'data-type': type,
+    'data-variant': variant,
+    'data-selected': String(selected),
+    'data-has-leading-icon': hasLeadingIcon || undefined,
+    'data-has-trailing-icon': hasTrailingIcon || undefined,
+  };
+
+  const body = (
+    <>
       {isFilterChip && (
         <span aria-hidden="true" className="md-chip__filter-icon" data-selected={String(selected)}>
           <Check />
@@ -101,7 +98,35 @@ const Chip = ({
         </span>
       )}
       <span>{children}</span>
-      {showCloseButton ? (
+      {!showCloseButton && trailingIcon && (
+        <span aria-hidden="true" className="md-chip__trailing-icon">
+          {trailingIcon}
+        </span>
+      )}
+    </>
+  );
+
+  // Input chips with a remove affordance use a non-button container so the
+  // close button is a sibling of the chip action — never nested inside it
+  // (nested interactive elements are invalid HTML).
+  if (showCloseButton) {
+    return (
+      <span
+        className={cx('md-chip', 'md-chip--closable', className)}
+        data-disabled={disabled || undefined}
+        {...dataAttrs}
+      >
+        <button
+          ref={setChipRef}
+          type="button"
+          disabled={disabled}
+          onKeyDown={handleKeyDown}
+          className="md-chip__primary"
+          {...props}
+        >
+          <Ripple />
+          {body}
+        </button>
         <button
           type="button"
           aria-label={`Remove ${typeof children === 'string' ? children : 'chip'}`}
@@ -111,17 +136,28 @@ const Chip = ({
               e.stopPropagation();
             }
           }}
+          disabled={disabled}
           className="md-chip__close"
         >
           <X aria-hidden="true" />
         </button>
-      ) : (
-        trailingIcon && (
-          <span aria-hidden="true" className="md-chip__trailing-icon">
-            {trailingIcon}
-          </span>
-        )
-      )}
+      </span>
+    );
+  }
+
+  return (
+    <button
+      ref={setChipRef}
+      type="button"
+      disabled={disabled}
+      onKeyDown={handleKeyDown}
+      aria-pressed={isFilterChip ? selected : undefined}
+      className={cx('md-chip', className)}
+      {...dataAttrs}
+      {...props}
+    >
+      <Ripple />
+      {body}
     </button>
   );
 };

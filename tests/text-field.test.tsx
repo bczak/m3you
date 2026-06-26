@@ -109,3 +109,57 @@ test('forwards ref to the input element', async () => {
 
   expect(ref.current).toBeInstanceOf(HTMLInputElement);
 });
+
+test('blur removes the focused state and calls onBlur', async () => {
+  let blurred = false;
+  render(
+    <TextField
+      label="Email"
+      onBlur={() => {
+        blurred = true;
+      }}
+    />,
+  );
+
+  const input = screen.getByRole('textbox');
+  fireEvent.focus(input);
+  expect(screen.getByText('Email')).toHaveAttribute('data-floating', 'true');
+
+  fireEvent.blur(input);
+  expect(blurred).toBe(true);
+  expect(screen.getByText('Email')).toHaveAttribute('data-floating', 'false');
+});
+
+test('controlled value stays fixed while still emitting onValueChange', async () => {
+  let captured = '';
+  render(
+    <TextField
+      label="Name"
+      value="fixed"
+      onValueChange={(v) => {
+        captured = v;
+      }}
+    />,
+  );
+
+  const input = screen.getByRole('textbox') as HTMLInputElement;
+  expect(input.value).toBe('fixed');
+
+  fireEvent.change(input, { target: { value: 'typed' } });
+  expect(captured).toBe('typed');
+  expect(input.value).toBe('fixed');
+});
+
+test('uses icon padding attributes when icons are present without prefix or suffix', async () => {
+  render(
+    <TextField
+      label="Search"
+      leadingIcon={<span data-testid="leading">L</span>}
+      trailingIcon={<span data-testid="trailing">T</span>}
+    />,
+  );
+
+  const input = screen.getByRole('textbox');
+  expect(input).toHaveAttribute('data-pad-left', 'icon');
+  expect(input).toHaveAttribute('data-pad-right', 'icon');
+});

@@ -59,6 +59,22 @@ test('injects polygon CSS variables once into document.head', () => {
   expect(styles[0].textContent).toContain('--_polygon-oval');
 });
 
+test('skips polygon style injection when document.head is unavailable', () => {
+  const descriptor = Object.getOwnPropertyDescriptor(document, 'head');
+  Object.defineProperty(document, 'head', { configurable: true, get: () => null });
+  try {
+    expect(() => render(<LoadingIndicator data-testid="headless" />)).not.toThrow();
+    expect(screen.getByTestId('headless')).toBeInTheDocument();
+  } finally {
+    if (descriptor) {
+      Object.defineProperty(document, 'head', descriptor);
+    } else {
+      delete (document as unknown as { head?: unknown }).head;
+    }
+  }
+  expect(document.head).toBeTruthy();
+});
+
 test('SHAPE_POLYGONS contains a polygon() string for every named shape', () => {
   for (const name of SHAPE_NAMES) {
     const polygon = SHAPE_POLYGONS[name];

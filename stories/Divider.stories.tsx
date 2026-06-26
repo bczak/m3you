@@ -36,6 +36,26 @@ export const Playground: Story = {
     ),
 };
 
+export const Variants: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'The three weights — full-width, inset, and heavy — shown as horizontal separators.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {(['full-width', 'inset', 'heavy'] as const).map((variant) => (
+        <div key={variant} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 12, color: 'var(--md-sys-color-on-surface-variant)' }}>{variant}</span>
+          <Divider variant={variant} />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
 export const InContent: Story = {
   render: () => (
     <div style={{ maxWidth: 820 }}>

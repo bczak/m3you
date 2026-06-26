@@ -12,6 +12,21 @@ const meta = {
     layout: 'padded',
     controls: {
       include: ['variant', 'fullWidth'],
+      expanded: true,
+    },
+  },
+  argTypes: {
+    variant: {
+      control: 'inline-radio',
+      options: ['primary', 'secondary'],
+      description:
+        'M3 tab hierarchy style. Primary tabs show the icon above the label; secondary tabs render a single-line label (icon-only supported).',
+      table: { category: 'Appearance', defaultValue: { summary: 'primary' } },
+    },
+    fullWidth: {
+      control: 'boolean',
+      description: 'When true, tabs stretch to fill the available width; when false, they size to content and scroll.',
+      table: { category: 'Layout', defaultValue: { summary: 'true' } },
     },
   },
   tags: ['autodocs'],

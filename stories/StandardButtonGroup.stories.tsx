@@ -81,6 +81,41 @@ export const AllSizes: Story = {
   },
 };
 
+export const MorphComparison: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
+      <StandardButtonGroup shape="round" morph selectionMode="multiple" defaultValue={[0]}>
+        <Button variant="tonal">
+          <BoldIcon />
+          Morph on
+        </Button>
+        <Button variant="tonal">
+          <ItalicIcon />
+          Press
+        </Button>
+        <Button variant="tonal">
+          <UnderlineIcon />
+          Me
+        </Button>
+      </StandardButtonGroup>
+      <StandardButtonGroup shape="round" morph={false} selectionMode="multiple" defaultValue={[0]}>
+        <Button variant="tonal">
+          <BoldIcon />
+          Morph off
+        </Button>
+        <Button variant="tonal">
+          <ItalicIcon />
+          Press
+        </Button>
+        <Button variant="tonal">
+          <UnderlineIcon />
+          Me
+        </Button>
+      </StandardButtonGroup>
+    </div>
+  ),
+};
+
 export const SingleSelect: Story = {
   render: () => (
     <StandardButtonGroup selectionMode="single" defaultValue={[0]} shape="round">

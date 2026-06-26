@@ -21,7 +21,9 @@ import { Button } from '../src/components/Button/button';
 import { FAB } from '../src/components/Fab/fab';
 import { IconButton } from '../src/components/IconButton/icon-button';
 import { MenuItem } from '../src/components/Menu/menu';
-import { SplitButton, SplitButtonAction, SplitButtonMenu } from '../src/components/SplitButton/split-button';
+import { SplitButton } from '../src/components/SplitButton/split-button';
+import { SplitButtonAction } from '../src/components/SplitButton/split-button-action';
+import { SplitButtonMenu } from '../src/components/SplitButton/split-button-menu';
 import { Toolbar } from '../src/components/Toolbar/toolbar';
 
 const meta = {
@@ -31,6 +33,33 @@ const meta = {
     layout: 'centered',
     controls: {
       include: ['type', 'color', 'layout', 'align'],
+      expanded: true,
+    },
+  },
+  argTypes: {
+    type: {
+      control: 'inline-radio',
+      options: ['docked', 'floating'],
+      description: 'Container style — docked (attached, full-bleed) or floating (rounded, elevated).',
+      table: { category: 'Appearance', defaultValue: { summary: 'floating' } },
+    },
+    color: {
+      control: 'inline-radio',
+      options: ['standard', 'vibrant'],
+      description: 'Color scheme of the toolbar surface.',
+      table: { category: 'Appearance', defaultValue: { summary: 'standard' } },
+    },
+    layout: {
+      control: 'inline-radio',
+      options: ['horizontal', 'vertical'],
+      description: 'Orientation in which the actions are arranged.',
+      table: { category: 'Layout', defaultValue: { summary: 'horizontal' } },
+    },
+    align: {
+      control: 'inline-radio',
+      options: ['start', 'center', 'end', 'between'],
+      description: 'How actions are distributed along the main axis.',
+      table: { category: 'Layout', defaultValue: { summary: 'center' } },
     },
   },
   tags: ['autodocs'],
@@ -580,6 +609,60 @@ function DockedMixedButtonRow(args: ComponentProps<typeof Toolbar>) {
   );
 }
 
+function VerticalToolbarRow(args: ComponentProps<typeof Toolbar>) {
+  const { toggle, selectedProp } = useToolbarSelection({
+    download: false,
+    delete: false,
+    share: false,
+    more: false,
+  });
+
+  return (
+    <Toolbar {...args}>
+      <IconButton
+        variant="standard"
+        size="xs"
+        morph
+        aria-label="Download"
+        selected={selectedProp('download')}
+        onClick={() => toggle('download')}
+      >
+        <DownloadIcon />
+      </IconButton>
+      <IconButton
+        variant="standard"
+        size="xs"
+        morph
+        aria-label="Delete"
+        selected={selectedProp('delete')}
+        onClick={() => toggle('delete')}
+      >
+        <Trash2Icon />
+      </IconButton>
+      <IconButton
+        variant="standard"
+        size="xs"
+        morph
+        aria-label="Share"
+        selected={selectedProp('share')}
+        onClick={() => toggle('share')}
+      >
+        <ShareIcon />
+      </IconButton>
+      <IconButton
+        variant="standard"
+        size="xs"
+        morph
+        aria-label="More options"
+        selected={selectedProp('more')}
+        onClick={() => toggle('more')}
+      >
+        <MoreVerticalIcon />
+      </IconButton>
+    </Toolbar>
+  );
+}
+
 function StoryStack({ children }: { children: ReactNode }) {
   return (
     <div
@@ -710,5 +793,41 @@ export const FloatingWithIconButtons: Story = {
         <FloatingWithIconButtonsRow type="floating" color="standard" layout="horizontal" gap={8} />
       </div>
     </div>
+  ),
+};
+
+export const Vertical: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Toolbars can stack their actions on the cross axis with `layout="vertical"`.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'grid', placeItems: 'center', minHeight: 280 }}>
+      <VerticalToolbarRow type="floating" color="standard" layout="vertical" />
+    </div>
+  ),
+};
+
+export const Alignments: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Actions can be aligned to the start, center, or end of the toolbar, or spaced apart with `align="between"`.',
+      },
+    },
+  },
+  render: () => (
+    <StoryStack>
+      {(['start', 'center', 'end', 'between'] as const).map((align) => (
+        <div key={align} style={{ width: 'min(100%, 480px)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 12, color: 'var(--md-sys-color-on-surface-variant)' }}>{align}</span>
+          <DockedIconRow type="docked" color="standard" align={align} style={{ width: '100%' }} />
+        </div>
+      ))}
+    </StoryStack>
   ),
 };

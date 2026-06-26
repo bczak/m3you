@@ -6,6 +6,22 @@ import '../src/styles/globals.css';
 
 const DEFAULT_SEED = '#416699';
 
+// Material Design 3 window size classes (https://m3.material.io/foundations/layout/applying-layout/window-size-classes).
+// M3 lays out to width-based breakpoints, not device names, so these let you verify responsive
+// components (NavigationRail expand/collapse, AppBar, etc.) at the exact class thresholds.
+// Widths sit inside each class; the dp range is in the name for reference.
+const M3_VIEWPORTS = {
+  m3Compact: { name: 'M3 Compact · phone (0–599)', styles: { width: '412px', height: '917px' }, type: 'mobile' },
+  m3Medium: { name: 'M3 Medium · foldable (600–839)', styles: { width: '700px', height: '840px' }, type: 'tablet' },
+  m3Expanded: { name: 'M3 Expanded · tablet (840–1199)', styles: { width: '1024px', height: '800px' }, type: 'tablet' },
+  m3Large: { name: 'M3 Large · desktop (1200–1599)', styles: { width: '1280px', height: '800px' }, type: 'desktop' },
+  m3ExtraLarge: {
+    name: 'M3 Extra-large · desktop (1600+)',
+    styles: { width: '1600px', height: '1000px' },
+    type: 'desktop',
+  },
+} as const;
+
 // Clean up any global theme state an earlier version of this preview may have
 // applied to <html>/<body>. Runs once per module load. Without this, HMR
 // leaves stale data-theme and inline --md-sys-color-* vars on the root,
@@ -97,7 +113,8 @@ const preview: Preview = {
   ],
   parameters: {
     viewport: {
-      options: INITIAL_VIEWPORTS,
+      // M3 window size classes first (primary), then the common device presets.
+      options: { ...M3_VIEWPORTS, ...INITIAL_VIEWPORTS },
     },
 
     layout: 'padded',

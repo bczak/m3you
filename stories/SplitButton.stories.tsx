@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { BookmarkIcon, CircleStarIcon, CopyIcon, DownloadIcon, PrinterIcon, ShareIcon } from 'lucide-react';
 import { MenuItem } from '../src/components/Menu/menu';
-import { SplitButton, SplitButtonAction, SplitButtonMenu } from '../src/components/SplitButton/split-button';
+import { SplitButton } from '../src/components/SplitButton/split-button';
+import { SplitButtonAction } from '../src/components/SplitButton/split-button-action';
+import { SplitButtonMenu } from '../src/components/SplitButton/split-button-menu';
 
 const meta = {
   title: 'Actions/Split Button',
@@ -9,7 +11,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['variant', 'size', 'shape'],
+      include: ['variant', 'size', 'shape', 'morph', 'selected'],
     },
   },
   tags: ['autodocs'],
@@ -118,6 +120,50 @@ export const SquareShape: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 48 }}>
       {(['filled', 'tonal', 'elevated', 'outlined'] as const).map((variant) => (
         <SplitButton key={variant} variant={variant} size="sm" shape="square">
+          <SplitButtonAction>
+            <CircleStarIcon aria-hidden="true" />
+            Label
+          </SplitButtonAction>
+          <SplitButtonMenu>
+            <MenuItem>Option 1</MenuItem>
+            <MenuItem>Option 2</MenuItem>
+          </SplitButtonMenu>
+        </SplitButton>
+      ))}
+    </div>
+  ),
+};
+
+export const Morph: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 48 }}>
+      {(['round', 'square'] as const).map((shape) => (
+        <SplitButton key={shape} variant="filled" size="md" shape={shape} morph>
+          <SplitButtonAction>
+            <CircleStarIcon aria-hidden="true" />
+            Label
+          </SplitButtonAction>
+          <SplitButtonMenu>
+            <MenuItem>
+              <CopyIcon aria-hidden="true" />
+              Copy
+            </MenuItem>
+            <MenuItem>
+              <ShareIcon aria-hidden="true" />
+              Share
+            </MenuItem>
+          </SplitButtonMenu>
+        </SplitButton>
+      ))}
+    </div>
+  ),
+};
+
+export const Selected: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 48 }}>
+      {(['filled', 'tonal', 'elevated', 'outlined'] as const).map((variant) => (
+        <SplitButton key={variant} variant={variant} size="sm" shape="round" selected>
           <SplitButtonAction>
             <CircleStarIcon aria-hidden="true" />
             Label

@@ -58,3 +58,34 @@ test('forwards refs to the root header element', async () => {
   expect(ref.current).toBeInstanceOf(HTMLElement);
   expect(ref.current?.tagName).toBe('HEADER');
 });
+
+test('search variant falls back to the default "Search" label when no label or headline is given', async () => {
+  render(<AppBar variant="search" centerAligned />);
+
+  expect(screen.getByText('Search')).toBeInTheDocument();
+});
+
+test('small variant marks slots as populated when leading and trailing content is provided', async () => {
+  const { container } = render(
+    <AppBar
+      variant="small"
+      headline="Inbox"
+      leadingIcon={<span data-testid="leading-icon" />}
+      trailingIcons={<span data-testid="trailing-icon" />}
+    />,
+  );
+
+  const leading = container.querySelector('.md-app-bar__leading[data-slot="leading"]');
+  const trailing = container.querySelector('.md-app-bar__trailing[data-slot="actions"]');
+  expect(leading).not.toHaveAttribute('data-empty');
+  expect(trailing).not.toHaveAttribute('data-empty');
+  expect(screen.getByTestId('leading-icon')).toBeInTheDocument();
+  expect(screen.getByTestId('trailing-icon')).toBeInTheDocument();
+});
+
+test('non-search variant omits the headline element when no headline is provided', async () => {
+  const { container } = render(<AppBar variant="medium" />);
+
+  expect(container.querySelector('.md-app-bar__headline')).toBeNull();
+  expect(container.querySelector('.md-app-bar__label-block')).not.toBeNull();
+});

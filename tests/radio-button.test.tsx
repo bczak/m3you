@@ -272,6 +272,10 @@ test('renders radio group with radiogroup role', async () => {
   expect(group).toBeInTheDocument();
 });
 
+test('RadioGroupItem throws when used outside a RadioGroup', async () => {
+  expect(() => render(<RadioGroupItem value="a" />)).toThrow('RadioGroupItem must be used within a RadioGroup');
+});
+
 test('renders children inside radio group', async () => {
   render(
     <RadioGroup>

@@ -1082,3 +1082,42 @@ export const FullScreenWithList: Story = {
     </MobileFrame>
   ),
 };
+
+// =============================================================================
+// Controlled — parent owns the open state via open / onOpenChange
+// =============================================================================
+
+function ControlledStory() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+      <Button variant="filled" size="sm" shape="round" onClick={() => setOpen(true)}>
+        Open
+      </Button>
+      <span style={{ color: 'var(--md-sys-color-on-surface-variant)' }}>open = {open ? 'true' : 'false'}</span>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Controlled dialog</DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
+            Open state is lifted into the story. Close via a button, the escape key, or a scrim tap.
+          </DialogDescription>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button variant="text" size="sm" shape="round">
+                  Close
+                </Button>
+              }
+            />
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+export const Controlled: Story = {
+  render: () => <ControlledStory />,
+};

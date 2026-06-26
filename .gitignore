@@ -8,7 +8,16 @@ node_modules
 dist/
 storybook-static
 
+# Coverage
+coverage/
+
 # IDE
 .vscode/*
 !.vscode/extensions.json
 .idea
+.design-sync/sb-reference/
+.design-sync/learnings/
+.design-sync/.cache/
+.design-sync/node_modules
+.ds-sync/
+ds-bundle/

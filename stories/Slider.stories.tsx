@@ -10,6 +10,46 @@ const meta = {
     layout: 'centered',
     controls: {
       include: ['size', 'orientation', 'min', 'max', 'step', 'showTooltip', 'disabled'],
+      expanded: true,
+    },
+  },
+  argTypes: {
+    size: {
+      control: 'inline-radio',
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'One of the five M3 Expressive size steps (track thickness + handle height).',
+      table: { category: 'Appearance', defaultValue: { summary: 'md' } },
+    },
+    orientation: {
+      control: 'inline-radio',
+      options: ['horizontal', 'vertical'],
+      description: 'Layout axis of the slider.',
+      table: { category: 'Appearance', defaultValue: { summary: 'horizontal' } },
+    },
+    min: {
+      control: 'number',
+      description: 'Minimum value.',
+      table: { category: 'Behavior', defaultValue: { summary: '0' } },
+    },
+    max: {
+      control: 'number',
+      description: 'Maximum value.',
+      table: { category: 'Behavior', defaultValue: { summary: '100' } },
+    },
+    step: {
+      control: 'number',
+      description: 'Step increment. Set it to enable discrete mode with stop indicators.',
+      table: { category: 'Behavior' },
+    },
+    showTooltip: {
+      control: 'boolean',
+      description: 'Shows the value tooltip while dragging.',
+      table: { category: 'Behavior', defaultValue: { summary: 'false' } },
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disables interaction and dims the track and handle.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
     },
   },
   tags: ['autodocs'],

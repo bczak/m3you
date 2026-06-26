@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { RadioButton, RadioGroup, RadioGroupItem } from '../src/components/RadioButton/radio-button';
+import { RadioButton } from '../src/components/RadioButton/radio-button';
+import { RadioGroup } from '../src/components/RadioButton/radio-group';
+import { RadioGroupItem } from '../src/components/RadioButton/radio-group-item';
 
 const meta = {
   title: 'Selection/Radio Button',
@@ -9,6 +11,25 @@ const meta = {
     layout: 'centered',
     controls: {
       include: ['variant', 'checked', 'disabled'],
+      expanded: true,
+    },
+  },
+  argTypes: {
+    variant: {
+      control: 'inline-radio',
+      options: ['primary', 'error'],
+      description: 'Color role — `primary` for normal selection, `error` for validation failures.',
+      table: { category: 'Appearance', defaultValue: { summary: 'primary' } },
+    },
+    checked: {
+      control: 'boolean',
+      description: 'Whether this radio is selected. Inside a `RadioGroup` this is derived from the group value.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disables interaction and applies the disabled state layer.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
     },
   },
   tags: ['autodocs'],

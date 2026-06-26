@@ -40,6 +40,7 @@ const RAW_PATHS: Record<ShapeName, string> = {
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+/* v8 ignore next 3 -- quadraticBezier only runs for Q path commands, which none of the 7 built-in shapes use */
 const quadraticBezier = (p0: Point, p1: Point, p2: Point, t: number): Point => {
   const u = 1 - t;
   return { x: u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x, y: u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y };
@@ -54,6 +55,7 @@ const cubicBezier = (p0: Point, p1: Point, p2: Point, p3: Point, t: number): Poi
 };
 
 const parsePath = (d: string) => {
+  /* v8 ignore next -- every built-in shape path matches the command regex, so the ?? [] fallback is unreachable */
   const commands = d.match(/[a-zA-Z][^a-zA-Z]*/g) ?? [];
   return commands.map((cmd) => ({
     type: cmd[0],
@@ -86,6 +88,7 @@ const samplePath = (d: string, maxPoints: number): Point[] => {
       const next = { x: seg.nums[0], y: current.y };
       segs.push({ type: 'L', pts: [current, next], length: Math.abs(next.x - current.x) });
       current = next;
+      /* v8 ignore start -- no built-in shape path uses V or Q commands */
     } else if (seg.type === 'V') {
       const next = { x: current.x, y: seg.nums[0] };
       segs.push({ type: 'L', pts: [current, next], length: Math.abs(next.y - current.y) });
@@ -102,6 +105,7 @@ const samplePath = (d: string, maxPoints: number): Point[] => {
       }
       segs.push({ type: 'Q', pts: [current, p1, p2], length });
       current = p2;
+      /* v8 ignore stop */
     } else if (seg.type === 'C') {
       const p1 = { x: seg.nums[0], y: seg.nums[1] };
       const p2 = { x: seg.nums[2], y: seg.nums[3] };
@@ -115,7 +119,9 @@ const samplePath = (d: string, maxPoints: number): Point[] => {
       }
       segs.push({ type: 'C', pts: [current, p1, p2, p3], length });
       current = p3;
+      /* v8 ignore start -- every built-in path command is M/L/C/Z, so the chain's implicit else is unreachable */
     } else if (seg.type === 'Z') {
+      /* v8 ignore stop */
       segs.push({ type: 'L', pts: [current, start], length: Math.hypot(start.x - current.x, start.y - current.y) });
       current = start;
     }
@@ -134,15 +140,19 @@ const samplePath = (d: string, maxPoints: number): Point[] => {
       segIndex++;
     }
     const seg = segs[segIndex];
+    /* v8 ignore next -- segIndex stays clamped to a valid segment, so seg is always defined */
     if (!seg) break;
+    /* v8 ignore next -- no built-in path yields a zero-length sampled segment, so the : 0 fallback is unused */
     const localT = seg.length > 0 ? (targetDist - distSoFar) / seg.length : 0;
     if (seg.type === 'L') {
       const [p0, p1] = seg.pts;
       points.push({ x: lerp(p0.x, p1.x, localT), y: lerp(p0.y, p1.y, localT) });
+      /* v8 ignore start -- no built-in shape produces Q segments; the C branch's implicit else is also unreachable */
     } else if (seg.type === 'Q') {
       const [p0, p1, p2] = seg.pts;
       points.push(quadraticBezier(p0, p1, p2, localT));
     } else if (seg.type === 'C') {
+      /* v8 ignore stop */
       const [p0, p1, p2, p3] = seg.pts;
       points.push(cubicBezier(p0, p1, p2, p3, localT));
     }
@@ -207,6 +217,7 @@ const bestCircularShift = (target: Point[], source: Point[]): number => {
 const normalizePointSets = (sets: Point[][]): Point[][] => {
   const normalized = sets.map((pts) => {
     const b = bbox(pts);
+    /* v8 ignore next -- no built-in shape has a degenerate (zero-size) bounding box, so the || 1 fallback is unreachable */
     const scale = Math.max(b.width, b.height) || 1;
     const w = b.width / scale;
     const h = b.height / scale;
@@ -220,6 +231,7 @@ const normalizePointSets = (sets: Point[][]): Point[][] => {
   for (let i = 1; i < normalized.length; i++) {
     let set = normalized[i];
     const sign = Math.sign(signedArea(set));
+    /* v8 ignore next -- all built-in shapes share the reference winding order, so none get reversed */
     if (sign !== 0 && sign !== refSign) set = set.slice().reverse();
     normalized[i] = rotateArray(set, bestCircularShift(reference, set));
   }

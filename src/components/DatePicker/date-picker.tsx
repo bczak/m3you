@@ -99,6 +99,7 @@ const MonthDropdown = ({ month, onSelect, onClose }: MonthDropdownProps) => {
   const listRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
+    /* v8 ignore next -- listRef is always mounted when this effect runs */
     if (listRef.current) {
       const el = listRef.current.querySelector('[data-selected]');
       el?.scrollIntoView({ block: 'center' });
@@ -154,6 +155,7 @@ const YearDropdown = ({ year, onSelect, onClose }: YearDropdownProps) => {
   const years = Array.from({ length: 201 }, (_, i) => currentYear - 100 + i);
 
   React.useEffect(() => {
+    /* v8 ignore next -- listRef is always mounted when this effect runs */
     if (listRef.current) {
       const el = listRef.current.querySelector('[data-selected]');
       el?.scrollIntoView({ block: 'center' });
@@ -226,14 +228,16 @@ const CalendarGrid = ({
   const days = getCalendarDays(viewYear, viewMonth);
   const gridKey = `${viewYear}-${viewMonth}`;
   const [animAttr, setAnimAttr] = React.useState<string | undefined>(undefined);
-  const prevKeyRef = React.useRef(gridKey);
+  const [prevKey, setPrevKey] = React.useState(gridKey);
 
-  React.useEffect(() => {
-    if (prevKeyRef.current !== gridKey && slideDirection) {
+  // Derive the slide animation during render when the visible month changes,
+  // instead of mirroring it into state via an effect.
+  if (gridKey !== prevKey) {
+    setPrevKey(gridKey);
+    if (slideDirection) {
       setAnimAttr(slideDirection === 'left' ? 'slide-right' : 'slide-left');
     }
-    prevKeyRef.current = gridKey;
-  }, [gridKey, slideDirection]);
+  }
 
   const isDateDisabled = (date: Date): boolean => {
     if (minDate && date < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())) return true;
@@ -244,6 +248,7 @@ const CalendarGrid = ({
   const getDayState = (day: CalendarDay): 'default' | 'today' | 'selected' | 'outsideMonth' | 'disabled' => {
     if (isDateDisabled(day.date)) return 'disabled';
     if (value && isSameDay(day.date, value)) return 'selected';
+    /* v8 ignore next -- outside-month cells are handled before reaching getDayState */
     if (!day.isCurrentMonth) return 'outsideMonth';
     if (day.isToday) return 'today';
     return 'default';

@@ -95,3 +95,37 @@ export const AnchoredStates: Story = {
     </div>
   ),
 };
+
+export const AnchorPositions: Story = {
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story:
+          'BadgeAnchor can place its badge at any corner via `position`, and inset it for square (`rectangular`) or round (`circular`) anchors via `overlap`.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: 40, flexWrap: 'wrap', alignItems: 'center' }}>
+      {(['top-right', 'top-left', 'bottom-right', 'bottom-left'] as const).map((position) => (
+        <div key={position} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+          <BadgeAnchor badge={<Badge count={5} />} position={position} overlap="rectangular">
+            <IconButton variant="tonal" size="xs" aria-label="Messages">
+              <MailIcon />
+            </IconButton>
+          </BadgeAnchor>
+          <span style={{ fontSize: 12, color: 'var(--md-sys-color-on-surface-variant)' }}>{position}</span>
+        </div>
+      ))}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+        <BadgeAnchor badge={<Badge count={5} />} overlap="circular">
+          <IconButton variant="tonal" size="xs" aria-label="Messages">
+            <MailIcon />
+          </IconButton>
+        </BadgeAnchor>
+        <span style={{ fontSize: 12, color: 'var(--md-sys-color-on-surface-variant)' }}>circular</span>
+      </div>
+    </div>
+  ),
+};

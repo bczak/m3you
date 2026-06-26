@@ -131,6 +131,20 @@ export const Elevated: Story = {
   render: () => <VariantStory variant="elevated" />,
 };
 
+export const Outlined: Story = {
+  args: {
+    label: 'Label',
+  },
+  render: () => <VariantStory variant="outlined" />,
+};
+
+export const Text: Story = {
+  args: {
+    label: 'Label',
+  },
+  render: () => <VariantStory variant="text" />,
+};
+
 export const Lowered: Story = {
   args: {
     label: 'Lowered',

@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { expect, test } from 'vitest';
+import { ButtonGroupContext, ButtonGroupItemContext } from '../src/components/ButtonGroup/button-group-context';
 import { Button } from '../src/components/ui/button';
 
 // Variant tests
@@ -136,4 +137,66 @@ test('merges custom className', async () => {
   const button = screen.getByRole('button', { name: 'Custom' });
   expect(button).toHaveClass('md-button');
   expect(button).toHaveClass('custom-class');
+});
+
+// onClick handler
+test('fires the onClick handler when clicked', async () => {
+  let clicked = false;
+  render(
+    <Button
+      onClick={() => {
+        clicked = true;
+      }}
+    >
+      Clickable
+    </Button>,
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Clickable' }));
+  expect(clicked).toBe(true);
+});
+
+// Selected state
+test('reflects selected state via data-selected and aria-pressed', async () => {
+  render(<Button selected>Selected</Button>);
+  const button = screen.getByRole('button', { name: 'Selected' });
+  expect(button).toHaveAttribute('data-selected', 'true');
+  expect(button).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('reflects unselected state via data-selected and aria-pressed', async () => {
+  render(<Button selected={false}>Unselected</Button>);
+  const button = screen.getByRole('button', { name: 'Unselected' });
+  expect(button).toHaveAttribute('data-selected', 'false');
+  expect(button).toHaveAttribute('aria-pressed', 'false');
+});
+
+// Button group context inheritance
+test('inherits size, shape, morph and selection from the button group context and toggles on click', async () => {
+  let toggledIndex = -1;
+  render(
+    <ButtonGroupContext.Provider
+      value={{
+        size: 'lg',
+        shape: 'square',
+        morph: true,
+        selectedIndices: new Set([0]),
+        handleToggle: (index) => {
+          toggledIndex = index;
+        },
+      }}
+    >
+      <ButtonGroupItemContext.Provider value={{ index: 0 }}>
+        <Button>Grouped</Button>
+      </ButtonGroupItemContext.Provider>
+    </ButtonGroupContext.Provider>,
+  );
+  const button = screen.getByRole('button', { name: 'Grouped' });
+  expect(button).toHaveAttribute('data-size', 'lg');
+  expect(button).toHaveAttribute('data-shape', 'square');
+  expect(button).toHaveAttribute('data-morph');
+  expect(button).toHaveAttribute('data-selected', 'true');
+  expect(button).toHaveAttribute('aria-pressed', 'true');
+
+  fireEvent.click(button);
+  expect(toggledIndex).toBe(0);
 });

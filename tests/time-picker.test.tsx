@@ -1,7 +1,37 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { useState } from 'react';
-import { expect, test } from 'vitest';
-import { TimePicker } from '../src/components/ui/time-picker';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { createRef, type SetStateAction, useState } from 'react';
+import { afterEach, expect, test, vi } from 'vitest';
+import { TimePicker } from '../src/components/TimePicker/time-picker';
+
+const ORIGINAL_INNER_WIDTH = window.innerWidth;
+const ORIGINAL_INNER_HEIGHT = window.innerHeight;
+
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+  window.innerWidth = ORIGINAL_INNER_WIDTH;
+  window.innerHeight = ORIGINAL_INNER_HEIGHT;
+});
+
+// Prepare a ClockDial element for pointer interaction: happy-dom does not
+// implement setPointerCapture and returns an all-zero getBoundingClientRect.
+const setupDial = (dial: HTMLElement) => {
+  dial.setPointerCapture = vi.fn();
+  dial.releasePointerCapture = vi.fn();
+  dial.getBoundingClientRect = () =>
+    ({
+      left: 0,
+      top: 0,
+      right: 256,
+      bottom: 256,
+      width: 256,
+      height: 256,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    }) as DOMRect;
+  return dial;
+};
 
 // Helper to render a controlled TimePicker
 const ControlledTimePicker = ({
@@ -331,4 +361,358 @@ test('opens in input mode with defaultMode="input"', async () => {
   expect(screen.queryByTestId('clock-dial')).not.toBeInTheDocument();
   expect(screen.getByRole('textbox', { name: 'Hours' })).toBeInTheDocument();
   expect(screen.getByRole('textbox', { name: 'Minutes' })).toBeInTheDocument();
+});
+
+// =============================================================================
+// Clock dial pointer interaction (resolveValue / pointer handlers)
+// =============================================================================
+
+test('dial pointer selects an hour and advances to minutes on pointer up (12h)', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 30 }} format="12h" />);
+  const dial = setupDial(screen.getByTestId('clock-dial'));
+
+  // Right of center → 3 o'clock; AM stays AM → hour 3
+  fireEvent.pointerDown(dial, { clientX: 228, clientY: 128, pointerId: 1 });
+  fireEvent.pointerMove(dial, { clientX: 228, clientY: 128, pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('03');
+
+  fireEvent.pointerUp(dial, { pointerId: 1 });
+  // After releasing on hours, the dial advances to minutes selection
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveClass('border-primary');
+});
+
+test('dial pointer move is ignored when not dragging', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 30 }} format="12h" />);
+  const dial = setupDial(screen.getByTestId('clock-dial'));
+  // No pointerDown first → handler returns early, value unchanged
+  fireEvent.pointerMove(dial, { clientX: 228, clientY: 128, pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('10');
+});
+
+test('dial pointer up is ignored when not dragging', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 30 }} format="12h" />);
+  const dial = setupDial(screen.getByTestId('clock-dial'));
+  // pointerUp without pointerDown → early return, selection stays on hours
+  fireEvent.pointerUp(dial, { pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveClass('border-primary');
+});
+
+test('dial pointer at top maps to 12 and upper-left normalizes the angle (12h)', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 0 }} format="12h" />);
+  const dial = setupDial(screen.getByTestId('clock-dial'));
+
+  // Top of dial → index 0 → 12 o'clock; AM noon (12) maps to hours 0 → displays 12
+  fireEvent.pointerDown(dial, { clientX: 128, clientY: 28, pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('12');
+
+  // Upper-left exercises the negative-angle normalization branch
+  fireEvent.pointerDown(dial, { clientX: 80, clientY: 80, pointerId: 1 });
+  expect(screen.getByTestId('clock-dial')).toBeInTheDocument();
+});
+
+test('dial pointer converts to PM hour when period is PM (12h)', async () => {
+  render(<ControlledTimePicker value={{ hours: 14, minutes: 0 }} format="12h" />);
+  const dial = setupDial(screen.getByTestId('clock-dial'));
+  // Right → 3; PM keeps afternoon → 15 → displays 03 with PM selected
+  fireEvent.pointerDown(dial, { clientX: 228, clientY: 128, pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('03');
+  expect(screen.getByText('PM')).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('dial pointer resolves inner and outer rings in 24h format', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 0 }} format="24h" />);
+  const dial = setupDial(screen.getByTestId('clock-dial'));
+
+  // Outer ring, right → 3
+  fireEvent.pointerDown(dial, { clientX: 228, clientY: 128, pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('03');
+
+  // Outer ring, top → index 0 → 12
+  fireEvent.pointerDown(dial, { clientX: 128, clientY: 28, pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('12');
+
+  // Inner ring (dist < threshold), right → index 3 → 15
+  fireEvent.pointerDown(dial, { clientX: 178, clientY: 128, pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('15');
+
+  // Inner ring, top → index 0 → 0 (midnight)
+  fireEvent.pointerDown(dial, { clientX: 128, clientY: 78, pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('00');
+});
+
+test('dial pointer sets minutes when minutes selection is active', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 0 }} format="12h" />);
+  fireEvent.click(screen.getByRole('button', { name: 'Minutes' }));
+  const dial = setupDial(screen.getByTestId('clock-dial'));
+
+  // Right → 15 minutes
+  fireEvent.pointerDown(dial, { clientX: 228, clientY: 128, pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveTextContent('15');
+
+  // Releasing while on minutes keeps minutes selected (no advance)
+  fireEvent.pointerUp(dial, { pointerId: 1 });
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveClass('border-primary');
+});
+
+// =============================================================================
+// Selection switching (hours button)
+// =============================================================================
+
+test('clicking the hours button returns selection to hours', async () => {
+  render(<ControlledTimePicker />);
+  fireEvent.click(screen.getByRole('button', { name: 'Minutes' }));
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveClass('border-primary');
+  fireEvent.click(screen.getByRole('button', { name: 'Hours' }));
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveClass('border-primary');
+});
+
+// =============================================================================
+// Period selector — AM click
+// =============================================================================
+
+test('clicking AM switches the period from PM back to AM', async () => {
+  render(<ControlledTimePicker value={{ hours: 14, minutes: 0 }} format="12h" />);
+  const amBtn = screen.getByText('AM');
+  fireEvent.click(amBtn);
+  expect(amBtn).toHaveAttribute('aria-pressed', 'true');
+  // 14 → 2 → displays 02
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('02');
+});
+
+// =============================================================================
+// Non-dialog (inline) mode — emit path
+// =============================================================================
+
+test('inline (non-dialog) uncontrolled picker updates its own value', async () => {
+  render(<TimePicker defaultValue={{ hours: 10, minutes: 0 }} format="12h" orientation="portrait" />);
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByText('PM'));
+  expect(screen.getByText('PM')).toHaveAttribute('aria-pressed', 'true');
+  // 10 AM → 22 PM, still displays 10 in 12h
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('10');
+});
+
+test('inline (non-dialog) controlled picker calls onChange', async () => {
+  const handleChange = vi.fn();
+  const Comp = () => {
+    const [time, setTime] = useState({ hours: 10, minutes: 0 });
+    return (
+      <TimePicker
+        value={time}
+        onChange={(next: SetStateAction<{ hours: number; minutes: number }>) => {
+          handleChange(next);
+          setTime(next);
+        }}
+        format="12h"
+        orientation="portrait"
+      />
+    );
+  };
+  render(<Comp />);
+  fireEvent.click(screen.getByText('PM'));
+  expect(handleChange).toHaveBeenCalledWith({ hours: 22, minutes: 0 });
+});
+
+// =============================================================================
+// Input mode — field handlers
+// =============================================================================
+
+test('input mode hour field (12h) converts PM and ignores invalid input', async () => {
+  render(
+    <TimePicker defaultValue={{ hours: 14, minutes: 0 }} format="12h" defaultMode="input" orientation="portrait" />,
+  );
+  const hourInput = screen.getByRole('textbox', { name: 'Hours' });
+  fireEvent.focus(hourInput);
+  expect(hourInput).toHaveClass('border-primary');
+
+  // PM, 5 → 17 → displays 05
+  fireEvent.change(hourInput, { target: { value: '5' } });
+  expect(hourInput).toHaveValue('05');
+
+  // Out of range (> 12) is ignored
+  fireEvent.change(hourInput, { target: { value: '15' } });
+  expect(hourInput).toHaveValue('05');
+
+  // Non-numeric is ignored
+  fireEvent.change(hourInput, { target: { value: 'ab' } });
+  expect(hourInput).toHaveValue('05');
+});
+
+test('input mode hour field (12h) maps AM noon to zero', async () => {
+  render(
+    <TimePicker defaultValue={{ hours: 10, minutes: 0 }} format="12h" defaultMode="input" orientation="portrait" />,
+  );
+  const hourInput = screen.getByRole('textbox', { name: 'Hours' });
+  // AM, 12 → 0 → still displays 12
+  fireEvent.change(hourInput, { target: { value: '12' } });
+  expect(hourInput).toHaveValue('12');
+});
+
+test('input mode hour field (24h) clamps range and ignores invalid input', async () => {
+  render(
+    <TimePicker defaultValue={{ hours: 10, minutes: 0 }} format="24h" defaultMode="input" orientation="portrait" />,
+  );
+  const hourInput = screen.getByRole('textbox', { name: 'Hours' });
+  fireEvent.change(hourInput, { target: { value: '20' } });
+  expect(hourInput).toHaveValue('20');
+  // > 23 ignored
+  fireEvent.change(hourInput, { target: { value: '30' } });
+  expect(hourInput).toHaveValue('20');
+  // NaN ignored
+  fireEvent.change(hourInput, { target: { value: 'zz' } });
+  expect(hourInput).toHaveValue('20');
+});
+
+test('input mode minute field handles focus, range, and invalid input', async () => {
+  render(
+    <TimePicker defaultValue={{ hours: 10, minutes: 30 }} format="12h" defaultMode="input" orientation="portrait" />,
+  );
+  const minuteInput = screen.getByRole('textbox', { name: 'Minutes' });
+  fireEvent.focus(minuteInput);
+  expect(minuteInput).toHaveClass('border-primary');
+
+  fireEvent.change(minuteInput, { target: { value: '45' } });
+  expect(minuteInput).toHaveValue('45');
+  // > 59 ignored
+  fireEvent.change(minuteInput, { target: { value: '75' } });
+  expect(minuteInput).toHaveValue('45');
+  // NaN ignored
+  fireEvent.change(minuteInput, { target: { value: 'xx' } });
+  expect(minuteInput).toHaveValue('45');
+});
+
+// =============================================================================
+// Orientation
+// =============================================================================
+
+test('orientation="landscape" renders the landscape layout', async () => {
+  render(
+    <TimePicker
+      open
+      value={{ hours: 10, minutes: 30 }}
+      onChange={() => {}}
+      onOpenChange={() => {}}
+      format="12h"
+      orientation="landscape"
+    />,
+  );
+  expect(screen.getByRole('dialog')).toHaveAttribute('data-layout', 'landscape');
+  expect(document.querySelector('.md-time-picker__dial-body')).toBeInTheDocument();
+  expect(document.querySelector('.md-time-picker__period')).toHaveAttribute('data-orientation', 'horizontal');
+});
+
+test('orientation="landscape" in input mode shows the top display and no dial body', async () => {
+  render(
+    <TimePicker
+      open
+      value={{ hours: 10, minutes: 30 }}
+      onChange={() => {}}
+      onOpenChange={() => {}}
+      format="12h"
+      orientation="landscape"
+      defaultMode="input"
+    />,
+  );
+  expect(screen.getByText('Enter time')).toBeInTheDocument();
+  expect(document.querySelector('.md-time-picker__dial-body')).not.toBeInTheDocument();
+  expect(document.querySelector('.md-time-picker__period')).toHaveAttribute('data-orientation', 'vertical');
+  expect(screen.getByRole('dialog')).toHaveAttribute('data-layout', 'portrait');
+});
+
+test('orientation="portrait" renders the portrait layout', async () => {
+  render(
+    <TimePicker
+      open
+      value={{ hours: 10, minutes: 30 }}
+      onChange={() => {}}
+      onOpenChange={() => {}}
+      orientation="portrait"
+    />,
+  );
+  expect(screen.getByRole('dialog')).toHaveAttribute('data-layout', 'portrait');
+});
+
+test('orientation="auto" detects landscape on window resize', async () => {
+  render(
+    <TimePicker
+      open
+      value={{ hours: 10, minutes: 30 }}
+      onChange={() => {}}
+      onOpenChange={() => {}}
+      format="12h"
+      orientation="auto"
+    />,
+  );
+  // Default happy-dom viewport → portrait
+  expect(screen.getByRole('dialog')).toHaveAttribute('data-layout', 'portrait');
+
+  window.innerWidth = 800;
+  window.innerHeight = 450;
+  fireEvent(window, new Event('resize'));
+
+  expect(screen.getByRole('dialog')).toHaveAttribute('data-layout', 'landscape');
+});
+
+test('orientation="auto" switches to input mode when viewport is very short', async () => {
+  window.innerWidth = 800;
+  window.innerHeight = 350;
+  render(
+    <TimePicker
+      open
+      value={{ hours: 10, minutes: 30 }}
+      onChange={() => {}}
+      onOpenChange={() => {}}
+      orientation="auto"
+    />,
+  );
+  expect(screen.getByText('Enter time')).toBeInTheDocument();
+  expect(screen.getByRole('textbox', { name: 'Hours' })).toBeInTheDocument();
+});
+
+// =============================================================================
+// Ref forwarding
+// =============================================================================
+
+test('forwards ref to the root element', async () => {
+  const ref = createRef<HTMLDivElement>();
+  render(<TimePicker open ref={ref} value={{ hours: 10, minutes: 0 }} onChange={() => {}} onOpenChange={() => {}} />);
+  expect(ref.current).toHaveClass('md-time-picker');
+});
+
+// =============================================================================
+// Default-value fallbacks and uncontrolled commit
+// =============================================================================
+
+test('falls back to the default time when value is explicitly null', async () => {
+  render(<TimePicker open value={null} onChange={() => {}} onOpenChange={() => {}} format="12h" />);
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('12');
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveTextContent('00');
+});
+
+test('uncontrolled dialog commits the draft when OK is pressed', async () => {
+  const UncontrolledDialog = () => {
+    const [open, setOpen] = useState(true);
+    return (
+      <TimePicker
+        open={open}
+        onOpenChange={setOpen}
+        defaultValue={{ hours: 9, minutes: 15 }}
+        format="24h"
+        defaultMode="input"
+      />
+    );
+  };
+  render(<UncontrolledDialog />);
+  fireEvent.change(screen.getByRole('textbox', { name: 'Hours' }), { target: { value: '11' } });
+  fireEvent.click(screen.getByRole('button', { name: 'OK' }));
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+});
+
+test('toggles mode from input back to dial', async () => {
+  render(<ControlledTimePicker />);
+  fireEvent.click(screen.getByRole('button', { name: 'Switch to keyboard input' }));
+  expect(screen.getByText('Enter time')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Switch to clock dial' }));
+  expect(screen.getByText('Select time')).toBeInTheDocument();
+  expect(screen.getByTestId('clock-dial')).toBeInTheDocument();
 });

@@ -157,3 +157,39 @@ function ControlledStory() {
 export const Controlled: Story = {
   render: () => <ControlledStory />,
 };
+
+// ─── modal: 'trap-focus' — no scrim, but keyboard focus stays trapped ──────
+export const TrapFocus: Story = {
+  render: () => (
+    <BottomSheet modal="trap-focus">
+      <BottomSheetTrigger render={<Button variant="tonal">Open (trap focus)</Button>} />
+      <BottomSheetContent>
+        <BottomSheetBody>
+          <h2 style={{ margin: '0 0 4px', font: 'var(--md-sys-typescale-title-large)' }}>Focus-trapped sheet</h2>
+          <p style={{ margin: '0 0 16px', color: 'var(--md-sys-color-on-surface-variant)' }}>
+            Behaves like a standard sheet (no scrim) but traps keyboard focus inside while open.
+          </p>
+          <BottomSheetClose render={<Button variant="outlined">Close</Button>} />
+        </BottomSheetBody>
+      </BottomSheetContent>
+    </BottomSheet>
+  ),
+};
+
+// ─── showDragHandle: false — hides the drag handle indicator ───────────────
+export const NoDragHandle: Story = {
+  render: () => (
+    <BottomSheet>
+      <BottomSheetTrigger render={<Button variant="filled">Open without drag handle</Button>} />
+      <BottomSheetContent showDragHandle={false}>
+        <BottomSheetBody>
+          <h2 style={{ margin: '0 0 4px', font: 'var(--md-sys-typescale-title-large)' }}>No drag handle</h2>
+          <p style={{ margin: '0 0 16px', color: 'var(--md-sys-color-on-surface-variant)' }}>
+            The grabber indicator is removed via `showDragHandle={false}`. Swipe-to-dismiss still works.
+          </p>
+          <BottomSheetClose render={<Button variant="text">Close</Button>} />
+        </BottomSheetBody>
+      </BottomSheetContent>
+    </BottomSheet>
+  ),
+};

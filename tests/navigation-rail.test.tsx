@@ -581,3 +581,128 @@ test('NavigationRailItem custom onClick handler is called', async () => {
 
   expect(clickCount).toBe(1);
 });
+
+/* =============================================================================
+   Context guard, aria-labelledby, null state, backdrop keyboard
+   ============================================================================= */
+
+test('NavigationRailItem throws when used outside a NavigationRail', async () => {
+  expect(() => render(<NavigationRailItem value="home" icon={<MockIcon />} label="Home" />)).toThrow(
+    'NavigationRailItem must be used within a NavigationRail',
+  );
+});
+
+test('NavigationRail omits the default aria-label when aria-labelledby is provided', async () => {
+  render(
+    <NavigationRail value="home" onValueChange={() => {}} aria-labelledby="rail-heading">
+      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
+    </NavigationRail>,
+  );
+  const nav = screen.getByRole('navigation');
+  expect(nav).not.toHaveAttribute('aria-label');
+  expect(nav).toHaveAttribute('aria-labelledby', 'rail-heading');
+});
+
+test('NavigationRail tolerates a null state by defaulting the context to collapsed', async () => {
+  render(
+    <NavigationRail value="home" onValueChange={() => {}} state={null as unknown as 'collapsed'}>
+      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
+    </NavigationRail>,
+  );
+  expect(screen.getByRole('navigation')).toBeInTheDocument();
+});
+
+test('NavigationRail modal backdrop closes on Escape and ignores other keys', async () => {
+  let currentState: 'collapsed' | 'expanded' = 'expanded';
+  const handleStateChange = (state: 'collapsed' | 'expanded') => {
+    currentState = state;
+  };
+
+  render(
+    <NavigationRail
+      value="home"
+      onValueChange={() => {}}
+      state="expanded"
+      modality="modal"
+      onStateChange={handleStateChange}
+    >
+      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
+    </NavigationRail>,
+  );
+
+  const backdrop = screen.getByRole('button', { name: 'Close navigation' });
+  fireEvent.keyDown(backdrop, { key: 'ArrowLeft' });
+  expect(currentState).toBe('expanded');
+
+  fireEvent.keyDown(backdrop, { key: 'Escape' });
+  expect(currentState).toBe('collapsed');
+});
+
+test('NavigationRailItem renders the icon toggle for an inactive item with an activeIcon', async () => {
+  render(
+    <NavigationRail value="home" onValueChange={() => {}}>
+      <NavigationRailItem value="home" icon={<MockIcon />} activeIcon={<MockActiveIcon />} label="Home" />
+      <NavigationRailItem value="search" icon={<MockIcon />} activeIcon={<MockActiveIcon />} label="Search" />
+    </NavigationRail>,
+  );
+  expect(screen.getAllByTestId('mock-icon')).toHaveLength(2);
+  expect(screen.getAllByTestId('mock-active-icon')).toHaveLength(2);
+});
+
+test('NavigationRailItem keyboard handler ignores activation keys when disabled', async () => {
+  let selectedValue = 'home';
+  const handleChange = (value: string) => {
+    selectedValue = value;
+  };
+
+  render(
+    <NavigationRail value={selectedValue} onValueChange={handleChange}>
+      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
+      <NavigationRailItem value="search" icon={<MockIcon />} label="Search" disabled />
+    </NavigationRail>,
+  );
+
+  const searchItem = screen.getByRole('button', { name: 'Search' });
+  fireEvent.keyDown(searchItem, { key: 'Enter' });
+
+  expect(selectedValue).toBe('home');
+});
+
+test('NavigationRailMenuButton toggles from expanded back to collapsed', async () => {
+  let currentState: 'collapsed' | 'expanded' = 'expanded';
+  const handleStateChange = (state: 'collapsed' | 'expanded') => {
+    currentState = state;
+  };
+
+  render(
+    <NavigationRail value="home" onValueChange={() => {}} state="expanded" onStateChange={handleStateChange}>
+      <NavigationRailMenuButton collapsedIcon={<MockMenuIcon />} expandedIcon={<MockCloseIcon />} />
+      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
+    </NavigationRail>,
+  );
+
+  const menuButton = screen.getByRole('button', { name: 'Collapse navigation' });
+  fireEvent.click(menuButton);
+
+  expect(currentState).toBe('collapsed');
+});
+
+test('NavigationRailMenuButton renders a single icon when only one variant is provided', async () => {
+  render(
+    <NavigationRail value="home" onValueChange={() => {}} state="collapsed">
+      <NavigationRailMenuButton collapsedIcon={<MockMenuIcon />} />
+      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
+    </NavigationRail>,
+  );
+  expect(screen.getByTestId('mock-menu-icon')).toBeInTheDocument();
+});
+
+test('NavigationRailMenuButton falls back to children when no icons are provided', async () => {
+  render(
+    <NavigationRail value="home" onValueChange={() => {}} state="collapsed">
+      <NavigationRailMenuButton>Toggle</NavigationRailMenuButton>
+      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
+    </NavigationRail>,
+  );
+  expect(screen.getByRole('button', { name: 'Expand navigation' }).textContent).toContain('Toggle');
+});

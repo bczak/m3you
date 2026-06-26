@@ -5,12 +5,44 @@ import { SHAPE_NAMES, SHAPE_POLYGONS } from '../src/components/LoadingIndicator/
 const meta = {
   title: 'Communication/Loading Indicator',
   component: LoadingIndicator,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    controls: {
+      include: ['variant', 'size', 'color'],
+      expanded: true,
+    },
+  },
+  argTypes: {
+    variant: {
+      control: 'inline-radio',
+      options: ['uncontained', 'contained'],
+      description: 'Whether the morphing shape sits in a surface container or floats on its own.',
+      table: { category: 'Appearance', defaultValue: { summary: 'uncontained' } },
+    },
+    size: {
+      control: 'inline-radio',
+      options: ['sm', 'md', 'lg'],
+      description: 'Indicator size step.',
+      table: { category: 'Appearance', defaultValue: { summary: 'md' } },
+    },
+    color: {
+      control: 'text',
+      description: 'Overrides the indicator color (any CSS color or design token).',
+      table: { category: 'Appearance' },
+    },
+  },
   tags: ['autodocs'],
 } satisfies Meta<typeof LoadingIndicator>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+export const Playground: Story = {
+  args: {
+    size: 'lg',
+    variant: 'uncontained',
+  },
+};
 
 export const Default: Story = {
   render: () => <LoadingIndicator size="lg" />,

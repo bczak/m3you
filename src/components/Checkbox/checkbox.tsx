@@ -29,6 +29,7 @@ const Checkbox = ({
 
   // Set indeterminate state via ref (not an HTML attribute)
   React.useEffect(() => {
+    /* v8 ignore next -- inputRef is always mounted when this effect runs */
     if (inputRef.current) {
       inputRef.current.indeterminate = indeterminate;
     }

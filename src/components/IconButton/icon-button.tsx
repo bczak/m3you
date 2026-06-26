@@ -42,6 +42,7 @@ const IconButton = ({
 
   return (
     <button
+      type="button"
       className={cx('md-icon-button', className)}
       data-variant={variant}
       data-shape={shape}

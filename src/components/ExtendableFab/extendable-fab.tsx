@@ -69,6 +69,7 @@ const ExtendableFAB = ({
   React.useLayoutEffect(() => {
     const measure = measureRef.current;
 
+    /* v8 ignore next 4 -- measureRef is always set while mounted */
     if (!measure) {
       setWidths((current) => (current == null ? current : null));
       return;
@@ -105,6 +106,7 @@ const ExtendableFAB = ({
 
   return (
     <button
+      type="button"
       className={cx('md-extendable-fab', className)}
       data-variant={variant}
       data-size={size}

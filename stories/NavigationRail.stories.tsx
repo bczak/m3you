@@ -18,6 +18,27 @@ const meta = {
     layout: 'fullscreen',
     controls: {
       include: ['state', 'modality', 'itemsAlignment'],
+      expanded: true,
+    },
+  },
+  argTypes: {
+    state: {
+      control: 'inline-radio',
+      options: ['collapsed', 'expanded'],
+      description: 'Rail width state — collapsed (narrow icon rail) or expanded (wide rail with labels).',
+      table: { category: 'Appearance', defaultValue: { summary: 'collapsed' } },
+    },
+    modality: {
+      control: 'inline-radio',
+      options: ['standard', 'modal'],
+      description: 'How the expanded rail is presented — standard (inline) or modal (overlay with a scrim).',
+      table: { category: 'Appearance', defaultValue: { summary: 'standard' } },
+    },
+    itemsAlignment: {
+      control: 'inline-radio',
+      options: ['start', 'center'],
+      description: 'Vertical alignment of the navigation items within the rail.',
+      table: { category: 'Appearance', defaultValue: { summary: 'start' } },
     },
   },
   tags: ['autodocs'],
@@ -106,4 +127,27 @@ export const Playground: Story = {
 
 export const Expanded: Story = {
   render: () => <ControlledRail state="expanded" modality="standard" />,
+};
+
+export const Modal: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'With `modality="modal"`, the expanded rail overlays page content and dims the background with a scrim. Click the scrim to collapse it.',
+      },
+    },
+  },
+  render: () => <ControlledRail state="expanded" modality="modal" />,
+};
+
+export const ItemsCenterAligned: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Navigation items can be vertically centered within the rail via `itemsAlignment="center"`.',
+      },
+    },
+  },
+  render: () => <ControlledRail itemsAlignment="center" />,
 };

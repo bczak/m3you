@@ -34,6 +34,21 @@ test('maps numeric spacing props to CSS custom properties', async () => {
   expect(style).toContain('--md-toolbar-padding-block: 4px');
 });
 
+test('accepts string spacing values and a padding shorthand applied to both axes', async () => {
+  render(
+    <Toolbar gap="0.5rem" padding="1rem">
+      Content
+    </Toolbar>,
+  );
+
+  const toolbar = screen.getByRole('toolbar');
+  const style = toolbar.getAttribute('style') ?? '';
+
+  expect(style).toContain('--md-toolbar-gap: 0.5rem');
+  expect(style).toContain('--md-toolbar-padding-inline: 1rem');
+  expect(style).toContain('--md-toolbar-padding-block: 1rem');
+});
+
 test('keeps vertical orientation semantics and forwards refs', async () => {
   const ref = createRef<HTMLDivElement>();
 

@@ -91,3 +91,30 @@ export const Tonal: Story = {
 export const Outlined: Story = {
   render: () => <VariantStory variant="outlined" />,
 };
+
+export const Selected: Story = {
+  render: () => {
+    const variants = ['standard', 'filled', 'elevated', 'tonal', 'outlined'] as const;
+    const shapes = ['round', 'square'] as const;
+
+    return (
+      <div style={{ display: 'flex', gap: '48px' }}>
+        {shapes.map((shape) => (
+          <div key={shape} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+            <span style={{ fontSize: '14px', fontWeight: 600 }}>{shape}</span>
+            {variants.map((variant) => (
+              <div key={variant} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <IconButton variant={variant} shape={shape} morph selected={false}>
+                  <StarIcon />
+                </IconButton>
+                <IconButton variant={variant} shape={shape} morph selected>
+                  <StarIcon />
+                </IconButton>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  },
+};

@@ -5,6 +5,7 @@ import { NavigationBar, NavigationBarItem } from '../src/components/ui/navigatio
 
 // Mock icon component for testing
 const MockIcon = () => <svg data-testid="mock-icon" />;
+const MockActiveIcon = () => <svg data-testid="mock-active-icon" />;
 
 /* =============================================================================
    NavigationBar Container Tests
@@ -390,4 +391,78 @@ test('NavigationBarItem custom onClick handler is called', async () => {
   fireEvent.click(item);
 
   expect(clickCount).toBe(1);
+});
+
+/* =============================================================================
+   Context guard + aria-labelledby + activeIcon + disabled keyboard
+   ============================================================================= */
+
+test('NavigationBarItem throws when rendered outside a NavigationBar', async () => {
+  expect(() => render(<NavigationBarItem value="home" icon={<MockIcon />} label="Home" />)).toThrow(
+    'NavigationBarItem must be used within a NavigationBar',
+  );
+});
+
+test('NavigationBar omits the default aria-label when aria-labelledby is provided', async () => {
+  render(
+    <NavigationBar value="home" onValueChange={() => {}} aria-labelledby="nav-heading">
+      <NavigationBarItem value="home" icon={<MockIcon />} label="Home" />
+    </NavigationBar>,
+  );
+  const nav = screen.getByRole('navigation');
+  expect(nav).not.toHaveAttribute('aria-label');
+  expect(nav).toHaveAttribute('aria-labelledby', 'nav-heading');
+});
+
+test('NavigationBarItem renders the animated icon toggle for active and inactive items', async () => {
+  render(
+    <NavigationBar value="home" onValueChange={() => {}}>
+      <NavigationBarItem value="home" icon={<MockIcon />} activeIcon={<MockActiveIcon />} label="Home" />
+      <NavigationBarItem value="search" icon={<MockIcon />} activeIcon={<MockActiveIcon />} label="Search" />
+    </NavigationBar>,
+  );
+  // Both base and active icons are mounted for each item to allow cross-fade.
+  expect(screen.getAllByTestId('mock-icon')).toHaveLength(2);
+  expect(screen.getAllByTestId('mock-active-icon')).toHaveLength(2);
+});
+
+test('horizontal NavigationBarItems cover the inactive indicator, badge, and hidden-label branches', async () => {
+  render(
+    <NavigationBar value="home" onValueChange={() => {}} orientation="horizontal">
+      <NavigationBarItem
+        value="home"
+        icon={<MockIcon />}
+        label="Home"
+        badge={<span data-testid="h-badge">1</span>}
+        hideInactiveLabel
+      />
+      <NavigationBarItem value="search" icon={<MockIcon />} label="Search" hideInactiveLabel />
+    </NavigationBar>,
+  );
+  // Active item: badge rendered and label visible.
+  expect(screen.getByTestId('h-badge')).toBeInTheDocument();
+  expect(screen.getByText('Home')).toHaveClass('opacity-100');
+  // Inactive item: label hidden.
+  const searchLabel = screen.getByText('Search');
+  expect(searchLabel).toHaveClass('opacity-0');
+  expect(searchLabel).toHaveAttribute('data-hidden', 'true');
+});
+
+test('NavigationBarItem keyboard handler ignores activation keys when disabled', async () => {
+  let selectedValue = 'home';
+  const handleChange = (value: string) => {
+    selectedValue = value;
+  };
+
+  render(
+    <NavigationBar value={selectedValue} onValueChange={handleChange}>
+      <NavigationBarItem value="home" icon={<MockIcon />} label="Home" />
+      <NavigationBarItem value="search" icon={<MockIcon />} label="Search" disabled />
+    </NavigationBar>,
+  );
+
+  const searchItem = screen.getByRole('button', { name: 'Search' });
+  fireEvent.keyDown(searchItem, { key: 'Enter' });
+
+  expect(selectedValue).toBe('home');
 });

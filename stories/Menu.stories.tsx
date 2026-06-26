@@ -501,6 +501,23 @@ export const AlignEnd: Story = {
   ),
 };
 
+export const AlignCenter: Story = {
+  render: () => (
+    <Menu>
+      <MenuTrigger asChild>
+        <IconButton variant="filled" size="sm">
+          <EllipsisVerticalIcon />
+        </IconButton>
+      </MenuTrigger>
+      <MenuContent side="bottom" align="center">
+        <MenuItem>Item One</MenuItem>
+        <MenuItem>Item Two</MenuItem>
+        <MenuItem>Item Three</MenuItem>
+      </MenuContent>
+    </Menu>
+  ),
+};
+
 // =============================================================================
 // Trigger Variants
 // =============================================================================
@@ -522,6 +539,41 @@ export const ButtonTrigger: Story = {
         </MenuItem>
         <MenuItem>
           <Trash2Icon /> Delete
+        </MenuItem>
+      </MenuContent>
+    </Menu>
+  ),
+};
+
+// =============================================================================
+// Color & selection
+// =============================================================================
+
+export const Vibrant: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The `vibrant` color scheme tints the popup with the tertiary container. Selected items use the tertiary accent and show a leading check. Rendered open to show the styling.',
+      },
+    },
+  },
+  render: () => (
+    <Menu color="vibrant" defaultOpen modal={false}>
+      <MenuTrigger asChild>
+        <IconButton variant="filled" size="sm">
+          <EllipsisVerticalIcon />
+        </IconButton>
+      </MenuTrigger>
+      <MenuContent>
+        <MenuItem selected>
+          <StarIcon /> Favorite
+        </MenuItem>
+        <MenuItem>
+          <ShareIcon /> Share
+        </MenuItem>
+        <MenuItem>
+          <CopyIcon /> Copy
         </MenuItem>
       </MenuContent>
     </Menu>

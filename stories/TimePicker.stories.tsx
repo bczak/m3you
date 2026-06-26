@@ -81,6 +81,16 @@ export const Landscape: Story = {
   render: () => <TimePicker defaultValue={{ hours: 16, minutes: 20 }} orientation="landscape" />,
 };
 
+// orientation="portrait" forces the stacked layout regardless of viewport.
+export const Portrait: Story = {
+  render: () => <TimePicker defaultValue={{ hours: 8, minutes: 5 }} orientation="portrait" />,
+};
+
+// orientation="auto" (the default) picks portrait/landscape from the viewport.
+export const AutoOrientation: Story = {
+  render: () => <TimePicker defaultValue={{ hours: 11, minutes: 50 }} orientation="auto" />,
+};
+
 // =============================================================================
 // Wrapped in Dialog — consumer composes their own modal
 // =============================================================================

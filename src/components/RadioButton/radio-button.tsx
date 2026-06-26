@@ -1,7 +1,6 @@
 import './radio-button.css';
 import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -28,6 +27,7 @@ const RadioButton = ({
   checked: checkedProp,
   defaultChecked = false,
   onValueChange,
+  onChange,
   ref,
   ...props
 }: RadioButtonProps & { ref?: React.Ref<HTMLInputElement> }) => {
@@ -43,10 +43,11 @@ const RadioButton = ({
     if (!isControlled) {
       setInternalChecked(e.target.checked);
     }
+    /* v8 ignore next -- React only fires radio onChange when checked becomes true */
     if (e.target.checked) {
       onValueChange?.(e.target.value);
     }
-    props.onChange?.(e);
+    onChange?.(e);
   };
 
   return (
@@ -101,8 +102,7 @@ const RadioButton = ({
       <input
         ref={inputRef}
         type="radio"
-        checked={isControlled ? checked : undefined}
-        defaultChecked={isControlled ? undefined : defaultChecked}
+        {...(isControlled ? { checked } : { defaultChecked })}
         disabled={disabled}
         onChange={updateRadioChecked}
         className="md-radio__input sr-only"
@@ -113,123 +113,4 @@ const RadioButton = ({
 };
 RadioButton.displayName = 'RadioButton';
 
-export type RadioGroupProps = {
-  value?: string;
-  defaultValue?: string;
-  name?: string;
-  variant?: 'primary' | 'error';
-  disabled?: boolean;
-  onValueChange?: (value: string) => void;
-  children: React.ReactNode;
-  className?: string;
-};
-
-type RadioGroupContextValue = {
-  value: string;
-  name: string;
-  variant: 'primary' | 'error';
-  disabled: boolean;
-  onValueChange: (value: string) => void;
-};
-
-const RadioGroupContext = React.createContext<RadioGroupContextValue | null>(null);
-
-function useRadioGroup() {
-  return use(RadioGroupContext);
-}
-
-const RadioGroup = ({
-  value: valueProp,
-  defaultValue = '',
-  name: nameProp,
-  variant = 'primary',
-  disabled = false,
-  onValueChange,
-  children,
-  className,
-  ref,
-  ...props
-}: RadioGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const isControlled = valueProp !== undefined;
-  const [internalValue, setInternalValue] = React.useState(defaultValue);
-  const value = isControlled ? valueProp : internalValue;
-  const generatedName = React.useId();
-  const name = nameProp ?? generatedName;
-
-  const handleValueChange = React.useCallback(
-    (newValue: string) => {
-      if (!isControlled) {
-        setInternalValue(newValue);
-      }
-      onValueChange?.(newValue);
-    },
-    [isControlled, onValueChange],
-  );
-
-  const contextValue = React.useMemo<RadioGroupContextValue>(
-    () => ({
-      value,
-      name,
-      variant,
-      disabled,
-      onValueChange: handleValueChange,
-    }),
-    [value, name, variant, disabled, handleValueChange],
-  );
-
-  return (
-    <RadioGroupContext.Provider value={contextValue}>
-      <div ref={ref} role="radiogroup" className={className} {...props}>
-        {children}
-      </div>
-    </RadioGroupContext.Provider>
-  );
-};
-RadioGroup.displayName = 'RadioGroup';
-
-/**
- * RadioGroupItem — a RadioButton that automatically connects to its parent RadioGroup.
- * Use inside a <RadioGroup> to get automatic name, value tracking, and variant inheritance.
- */
-export type RadioGroupItemProps = Omit<RadioButtonProps, 'checked' | 'name'> & {
-  value: string;
-};
-
-const RadioGroupItem = ({
-  value,
-  variant,
-  disabled,
-  onValueChange,
-  ref,
-  ...props
-}: RadioGroupItemProps & { ref?: React.Ref<HTMLInputElement> }) => {
-  const group = useRadioGroup();
-
-  if (!group) {
-    throw new Error('RadioGroupItem must be used within a RadioGroup');
-  }
-
-  const handleValueChange = React.useCallback(
-    (v: string) => {
-      group.onValueChange(v);
-      onValueChange?.(v);
-    },
-    [group.onValueChange, onValueChange],
-  );
-
-  return (
-    <RadioButton
-      ref={ref}
-      name={group.name}
-      value={value}
-      checked={group.value === value}
-      variant={variant ?? group.variant}
-      disabled={disabled ?? group.disabled}
-      onValueChange={handleValueChange}
-      {...props}
-    />
-  );
-};
-RadioGroupItem.displayName = 'RadioGroupItem';
-
-export { RadioButton, RadioGroup, RadioGroupItem };
+export { RadioButton };

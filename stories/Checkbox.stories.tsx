@@ -9,6 +9,31 @@ const meta = {
     layout: 'centered',
     controls: {
       include: ['variant', 'checked', 'indeterminate', 'disabled'],
+      expanded: true,
+    },
+  },
+  argTypes: {
+    variant: {
+      control: 'inline-radio',
+      options: ['primary', 'error'],
+      description: 'Color role — `primary` for normal selection, `error` for validation failures.',
+      table: { category: 'Appearance', defaultValue: { summary: 'primary' } },
+    },
+    checked: {
+      control: 'boolean',
+      description: 'Whether the checkbox is checked. Controlled via `onCheckedChange`.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    indeterminate: {
+      control: 'boolean',
+      description:
+        'Shows the dash glyph for a partially-selected (mixed) state. Takes visual precedence over `checked`.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disables interaction and applies the disabled state layer.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
     },
   },
   tags: ['autodocs'],

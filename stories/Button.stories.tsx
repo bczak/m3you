@@ -8,7 +8,51 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
+      // Button spreads native <button> props, so without an allow-list the table
+      // would flood with every HTML attribute. Keep it to the M3-specific props.
       include: ['variant', 'shape', 'size', 'morph', 'selected', 'disabled', 'children'],
+      // Show the description + default-value columns in the Controls table.
+      expanded: true,
+    },
+  },
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['filled', 'elevated', 'tonal', 'outlined', 'text'],
+      description: 'Visual emphasis level following the M3 button hierarchy.',
+      table: { category: 'Appearance', defaultValue: { summary: 'filled' } },
+    },
+    shape: {
+      control: 'inline-radio',
+      options: ['round', 'square'],
+      description: 'Corner shape. Animates between the two while pressed when `morph` is on.',
+      table: { category: 'Appearance', defaultValue: { summary: 'round' } },
+    },
+    size: {
+      control: 'inline-radio',
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'One of the five M3 Expressive size steps.',
+      table: { category: 'Appearance', defaultValue: { summary: 'sm' } },
+    },
+    morph: {
+      control: 'boolean',
+      description: 'Enables the pressed shape-morph spring animation.',
+      table: { category: 'Behavior', defaultValue: { summary: 'false' } },
+    },
+    selected: {
+      control: 'boolean',
+      description: 'Toggles the selected (`aria-pressed`) state for toggle-style usage.',
+      table: { category: 'Behavior' },
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disables interaction and applies the disabled state layer.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    children: {
+      control: 'text',
+      description: 'Button label content.',
+      table: { category: 'Content' },
     },
   },
   tags: ['autodocs'],

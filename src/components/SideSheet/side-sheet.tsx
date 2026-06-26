@@ -28,11 +28,12 @@ const SideSheetContext = React.createContext<{ variant: 'standard' | 'modal'; si
 });
 
 function SideSheet({ modal = true, side = 'right', children, ...props }: SideSheetProps) {
-  const variant = modal === false ? 'standard' : 'modal';
+  const variant: 'standard' | 'modal' = modal === false ? 'standard' : 'modal';
   const swipeDirection = side === 'right' ? 'right' : 'left';
+  const contextValue = React.useMemo(() => ({ variant, side }), [variant, side]);
 
   return (
-    <SideSheetContext.Provider value={{ variant, side }}>
+    <SideSheetContext.Provider value={contextValue}>
       <DrawerPrimitive.Root data-slot="side-sheet" modal={modal} swipeDirection={swipeDirection} {...props}>
         {children}
       </DrawerPrimitive.Root>

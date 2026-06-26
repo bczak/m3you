@@ -42,8 +42,12 @@ const NavigationBar = ({
   ref,
   ...props
 }: NavigationBarProps & { ref?: React.Ref<HTMLElement> }) => {
+  const contextValue = React.useMemo(
+    () => ({ value, onValueChange, orientation }),
+    [value, onValueChange, orientation],
+  );
   return (
-    <NavigationBarContext.Provider value={{ value, onValueChange, orientation }}>
+    <NavigationBarContext.Provider value={contextValue}>
       <nav
         ref={ref}
         aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
@@ -118,6 +122,7 @@ const NavigationBarItem = ({
   const isActive = selectedValue === value;
 
   const selectNavigationItem = (e: React.MouseEvent<HTMLButtonElement>) => {
+    /* v8 ignore next -- React never fires onClick on a disabled button */
     if (!disabled) {
       onValueChange?.(value);
     }

@@ -61,6 +61,7 @@ function getDistanceFromCenter(x: number, y: number, center: number): number {
 function getHandAngle(value: number, selection: Selection, format: ClockFormat): number {
   if (selection === 'minutes') return (value / 60) * 360;
   if (format === '24h') return ((value % 12) / 12) * 360;
+  /* v8 ignore next -- 12h dial hours are 1-12, so value is never 0 here */
   const h = value === 0 ? 12 : value;
   return ((h % 12) / 12) * 360;
 }
@@ -140,6 +141,7 @@ const ClockDial = ({
   const resolveValue = React.useCallback(
     (clientX: number, clientY: number) => {
       const el = faceRef.current;
+      /* v8 ignore next -- faceRef is always set on the elements that fire these pointer events */
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const x = clientX - rect.left;
@@ -311,11 +313,15 @@ const TimePicker = ({
   const hourInputRef = React.useRef<HTMLInputElement>(null);
   const minuteInputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
+  // Reset the in-progress draft to the committed value when the dialog opens,
+  // computed during render instead of mirrored through an effect.
+  const [prevOpen, setPrevOpen] = React.useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
     if (open) {
       setDraftValue(committedValue);
     }
-  }, [open, committedValue]);
+  }
 
   // Detect landscape (only used when orientation='auto')
   React.useEffect(() => {

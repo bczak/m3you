@@ -34,6 +34,19 @@ export const Default: Story = {
   },
 };
 
+// Renders in the open state via `defaultOpen` so the expanded menu items show.
+export const Open: Story = {
+  args: {
+    defaultOpen: true,
+    items: defaultItems,
+    children: (
+      <FAB>
+        <PlusIcon />
+      </FAB>
+    ),
+  },
+};
+
 export const WithExtendedFAB: Story = {
   args: {
     items: [

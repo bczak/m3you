@@ -20,8 +20,9 @@ const BottomSheetContext = React.createContext<{ isModal: boolean }>({ isModal: 
 
 function BottomSheet({ modal = true, children, ...props }: BottomSheetProps) {
   const isModal = modal !== false;
+  const contextValue = React.useMemo(() => ({ isModal }), [isModal]);
   return (
-    <BottomSheetContext.Provider value={{ isModal }}>
+    <BottomSheetContext.Provider value={contextValue}>
       <DrawerPrimitive.Root data-slot="bottom-sheet" modal={modal} swipeDirection="down" {...props}>
         {children}
       </DrawerPrimitive.Root>

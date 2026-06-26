@@ -12,6 +12,25 @@ const meta = {
     layout: 'padded',
     controls: {
       include: ['variant', 'disabled', 'ripple'],
+      expanded: true,
+    },
+  },
+  argTypes: {
+    variant: {
+      control: 'inline-radio',
+      options: ['elevated', 'filled', 'outlined'],
+      description: 'Surface emphasis following the M3 card hierarchy.',
+      table: { category: 'Appearance', defaultValue: { summary: 'filled' } },
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Dims the surface and disables interaction when the card is clickable.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    ripple: {
+      control: 'boolean',
+      description: 'Forces the surface ripple on/off. Defaults to on whenever an `onClick` handler is provided.',
+      table: { category: 'Behavior' },
     },
   },
   tags: ['autodocs'],
@@ -108,6 +127,45 @@ export const Variants: Story = {
               Later
             </Button>
           </div>
+        </div>
+      </Card>
+    </ShowcaseGrid>
+  ),
+};
+
+export const States: Story = {
+  render: () => (
+    <ShowcaseGrid>
+      {/* Static (non-interactive) — no onClick, so no ripple */}
+      <Card variant="filled" style={{ padding: 24 }}>
+        <div className="sb-m3-demo-stack">
+          <p className="sb-m3-panel__eyebrow">Static</p>
+          <h3 className="sb-m3-panel__title">Quiet container</h3>
+          <p className="sb-m3-muted" style={{ margin: 0 }}>
+            Without an `onClick` the card stays a passive surface — no ripple, no button semantics.
+          </p>
+        </div>
+      </Card>
+
+      {/* Interactive — owns the surface ripple */}
+      <Card variant="elevated" onClick={() => {}} style={{ padding: 24 }}>
+        <div className="sb-m3-demo-stack">
+          <p className="sb-m3-panel__eyebrow">Interactive</p>
+          <h3 className="sb-m3-panel__title">Clickable surface</h3>
+          <p className="sb-m3-muted" style={{ margin: 0 }}>
+            With an `onClick` the whole surface becomes a touch target with a ripple.
+          </p>
+        </div>
+      </Card>
+
+      {/* Disabled interactive */}
+      <Card variant="outlined" disabled onClick={() => {}} style={{ padding: 24 }}>
+        <div className="sb-m3-demo-stack">
+          <p className="sb-m3-panel__eyebrow">Disabled</p>
+          <h3 className="sb-m3-panel__title">Interaction suppressed</h3>
+          <p className="sb-m3-muted" style={{ margin: 0 }}>
+            A disabled clickable card dims the surface and ignores pointer and keyboard activation.
+          </p>
         </div>
       </Card>
     </ShowcaseGrid>

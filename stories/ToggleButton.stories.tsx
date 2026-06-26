@@ -35,7 +35,7 @@ export const Default: Story = {
   ),
 };
 
-const VariantStory = ({ variant }: { variant: 'filled' | 'elevated' | 'tonal' | 'outlined' }) => {
+const VariantStory = ({ variant }: { variant: 'filled' | 'elevated' | 'tonal' | 'outlined' | 'text' }) => {
   const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
 
   return (
@@ -105,4 +105,8 @@ export const TonalToggle: Story = {
 
 export const OutlinedToggle: Story = {
   render: () => <VariantStory variant="outlined" />,
+};
+
+export const TextToggle: Story = {
+  render: () => <VariantStory variant="text" />,
 };

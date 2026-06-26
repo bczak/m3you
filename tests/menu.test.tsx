@@ -239,6 +239,45 @@ test('MenuItem renders supporting text', async () => {
   expect(screen.getByTestId('item').textContent).toContain('Helper text');
 });
 
+test('MenuItem with supportingText splits element children into icons', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuItem data-testid="item" supportingText="Helper text">
+          <svg data-testid="inline-icon" aria-hidden="true" />
+          Label text
+        </MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(screen.getByTestId('inline-icon')).toBeInTheDocument();
+  const item = screen.getByTestId('item');
+  expect(item.textContent).toContain('Label text');
+  expect(item.textContent).toContain('Helper text');
+});
+
+test('MenuItem keyUp with a non-activation key does not trigger onClick', async () => {
+  let clicked = false;
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuItem
+          data-testid="item"
+          onClick={() => {
+            clicked = true;
+          }}
+        >
+          Item 1
+        </MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  fireEvent.keyUp(screen.getByTestId('item'), { key: 'a' });
+  expect(clicked).toBe(false);
+});
+
 test('MenuItem renders trailing text', async () => {
   render(
     <Menu defaultOpen>
@@ -723,6 +762,28 @@ test('MenuSubTrigger renders with aria-haspopup and chevron', async () => {
   // Should have a chevron icon
   const svg = subTrigger.querySelector('svg');
   expect(svg).toBeTruthy();
+});
+
+test('MenuSubTrigger supports a disabled state and supporting text', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuSub>
+          <MenuSubTrigger data-testid="sub-trigger" disabled supportingText="Opens more options">
+            More
+          </MenuSubTrigger>
+          <MenuSubContent>
+            <MenuItem>Sub Item 1</MenuItem>
+          </MenuSubContent>
+        </MenuSub>
+      </MenuContent>
+    </Menu>,
+  );
+  const subTrigger = screen.getByTestId('sub-trigger');
+  expect(subTrigger).toHaveClass('opacity-38');
+  expect(subTrigger).toHaveAttribute('data-disabled', 'true');
+  expect(subTrigger.textContent).toContain('Opens more options');
 });
 
 test('MenuSubContent is not visible when submenu is closed', async () => {

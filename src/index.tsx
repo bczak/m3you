@@ -118,18 +118,18 @@ export {
   NavigationRailMenuButton,
   NavigationRailSection,
 } from './components/NavigationRail/navigation-rail';
-export type { RadioButtonProps, RadioGroupItemProps, RadioGroupProps } from './components/RadioButton/radio-button';
-export {
-  RadioButton,
-  RadioGroup,
-  RadioGroupItem,
-} from './components/RadioButton/radio-button';
-export type { SearchBarProps, SearchSuggestionItemProps, SearchViewProps } from './components/Search/search';
-export {
-  SearchBar,
-  SearchSuggestionItem,
-  SearchView,
-} from './components/Search/search';
+export type { RadioButtonProps } from './components/RadioButton/radio-button';
+export { RadioButton } from './components/RadioButton/radio-button';
+export type { RadioGroupProps } from './components/RadioButton/radio-group';
+export { RadioGroup } from './components/RadioButton/radio-group';
+export type { RadioGroupItemProps } from './components/RadioButton/radio-group-item';
+export { RadioGroupItem } from './components/RadioButton/radio-group-item';
+export type { SearchViewProps } from './components/Search/search';
+export { SearchView } from './components/Search/search';
+export type { SearchBarProps } from './components/Search/search-bar';
+export { SearchBar } from './components/Search/search-bar';
+export type { SearchSuggestionItemProps } from './components/Search/search-suggestion-item';
+export { SearchSuggestionItem } from './components/Search/search-suggestion-item';
 export type {
   SideSheetContentProps,
   SideSheetHeaderProps,
@@ -148,13 +148,14 @@ export {
 export type { SliderProps } from './components/Slider/slider';
 export { Slider } from './components/Slider/slider';
 export type { SnackbarHostProps, SnackbarProps } from './components/Snackbar/snackbar';
-export { Snackbar, SnackbarHost, snackbar } from './components/Snackbar/snackbar';
-export type {
-  SplitButtonActionProps,
-  SplitButtonMenuProps,
-  SplitButtonProps,
-} from './components/SplitButton/split-button';
-export { SplitButton, SplitButtonAction, SplitButtonMenu } from './components/SplitButton/split-button';
+export { Snackbar, SnackbarHost } from './components/Snackbar/snackbar';
+export { snackbar } from './components/Snackbar/snackbar-api';
+export type { SplitButtonProps } from './components/SplitButton/split-button';
+export { SplitButton } from './components/SplitButton/split-button';
+export type { SplitButtonActionProps } from './components/SplitButton/split-button-action';
+export { SplitButtonAction } from './components/SplitButton/split-button-action';
+export type { SplitButtonMenuProps } from './components/SplitButton/split-button-menu';
+export { SplitButtonMenu } from './components/SplitButton/split-button-menu';
 export type { SwitchProps } from './components/Switch/switch';
 export { Switch } from './components/Switch/switch';
 export type { TabProps, TabsProps } from './components/Tabs/tabs';

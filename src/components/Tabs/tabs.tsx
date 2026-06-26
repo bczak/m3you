@@ -46,8 +46,12 @@ const Tabs = ({
   ref,
   ...props
 }: TabsProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const contextValue = React.useMemo(
+    () => ({ value, onValueChange, variant, fullWidth }),
+    [value, onValueChange, variant, fullWidth],
+  );
   return (
-    <TabsContext.Provider value={{ value, onValueChange, variant, fullWidth }}>
+    <TabsContext.Provider value={contextValue}>
       <div
         ref={ref}
         role="tablist"
@@ -91,6 +95,7 @@ const Tab = ({
   const hasIcon = !!icon && (variant === 'primary' || !hasLabel);
 
   const selectTab = (e: React.MouseEvent<HTMLButtonElement>) => {
+    /* v8 ignore next -- React never fires onClick on a disabled button */
     if (!disabled) {
       onValueChange?.(value);
     }

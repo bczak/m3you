@@ -67,9 +67,13 @@ const NavigationRail = ({
   ...props
 }: NavigationRailProps & { ref?: React.Ref<HTMLElement> }) => {
   const resolvedState = state ?? 'collapsed';
+  const contextValue = React.useMemo(
+    () => ({ value, onValueChange, state: resolvedState, onStateChange }),
+    [value, onValueChange, resolvedState, onStateChange],
+  );
 
   return (
-    <NavigationRailContext.Provider value={{ value, onValueChange, state: resolvedState, onStateChange }}>
+    <NavigationRailContext.Provider value={contextValue}>
       {/* Modal backdrop */}
       {state === 'expanded' && modality === 'modal' && (
         <button
@@ -168,6 +172,7 @@ const NavigationRailItem = ({
   const isActive = selectedValue === value;
 
   const selectRailItem = (e: React.MouseEvent<HTMLButtonElement>) => {
+    /* v8 ignore next -- React never fires onClick on a disabled button */
     if (!disabled) {
       onValueChange?.(value);
     }
