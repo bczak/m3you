@@ -23,6 +23,15 @@ export type { StandardButtonGroupProps } from './components/ButtonGroup/standard
 export { StandardButtonGroup } from './components/ButtonGroup/standard-button-group';
 export type { CardProps } from './components/Card/card';
 export { Card } from './components/Card/card';
+export type {
+  CarouselAlignment,
+  CarouselButtonItemProps,
+  CarouselItemProps,
+  CarouselLinkItemProps,
+  CarouselProps,
+} from './components/Carousel/carousel';
+export { Carousel, CarouselItem } from './components/Carousel/carousel';
+export type { CarouselLayout, CarouselScrollMode } from './components/Carousel/carousel-layout';
 export type { CheckboxProps } from './components/Checkbox/checkbox';
 export { Checkbox } from './components/Checkbox/checkbox';
 export type { ChipProps } from './components/Chip/chip';
@@ -73,6 +82,18 @@ export type {
   LinearProgressVariant,
 } from './components/LinearProgress/linear-progress';
 export { LinearProgress } from './components/LinearProgress/linear-progress';
+export type {
+  ListAppearance,
+  ListDividerProps,
+  ListItemProps,
+  ListMode,
+  ListMultiSelectionProps,
+  ListNonSelectionProps,
+  ListProps,
+  ListSelectionIndicator,
+  ListSingleSelectionProps,
+} from './components/List/list';
+export { List, ListDivider, ListItem } from './components/List/list';
 export type {
   LoadingIndicatorProps,
   LoadingIndicatorVariant,

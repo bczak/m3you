@@ -2,6 +2,8 @@
 
 Material Design 3 Expressive component library for React, built with plain CSS and CSS custom properties.
 
+**[Documentation](https://material.you)** · [Components](https://material.you/components) · [Showcase](https://material.you/showcase) · [Theme playground](https://material.you/theme) · [Storybook](https://storybook.material.you)
+
 ## Installation
 
 ```bash
@@ -49,11 +51,76 @@ function App() {
 |---|---|
 | **Actions** | Button, ButtonGroup, ConnectedButtonGroup, IconButton, ToggleButton, ToggleIconButton, Fab, ExtendedFab, FabMenu |
 | **Communication** | Badge, Snackbar, CircularProgress, LinearProgress, LoadingIndicator |
-| **Containment** | Card, Dialog, BottomSheet, SideSheet, Tooltip, Divider, Toolbar |
+| **Containment** | Card, Carousel, List, Dialog, BottomSheet, SideSheet, Tooltip, Divider, Toolbar |
 | **Navigation** | NavigationBar, NavigationRail, Tabs, AppBar, SearchBar |
 | **Selection** | Checkbox, Chip, Switch, RadioButton, Slider, DatePicker, TimePicker |
 | **Text Input** | TextField (filled, outlined) |
 | **Menu** | Menu with sub-menus, groups, dividers |
+
+## Material 3 catalog coverage
+
+m3you implements every component family currently recommended by the [Material 3 component catalog](https://m3.material.io/components). Of the 36 catalog families, 34 have direct component APIs and the two retired families have expressive replacements:
+
+| M3 family | m3you API | Status |
+|---|---|---|
+| [Carousel](https://m3.material.io/components/carousel/overview) | `Carousel`, `CarouselItem` | All six current layouts |
+| [Lists](https://m3.material.io/components/lists/overview) | `List`, `ListItem`, `ListDivider` | Expressive standard and segmented appearances |
+| [Navigation drawer](https://m3.material.io/components/navigation-drawer/overview) | Expanded `NavigationRail` | Retired by M3 in May 2025 |
+| [Segmented buttons](https://m3.material.io/components/segmented-buttons/overview) | `ConnectedButtonGroup` | Retired by M3 in May 2025 |
+
+### Navigation drawer replacement
+
+Use an expanded rail for new designs. Standard modality remains inline; modal modality overlays content with a dismissible scrim.
+
+```tsx
+<NavigationRail state="expanded" modality="standard" />
+<NavigationRail state="expanded" modality="modal" />
+```
+
+### Segmented button replacement
+
+Connected button groups provide the same single- or multiple-selection behavior with the current M3 Expressive button shapes and sizes.
+
+```tsx
+<ConnectedButtonGroup selectionMode="single" required>
+  <Button>Day</Button>
+  <Button>Week</Button>
+  <Button>Month</Button>
+</ConnectedButtonGroup>
+
+<ConnectedButtonGroup selectionMode="multiple">
+  <Button>Labels</Button>
+  <Button>Guides</Button>
+  <Button>Grid</Button>
+</ConnectedButtonGroup>
+```
+
+### Carousel accessibility
+
+Carousels are labelled native scroll regions. Items expose their position to assistive technology, keyboard arrows move between enabled items, full-screen layouts use vertical navigation, and reduced-motion preferences remove parallax and size morphing. Non-full-screen carousels should provide a `showAllAction` that reaches the same content without horizontal scrolling.
+
+```tsx
+<Carousel label="Featured places" title="Featured" showAllAction={<Button>Show all</Button>}>
+  <CarouselItem label="Mountain retreat" href="/places/mountain">
+    <img src="/mountain.jpg" alt="" />
+  </CarouselItem>
+  <CarouselItem label="Coastal trail" onClick={openCoastalTrail}>
+    <img src="/coast.jpg" alt="" />
+  </CarouselItem>
+</Carousel>
+```
+
+### Expressive list selection
+
+Selection uses stable string values rather than item indexes. Listbox semantics, roving focus, disabled-item skipping, and a non-color selection indicator are applied automatically.
+
+```tsx
+<List mode="multi-select" aria-label="Notification channels" value={channels} onValueChange={setChannels}>
+  <ListItem value="email" headline="Email" supportingText="Daily summary" />
+  <ListItem value="push" headline="Push notifications" />
+  <ListItem value="sms" headline="Text message" disabled />
+</List>
+```
 
 ## Theming
 
@@ -92,7 +159,15 @@ bun run test           # Vitest
 bun run test:watch     # Vitest in watch mode
 bun run storybook      # Storybook on port 6006
 bun run check          # Biome lint + format (auto-fix)
+
+bun run docs:dev       # Documentation site on port 3000
+bun run docs:build     # Static build of the documentation site
 ```
+
+The documentation site lives in [`docs/`](docs) as a bun workspace and imports
+the library straight from `src/`, so component edits hot-reload into it. Its
+props tables are generated from the TypeScript source — see
+[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for hosting.
 
 ## Tech stack
 

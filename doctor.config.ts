@@ -20,6 +20,11 @@ export default {
       'knip/files',
       'knip/exports',
       'knip/types',
+      // React Doctor 0.9 migrated its dead-code diagnostics from Knip to
+      // Deslop. Keep the same policy for convention-loaded docs modules and
+      // intentionally public docs metadata.
+      'deslop/unused-file',
+      'deslop/unused-export',
     ],
   },
 
@@ -38,5 +43,12 @@ export default {
     //   - role="group" (ButtonGroup, SplitButton) — correct WAI-ARIA grouping;
     //     no native tag equivalent.
     'react-doctor/prefer-tag-over-role': 'off',
+
+    // TanStack Router requires route configuration and page components to be
+    // colocated, while the docs theme intentionally exports presets beside its
+    // provider. Splitting those declarations would work against each
+    // framework's file conventions without improving runtime behavior.
+    'react-doctor/no-multi-comp': 'off',
+    'react-doctor/only-export-components': 'off',
   },
 } satisfies ReactDoctorConfig;
