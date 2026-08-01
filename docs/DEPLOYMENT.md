@@ -70,7 +70,8 @@ New repository secret**:
 |---|---|
 | `CLOUDFLARE_API_TOKEN` | the token created above |
 | `CLOUDFLARE_ACCOUNT_ID` | your account ID |
-| `NPM_TOKEN` | npm granular token, Read and write on `m3you` |
+
+npm needs no secret — see [Trusted Publishing](#publishing-to-npm) below.
 
 Jobs whose credentials are missing skip rather than fail, so the workflow stays
 green before the secrets exist — check the run summary for a note saying what
@@ -191,28 +192,50 @@ Cloudflare is live you can delete it — the Cloudflare project supersedes it.
 `.github/workflows/docs.yml` is separate: it only verifies the docs build on
 pull requests and does not deploy.
 
-## Publishing to npm without a browser
+## Publishing to npm
 
-`npm login` also opens a browser by default. Two ways around it:
+The release workflow publishes with **Trusted Publishing**: npm verifies a
+short-lived OIDC token minted by GitHub for that specific workflow run, so there
+is no long-lived credential to store, leak or rotate. It also means npm attaches
+a provenance attestation automatically — the package page shows which repository,
+commit and workflow built it.
 
-**Granular access token** (preferred). Create one at
-[npmjs.com/settings/~/tokens](https://www.npmjs.com/settings/tashpulatov/tokens)
-with **Read and write** on the `m3you` package, then:
+### One-time setup
 
-```bash
-export NPM_TOKEN=...
-npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
-npm publish
-```
+At [npmjs.com/package/m3you/access](https://www.npmjs.com/package/m3you/access)
+→ **Trusted Publisher** → **GitHub Actions**:
 
-**Legacy prompt**, if you would rather not store a token:
+| Field | Value |
+|---|---|
+| Organization or user | `bczak` |
+| Repository | `m3you` |
+| Workflow filename | `release.yml` |
+| Environment | *leave blank* |
+
+The workflow filename must match exactly. If you set an environment here, the
+`npm` job in `release.yml` must declare the same `environment:` name or the
+exchange is rejected — it declares none, so leave the field empty.
+
+Two things in the workflow make this work, and both are easy to lose in a
+refactor:
+
+- `permissions: id-token: write` on the `npm` job. Without it the runner cannot
+  mint an OIDC token and publishing fails.
+- `npm install -g npm@latest`. Trusted Publishing arrived in npm 11.5.1 and the
+  npm bundled with Node is older.
+
+### Publishing by hand
+
+Trusted Publishing only works from CI. To publish from a laptop you still need a
+token:
 
 ```bash
 npm login --auth-type=legacy   # username, password and OTP in the terminal
 npm publish
 ```
 
-`prepublishOnly` rebuilds the library, so the tarball always matches the source.
+Prefer letting CI do it — bump the version in `package.json`, push, and the
+workflow publishes.
 
 ## Local equivalents
 

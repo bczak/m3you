@@ -11,7 +11,12 @@ name: Release
 # Repository secrets required (Settings → Secrets and variables → Actions):
 #   CLOUDFLARE_API_TOKEN   — Account → Cloudflare Pages → Edit
 #   CLOUDFLARE_ACCOUNT_ID  — right-hand sidebar of any domain overview
-#   NPM_TOKEN              — npm granular token, Read and write on `m3you`
+#
+# npm needs no secret: publishing uses Trusted Publishing, where npm verifies a
+# short-lived GitHub OIDC token instead of a stored credential. Configure it at
+# npmjs.com → m3you → Settings → Trusted Publisher, pointing at this repository
+# and the workflow file `release.yml`. Provenance attestations are generated
+# automatically as a result.
 
 on:
   push:
@@ -35,7 +40,6 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       should-publish: ${{ steps.version.outputs.should-publish }}
       has-cloudflare: ${{ steps.secrets.outputs.cloudflare }}
-      has-npm: ${{ steps.secrets.outputs.npm }}
     steps:
       - uses: actions/checkout@v5
 
@@ -61,20 +65,12 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
             echo "cloudflare=true" >> "$GITHUB_OUTPUT"
           else
             echo "cloudflare=false" >> "$GITHUB_OUTPUT"
             echo "::notice::Cloudflare secrets not set — skipping the site deploys."
-          fi
-
-          if [ -n "$NPM_TOKEN" ]; then
-            echo "npm=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "npm=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::NPM_TOKEN not set — skipping the npm publish."
           fi
 
       - name: Is this version already on npm?
@@ -155,31 +151,39 @@ jobs:
   npm:
     name: Publish to npm
     needs: verify
-    if: needs.verify.outputs.should-publish == 'true' && needs.verify.outputs.has-npm == 'true'
+    if: needs.verify.outputs.should-publish == 'true'
     runs-on: ubuntu-latest
-    environment:
-      name: npm
-      url: https://www.npmjs.com/package/m3you
+    permissions:
+      contents: read
+      # Lets the runner mint the OIDC token npm exchanges for publish rights.
+      # Without it, Trusted Publishing fails with a missing-token error.
+      id-token: write
     steps:
       - uses: actions/checkout@v5
 
       - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
 
-      # setup-node writes the .npmrc that reads NODE_AUTH_TOKEN, so the token is
-      # never written to disk by a shell command or echoed into the log.
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 24
           registry-url: https://registry.npmjs.org
+
+      # Trusted Publishing landed in npm 11.5.1; the npm bundled with Node is
+      # older than that, so upgrade the CLI rather than relying on the runtime.
+      - name: Upgrade npm
+        run: |
+          npm install -g npm@latest
+          npm --version
 
       - run: bun install --frozen-lockfile
 
       - name: Publish
+        # No token: npm verifies the OIDC token from this workflow. That is also
+        # what lets it attach a provenance attestation automatically.
+        #
         # `prepublishOnly` rebuilds the library, so the tarball always matches
         # the committed source rather than whatever happens to be in dist/.
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Summary
         env:
