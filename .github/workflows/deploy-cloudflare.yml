@@ -1,0 +1,87 @@
+name: Deploy to Cloudflare
+
+# Deploys the documentation site and Storybook to their Cloudflare Pages
+# projects. Uses an API token rather than `wrangler login`, so nothing here
+# needs a browser — which is also why this works from a headless machine or
+# over SSH.
+#
+# Requires two repository secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   — needs the "Cloudflare Pages: Edit" permission
+#   CLOUDFLARE_ACCOUNT_ID  — from the right-hand sidebar of any domain overview
+#
+# Wrangler is invoked directly rather than through a third-party action: it is
+# the same command as the local `bun run deploy:*` scripts, and it keeps the
+# deploy path free of extra supply-chain surface.
+
+on:
+  push:
+    branches: [development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-cloudflare
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    name: Documentation site
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://material.you
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - run: bun install --frozen-lockfile
+
+      # Fail the deploy rather than publish docs that have drifted from the code.
+      - name: Verify documentation coverage
+        run: bun --cwd docs run test
+
+      - name: Build
+        run: bun run docs:build
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Passed through the environment, never interpolated into the shell:
+          # a branch name is attacker-influenceable on workflow_dispatch.
+          BRANCH: ${{ github.ref_name }}
+        run: >-
+          bunx wrangler pages deploy docs/.output/public
+          --project-name m3you-docs
+          --branch "$BRANCH"
+
+  storybook:
+    name: Storybook
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://storybook.material.you
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run build-storybook
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Passed through the environment, never interpolated into the shell:
+          # a branch name is attacker-influenceable on workflow_dispatch.
+          BRANCH: ${{ github.ref_name }}
+        run: >-
+          bunx wrangler pages deploy storybook-static
+          --project-name m3you-storybook
+          --branch "$BRANCH"

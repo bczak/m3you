@@ -14,28 +14,66 @@ GitHub Pages does not fit: it permits only one custom domain per repository.
 Both projects are free on Cloudflare's Free plan (unlimited sites, 500 builds a
 month, unlimited bandwidth).
 
-## Option A — from the command line (fastest)
+## Authentication without a browser
 
-`wrangler pages deploy` creates the project on first run, so there is no
-dashboard navigation to hunt through. The only dashboard step left is attaching
-the custom domains (step 4 below).
+`wrangler login` uses an OAuth callback, which needs a browser on the same
+machine. Everything below avoids it by using an API token instead — the same
+mechanism CI uses, and the only option over SSH or on a headless box.
+
+### Create the token
+
+At [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens)
+→ **Create Token** → **Custom token**, grant exactly:
+
+| Scope | Permission | Access |
+|---|---|---|
+| Account | Cloudflare Pages | Edit |
+
+Nothing else is required to deploy. Copy the token — it is shown once.
+
+Your **account ID** is in the right-hand sidebar of any domain's overview page.
+
+### Use it
 
 ```bash
-bunx wrangler login          # opens a browser once
+export CLOUDFLARE_API_TOKEN=...
+export CLOUDFLARE_ACCOUNT_ID=...
 
 bun run deploy:docs          # builds, then creates/deploys m3you-docs
 bun run deploy:storybook     # builds, then creates/deploys m3you-storybook
 ```
 
-The first run of each prompts to create the project — accept the name it
-suggests, which matches the `--project-name` flag in the script.
+Wrangler picks both variables up automatically; there is no login step. The
+first run of each creates the project — accept the suggested name, which matches
+the `--project-name` flag in the script.
 
-This uploads a build made on your machine. It does not connect the project to
-Git, so pushes will not trigger rebuilds. To add that afterwards, open the
-project in the dashboard and use **Settings → Build → Connect to Git** with the
-build settings from the table above.
+## Option A — deploy from CI (recommended)
 
-## Option B — from the dashboard (with Git integration)
+`.github/workflows/deploy-cloudflare.yml` runs the same two commands on every
+push to `development`, so nothing needs Wrangler installed locally and pushes
+publish automatically.
+
+Add the token and account ID as repository secrets — **Settings → Secrets and
+variables → Actions → New repository secret**:
+
+| Secret | Value |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | the token created above |
+| `CLOUDFLARE_ACCOUNT_ID` | your account ID |
+
+The docs job runs `docs/tests` before deploying, so documentation that has
+drifted from the component exports fails the deploy instead of shipping.
+
+Trigger the first run from **Actions → Deploy to Cloudflare → Run workflow**, or
+just push.
+
+## Option B — deploy from your machine
+
+Use the `export` + `bun run deploy:*` commands above. This uploads a build made
+locally and does not connect the project to Git, so pushes will not rebuild it.
+Fine for a one-off; prefer Option A for anything ongoing.
+
+## Option C — from the dashboard (with Git integration)
 
 ### Finding Workers & Pages
 
@@ -137,6 +175,29 @@ publishes Storybook to `bczak.github.io/m3you`. It does no harm, but once
 Cloudflare is live you can delete it — the Cloudflare project supersedes it.
 `.github/workflows/docs.yml` is separate: it only verifies the docs build on
 pull requests and does not deploy.
+
+## Publishing to npm without a browser
+
+`npm login` also opens a browser by default. Two ways around it:
+
+**Granular access token** (preferred). Create one at
+[npmjs.com/settings/~/tokens](https://www.npmjs.com/settings/tashpulatov/tokens)
+with **Read and write** on the `m3you` package, then:
+
+```bash
+export NPM_TOKEN=...
+npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+npm publish
+```
+
+**Legacy prompt**, if you would rather not store a token:
+
+```bash
+npm login --auth-type=legacy   # username, password and OTP in the terminal
+npm publish
+```
+
+`prepublishOnly` rebuilds the library, so the tarball always matches the source.
 
 ## Local equivalents
 
