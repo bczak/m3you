@@ -56,6 +56,12 @@ jobs:
       - name: Library tests
         run: bun run test
 
+      # docgen.json is generated and git-ignored. `docs build` regenerates it via
+      # its prebuild hook, but the tests run without building, so it has to be
+      # produced explicitly here.
+      - name: Generate prop tables
+        run: bun run --cwd docs docgen
+
       - name: Documentation coverage
         run: bun run --cwd docs test
 
