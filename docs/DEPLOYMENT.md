@@ -14,6 +14,59 @@ GitHub Pages does not fit: it permits only one custom domain per repository.
 Both projects are free on Cloudflare's Free plan (unlimited sites, 500 builds a
 month, unlimited bandwidth).
 
+## Release flow
+
+```
+feature/*  ──PR──▶  development  ──PR──▶  master
+    │                    │                  │
+ Storybook           prerelease          release
+ preview URL         0.2.1-dev.1         0.2.1
+                     npm tag: dev        npm tag: latest
+```
+
+**On a pull request** (`.github/workflows/pr.yml`) the change is verified —
+commit messages, lint, library tests, docs coverage, types — and Storybook is
+deployed to a unique preview URL, posted as a single comment that updates in
+place on each push.
+
+**On a push to `development`** (`.github/workflows/release.yml`) semantic-release
+publishes a prerelease on the `dev` dist-tag:
+
+```bash
+npm install m3you@dev      # whatever the latest 0.x.y-dev.N is
+```
+
+**On a push to `master`** the same workflow publishes a stable release on
+`latest`. Both branches redeploy the documentation site and Storybook.
+
+### The version comes from your commit messages
+
+| Commit | Result |
+|---|---|
+| `fix: keep the portal inside its container` | patch — 0.2.0 → 0.2.1 |
+| `feat: add Carousel` | minor — 0.2.0 → 0.3.0 |
+| `feat!: drop asChild` or `BREAKING CHANGE:` in the body | major — 0.2.0 → 1.0.0 |
+| `docs:`, `ci:`, `chore:`, `test:` | no release; sites still redeploy |
+
+This is why commit messages are linted rather than merely encouraged: a typo in
+the prefix does not fail loudly, it silently ships nothing. `lefthook` checks the
+message as you commit, and the PR workflow checks every commit in the range.
+
+`lefthook` installs itself through the `prepare` script on `bun install`. If the
+hooks ever go missing, `bunx lefthook install` restores them.
+
+### Cutting a stable release
+
+Open a PR from `development` to `master` and merge it. Everything already
+released as `-dev.N` is rolled into one stable version.
+
+### Nothing is committed back
+
+semantic-release sets the version at publish time and does not commit it, so
+`package.json` in git stays at whatever it was. Git tags and GitHub Releases are
+the record of what shipped — deliberately, since committing from CI invites loops
+and conflicts with concurrent merges.
+
 ## Authentication without a browser
 
 `wrangler login` uses an OAuth callback, which needs a browser on the same
@@ -49,39 +102,21 @@ the `--project-name` flag in the script.
 
 ## Option A — release from CI (recommended)
 
-`.github/workflows/release.yml` handles everything on every push to
-`development`:
+`.github/workflows/release.yml` verifies, releases and deploys on every push to
+`development` and `master`; `pr.yml` verifies and previews on every pull request.
+See [Release flow](#release-flow) for what each branch produces.
 
-| Job | What it does |
-|---|---|
-| `verify` | Library tests, documentation-coverage tests, docs type-check |
-| `docs` | Builds and deploys the site to `m3you-docs` |
-| `storybook` | Builds and deploys Storybook to `m3you-storybook` |
-| `npm` | Publishes the library — **only if `package.json` carries a version that is not on the registry** |
-
-That last condition is what makes the workflow safe to run on every push.
-Bumping the version in `package.json` *is* the release trigger; pushes that
-leave it alone redeploy the two sites and skip npm entirely.
-
-Add three repository secrets — **Settings → Secrets and variables → Actions →
-New repository secret**:
+Two repository secrets, in the **`development` environment** — not at repository
+level, since that is where the deploy jobs read them from:
 
 | Secret | Value |
 |---|---|
 | `CLOUDFLARE_API_TOKEN` | the token created above |
 | `CLOUDFLARE_ACCOUNT_ID` | your account ID |
 
-npm needs no secret — see [Trusted Publishing](#publishing-to-npm) below.
-
-Jobs whose credentials are missing skip rather than fail, so the workflow stays
-green before the secrets exist — check the run summary for a note saying what
-was skipped.
-
-Nothing deploys until `verify` passes, so docs that have drifted from the
-component exports, or a failing component test, block the release rather than
-shipping.
-
-Trigger the first run from **Actions → Release → Run workflow**, or just push.
+Environment-scoped secrets are invisible to jobs that do not declare that
+environment — worth remembering if a deploy job ever reports missing
+credentials.
 
 ## Option B — deploy from your machine
 
@@ -194,16 +229,24 @@ pull requests and does not deploy.
 
 ## Publishing to npm
 
-The release workflow publishes with **Trusted Publishing**: npm verifies a
-short-lived OIDC token minted by GitHub for that specific workflow run, so there
-is no long-lived credential to store, leak or rotate. It also means npm attaches
-a provenance attestation automatically — the package page shows which repository,
-commit and workflow built it.
+Releases are automated — see [Release flow](#release-flow). npm needs no secret:
+`@semantic-release/npm` exchanges the workflow's GitHub OIDC token for a
+short-lived publish token (Trusted Publishing) and attaches a provenance
+attestation. Verified working — the run log reads *"OIDC token exchange with the
+npm registry succeeded"*.
 
-### One-time setup
+Two things the release job depends on:
 
-At [npmjs.com/package/m3you/access](https://www.npmjs.com/package/m3you/access)
-→ **Trusted Publisher** → **GitHub Actions**:
+- `permissions: id-token: write`, without which no OIDC token can be minted.
+- `npm install -g npm@latest`. Trusted Publishing needs npm 11.5.1 or newer and
+  the npm bundled with Node is older.
+
+If the exchange ever fails, the plugin falls back to `NPM_TOKEN`, which is still
+passed through as a safety net.
+
+### One-time npm setup
+
+npmjs.com → m3you → **Settings → Trusted Publisher → GitHub Actions**:
 
 | Field | Value |
 |---|---|
@@ -212,30 +255,8 @@ At [npmjs.com/package/m3you/access](https://www.npmjs.com/package/m3you/access)
 | Workflow filename | `release.yml` |
 | Environment | *leave blank* |
 
-The workflow filename must match exactly. If you set an environment here, the
-`npm` job in `release.yml` must declare the same `environment:` name or the
-exchange is rejected — it declares none, so leave the field empty.
-
-Two things in the workflow make this work, and both are easy to lose in a
-refactor:
-
-- `permissions: id-token: write` on the `npm` job. Without it the runner cannot
-  mint an OIDC token and publishing fails.
-- `npm install -g npm@latest`. Trusted Publishing arrived in npm 11.5.1 and the
-  npm bundled with Node is older.
-
-### Publishing by hand
-
-Trusted Publishing only works from CI. To publish from a laptop you still need a
-token:
-
-```bash
-npm login --auth-type=legacy   # username, password and OTP in the terminal
-npm publish
-```
-
-Prefer letting CI do it — bump the version in `package.json`, push, and the
-workflow publishes.
+The filename must match exactly, and the environment field must stay empty
+because the release job declares no environment.
 
 ## Local equivalents
 
