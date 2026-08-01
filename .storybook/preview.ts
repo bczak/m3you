@@ -3,6 +3,7 @@ import { createElement, useLayoutEffect } from 'react';
 import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import { generateM3Theme } from '../src/lib/color';
 import '../src/styles/globals.css';
+import './preview.css';
 
 const DEFAULT_SEED = '#416699';
 

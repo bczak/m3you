@@ -7,6 +7,12 @@
   "storybookConfigDir": ".storybook",
   "buildCmd": "bun run build",
   "entry": "dist/index.js",
+  "cssEntry": "dist/styles/globals.css",
+  "extraFonts": [".design-sync/fonts/roboto-flex.css"],
+  "runtimeFontPrefixes": ["https://fonts.gstatic.com"],
+  "libOverrides": {
+    "dts.mjs": "FAB is a real component; the ALL-CAPS heuristic in isComponentName would drop it as an object constant"
+  },
   "titleMap": {
     "FAB": "FAB",
     "Search": "SearchBar",
@@ -24,7 +30,7 @@
     "Toolbar": { "cardMode": "column" },
     "RadioButton": { "cardMode": "column" },
     "Slider": { "cardMode": "column" },
-    "Menu": { "cardMode": "single", "primaryStory": "Showcase" },
+    "Menu": { "cardMode": "single", "primaryStory": "Showcase", "viewport": "900x1000" },
     "Tooltip": { "cardMode": "single" }
   }
 }

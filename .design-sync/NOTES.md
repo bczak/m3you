@@ -21,14 +21,51 @@ remote `_ds_sync.json` anchor, config recovered and committed from this run onwa
   `SearchView` / `SearchSuggestionItem` — mapped via `titleMap: {"Search": "SearchBar"}`.
 - `NavigationDrawer` was removed upstream in 0.2.0 (no src/ component, no story) — its remote
   files are deleted on sync. `SearchBar` survives via the Search title mapping.
-- Title `Actions/FAB` silently fell out of the roster (neither mapped nor TITLE_UNMAPPED —
-  likely a pairing quirk vs `FABMenu`/the lowercase `Fab/` dir). Pinned explicitly with
-  `titleMap: {"FAB": "FAB"}`.
+- `FAB` fell out of the roster silently: `isComponentName` in `lib/dts.mjs` treats ALL-CAPS
+  exports as object constants (`/^[A-Z][A-Z0-9_]+$/`), so FAB was dropped by the
+  "excluded N enum/type/context/hook exports" filter (never TITLE_UNMAPPED — the title mapped
+  fine). Fixed with the committed fork `.design-sync/overrides/dts.mjs` (declared in
+  `cfg.libOverrides`) exempting `FAB`; `titleMap: {"FAB": "FAB"}` stays as belt-and-suspenders.
+  The fork needs `ln -sfn ../.ds-sync/node_modules .design-sync/node_modules` on a fresh clone
+  (it imports ts-morph).
 - Wide stories (GRID_OVERFLOW wide) → `cardMode: "column"`: LinearProgress, Snackbar, Card,
   Dialog, List, TextField, Tabs, Toolbar, RadioButton, Slider.
   Portal/fixed stories (escape) → `cardMode: "single"`: Menu (primaryStory Showcase), Tooltip.
-- `[FONT_REMOTE] "Roboto Flex"` — typescale font loads from a CDN at render time; both panels
-  see it, but network-sandboxed shells will blank it (watch for `[ASSETS_BLOCKED]`).
+- [GENERAL] The library CSS is NOT a dist sidecar the converter auto-finds — it lives at
+  `dist/styles/globals.css` (the package's `./styles.css` export). Without
+  `cssEntry: "dist/styles/globals.css"` the build falls back to `[CSS_FROM_STORYBOOK]`
+  (21 KB of story-page CSS) and EVERY preview renders unstyled.
+- [GENERAL] FONTS (root-caused in wave 1): `.storybook/preview-head.html` loads **Google Sans**
+  from the Google Fonts CDN and points `--md-ref-typeface-brand/plain` at it via `html:root`
+  (storybook-only chrome, deliberately scoped per its own comment), plus sets
+  `body { font-family: var(--md-ref-typeface-plain) }`. The shipped library defaults those
+  tokens to `"Roboto Flex", "Roboto", system-ui` and ships no font. Resolution chosen:
+  the library's own Roboto Flex is canonical for the synced DS — pinned `@font-face` css in
+  `.design-sync/fonts/roboto-flex.css` shipped via `extraFonts` (+
+  `runtimeFontPrefixes: ["https://fonts.gstatic.com"]`); story prose gets a base font via
+  `.storybook/preview.css` (imported by `preview.ts`, so it rides the decorators bundle into
+  previews; storybook itself already had the same body rule from preview-head, so the oracle
+  render didn't change). Storybook keeps showing Google Sans — a subtle, accepted metric
+  drift vs previews (both geometric sans; geometry verified unaffected). The old
+  `[FONT_REMOTE] "Roboto Flex"` warn wrongly assumed the scraped Google-Sans @import served
+  Roboto Flex — it doesn't.
+- Sheet-scaling gotcha (recurring in wave 1): sb raw shots are tight element crops while ds
+  shots are fixed 900x700 pages, so equal-width sheet columns scale them differently — an
+  apparent 2x size difference on a sheet is usually framing. Always confirm from raw/ PNGs
+  before calling a size mismatch.
+- Divider: full-width and heavy hairline variants draw nothing on BOTH panels (only inset
+  draws) — component/story behavior, identical parity, not a sync defect.
+- Menu Showcase: 6th menu wraps to a 3rd row and fell below the 700px fold (preview page
+  leaves ~876px content width vs ~886px in storybook) — fixed with
+  `overrides.Menu.viewport: "900x1000"`.
+
+- KNOWN UPSTREAM BUG (2026-08-01): Carousel renders empty (header only, zero-size items) in
+  dev storybook, static storybook, and previews alike — the `applyLayout`/`data-size-role`
+  sizing pipeline produces no visible items. Regression introduced with the new 0.2.0
+  Carousel (`3a4b924 feat(components): add List and Carousel`). Graded `match` (preview is
+  pixel-identical to the repo's own render); RE-VERIFY Carousel after the upstream fix —
+  the source change will re-key it automatically. Watch List (same commit) for the same class
+  of problem.
 
 ## Re-sync risks
 

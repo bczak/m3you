@@ -1,0 +1,9 @@
+/* Base typeface for story prose. m3you deliberately sets no body font-family
+ * (consumers opt in via tokens), so unstyled story/fixture text would fall back
+ * to the browser default — Storybook's iframe chrome masks that with its own
+ * sans font, while token-styled component text is unaffected either way.
+ * Setting the library's plain typeface here makes story prose render with the
+ * design system's own font in Storybook and in design-sync previews alike. */
+body {
+  font-family: var(--md-ref-typeface-plain, "Roboto Flex", Roboto, system-ui, sans-serif);
+}
