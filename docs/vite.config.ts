@@ -31,6 +31,9 @@ export default defineConfig({
         },
       },
 
+      // Listing `/` here does not help: in SPA mode `_shell.html` *is* the root
+      // render, so no index.html is emitted either way. scripts/postbuild.ts
+      // copies the shell into place instead.
       pages: [{ path: '/docs' }, { path: '/api/search' }, { path: 'llms-full.txt' }, { path: 'llms.txt' }],
     }),
     react(),

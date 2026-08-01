@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/react-vite';
-import { createElement } from 'react';
+import { createElement, useLayoutEffect } from 'react';
 import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import { generateM3Theme } from '../src/lib/color';
 import '../src/styles/globals.css';
@@ -60,6 +60,35 @@ const buildThemeStyle = (seed: string, isDark: boolean): React.CSSProperties => 
   return style as React.CSSProperties;
 };
 
+// Paint the story canvas itself rather than a wrapper around the component.
+//
+// The wrapper carries the tokens (so docs pages keep neutral chrome), but a
+// wrapper cannot paint the canvas: under `layout: 'centered'` Storybook centres
+// the story by making <body> a flex container, leaving #storybook-root
+// shrink-to-fit. The surface colour then reads as a tinted box drawn around the
+// component instead of as the page behind it. Overriding that in CSS loses to
+// Storybook's own stylesheet, which is injected after this module.
+//
+// Setting it on <body> is reliable and correct: inside the preview iframe, body
+// *is* the canvas — the sidebar and toolbar live in the parent document. It is
+// applied only in story view so docs pages are left alone.
+function useCanvasSurface(isStory: boolean, isDark: boolean, surface: string) {
+  useLayoutEffect(() => {
+    if (!isStory) return;
+    const { body } = document;
+    const previousBackground = body.style.backgroundColor;
+    const previousScheme = body.style.colorScheme;
+
+    body.style.backgroundColor = surface;
+    body.style.colorScheme = isDark ? 'dark' : 'light';
+
+    return () => {
+      body.style.backgroundColor = previousBackground;
+      body.style.colorScheme = previousScheme;
+    };
+  }, [isStory, isDark, surface]);
+}
+
 const preview: Preview = {
   globalTypes: {
     theme: {
@@ -100,6 +129,10 @@ const preview: Preview = {
       const theme = context.globals.theme ?? 'light';
       const seed = context.globals.seed ?? DEFAULT_SEED;
       const isDark = theme === 'dark';
+      const palette = generateM3Theme(seed);
+      const surface = (isDark ? palette.dark : palette.light)['--md-sys-color-surface'];
+
+      useCanvasSurface(context.viewMode === 'story', isDark, surface);
 
       return createElement(
         'div',

@@ -1,0 +1,30 @@
+{
+  "projectId": "cbd619a7-058d-4526-a8c6-77bceb6470e5",
+  "shape": "storybook",
+  "pkg": "m3you",
+  "readmeHeader": ".design-sync/conventions.md",
+  "storybookStatic": ".design-sync/sb-reference",
+  "storybookConfigDir": ".storybook",
+  "buildCmd": "bun run build",
+  "entry": "dist/index.js",
+  "titleMap": {
+    "FAB": "FAB",
+    "Search": "SearchBar",
+    "M3ComponentReplacements": null,
+    "InteractionPlayground": null
+  },
+  "overrides": {
+    "LinearProgress": { "cardMode": "column" },
+    "Snackbar": { "cardMode": "column" },
+    "Card": { "cardMode": "column" },
+    "Dialog": { "cardMode": "column" },
+    "List": { "cardMode": "column" },
+    "TextField": { "cardMode": "column" },
+    "Tabs": { "cardMode": "column" },
+    "Toolbar": { "cardMode": "column" },
+    "RadioButton": { "cardMode": "column" },
+    "Slider": { "cardMode": "column" },
+    "Menu": { "cardMode": "single", "primaryStory": "Showcase" },
+    "Tooltip": { "cardMode": "single" }
+  }
+}
