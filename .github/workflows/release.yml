@@ -113,10 +113,15 @@ jobs:
           # Through the environment, never interpolated into the shell: a branch
           # name is attacker-influenceable on workflow_dispatch.
           BRANCH: ${{ github.ref_name }}
-        run: >-
-          bunx wrangler pages deploy docs/.output/public
-          --project-name m3you-docs
-          --branch "$BRANCH"
+        run: |
+          # `pages deploy` cannot create a project non-interactively, so ensure it
+          # exists first. Creating one that already exists is a harmless error.
+          bunx wrangler pages project create m3you-docs \
+            --production-branch development 2>/dev/null || true
+
+          bunx wrangler pages deploy docs/.output/public \
+            --project-name m3you-docs \
+            --branch "$BRANCH"
 
   storybook:
     name: Storybook
@@ -138,10 +143,15 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           BRANCH: ${{ github.ref_name }}
-        run: >-
-          bunx wrangler pages deploy storybook-static
-          --project-name m3you-storybook
-          --branch "$BRANCH"
+        run: |
+          # `pages deploy` cannot create a project non-interactively, so ensure it
+          # exists first. Creating one that already exists is a harmless error.
+          bunx wrangler pages project create m3you-storybook \
+            --production-branch development 2>/dev/null || true
+
+          bunx wrangler pages deploy storybook-static \
+            --project-name m3you-storybook \
+            --branch "$BRANCH"
 
   npm:
     name: Publish to npm
