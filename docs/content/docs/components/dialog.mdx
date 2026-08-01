@@ -1,0 +1,40 @@
+---
+title: Dialog
+description: Basic and full-screen dialogs built on Base UI.
+---
+
+Dialogs interrupt to ask for a decision. They are built on Base UI's dialog
+primitive, so focus trapping, scroll locking, escape handling and ARIA wiring
+come from a library that specialises in them.
+
+Compose a dialog from `Dialog` → `DialogTrigger` → `DialogContent`, with
+`DialogTitle`, `DialogBody` and `DialogFooter` inside.
+
+<Example
+  name="dialog/basic"
+  title="Basic dialog"
+  description="DialogClose wraps the buttons so either one dismisses."
+/>
+
+## Full-screen dialog
+
+Full-screen dialogs suit long forms on compact screens, where a centred dialog
+would be cramped. They use their own header with a confirming action.
+
+<Example name="dialog/full-screen" title="Full-screen dialog" />
+
+## Rendering inside a container
+
+`DialogContent` accepts `portalProps`, so you can portal the dialog into a
+specific element rather than `document.body` — this site's demo apps use it to
+keep dialogs inside the phone frame.
+
+```tsx
+<DialogContent portalProps={{ container: myElement }}>…</DialogContent>
+```
+
+## Props
+
+<PropsTable of="DialogContent" />
+
+<SpecLink slug="dialog" source="src/components/Dialog" />

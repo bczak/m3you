@@ -1,0 +1,32 @@
+---
+title: Snackbar
+description: Brief messages about a process, with an optional action.
+---
+
+Snackbars report on something that has already happened. They should not
+interrupt, and they should never be the only place an important message appears.
+
+There are two ways to use them: render `<Snackbar>` yourself, or call the
+imperative `snackbar()` function and mount a single `<SnackbarHost />` near the
+root of your app.
+
+## Layouts
+
+<Example name="snackbar/basic" title="Three layouts" layout="stretch" />
+
+## Imperative API
+
+A snackbar with an action or a close button stays until it is dismissed;
+otherwise it disappears after four seconds.
+
+<Example
+  name="snackbar/api"
+  title="snackbar() and SnackbarHost"
+  description="Mount SnackbarHost once, then call snackbar() from anywhere."
+/>
+
+## Props
+
+<PropsTable of="Snackbar" extends="<output>" />
+
+<SpecLink slug="snackbar" source="src/components/Snackbar" />

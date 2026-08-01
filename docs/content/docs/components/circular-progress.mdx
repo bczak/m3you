@@ -1,0 +1,36 @@
+---
+title: Circular progress
+description: Determinate and indeterminate circular activity.
+---
+
+import { CircularProgress } from 'm3you';
+
+Use determinate progress when you know how much work is left, and indeterminate
+when you do not. The `wavy` variant is the Material 3 Expressive treatment — the
+track ripples rather than sitting flat.
+
+<Playground
+  name="CircularProgress"
+  controls={{
+    type: ['determinate', 'indeterminate'],
+    variant: ['flat', 'wavy'],
+    size: ['md', 'sm', 'lg'],
+    value: { min: 0, max: 100, default: 65 },
+    strokeWidth: { min: 2, max: 12, default: 4 },
+  }}
+  render={(props) => <CircularProgress {...props} />}
+/>
+
+## Determinate and indeterminate
+
+<Example name="circular-progress/basic" title="Both types" />
+
+## Wavy
+
+<Example name="circular-progress/wavy" title="The wavy variant at three sizes" />
+
+## Props
+
+<PropsTable of="CircularProgress" extends="<div>" />
+
+<SpecLink slug="circular-progress" source="src/components/CircularProgress" />

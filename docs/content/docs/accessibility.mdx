@@ -1,0 +1,63 @@
+---
+title: Accessibility
+description: What the library handles, and what stays your job.
+icon: Accessibility
+---
+
+## What the components handle
+
+**Focus, ARIA and keyboard behaviour for overlays.** Dialogs, menus, tooltips,
+popovers and drawers are built on [Base UI](https://base-ui.com). Focus trapping,
+focus return, `Escape` handling, roving tabindex, typeahead and the correct ARIA
+roles come from there rather than being reimplemented.
+
+**Native semantics elsewhere.** Buttons are `<button>`, checkboxes are
+`<input type="checkbox">`, sliders are `<input type="range">`. Forms, screen
+readers and browser autofill work because the underlying element is the right
+one.
+
+**State reflected in ARIA.** Toggle components set `aria-pressed`, tabs set
+`aria-selected`, and disabled states set `disabled` rather than only looking
+faded.
+
+**Colour contrast.** Every generated palette pairs each surface role with an
+"on" role that meets WCAG AA against it — that is what
+`material-color-utilities` computes. Using `--md-sys-color-on-primary` on
+`--md-sys-color-primary` is safe by construction; inventing your own pairing is
+not.
+
+**Reduced motion.** Component animations are short and respect the user's
+setting where they are decorative.
+
+## What stays your job
+
+**Naming icon-only controls.** An `IconButton`, `ToggleIconButton` or icon-only
+`FAB` has no text, so it needs an `aria-label`:
+
+```tsx
+<IconButton variant="tonal" aria-label="Add to favourites">
+  <Heart size={20} aria-hidden="true" />
+</IconButton>
+```
+
+Mark the icon itself `aria-hidden="true"` so it is not announced twice.
+
+**Labelling form controls.** `TextField` takes a `label` prop and wires it up.
+`Switch`, `Checkbox` and `RadioButton` do not render a label — wrap them in one:
+
+```tsx
+<label>
+  <Switch checked={wifi} onCheckedChange={setWifi} />
+  Wi-Fi
+</label>
+```
+
+**Not relying on colour alone.** A filter chip that is selected also shows a
+check icon in these docs for a reason.
+
+**Live regions for async updates.** `Snackbar` renders as `<output>`, which is a
+live region — but if you are updating content elsewhere on a page, announce it
+yourself.
+
+**Testing with a keyboard.** Tab through your screens. Everything interactive
+should be reachable, visibly focused, and operable with Enter or Space.

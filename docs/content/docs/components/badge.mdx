@@ -1,0 +1,41 @@
+---
+title: Badge
+description: A small count or dot anchored to another element.
+---
+
+import { Badge } from 'm3you';
+
+A badge marks an element as having new or unread content. `BadgeAnchor` takes
+care of the positioning — wrap the element and pass the badge to it.
+
+A dot badge (no `count`) means "something new"; a numeric badge means "this many
+things". `max` caps the displayed number and adds a `+`.
+
+<Playground
+  name="Badge"
+  controls={{
+    count: { min: 0, max: 150, default: 8 },
+    max: { min: 9, max: 999, step: 90, default: 99 },
+    color: ['error', 'primary', 'secondary', 'tertiary'],
+    visible: true,
+  }}
+  render={(props) => <Badge {...props} />}
+/>
+
+## Anchoring
+
+<Example
+  name="badge/basic"
+  title="Dot, count, and capped count"
+  description="The third badge holds 1234 with max=99."
+/>
+
+## Colours
+
+<Example name="badge/colors" title="Colour roles" />
+
+## Props
+
+<PropsTable of="Badge" extends="<span>" />
+
+<SpecLink slug="badge" source="src/components/Badge" />

@@ -1,0 +1,60 @@
+---
+title: Introduction
+description: Material Design 3 Expressive components for React, built on plain CSS.
+icon: Sparkles
+---
+
+m3you is a React component library implementing **Material Design 3
+Expressive** — the 2025 revision of Material, not the 2021 one. It ships 37
+components as plain CSS driven by Material's own design tokens.
+
+## What makes it different
+
+**No build-tool ceremony.** One stylesheet import. No runtime CSS-in-JS, no
+Tailwind, no PostCSS plugin, no theme provider component. Everything is CSS
+custom properties, so overriding a token is a one-line CSS rule.
+
+**Dynamic colour that actually works.** `applyM3Theme('#6750A4')` runs Google's
+`material-color-utilities` and writes a complete tonal palette — 50-odd colour
+roles, light and dark — onto the document. The [theme page](/theme) does exactly
+this, live.
+
+**Shapes that morph.** Radii come from the M3 shape scale and animate on a
+spring curve. This is why the library never uses `border-radius: 9999px`: that
+value cannot interpolate, so anything using it snaps instead of morphing.
+
+**Accessible primitives underneath.** Dialogs, menus, tooltips, popovers and
+drawers are built on [Base UI](https://base-ui.com), so focus management, ARIA
+and keyboard behaviour come from a library that specialises in them.
+
+## Getting started
+
+```bash
+bun add m3you
+```
+
+```tsx
+import 'm3you/styles.css';
+import { Button, Card, TextField } from 'm3you';
+
+export function SignIn() {
+  return (
+    <Card variant="elevated">
+      <TextField label="Email" type="email" variant="outlined" />
+      <Button variant="filled">Continue</Button>
+    </Card>
+  );
+}
+```
+
+<Cards>
+  <Card title="Installation" href="/docs/installation" description="Set up in a Vite, Next.js or Remix app." />
+  <Card title="Theming" href="/docs/theming" description="Generate a palette from a seed colour." />
+  <Card title="All components" href="/components" description="Browse the gallery." />
+  <Card title="Showcase" href="/showcase" description="Four apps built from these components." />
+</Cards>
+
+## Requirements
+
+React 19 or later. The library uses the React 19 `ref`-as-prop convention and
+ships as unbundled ESM with generated type declarations.

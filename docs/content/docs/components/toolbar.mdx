@@ -1,0 +1,43 @@
+---
+title: Toolbar
+description: A floating or docked bar of related actions.
+---
+
+import { IconButton, Toolbar } from 'm3you';
+import { Bold, Italic, Underline } from 'lucide-react';
+
+Toolbars gather actions that apply to the current view. `floating` toolbars hover
+above content with a shadow; `docked` toolbars sit flush against an edge.
+
+<Playground
+  name="Toolbar"
+  controls={{
+    type: ['floating', 'docked'],
+    color: ['standard', 'vibrant'],
+    align: ['center', 'start', 'end', 'between'],
+    layout: ['horizontal', 'vertical'],
+  }}
+  render={(props) => (
+    <Toolbar {...props}>
+      <IconButton variant="standard" aria-label="Bold">
+        <Bold size={20} aria-hidden="true" />
+      </IconButton>
+      <IconButton variant="standard" aria-label="Italic">
+        <Italic size={20} aria-hidden="true" />
+      </IconButton>
+      <IconButton variant="standard" aria-label="Underline">
+        <Underline size={20} aria-hidden="true" />
+      </IconButton>
+    </Toolbar>
+  )}
+/>
+
+## Examples
+
+<Example name="toolbar/basic" title="A floating text toolbar" />
+
+## Props
+
+<PropsTable of="Toolbar" extends="<div>" />
+
+<SpecLink slug="toolbar" source="src/components/Toolbar" />

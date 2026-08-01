@@ -1,0 +1,46 @@
+---
+title: Icon button
+description: A compact action with an icon in place of a label.
+---
+
+import { Star } from 'lucide-react';
+import { IconButton } from 'm3you';
+
+Icon buttons carry a single action in the space of an icon. They share the
+Button size and shape scales, and add a `width` axis for tighter or roomier
+targets.
+
+Every icon button needs an `aria-label` — there is no visible text to name it.
+
+<Playground
+  name="IconButton"
+  controls={{
+    variant: ['filled', 'tonal', 'elevated', 'outlined', 'standard'],
+    size: ['sm', 'xs', 'md', 'lg', 'xl'],
+    width: ['default', 'narrow', 'wide'],
+    shape: ['round', 'square'],
+    disabled: false,
+  }}
+  render={(props) => (
+    <IconButton {...props} aria-label="Star">
+      <Star size={20} aria-hidden="true" />
+    </IconButton>
+  )}
+/>
+
+## Variants
+
+<Example name="icon-button/variants" title="The five variants" />
+
+## Width
+
+`width` changes horizontal padding without changing height, so a row of icon
+buttons stays on one baseline while individual targets grow.
+
+<Example name="icon-button/widths" title="Narrow, default and wide" />
+
+## Props
+
+<PropsTable of="IconButton" extends="<button>" />
+
+<SpecLink slug="icon-button" source="src/components/IconButton" />

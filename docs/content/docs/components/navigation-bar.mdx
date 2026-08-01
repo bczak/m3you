@@ -1,0 +1,25 @@
+---
+title: Navigation bar
+description: Bottom navigation between three to five destinations.
+---
+
+Navigation bars switch between the top-level destinations of an app on compact
+screens. Use between three and five — fewer and tabs would do, more and the
+targets get too small.
+
+Each item needs a `value`, an `icon` and a `label`. Pass `activeIcon` to swap in
+a filled icon when selected, which is the Material convention.
+
+<Example
+  name="navigation-bar/basic"
+  title="Four destinations"
+  description="The profile item carries a badge."
+  layout="stretch"
+/>
+
+## Props
+
+<PropsTable of="NavigationBar" extends="<nav>" />
+<PropsTable of="NavigationBarItem" extends="<button>" />
+
+<SpecLink slug="navigation-bar" source="src/components/NavigationBar" />

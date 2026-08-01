@@ -1,0 +1,18 @@
+---
+title: Radio button
+description: One choice from a set, on its own or in a group.
+---
+
+Radio buttons let people pick exactly one option. Use `RadioGroup` with
+`RadioGroupItem` so the group manages `name`, selection and arrow-key
+navigation; reach for the bare `RadioButton` only when you are wiring up your own
+form state.
+
+<Example name="radio-button/group" title="A radio group" layout="stretch" />
+
+## Props
+
+<PropsTable of="RadioGroup" extends="<div>" />
+<PropsTable of="RadioGroupItem" extends="<input type='radio'>" />
+
+<SpecLink slug="radio-button" source="src/components/RadioButton" />

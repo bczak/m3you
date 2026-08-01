@@ -1,0 +1,99 @@
+/* =============================================================================
+   Fumadocs → Material 3 theme bridge
+
+   Fumadocs UI paints everything through a small set of `--color-fd-*` variables.
+   Re-pointing them at m3you's `--md-sys-color-*` tokens makes the documentation
+   chrome itself Material: sidebar, search dialog, code blocks, callouts and
+   tables all follow the reader's chosen seed colour and light/dark mode.
+
+   Why `:root, .dark` and not just `:root`:
+   Fumadocs ships its dark values inside a `.dark { ... }` block. That has the
+   same specificity as `:root`, so only source order separates them — this file
+   is imported last, and listing both selectors guarantees the mapping wins in
+   either mode. The mapping is mode-agnostic because the m3you tokens themselves
+   already flip under `[data-theme="dark"]`.
+   ============================================================================= */
+
+:root,
+.dark {
+  /* Surfaces */
+  --color-fd-background: var(--md-sys-color-surface);
+  --color-fd-foreground: var(--md-sys-color-on-surface);
+  --color-fd-muted: var(--md-sys-color-surface-container);
+  --color-fd-muted-foreground: var(--md-sys-color-on-surface-variant);
+  --color-fd-popover: var(--md-sys-color-surface-container-high);
+  --color-fd-popover-foreground: var(--md-sys-color-on-surface);
+  --color-fd-card: var(--md-sys-color-surface-container-low);
+  --color-fd-card-foreground: var(--md-sys-color-on-surface);
+
+  /* Accents */
+  --color-fd-primary: var(--md-sys-color-primary);
+  --color-fd-primary-foreground: var(--md-sys-color-on-primary);
+  --color-fd-secondary: var(--md-sys-color-secondary-container);
+  --color-fd-secondary-foreground: var(--md-sys-color-on-secondary-container);
+  --color-fd-accent: var(--md-sys-color-surface-container-highest);
+  --color-fd-accent-foreground: var(--md-sys-color-on-surface);
+
+  /* Lines & focus */
+  --color-fd-border: var(--md-sys-color-outline-variant);
+  --color-fd-ring: var(--md-sys-color-primary);
+  --color-fd-overlay: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
+
+  /* Semantic callout colours — M3 has a real error role, the rest stay tonal */
+  --color-fd-error: var(--md-sys-color-error);
+  --color-fd-info: var(--md-sys-color-primary);
+  --color-fd-idea: var(--md-sys-color-tertiary);
+}
+
+/* The sidebar gets its own tint in the stock theme; keep it a distinct M3
+   surface level so the content column still reads as the page surface. */
+#nd-sidebar {
+  --color-fd-muted: var(--md-sys-color-surface-container-low);
+  --color-fd-secondary: var(--md-sys-color-secondary-container);
+  --color-fd-muted-foreground: var(--md-sys-color-on-surface-variant);
+}
+
+/* =============================================================================
+   Typography — swap the docs type ramp for the M3 typescale.
+   ============================================================================= */
+
+body {
+  font-family: var(--md-sys-typescale-body-large-font, ui-sans-serif, system-ui, sans-serif);
+}
+
+#nd-docs-layout h1,
+#nd-page h1 {
+  font-size: var(--md-sys-typescale-headline-large-size);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
+  font-weight: 400;
+  letter-spacing: var(--md-sys-typescale-headline-large-tracking);
+}
+
+#nd-docs-layout h2,
+#nd-page h2 {
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  font-weight: 400;
+  letter-spacing: var(--md-sys-typescale-headline-small-tracking);
+}
+
+#nd-docs-layout h3,
+#nd-page h3 {
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: 500;
+}
+
+/* =============================================================================
+   M3 shape — the docs shell uses square-ish corners by default; Material is
+   rounder. Radii come from the shape scale so they stay in step with the tokens.
+   ============================================================================= */
+
+:root {
+  --radius: var(--md-sys-shape-corner-medium);
+}
+
+#nd-sidebar a[data-active],
+#nd-toc a[data-active] {
+  border-radius: var(--md-sys-shape-corner-large);
+}

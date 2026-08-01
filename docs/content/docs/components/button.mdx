@@ -1,0 +1,65 @@
+---
+title: Button
+description: Five variants, five sizes, and a shape that morphs on press.
+---
+
+import { Button } from 'm3you';
+
+Buttons let people take action. m3you ships the five Material 3 variants, each in
+five sizes, in round or square shape — and every combination animates between
+shapes with the Expressive spring curve.
+
+<Playground
+  name="Button"
+  controls={{
+    variant: ['filled', 'tonal', 'elevated', 'outlined', 'text'],
+    size: ['sm', 'xs', 'md', 'lg', 'xl'],
+    shape: ['round', 'square'],
+    morph: false,
+    disabled: false,
+  }}
+  snippetChildren="Press me"
+  render={(props) => <Button {...props}>Press me</Button>}
+/>
+
+## Variants
+
+Variants carry emphasis. Use one filled button per screen for the primary
+action, tonal for a strong secondary, and text for the lowest emphasis.
+
+<Example
+  name="button/variants"
+  title="The five variants"
+  description="Ordered from highest to lowest emphasis."
+/>
+
+## Sizes
+
+The size scale runs from `xs` to `xl`. Sizes change height, padding, label
+typescale and corner radius together — you never set those separately.
+
+<Example name="button/sizes" title="Size scale" />
+
+## Shape and morph
+
+Round is the default. Square gives a more structural feel, and `morph` swaps to
+the other shape while the button is held — the Expressive shape-change gesture.
+
+<Example
+  name="button/shapes"
+  title="Shape and morph"
+  description="Press and hold the third button to see the morph."
+/>
+
+## Icons
+
+Icons are children, not a prop. Place one before the label for an action that
+creates or moves something, and size it to match the button's typescale.
+
+<Example name="button/with-icons" title="Leading icons" />
+
+## Props
+
+<PropsTable of="Button" extends="<button>" />
+
+<SpecLink slug="button" source="src/components/Button" />

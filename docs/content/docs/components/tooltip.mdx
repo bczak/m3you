@@ -1,0 +1,24 @@
+---
+title: Tooltip
+description: Plain and rich tooltips that explain an element on hover.
+---
+
+Plain tooltips name an element in a few words. Rich tooltips add a headline, a
+paragraph and up to one action — use them for genuinely new concepts, not for
+labels.
+
+Both need a `TooltipProvider` above them, which shares the open/close delays so
+moving between neighbouring triggers does not re-trigger the delay each time.
+
+<Example name="tooltip/basic" title="Plain tooltip" description="Hover or focus the button." />
+
+## Rich tooltip
+
+<Example name="tooltip/rich" title="Rich tooltip" />
+
+## Props
+
+<PropsTable of="TooltipContent" />
+<PropsTable of="RichTooltipContent" />
+
+<SpecLink slug="tooltip" source="src/components/Tooltip" />

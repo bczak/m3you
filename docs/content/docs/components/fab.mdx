@@ -1,0 +1,40 @@
+---
+title: FAB
+description: The floating action button, in three sizes and four colours.
+---
+
+import { Plus } from 'lucide-react';
+import { FAB } from 'm3you';
+
+The floating action button carries the single most important action on a screen.
+There should be at most one per screen, and it should never be the only way to
+reach that action.
+
+<Playground
+  name="FAB"
+  controls={{
+    variant: ['tonal', 'filled', 'elevated', 'outlined', 'standard'],
+    size: ['md', 'sm', 'lg'],
+    lowered: false,
+    disabled: false,
+  }}
+  render={(props) => (
+    <FAB {...props} aria-label="Add">
+      <Plus size={24} aria-hidden="true" />
+    </FAB>
+  )}
+/>
+
+## Sizes
+
+<Example name="fab/sizes" title="Small, medium and large" />
+
+## Variants
+
+<Example name="fab/variants" title="Colour variants" />
+
+## Props
+
+<PropsTable of="FAB" extends="<button>" />
+
+<SpecLink slug="fab" source="src/components/Fab" />

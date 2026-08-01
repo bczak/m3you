@@ -1,0 +1,46 @@
+---
+title: Toggle button
+description: A button that stays selected, with an M3 shape morph.
+---
+
+import { ToggleButton } from 'm3you';
+
+A toggle button represents a setting that is on or off, rather than an action
+that happens once. Use `selected` with `onSelectedChange` to control it, or
+`defaultSelected` to let it manage itself.
+
+<Playground
+  name="ToggleButton"
+  controls={{
+    variant: ['filled', 'tonal', 'elevated', 'text'],
+    size: ['sm', 'xs', 'md', 'lg', 'xl'],
+    shape: ['round', 'square'],
+    defaultSelected: false,
+    morph: false,
+    disabled: false,
+  }}
+  snippetChildren="Toggle"
+  render={(props) => <ToggleButton {...props}>Toggle</ToggleButton>}
+/>
+
+## Controlled and uncontrolled
+
+<Example
+  name="toggle-button/basic"
+  title="Both patterns"
+  description="The first button is controlled and changes its own label; the second manages itself."
+/>
+
+## Morph
+
+With `morph`, the corner radius changes while the button is held — the
+Expressive press gesture. It runs on the spring curve, so it settles rather than
+snapping.
+
+<Example name="toggle-button/morph" title="Press and hold" />
+
+## Props
+
+<PropsTable of="ToggleButton" extends="<button>" />
+
+<SpecLink slug="toggle-button" source="src/components/ToggleButton" />

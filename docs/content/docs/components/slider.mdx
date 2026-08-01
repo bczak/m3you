@@ -1,0 +1,41 @@
+---
+title: Slider
+description: A value along a range, continuous or in steps.
+---
+
+import { Slider } from 'm3you';
+
+Sliders suit values where the exact number matters less than the relative
+position — volume, brightness, opacity. Setting `step` turns the slider discrete
+and draws stop indicators along the track.
+
+<Playground
+  name="Slider"
+  controls={{
+    size: ['md', 'xs', 'sm', 'lg', 'xl'],
+    value: { min: 0, max: 100, default: 45 },
+    step: { min: 1, max: 25, default: 1 },
+    showTooltip: false,
+    disabled: false,
+  }}
+  render={(props) => (
+    <div style={{ width: '20rem' }}>
+      <Slider {...props} />
+    </div>
+  )}
+/>
+
+## Continuous, discrete and iconic
+
+<Example
+  name="slider/basic"
+  title="Three sliders"
+  description="Continuous with a tooltip, discrete in steps of 10, and one with an inset icon."
+  layout="stretch"
+/>
+
+## Props
+
+<PropsTable of="Slider" extends="<input type='range'>" />
+
+<SpecLink slug="slider" source="src/components/Slider" />

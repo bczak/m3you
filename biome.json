@@ -35,7 +35,20 @@
       }
     }
   },
+  "files": {
+    "includes": ["**", "!docs/src/routeTree.gen.ts", "!docs/.output", "!docs/.source"]
+  },
   "overrides": [
+    {
+      "includes": ["docs/src/styles/app.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          }
+        }
+      }
+    },
     {
       "includes": [".storybook/**/*.css"],
       "linter": {

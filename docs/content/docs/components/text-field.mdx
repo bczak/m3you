@@ -1,0 +1,49 @@
+---
+title: Text field
+description: Filled and outlined fields with labels and supporting text.
+---
+
+import { TextField } from 'm3you';
+
+Text fields collect typed input. Both variants animate the label into the field
+outline on focus. Use `supportingText` for guidance that is always relevant, and
+`errorText` for a message that replaces it when `error` is set.
+
+`onValueChange` gives you the string directly, so you rarely need to reach into
+the event.
+
+<Playground
+  name="TextField"
+  controls={{
+    variant: ['filled', 'outlined'],
+    label: 'Label',
+    supportingText: 'Supporting text',
+    type: ['text', 'email', 'password', 'number', 'search', 'tel', 'url'],
+    error: false,
+    disabled: false,
+  }}
+  render={(props) => (
+    <div style={{ width: '18rem' }}>
+      <TextField {...props} />
+    </div>
+  )}
+/>
+
+## Variants
+
+<Example name="text-field/variants" title="Filled, outlined and with an icon" layout="stretch" />
+
+## Validation and affixes
+
+<Example
+  name="text-field/validation"
+  title="Errors, character counts and affixes"
+  description="Type an @ into the first field to clear the error."
+  layout="stretch"
+/>
+
+## Props
+
+<PropsTable of="TextField" extends="<input>" />
+
+<SpecLink slug="text-field" source="src/components/TextField" />

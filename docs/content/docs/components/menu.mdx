@@ -1,0 +1,25 @@
+---
+title: Menu
+description: Menus with groups, dividers and nested sub-menus.
+---
+
+Menus present a list of choices on a temporary surface. They are built on Base
+UI's menu primitive, so keyboard navigation, typeahead and focus return work
+without any wiring.
+
+`MenuTrigger` takes a `render` prop to use your own button as the trigger, the
+same convention as Dialog, Tooltip and the sheets. (`asChild` still works but is
+deprecated.)
+
+<Example name="menu/basic" title="Icons, shortcuts and a divider" />
+
+## Sub-menus
+
+<Example name="menu/submenu" title="A nested sub-menu" description="Hover “Send to”." />
+
+## Props
+
+<PropsTable of="Menu" />
+<PropsTable of="MenuItem" extends="<div>" />
+
+<SpecLink slug="menu" source="src/components/Menu" />

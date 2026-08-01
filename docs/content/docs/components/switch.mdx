@@ -1,0 +1,33 @@
+---
+title: Switch
+description: A binary toggle that takes effect immediately.
+---
+
+import { Switch } from 'm3you';
+
+A switch applies its change the moment it is flipped — no save button. If the
+change needs confirming, use a checkbox in a form instead.
+
+Always label a switch. The examples here wrap it in a `<label>`; in a settings
+list, the row title is the label.
+
+<Playground
+  name="Switch"
+  controls={{
+    checked: false,
+    showIcons: false,
+    variant: ['primary', 'error'],
+    disabled: false,
+  }}
+  render={(props) => <Switch {...props} />}
+/>
+
+## Examples
+
+<Example name="switch/basic" title="Labelled switches" layout="stretch" />
+
+## Props
+
+<PropsTable of="Switch" extends="<input type='checkbox'>" />
+
+<SpecLink slug="switch" source="src/components/Switch" />

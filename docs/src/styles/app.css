@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+/* The library itself. Imported before the bridge so the `--md-sys-*` tokens
+   exist by the time the Fumadocs variables are re-pointed at them. */
+@import "../../../src/styles/globals.css";
+
+@import "./m3-bridge.css";
+@import "./site.css";
+@import "./preview.css";
+@import "./device.css";
+
+html {
+  scrollbar-gutter: stable;
+}
+
+html > body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}

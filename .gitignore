@@ -21,3 +21,13 @@ coverage/
 .design-sync/node_modules
 .ds-sync/
 ds-bundle/
+
+# Docs site (TanStack Start / Fumadocs)
+docs/.output/
+docs/.nitro/
+docs/.tanstack/
+docs/.source/
+docs/src/lib/docgen.json
+
+# Playwright MCP scratch output
+.playwright-mcp/

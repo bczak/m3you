@@ -1,0 +1,67 @@
+---
+title: Dark mode
+description: Two ways to switch palettes, and how they interact.
+icon: Moon
+---
+
+Dark mode works two ways, and you can use either or both.
+
+## Follow the system
+
+Out of the box, m3you respects `prefers-color-scheme`. Nothing to configure:
+
+```css
+/* Already in the shipped stylesheet */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* dark palette */
+  }
+}
+```
+
+Note the `:not([data-theme="light"])` — an explicit light setting always wins
+over the system preference.
+
+## Explicit control
+
+Set `data-theme` on `<html>`, or on any ancestor to scope it:
+
+```tsx
+document.documentElement.dataset.theme = 'dark';
+```
+
+```html
+<div data-theme="dark">
+  <!-- everything here uses the dark palette -->
+</div>
+```
+
+Scoping is genuinely useful: this site's component playgrounds put
+`data-theme="dark"` on the preview stage alone, so you can check a component in
+dark mode without flipping the page.
+
+## Also set color-scheme
+
+Tell the browser too, so native form controls, scrollbars and the caret match:
+
+```tsx
+document.documentElement.style.colorScheme = 'dark';
+```
+
+## With next-themes
+
+If you use `next-themes`, drive both attributes from it:
+
+```tsx
+<ThemeProvider attribute={['class', 'data-theme']} />
+```
+
+That is exactly what this documentation site does — `data-theme` for m3you,
+`class` for the docs framework, one toggle for both.
+
+## Avoiding a flash
+
+The palette lives in CSS, so there is no flash from the components themselves.
+A flash only appears if you set `data-theme` from JavaScript after paint — the
+usual fix is a small blocking script in `<head>` that reads the stored
+preference and sets the attribute before the first render.

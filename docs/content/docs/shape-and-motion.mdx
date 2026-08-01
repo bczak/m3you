@@ -1,0 +1,78 @@
+---
+title: Shape and motion
+description: Why the library never uses a 9999px radius.
+icon: Shapes
+---
+
+Shape change is one of the defining gestures of Material 3 Expressive: buttons
+reshape as you press them, connected groups round the selected segment while
+squaring its neighbours, the loading indicator morphs between seven silhouettes.
+Making that feel right constrains how radii are written.
+
+## The 9999px problem
+
+The usual way to make a pill is `border-radius: 9999px`. It works visually, but
+it cannot animate. Interpolating from `9999px` to `12px` spends almost the entire
+transition at values still large enough to look fully round, then snaps at the
+end. The morph reads as a jump.
+
+So m3you never uses `border-radius: 9999px`, and never uses the
+`--md-sys-shape-corner-full` token in component CSS. Instead:
+
+**For pills** — anything wider than it is tall — the radius is computed from the
+component's own height:
+
+```css
+.md-button {
+  --_height: 40px;
+  border-radius: calc(var(--_height) / 2);
+}
+```
+
+Each size variant sets `--_height`, so the radius is always exactly half and the
+value is a real number that can interpolate.
+
+**For circles** — where width equals height — it is `border-radius: 50%`.
+
+## Spring motion
+
+Shape transitions use the Expressive spring easing, which settles rather than
+stopping dead:
+
+```css
+transition: border-radius
+  var(--md-sys-motion-duration-short2)
+  var(--md-sys-motion-easing-spring-default-spatial);
+```
+
+Try it on the [connected button group](/docs/components/connected-button-group),
+where the effect is most visible, or hold down a
+[button with `morph`](/docs/components/button).
+
+## Shape morphing
+
+The [loading indicator](/docs/components/loading-indicator) goes further. Its
+seven shapes are each resampled to 300 equidistant points so
+`clip-path: polygon()` can interpolate between any two, and point zero of every
+shape is rotationally aligned to the first so the morph does not swirl.
+
+The polygons are exported if you want them:
+
+```tsx
+import { SHAPE_POLYGONS, SHAPE_NAMES } from 'm3you';
+
+<div style={{ clipPath: SHAPE_POLYGONS['soft-burst'] }} />
+```
+
+This site's logo and the shapes behind the home page hero are clipped from that
+same set.
+
+## Respecting reduced motion
+
+Wrap decorative animation in a media query:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .my-decoration { animation: none; }
+}
+```

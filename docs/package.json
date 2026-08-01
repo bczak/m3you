@@ -1,0 +1,45 @@
+{
+  "name": "@m3you/docs",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "docgen": "bun run scripts/gen-docgen.ts",
+    "predev": "bun run docgen",
+    "dev": "vite dev",
+    "prebuild": "bun run docgen",
+    "build": "vite build",
+    "start": "serve .output/public --config ./serve.json",
+    "preview": "vite preview",
+    "types:check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "1.170.18",
+    "@tanstack/react-start": "1.168.32",
+    "@tanstack/start-static-server-functions": "1.167.19",
+    "cnfast": "^0.1.0",
+    "fumadocs-core": "16.14.0",
+    "fumadocs-mdx": "15.2.1",
+    "fumadocs-ui": "npm:@fumadocs/base-ui@16.14.0",
+    "lucide-react": "1.21.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/mdx": "^2.0.14",
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "nitro": "3.0.260610-beta",
+    "react-docgen-typescript": "^2.4.0",
+    "serve": "^14.2.6",
+    "srvx": "^0.12.4",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.5",
+    "vitest": "4.1.9"
+  }
+}

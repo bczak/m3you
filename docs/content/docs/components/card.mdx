@@ -1,0 +1,44 @@
+---
+title: Card
+description: A container for related content, in three elevations.
+---
+
+import { Card } from 'm3you';
+
+Cards group content and actions about a single subject. Pick the variant by how
+much separation the card needs from its background: `elevated` casts a shadow,
+`filled` uses a container colour, `outlined` uses a border.
+
+<Playground
+  name="Card"
+  controls={{
+    variant: ['filled', 'elevated', 'outlined'],
+    ripple: false,
+    disabled: false,
+  }}
+  render={(props) => (
+    <Card {...props} style={{ padding: '1.25rem', width: '16rem' }}>
+      <strong>Card title</strong>
+      <p style={{ margin: '0.375rem 0 0', fontSize: '0.875rem', opacity: 0.75 }}>
+        Supporting text that explains what this card is about.
+      </p>
+    </Card>
+  )}
+/>
+
+## Variants
+
+<Example name="card/variants" title="Elevated, filled and outlined" />
+
+## Interactive cards
+
+Adding `onClick` makes the whole card a target. Set `ripple` so the press has
+Material feedback — without it, a clickable card feels inert.
+
+<Example name="card/interactive" title="A clickable card" />
+
+## Props
+
+<PropsTable of="Card" extends="<div>" />
+
+<SpecLink slug="card" source="src/components/Card" />

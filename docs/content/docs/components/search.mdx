@@ -1,0 +1,22 @@
+---
+title: Search
+description: A search bar that expands into a full search view.
+---
+
+The search bar is the collapsed state; the search view is what it expands into,
+holding recent and suggested results. Put `SearchView` inside `SearchBar` and the
+component manages the transition between them.
+
+<Example
+  name="search/basic"
+  title="Filtering suggestions"
+  description="Focus the field and type — the suggestions filter live."
+  layout="stretch"
+/>
+
+## Props
+
+<PropsTable of="SearchBar" extends="<div>" />
+<PropsTable of="SearchSuggestionItem" extends="<button>" />
+
+<SpecLink slug="search" source="src/components/Search" />

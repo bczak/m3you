@@ -1,0 +1,23 @@
+---
+title: Extendable FAB
+description: A FAB that expands to reveal its label, then collapses again.
+---
+
+The extendable FAB starts as a circle and grows into a labelled pill. The
+typical trigger is scroll direction: extended at the top of a list, collapsed
+once the user scrolls down.
+
+Both `icon` and `label` are required — the component needs them to measure the
+extended width before animating to it.
+
+<Example
+  name="extendable-fab/basic"
+  title="Toggling extension"
+  description="Use the outlined button to extend and collapse."
+/>
+
+## Props
+
+<PropsTable of="ExtendableFAB" extends="<button>" />
+
+<SpecLink slug="extendable-fab" source="src/components/ExtendableFab" />

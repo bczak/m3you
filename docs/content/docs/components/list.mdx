@@ -1,0 +1,33 @@
+---
+title: List
+description: Rows of related content, optionally selectable.
+---
+
+Lists present a continuous set of related items. Each `ListItem` takes a
+`headline` plus optional `overline`, `supportingText`, `leading` and `trailing`
+slots — `lineCount` tells it how many lines to reserve.
+
+The Expressive `segmented` appearance separates rows into rounded containers and
+is the recommended Material 3 look.
+
+<Example name="list/basic" title="A three-line list" layout="stretch" />
+
+## Selection
+
+Setting `mode` turns the list into a selection control. Single-select lists
+behave like radios and multi-select lists like checkboxes, with keyboard
+navigation to match. Selection lists must carry an `aria-label`, and each item
+needs a stable `value`.
+
+<Example
+  name="list/selection"
+  title="Single and multiple selection"
+  layout="stretch"
+/>
+
+## Props
+
+<PropsTable of="List" extends="<ul>" />
+<PropsTable of="ListItem" extends="<li>" />
+
+<SpecLink slug="list" source="src/components/List" />

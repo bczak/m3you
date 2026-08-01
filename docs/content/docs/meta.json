@@ -1,0 +1,16 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "index",
+    "installation",
+    "---Foundations---",
+    "theming",
+    "dark-mode",
+    "tokens",
+    "shape-and-motion",
+    "accessibility",
+    "---Reference---",
+    "components",
+    "contributing"
+  ]
+}

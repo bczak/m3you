@@ -1,0 +1,40 @@
+---
+title: Linear progress
+description: A horizontal track for progress through a task.
+---
+
+import { LinearProgress } from 'm3you';
+
+Linear progress suits work attached to a region of the screen — a page load, an
+upload, a form submission. It stretches to the width of its container.
+
+<Playground
+  name="LinearProgress"
+  controls={{
+    type: ['determinate', 'indeterminate'],
+    variant: ['flat', 'wavy'],
+    value: { min: 0, max: 100, default: 40 },
+  }}
+  render={(props) => (
+    <div style={{ width: '20rem' }}>
+      <LinearProgress {...props} />
+    </div>
+  )}
+/>
+
+## Variants
+
+<Example name="linear-progress/basic" title="Flat, wavy and indeterminate" layout="stretch" />
+
+## Animated
+
+The wave animates as the value changes, which is what makes the Expressive
+treatment worth using over a flat bar.
+
+<Example name="linear-progress/live" title="Driving the value" />
+
+## Props
+
+<PropsTable of="LinearProgress" extends="<div>" />
+
+<SpecLink slug="linear-progress" source="src/components/LinearProgress" />

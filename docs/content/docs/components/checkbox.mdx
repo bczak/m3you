@@ -1,0 +1,36 @@
+---
+title: Checkbox
+description: Checked, unchecked and indeterminate selection.
+---
+
+import { Checkbox } from 'm3you';
+
+Checkboxes let people select any number of options from a set. Use
+`indeterminate` for a parent whose children are partly selected — it is a visual
+state only, so you still control `checked` yourself.
+
+<Playground
+  name="Checkbox"
+  controls={{
+    checked: false,
+    indeterminate: false,
+    variant: ['primary', 'error'],
+    disabled: false,
+  }}
+  render={(props) => <Checkbox {...props} />}
+/>
+
+## Select all
+
+<Example
+  name="checkbox/basic"
+  title="A parent checkbox"
+  description="The parent goes indeterminate when only some children are checked."
+  layout="stretch"
+/>
+
+## Props
+
+<PropsTable of="Checkbox" extends="<input type='checkbox'>" />
+
+<SpecLink slug="checkbox" source="src/components/Checkbox" />

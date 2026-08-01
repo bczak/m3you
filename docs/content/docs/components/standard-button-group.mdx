@@ -1,0 +1,29 @@
+---
+title: Standard button group
+description: Evenly spaced buttons that share size, shape and selection.
+---
+
+Button groups hand their `size`, `shape` and `morph` down to every `Button`
+inside them through context, so you set those once on the group.
+
+Selection is by **index**, not by value: `value` and `defaultValue` are arrays of
+positions, and `onValueChange` receives the new array.
+
+<Example
+  name="standard-button-group/basic"
+  title="Single selection"
+  description="selectionMode='single' keeps one button selected at a time."
+/>
+
+## Multiple selection
+
+With `selectionMode="multiple"`, any number of buttons can be selected at once —
+the pattern for text formatting and filter toolbars.
+
+<Example name="standard-button-group/multiple" title="Multiple selection" />
+
+## Props
+
+<PropsTable of="StandardButtonGroup" extends="<div>" />
+
+<SpecLink slug="standard-button-group" source="src/components/ButtonGroup" />

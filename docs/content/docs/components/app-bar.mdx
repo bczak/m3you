@@ -1,0 +1,44 @@
+---
+title: App bar
+description: Small through large top bars for titles and actions.
+---
+
+import { AppBar, IconButton } from 'm3you';
+import { MoreVertical } from 'lucide-react';
+
+The top app bar names the current screen and holds its most common actions. The
+four variants differ in height and how much room the headline gets: `small` for
+dense screens, `medium` and `large` when the title deserves emphasis, `search`
+when the bar itself is the search field.
+
+<Playground
+  name="AppBar"
+  controls={{
+    variant: ['small', 'medium', 'large', 'search'],
+    headline: 'Inbox',
+    subtitle: '',
+    centerAligned: false,
+  }}
+  render={(props) => (
+    <div style={{ width: '100%', minWidth: '20rem' }}>
+      <AppBar
+        {...props}
+        trailingIcons={
+          <IconButton variant="standard" aria-label="More">
+            <MoreVertical size={20} aria-hidden="true" />
+          </IconButton>
+        }
+      />
+    </div>
+  )}
+/>
+
+## Sizes
+
+<Example name="app-bar/variants" title="Small, medium and large" layout="stretch" />
+
+## Props
+
+<PropsTable of="AppBar" extends="<header>" />
+
+<SpecLink slug="app-bar" source="src/components/AppBar" />

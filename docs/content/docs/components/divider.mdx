@@ -1,0 +1,32 @@
+---
+title: Divider
+description: A thin line that groups content in lists and layouts.
+---
+
+import { Divider } from 'm3you';
+
+A divider separates groups of content. Reach for one only when whitespace alone
+is not enough — Material 3 leans on spacing first.
+
+<Playground
+  name="Divider"
+  controls={{
+    variant: ['full-width', 'inset', 'heavy'],
+    orientation: ['horizontal', 'vertical'],
+  }}
+  render={(props) => (
+    <div style={{ width: '20rem', height: props.orientation === 'vertical' ? '5rem' : undefined }}>
+      <Divider {...props} />
+    </div>
+  )}
+/>
+
+## Variants
+
+<Example name="divider/basic" title="Full width, inset and heavy" layout="stretch" />
+
+## Props
+
+<PropsTable of="Divider" extends="<hr>" />
+
+<SpecLink slug="divider" source="src/components/Divider" />

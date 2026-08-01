@@ -1,0 +1,92 @@
+---
+title: Installation
+description: Add m3you to a React app in two steps.
+icon: Download
+---
+
+## Install
+
+```bash tab="bun"
+bun add m3you
+```
+
+```bash tab="npm"
+npm install m3you
+```
+
+```bash tab="pnpm"
+pnpm add m3you
+```
+
+React 19+ is a peer dependency:
+
+```bash
+npm install react react-dom
+```
+
+## Import the stylesheet
+
+Import it once, at your app's entry point, before any component renders:
+
+```tsx title="src/main.tsx"
+import 'm3you/styles.css';
+```
+
+That single file contains the design tokens, shared utilities and every
+component's styles. There is no per-component CSS import and no bundler plugin
+to configure.
+
+## Use a component
+
+```tsx
+import { Button } from 'm3you';
+
+export function App() {
+  return <Button variant="filled">Continue</Button>;
+}
+```
+
+## Framework notes
+
+### Vite
+
+Nothing to configure — import the stylesheet in `main.tsx` and you are done.
+
+### Next.js (App Router)
+
+Import the stylesheet in the root layout. Components that hold state need the
+`'use client'` directive, as with any interactive React component:
+
+```tsx title="app/layout.tsx"
+import 'm3you/styles.css';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+### Remix / React Router
+
+Export the stylesheet from your root route's `links` function, or import it
+directly if your setup supports CSS imports.
+
+## Bundle size
+
+The package is published as unbundled ESM with `sideEffects` limited to CSS
+files, so importing one component pulls in only that component's JavaScript. The
+stylesheet is not tree-shaken — it is a single file of roughly 60 KB before
+compression — which is the trade for having no build step.
+
+## Icons
+
+m3you does not ship icons. The examples throughout these docs use
+[lucide-react](https://lucide.dev), but any icon set works: icons are passed as
+`ReactNode` children or props.
+
+```bash
+npm install lucide-react
+```

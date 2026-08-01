@@ -1,0 +1,575 @@
+/* =============================================================================
+   Device frame and the demo-app showcase.
+   ============================================================================= */
+
+.m3-phone {
+  position: relative;
+  margin: 0;
+  flex: none;
+}
+
+.m3-phone__scaler {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.m3-phone__bezel {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  border-radius: 44px;
+  background: linear-gradient(160deg, #2b2b2f, #131316);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.12) inset,
+    0 24px 60px -20px rgb(0 0 0 / 0.45);
+}
+
+.m3-phone__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 34px;
+  overflow: hidden;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  /* Apps inside respond to the frame, not the browser window. */
+  container-type: inline-size;
+  container-name: device;
+  isolation: isolate;
+  /* The screen — not the outer scaler — must be the containing block for fixed
+     descendants. NavigationBar is `position: fixed; inset-inline: 0`, so if the
+     scaler owns it the bar spans the bezel's full width and overhangs the
+     screen's rounded corners instead of being clipped by them. */
+  transform: translateZ(0);
+}
+
+.m3-phone__label {
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  text-align: center;
+  font-size: var(--md-sys-typescale-label-large-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.m3-showcase-teaser {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  justify-content: center;
+}
+
+.m3-showcase-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.m3-showcase-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 24rem;
+}
+
+.m3-showcase-item__body {
+  text-align: center;
+}
+
+.m3-showcase-item__title {
+  margin: 0 0 0.25rem;
+  font-size: var(--md-sys-typescale-title-large-size);
+  font-weight: 500;
+}
+
+.m3-showcase-item__summary {
+  margin: 0 0 0.75rem;
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: 1.55;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.m3-showcase-item__uses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  justify-content: center;
+}
+
+.m3-showcase-item__chip {
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--md-sys-shape-corner-small);
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 0.6875rem;
+}
+
+/* Full-screen app route: the app fills the viewport with no bezel.
+
+   `transform` (not `container-type`) is what makes this a containing block for
+   the fixed-position NavigationBar and for portalled dialogs; `container-type`
+   only provides the query context the apps' layouts read. */
+.m3-appstage {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  transform: translateZ(0);
+  container-type: inline-size;
+  container-name: device;
+  background-color: var(--md-sys-color-surface);
+  overflow: hidden;
+}
+
+/* Bottom-trailing, not top-leading: the apps put their navigation rail on the
+   leading edge and their app bar across the top, so either of those would sit
+   underneath a corner button. */
+.m3-appstage__back {
+  position: fixed;
+  z-index: 20;
+  bottom: 1rem;
+  inset-inline-end: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--md-sys-shape-corner-large);
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  font-size: var(--md-sys-typescale-label-large-size);
+  text-decoration: none;
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+/* =============================================================================
+   Shared app furniture — the demo apps are laid out as a fixed screen with a
+   scrolling body, the way a real phone app is.
+   ============================================================================= */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-body-large-font);
+}
+
+.app__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.app__bottom {
+  flex: none;
+}
+
+.app__fab {
+  position: absolute;
+  inset-inline-end: 1rem;
+  bottom: 5.5rem;
+  z-index: 5;
+}
+
+.app__section-title {
+  margin: 0;
+  padding: 1rem 1.25rem 0.5rem;
+  font-size: var(--md-sys-typescale-title-small-size);
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.app__empty {
+  display: grid;
+  place-items: center;
+  gap: 0.5rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* ── Clock ───────────────────────────────────────────────────────────────── */
+
+.clock__now {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 2rem 1rem 1.5rem;
+}
+
+.clock__time {
+  font-size: 3.75rem;
+  line-height: 1;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  color: var(--md-sys-color-primary);
+}
+
+.clock__date {
+  font-size: var(--md-sys-typescale-body-medium-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.clock__alarm {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.5rem 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+.clock__alarm[data-enabled="false"] .clock__alarm-time {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.clock__alarm-time {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.clock__alarm-label {
+  font-size: var(--md-sys-typescale-body-small-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.clock__stopwatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 3rem 1.5rem;
+}
+
+.clock__stopwatch-time {
+  font-size: 3.25rem;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  color: var(--md-sys-color-on-surface);
+}
+
+.clock__laps {
+  width: 100%;
+  max-height: 11rem;
+  overflow-y: auto;
+}
+
+.clock__lap {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0.25rem;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--md-sys-typescale-body-medium-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.clock__zone {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+}
+
+.clock__zone-city {
+  font-size: var(--md-sys-typescale-title-medium-size);
+}
+
+.clock__zone-offset {
+  font-size: var(--md-sys-typescale-body-small-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.clock__zone-time {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Messages ────────────────────────────────────────────────────────────── */
+
+.msg__filters {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+}
+
+.msg__thread {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: start;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.msg__thread:hover {
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity), transparent);
+}
+
+.msg__avatar {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+  font-weight: 500;
+}
+
+.msg__thread-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.msg__thread-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.msg__thread-name {
+  font-size: var(--md-sys-typescale-title-medium-size);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msg__thread-time {
+  flex: none;
+  font-size: var(--md-sys-typescale-label-small-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.msg__thread-preview {
+  margin: 0.125rem 0 0;
+  font-size: var(--md-sys-typescale-body-medium-size);
+  color: var(--md-sys-color-on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msg__thread[data-unread="true"] .msg__thread-preview {
+  color: var(--md-sys-color-on-surface);
+  font-weight: 500;
+}
+
+.msg__conversation {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 1rem;
+}
+
+.msg__bubble {
+  max-width: 78%;
+  padding: 0.625rem 0.9375rem;
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: 1.4;
+}
+
+.msg__bubble[data-from="them"] {
+  align-self: flex-start;
+  border-radius: 20px 20px 20px 6px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+}
+
+.msg__bubble[data-from="me"] {
+  align-self: flex-end;
+  border-radius: 20px 20px 6px 20px;
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.msg__composer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+.msg__composer > :first-child {
+  flex: 1;
+}
+
+/* ── Phone ───────────────────────────────────────────────────────────────── */
+
+.dialer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem 1.5rem 2rem;
+}
+
+.dialer__display {
+  min-height: 3.25rem;
+  font-size: 2.25rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: var(--md-sys-color-on-surface);
+}
+
+.dialer__keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem 1.5rem;
+  width: 100%;
+  max-width: 17rem;
+}
+
+.dialer__key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.0625rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.dialer__key:hover {
+  background-color: var(--md-sys-color-surface-container-highest);
+}
+
+.dialer__key-digit {
+  font-size: 1.625rem;
+  line-height: 1;
+}
+
+.dialer__key-letters {
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.dialer__call {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  width: 100%;
+  padding: 0.6875rem 1rem;
+  text-align: start;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.contact-row:hover {
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity), transparent);
+}
+
+.contact-row__name {
+  font-size: var(--md-sys-typescale-title-medium-size);
+}
+
+.contact-row__meta {
+  font-size: var(--md-sys-typescale-body-small-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* ── Settings ────────────────────────────────────────────────────────────── */
+
+.settings {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.settings__pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings__group {
+  margin: 0.75rem 0.75rem 0;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: var(--md-sys-color-surface-container-low);
+  overflow: hidden;
+}
+
+.settings__group-title {
+  margin: 0;
+  padding: 1rem 1.25rem 0.5rem;
+  font-size: var(--md-sys-typescale-title-small-size);
+  color: var(--md-sys-color-primary);
+}
+
+.settings__row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1.25rem;
+}
+
+.settings__row + .settings__row {
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.settings__row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings__row-title {
+  font-size: var(--md-sys-typescale-body-large-size);
+}
+
+.settings__row-sub {
+  font-size: var(--md-sys-typescale-body-small-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.settings__row--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+/* The rail replaces the bottom bar once the *frame* is wide enough — a
+   container query, so it works inside the phone bezel on this site too. */
+.settings__rail {
+  display: none;
+}
+
+@container device (min-width: 600px) {
+  .settings__rail {
+    display: block;
+  }
+
+  .settings__bottom {
+    display: none;
+  }
+}

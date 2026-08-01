@@ -1,0 +1,29 @@
+---
+title: Carousel
+description: A scrolling strip of items in six Material 3 layouts.
+---
+
+Carousels show a horizontally scrolling collection where the items themselves
+change size as they move — the multi-browse layout shrinks items towards the
+edges, hero layouts give one item prominence.
+
+`label` is required and names the carousel for assistive technology; each item's
+`label` is announced with its position appended.
+
+Every `CarouselItem` must be actionable: give it either an `href` or an
+`onClick`.
+
+<Example name="carousel/basic" title="Multi-browse layout" layout="stretch" />
+
+## Layouts
+
+Set `layout` to one of `multi-browse` (the default), `uncontained`,
+`uncontained-multi-aspect`, `hero`, `centered-hero` or `full-screen`. Pair it
+with `alignment` (`start` or `center`) and `scrollMode` (`auto`, `snap` or
+`free`).
+
+## Props
+
+<PropsTable of="Carousel" extends="<section>" />
+
+<SpecLink slug="carousel" source="src/components/Carousel" />

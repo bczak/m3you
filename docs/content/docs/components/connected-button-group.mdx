@@ -1,0 +1,27 @@
+---
+title: Connected button group
+description: Flush segments whose corners round as selection moves.
+---
+
+The segments sit flush against each other. The selected segment rounds fully
+while its neighbours square off, and the radii animate as selection moves — this
+is the clearest demonstration of why the library never uses
+`border-radius: 9999px`, which cannot interpolate.
+
+Like the standard group, selection is by index.
+
+<Example
+  name="connected-button-group/basic"
+  title="Single selection"
+  description="Click between segments and watch the corners travel."
+/>
+
+## Orientation
+
+<Example name="connected-button-group/orientation" title="Vertical" />
+
+## Props
+
+<PropsTable of="ConnectedButtonGroup" extends="<div>" />
+
+<SpecLink slug="connected-button-group" source="src/components/ButtonGroup" />

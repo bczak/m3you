@@ -1,0 +1,25 @@
+---
+title: Navigation rail
+description: A vertical rail for medium and expanded window sizes.
+---
+
+The rail is the navigation bar's counterpart for wider windows. It can collapse
+to icons or expand to show labels, and it can host a FAB above the destinations.
+
+By default the rail is `position: fixed`. Set `position="relative"` to place it
+in normal flow — which is what the example below and the
+[Settings demo app](/showcase/settings) do.
+
+<Example
+  name="navigation-rail/basic"
+  title="Collapsed and expanded"
+  description="Use the menu button to expand the rail."
+  layout="stretch"
+/>
+
+## Props
+
+<PropsTable of="NavigationRail" extends="<nav>" />
+<PropsTable of="NavigationRailItem" extends="<button>" />
+
+<SpecLink slug="navigation-rail" source="src/components/NavigationRail" />

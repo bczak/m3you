@@ -1,0 +1,39 @@
+---
+title: Loading indicator
+description: The Expressive loader that morphs between seven shapes.
+---
+
+import { LoadingIndicator } from 'm3you';
+
+The Material 3 Expressive loading indicator cycles through seven shapes,
+morphing between them rather than cutting. Each shape is resampled to the same
+number of points so `clip-path: polygon()` can interpolate between them, and
+point zero of every shape is aligned so the animation does not swirl.
+
+The shapes are exported as `SHAPE_POLYGONS` if you want to use them elsewhere —
+this site's logo and hero are clipped from them.
+
+<Playground
+  name="LoadingIndicator"
+  controls={{
+    variant: ['uncontained', 'contained'],
+    size: ['md', 'sm', 'lg'],
+  }}
+  render={(props) => <LoadingIndicator {...props} />}
+/>
+
+## Sizes
+
+<Example name="loading-indicator/basic" title="Small, medium and large" />
+
+## Contained
+
+The contained variant sits on a filled surface, for use over content.
+
+<Example name="loading-indicator/contained" title="Uncontained and contained" />
+
+## Props
+
+<PropsTable of="LoadingIndicator" extends="<div>" />
+
+<SpecLink slug="loading-indicator" source="src/components/LoadingIndicator" />

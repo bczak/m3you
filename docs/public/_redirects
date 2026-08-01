@@ -1,0 +1,7 @@
+# Cloudflare Pages SPA fallback.
+#
+# Prerendered routes exist as real files and are served directly; this rule only
+# catches paths the prerenderer did not emit (client-side navigations landed on
+# directly, unknown URLs), handing them to the SPA shell with a 200 so the
+# router can resolve or 404 them itself.
+/*  /_shell.html  200

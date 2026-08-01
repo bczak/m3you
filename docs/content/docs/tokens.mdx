@@ -1,0 +1,98 @@
+---
+title: Design tokens
+description: The full token set and where each one lives.
+icon: Braces
+---
+
+Every visual decision in m3you is a CSS custom property. This is what makes
+theming a stylesheet change rather than a code change.
+
+## Colour
+
+50-odd roles, generated from a seed. See [theming](/docs/theming) and the
+[live palette](/theme).
+
+```
+--md-sys-color-primary            --md-sys-color-on-primary
+--md-sys-color-primary-container  --md-sys-color-on-primary-container
+--md-sys-color-secondary          --md-sys-color-tertiary
+--md-sys-color-error              --md-sys-color-outline
+--md-sys-color-surface            --md-sys-color-surface-container-lowest
+                                  --md-sys-color-surface-container-low
+                                  --md-sys-color-surface-container
+                                  --md-sys-color-surface-container-high
+                                  --md-sys-color-surface-container-highest
+```
+
+Source: `src/styles/tokens/sys.color.css` and `sys.color.dark.css`.
+
+## Shape
+
+A ten-step scale from `none` to `full`.
+
+| Token | Value |
+|---|---|
+| `--md-sys-shape-corner-none` | 0px |
+| `--md-sys-shape-corner-extra-small` | 4px |
+| `--md-sys-shape-corner-small` | 8px |
+| `--md-sys-shape-corner-medium` | 12px |
+| `--md-sys-shape-corner-large` | 16px |
+| `--md-sys-shape-corner-large-increased` | 20px |
+| `--md-sys-shape-corner-extra-large` | 28px |
+| `--md-sys-shape-corner-extra-large-increased` | 32px |
+| `--md-sys-shape-corner-extra-extra-large` | 48px |
+| `--md-sys-shape-corner-full` | 9999px |
+
+`corner-full` exists for reference but components never use it — see
+[shape and motion](/docs/shape-and-motion) for why.
+
+## Typography
+
+Fifteen type scales — display, headline, title, body and label, each in small,
+medium and large — plus Display XL and emphasised weights. Each scale exposes
+`-font`, `-size`, `-line-height`, `-weight` and `-tracking`:
+
+```css
+font-size: var(--md-sys-typescale-headline-large-size);
+line-height: var(--md-sys-typescale-headline-large-line-height);
+letter-spacing: var(--md-sys-typescale-headline-large-tracking);
+```
+
+## Elevation
+
+Six levels, expressed as `box-shadow` values:
+
+```
+--md-sys-elevation-level0 … --md-sys-elevation-level5
+```
+
+## Motion
+
+Seven easing curves and sixteen durations, plus spring approximations:
+
+```css
+transition: border-radius
+  var(--md-sys-motion-duration-short2)
+  var(--md-sys-motion-easing-spring-default-spatial);
+```
+
+## State
+
+Opacities for interaction layers, so hover and pressed states stay consistent:
+
+```
+--md-sys-state-hover-opacity
+--md-sys-state-focus-opacity
+--md-sys-state-pressed-opacity
+--md-sys-state-dragged-opacity
+```
+
+They are meant to be used through `color-mix`:
+
+```css
+background-color: color-mix(
+  in srgb,
+  var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity),
+  transparent
+);
+```

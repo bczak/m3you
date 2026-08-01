@@ -1,0 +1,74 @@
+---
+title: Contributing
+description: How the library and these docs fit together.
+icon: GitPullRequest
+---
+
+## Repository layout
+
+```
+src/
+  components/{Name}/{name}.tsx   Component
+  components/{Name}/{name}.css   Its styles
+  styles/tokens/                 Design tokens
+  index.tsx                      Public exports
+stories/                         Storybook stories
+tests/                           Vitest tests
+docs/                            This site
+```
+
+## Commands
+
+```bash
+bun run build          # Library build (ESM + type declarations)
+bun run test           # Vitest
+bun run storybook      # Component explorer on :6006
+bun run check          # Biome lint + format
+bun run docs:dev       # This site on :3000
+bun run docs:build     # Static build of this site
+```
+
+## Conventions
+
+**CSS lives beside the component** as `{name}.css`, imported as a side effect
+from the `.tsx` file.
+
+**Variants are data attributes** — `data-variant`, `data-size`, `data-shape` —
+styled in CSS, never conditional class strings in JavaScript.
+
+**Class names** are `md-{component}` for the root and `md-{component}__{part}`
+for children.
+
+**Never `!important`.** Specificity comes from data-attribute selectors, and
+overrides come from custom properties.
+
+**Never `border-radius: 9999px`.** See [shape and motion](/docs/shape-and-motion).
+
+## Adding a component to these docs
+
+The docs are wired so that a new component cannot be silently undocumented:
+
+1. Add the component to `docs/src/lib/registry.ts`.
+2. Write `docs/content/docs/components/{slug}.mdx`.
+3. Add the slug to `docs/content/docs/components/meta.json` for sidebar order.
+4. Add a preview to `docs/src/components/gallery-previews.tsx`.
+5. Put curated examples in `docs/src/demos/{slug}/*.tsx`.
+
+A test in `docs/tests/` fails if anything exported from `src/index.tsx` is
+missing from the registry, or if a registry entry has no MDX page.
+
+## Prop descriptions
+
+The props tables are generated from the TypeScript source by
+`docs/scripts/gen-docgen.ts`. The description column comes from JSDoc comments
+above each prop:
+
+```ts
+export type ButtonProps = React.ComponentProps<'button'> & {
+  /** Visual emphasis, from filled (highest) to text (lowest). */
+  variant?: 'filled' | 'elevated' | 'tonal' | 'outlined' | 'text';
+};
+```
+
+Writing that comment is what fills in the docs — there is nothing to update in
+the docs site itself.

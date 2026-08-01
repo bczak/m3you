@@ -1,0 +1,44 @@
+name: Docs
+
+# Cloudflare Pages does the deploying. This workflow only proves the docs still
+# build and that nothing has drifted out of the component registry — so a broken
+# docs build fails the PR rather than the deploy.
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'docs/**'
+      - 'package.json'
+      - '.github/workflows/docs.yml'
+  push:
+    branches: [development]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Generate prop tables
+        run: bun --cwd docs run docgen
+
+      - name: Check documentation coverage
+        run: bun --cwd docs run test
+
+      - name: Type-check
+        run: bun --cwd docs run types:check
+
+      - name: Build site
+        run: bun --cwd docs run build

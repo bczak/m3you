@@ -1,0 +1,37 @@
+---
+title: Toggle icon button
+description: An icon button with a persistent selected state.
+---
+
+import { Star } from 'lucide-react';
+import { ToggleIconButton } from 'm3you';
+
+The icon-only counterpart to the toggle button — favouriting, muting, pinning.
+Give it an `aria-label` that names the setting, not the action.
+
+<Playground
+  name="ToggleIconButton"
+  controls={{
+    variant: ['standard', 'filled', 'tonal', 'elevated', 'outlined'],
+    size: ['sm', 'xs', 'md', 'lg', 'xl'],
+    width: ['default', 'narrow', 'wide'],
+    shape: ['round', 'square'],
+    defaultSelected: false,
+    disabled: false,
+  }}
+  render={(props) => (
+    <ToggleIconButton {...props} aria-label="Star">
+      <Star size={20} aria-hidden="true" />
+    </ToggleIconButton>
+  )}
+/>
+
+## Examples
+
+<Example name="toggle-icon-button/basic" title="Across variants" />
+
+## Props
+
+<PropsTable of="ToggleIconButton" extends="<button>" />
+
+<SpecLink slug="toggle-icon-button" source="src/components/ToggleIconButton" />

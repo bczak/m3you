@@ -1,0 +1,33 @@
+---
+title: Chip
+description: Assist, filter, input and suggestion chips.
+---
+
+import { Chip } from 'm3you';
+
+The four chip types do different jobs. **Assist** chips trigger an action related
+to nearby content. **Filter** chips narrow a set and hold a selected state.
+**Input** chips represent a piece of information the user entered, and can be
+removed. **Suggestion** chips offer a next step.
+
+<Playground
+  name="Chip"
+  controls={{
+    type: ['assist', 'filter', 'input', 'suggestion'],
+    variant: ['outlined', 'elevated'],
+    selected: false,
+    disabled: false,
+  }}
+  snippetChildren="Chip label"
+  render={(props) => <Chip {...props}>Chip label</Chip>}
+/>
+
+## The four types
+
+<Example name="chip/types" title="Assist, filter and input" layout="stretch" />
+
+## Props
+
+<PropsTable of="Chip" extends="<button>" />
+
+<SpecLink slug="chip" source="src/components/Chip" />

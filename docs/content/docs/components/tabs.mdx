@@ -1,0 +1,47 @@
+---
+title: Tabs
+description: Primary and secondary tabs for peer content.
+---
+
+import { Tab, Tabs } from 'm3you';
+
+Tabs organise content into peer groups at the same level of hierarchy. Primary
+tabs sit directly under an app bar; secondary tabs sit inside a section that
+already has primary tabs above it.
+
+`Tabs` is controlled: give it a `value` and an `onValueChange`.
+
+<Playground
+  name="Tabs"
+  controls={{
+    variant: ['primary', 'secondary'],
+    fullWidth: true,
+  }}
+  code={(props) =>
+    `<Tabs variant="${props.variant}"${props.fullWidth ? '' : ' fullWidth={false}'} value={value} onValueChange={setValue}>\n  <Tab value="overview">Overview</Tab>\n  <Tab value="specs">Specs</Tab>\n</Tabs>`
+  }
+  render={(props) => (
+    <div style={{ width: '100%', minWidth: '20rem' }}>
+      <Tabs {...props} value="overview">
+        <Tab value="overview">Overview</Tab>
+        <Tab value="specs">Specs</Tab>
+        <Tab value="reviews">Reviews</Tab>
+      </Tabs>
+    </div>
+  )}
+/>
+
+## Switching panels
+
+<Example name="tabs/basic" title="Controlled tabs" layout="stretch" />
+
+## Icons and badges
+
+<Example name="tabs/icons" title="Secondary tabs with icons" layout="stretch" />
+
+## Props
+
+<PropsTable of="Tabs" extends="<div>" />
+<PropsTable of="Tab" extends="<button>" />
+
+<SpecLink slug="tabs" source="src/components/Tabs" />

@@ -1,0 +1,33 @@
+---
+title: Extended FAB
+description: A FAB carrying a text label alongside its icon.
+---
+
+import { Plus } from 'lucide-react';
+import { ExtendedFAB } from 'm3you';
+
+When the action needs naming, the extended FAB adds a label. `label` is a
+required prop rather than children, so the component can measure and animate its
+own width.
+
+<Playground
+  name="ExtendedFAB"
+  controls={{
+    label: 'Create',
+    variant: ['tonal', 'filled', 'elevated', 'outlined', 'text'],
+    size: ['md', 'sm', 'lg'],
+    lowered: false,
+    disabled: false,
+  }}
+  render={(props) => <ExtendedFAB {...props} icon={<Plus size={20} aria-hidden="true" />} />}
+/>
+
+## Examples
+
+<Example name="extended-fab/basic" title="With and without an icon" />
+
+## Props
+
+<PropsTable of="ExtendedFAB" extends="<button>" />
+
+<SpecLink slug="extended-fab" source="src/components/ExtendedFab" />

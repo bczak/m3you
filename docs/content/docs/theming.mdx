@@ -1,0 +1,81 @@
+---
+title: Theming
+description: Generate a complete Material 3 palette from one seed colour.
+icon: Palette
+---
+
+Material 3's colour system starts from a single seed colour and derives every
+role from it — primary, secondary, tertiary, error, five surface container
+levels, and the "on" colours that sit legibly on each. m3you exposes Google's
+own generator for this.
+
+## From a seed colour
+
+`applyM3Theme` generates the palette and writes it to an element as CSS custom
+properties:
+
+```tsx
+import { applyM3Theme } from 'm3you';
+
+applyM3Theme('#6750A4');
+```
+
+Call it once at startup, or whenever the user picks a new colour. Pass a second
+argument to scope the palette to part of the page:
+
+```tsx
+applyM3Theme('#006C4C', document.getElementById('preview')!);
+```
+
+To get the values without applying them — to persist them, or to render swatches:
+
+```tsx
+import { generateM3Theme } from 'm3you';
+
+const { light, dark } = generateM3Theme('#6750A4');
+// { '--md-sys-color-primary': '#65558F', ... }
+```
+
+Try it on the [theme playground](/theme), which also copies the result out as
+CSS.
+
+## Overriding individual tokens
+
+Every colour is a CSS custom property, so overriding one is ordinary CSS:
+
+```css
+:root {
+  --md-sys-color-primary: #6750a4;
+  --md-sys-color-on-primary: #ffffff;
+}
+```
+
+Scope the override to change only part of a page:
+
+```css
+.marketing-section {
+  --md-sys-color-primary: #b3261e;
+}
+```
+
+Because components read the token rather than a hard-coded colour, everything
+inside that section follows.
+
+## Per-component tokens
+
+Components also expose their own `--md-{component}-*` properties for cases where
+the system token is too broad. These are documented on each component's page
+where they exist.
+
+## The three tiers
+
+m3you follows the same token architecture as `@material/web`:
+
+| Tier | Prefix | What it is |
+|---|---|---|
+| System | `--md-sys-*` | Design decisions — colour, shape, type, motion, elevation, state |
+| Component | `--md-{component}-*` | Per-component overrides |
+| Instance | inline `style` | One-off adjustments |
+
+Prefer the highest tier that solves the problem. Changing a system token keeps
+the whole UI coherent; reaching for an inline style does not.
