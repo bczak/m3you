@@ -4,6 +4,7 @@ import { cx } from '../../lib/cx';
 import { IconButton, type IconButtonProps } from '../IconButton/icon-button';
 
 export type FABProps = Omit<IconButtonProps, 'shape' | 'width'> & {
+  /** Use the lowered elevation, for a FAB resting on a coloured surface. */
   lowered?: boolean;
 };
 

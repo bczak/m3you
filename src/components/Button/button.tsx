@@ -6,10 +6,15 @@ import { cx } from '../../lib/cx';
 import { useButtonGroup } from '../ButtonGroup/button-group-context';
 
 export type ButtonProps = React.ComponentProps<'button'> & {
+  /** Visual emphasis, from `filled` (highest) through `tonal`, `elevated` and `outlined` to `text` (lowest). Use one filled button per screen. */
   variant?: 'filled' | 'elevated' | 'tonal' | 'outlined' | 'text';
+  /** Corner style. `round` is the M3 default; `square` reads as more structural. */
   shape?: 'round' | 'square';
+  /** Size on the M3 scale. Changes height, padding, label typescale and corner radius together. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Swap to the opposite shape while the button is held — the Expressive press gesture. */
   morph?: boolean;
+  /** Renders the selected state. Setting this also emits `aria-pressed`, making the button a toggle. */
   selected?: boolean;
 };
 

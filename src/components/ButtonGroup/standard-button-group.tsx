@@ -11,8 +11,11 @@ import { type UseButtonGroupSelectionOptions, useButtonGroupSelection } from './
 export interface StandardButtonGroupProps
   extends Omit<ButtonGroupProps, 'defaultValue'>,
     UseButtonGroupSelectionOptions {
+  /** Size applied to every button in the group, through context. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Corner style applied to every button in the group. */
   shape?: 'round' | 'square';
+  /** Let buttons change shape while held. */
   morph?: boolean;
 }
 

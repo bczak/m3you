@@ -8,7 +8,9 @@ import { drawLinearWavyPath } from './wavy-path';
 export type LinearProgressVariant = 'flat' | 'wavy';
 
 export type LinearProgressProps = React.ComponentProps<'div'> & {
+  /** Progress from 0 to 100. Ignored when indeterminate. */
   value?: number;
+  /** Whether the amount of work is known. */
   type?: 'determinate' | 'indeterminate';
   /** @deprecated Use `type="indeterminate"` instead. */
   indeterminate?: boolean;

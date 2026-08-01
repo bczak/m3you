@@ -9,11 +9,17 @@ export type ExtendableFABVariant = 'standard' | 'filled' | 'elevated' | 'tonal' 
 export type ExtendableFABSize = 'sm' | 'md' | 'lg';
 
 export type ExtendableFABProps = Omit<React.ComponentProps<'button'>, 'children'> & {
+  /** Visual emphasis of the container. */
   variant?: ExtendableFABVariant;
+  /** Size on the M3 scale. */
   size?: ExtendableFABSize;
+  /** Use the lowered elevation. */
   lowered?: boolean;
+  /** Whether the label is showing. Commonly driven by scroll direction. */
   extended?: boolean;
+  /** Icon shown in both the collapsed and extended states. */
   icon: React.ReactNode;
+  /** Text revealed when extended. Required so the extended width can be measured up front. */
   label: React.ReactNode;
 };
 

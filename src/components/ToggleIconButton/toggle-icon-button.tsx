@@ -3,8 +3,11 @@ import type { IconButtonProps } from '../IconButton/icon-button';
 import { IconButton } from '../IconButton/icon-button';
 
 export type ToggleIconButtonProps = IconButtonProps & {
+  /** Initial selected state when uncontrolled. */
   defaultSelected?: boolean;
+  /** Selected state (controlled). Pair with `onSelectedChange`. */
   selected?: boolean;
+  /** Called with the new selected state when the user toggles the button. */
   onSelectedChange?: (selected: boolean) => void;
 };
 

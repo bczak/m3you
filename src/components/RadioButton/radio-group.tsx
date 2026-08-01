@@ -3,13 +3,20 @@ import * as React from 'react';
 import { RadioGroupContext, type RadioGroupContextValue } from './radio-group-context';
 
 export type RadioGroupProps = {
+  /** Selected value (controlled). Pair with `onValueChange`. */
   value?: string;
+  /** Initially selected value when uncontrolled. */
   defaultValue?: string;
+  /** Form field name shared by every radio in the group. */
   name?: string;
+  /** Colour role applied to every radio in the group. */
   variant?: 'primary' | 'error';
+  /** Disable every radio in the group. */
   disabled?: boolean;
+  /** Called with the newly selected value. */
   onValueChange?: (value: string) => void;
   children: React.ReactNode;
+  /** Additional class names for the group element. */
   className?: string;
 };
 

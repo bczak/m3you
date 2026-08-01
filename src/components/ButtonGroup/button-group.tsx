@@ -8,6 +8,7 @@ import { cx } from '../../lib/cx';
 // =============================================================================
 
 export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Lay the buttons out in a row or a column. */
   orientation?: 'horizontal' | 'vertical';
 }
 

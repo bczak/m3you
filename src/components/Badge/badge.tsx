@@ -4,10 +4,15 @@ import type * as React from 'react';
 import { cx } from '../../lib/cx';
 
 export type BadgeProps = Omit<React.ComponentProps<'span'>, 'children' | 'color'> & {
+  /** `small` is the dot; `large` carries a number. */
   size?: 'small' | 'large';
+  /** Number to display. Omit for a small dot badge meaning “something new”. */
   count?: number;
+  /** Cap for `count`; anything above renders as `{max}+`. */
   max?: number;
+  /** Set to `false` to hide the badge while keeping its anchor layout stable. */
   visible?: boolean;
+  /** Colour role. `error` is the M3 default for notification counts. */
   color?: 'error' | 'primary' | 'secondary' | 'tertiary';
 };
 
@@ -41,8 +46,11 @@ const Badge = ({
 Badge.displayName = 'Badge';
 
 export type BadgeAnchorProps = React.ComponentProps<'span'> & {
+  /** The badge element to position over the anchored content. */
   badge: React.ReactElement<BadgeProps>;
+  /** Which corner of the anchor the badge sits on. */
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+  /** Whether the badge overlaps a rectangular or circular anchor. */
   overlap?: 'rectangular' | 'circular';
 };
 

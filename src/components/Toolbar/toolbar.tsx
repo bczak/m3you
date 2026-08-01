@@ -4,15 +4,25 @@ import type * as React from 'react';
 import { cx } from '../../lib/cx';
 
 export type ToolbarProps = React.ComponentProps<'div'> & {
+  /** `floating` hovers above content with a shadow; `docked` sits flush against an edge. */
   type?: 'docked' | 'floating';
+  /** `vibrant` uses the tertiary container colour for more emphasis. */
   color?: 'standard' | 'vibrant';
+  /** Lay the actions out in a row or a column. */
   layout?: 'horizontal' | 'vertical';
+  /** How the actions are distributed along the toolbar. */
   align?: 'start' | 'center' | 'end' | 'between';
+  /** Content pinned before the actions. */
   leading?: React.ReactNode;
+  /** Content pinned after the actions. */
   trailing?: React.ReactNode;
+  /** Space between actions. Accepts any CSS length. */
   gap?: number | string;
+  /** Padding on all sides. Accepts any CSS length. */
   padding?: number | string;
+  /** Padding on the inline (horizontal) axis. */
   paddingInline?: number | string;
+  /** Padding on the block (vertical) axis. */
   paddingBlock?: number | string;
 };
 

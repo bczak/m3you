@@ -28,8 +28,11 @@ const syncNestedInteractiveState = (element: HTMLDivElement, target: EventTarget
  * should not also trigger the card surface interaction.
  */
 export type CardProps = React.ComponentProps<'div'> & {
+  /** How the card separates from its background: a shadow, a container colour, or a border. */
   variant?: 'elevated' | 'filled' | 'outlined';
+  /** Render the disabled state and block interaction. */
   disabled?: boolean;
+  /** Show a Material ripple on press. Set this whenever the card is clickable. */
   ripple?: boolean;
 };
 

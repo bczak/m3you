@@ -7,11 +7,17 @@ import { useCallback, useRef } from 'react';
 import { cx } from '../../lib/cx';
 
 export type ChipProps = Omit<React.ComponentProps<'button'>, 'type'> & {
+  /** What the chip is for: `assist` triggers an action, `filter` narrows a set, `input` represents user-entered data, `suggestion` offers a next step. */
   type?: 'assist' | 'filter' | 'input' | 'suggestion';
+  /** `outlined` is the M3 default; `elevated` adds a shadow. */
   variant?: 'outlined' | 'elevated';
+  /** Selected state, for filter chips. */
   selected?: boolean;
+  /** Icon before the label. On a selected filter chip this is conventionally a check. */
   leadingIcon?: React.ReactNode;
+  /** Icon after the label, usually a remove affordance on input chips. */
   trailingIcon?: React.ReactNode;
+  /** Called when an input chip's remove affordance is pressed. */
   onClose?: () => void;
 };
 

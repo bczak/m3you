@@ -4,14 +4,23 @@ import type * as React from 'react';
 import { cx } from '../../lib/cx';
 
 export type AppBarProps = React.ComponentProps<'header'> & {
+  /** Bar height and headline treatment. `search` turns the bar itself into a search field. */
   variant?: 'search' | 'small' | 'medium' | 'large';
+  /** The screen title. */
   headline?: string;
+  /** Secondary line under the headline. */
   subtitle?: string;
+  /** Longer explanatory text, on the medium and large variants. */
   supportingText?: string;
+  /** Placeholder for the `search` variant's field. */
   searchLabel?: string;
+  /** Leading action, typically a back or menu button. */
   leadingIcon?: React.ReactNode;
+  /** Trailing actions, at most three. */
   trailingIcons?: React.ReactNode;
+  /** Trailing content inside the `search` variant's field. */
   searchTrailing?: React.ReactNode;
+  /** Centre the headline, for a screen with a single leading and trailing action. */
   centerAligned?: boolean;
 };
 

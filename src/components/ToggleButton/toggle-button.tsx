@@ -3,8 +3,11 @@ import type { ButtonProps } from '../Button/button';
 import { Button } from '../Button/button';
 
 export type ToggleButtonProps = ButtonProps & {
+  /** Initial selected state when uncontrolled. */
   defaultSelected?: boolean;
+  /** Selected state (controlled). Pair with `onSelectedChange`. */
   selected?: boolean;
+  /** Called with the new selected state when the user toggles the button. */
   onSelectedChange?: (selected: boolean) => void;
 };
 

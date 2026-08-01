@@ -6,11 +6,17 @@ import { cx } from '../../lib/cx';
 import { useButtonGroup } from '../ButtonGroup/button-group-context';
 
 export type IconButtonProps = React.ComponentProps<'button'> & {
+  /** Visual emphasis. `standard` has no container; the rest match the Button variants. */
   variant?: 'standard' | 'filled' | 'elevated' | 'tonal' | 'outlined';
+  /** Corner style. `round` is the M3 default. */
   shape?: 'round' | 'square';
+  /** Size on the M3 scale. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Horizontal padding, without changing height — useful for tuning target size in a dense row. */
   width?: 'narrow' | 'default' | 'wide';
+  /** Swap to the opposite shape while the button is held. */
   morph?: boolean;
+  /** Renders the selected state and emits `aria-pressed`. */
   selected?: boolean;
 };
 

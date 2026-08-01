@@ -8,6 +8,7 @@ import { useRadioGroup } from './radio-group-context';
  * Use inside a <RadioGroup> to get automatic name, value tracking, and variant inheritance.
  */
 export type RadioGroupItemProps = Omit<RadioButtonProps, 'checked' | 'name'> & {
+  /** This item's value within the group. */
   value: string;
 };
 

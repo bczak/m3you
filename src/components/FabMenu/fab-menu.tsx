@@ -24,11 +24,17 @@ type FABMenuTriggerProps = React.ComponentProps<'button'> & {
 };
 
 export interface FABMenuProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** The actions revealed when the menu opens. */
   items: FABMenuItemOption[];
+  /** Open state (controlled). Pair with `onOpenChange`. */
   open?: boolean;
+  /** Initial open state when uncontrolled. */
   defaultOpen?: boolean;
+  /** Called when the menu opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Dim the content behind the open menu. */
   scrim?: boolean;
+  /** Icon shown on the trigger while the menu is open. Defaults to a cross. */
   closeIcon?: React.ReactNode;
   children: React.ReactElement<FABMenuTriggerProps>;
 }

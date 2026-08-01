@@ -607,10 +607,32 @@ test('onOpenChange callback is fired', async () => {
 });
 
 // =============================================================================
-// asChild
+// Custom trigger element
 // =============================================================================
 
-test('MenuTrigger asChild clones child with ARIA props', async () => {
+test('MenuTrigger render applies ARIA props to the given element', async () => {
+  render(
+    <Menu>
+      <MenuTrigger
+        render={
+          <button data-testid="custom-trigger" type="button">
+            Custom
+          </button>
+        }
+      />
+      <MenuContent>
+        <MenuItem>Item 1</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  const trigger = screen.getByTestId('custom-trigger');
+  expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+  expect(trigger).toHaveAttribute('aria-expanded', 'false');
+});
+
+// `asChild` is deprecated in favour of `render`, but still supported so existing
+// consumers keep working. This guards that promise.
+test('MenuTrigger asChild still clones child with ARIA props', async () => {
   render(
     <Menu>
       <MenuTrigger asChild>

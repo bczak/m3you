@@ -345,11 +345,17 @@ const CalendarGrid = ({
 // =============================================================================
 
 export type DatePickerProps = {
+  /** Selected date (controlled). Pair with `onChange`. */
   value?: Date | null;
+  /** Initially selected date when uncontrolled. */
   defaultValue?: Date | null;
+  /** Called with the newly selected date, or `null` when cleared. */
   onChange?: (date: Date | null) => void;
+  /** Earliest selectable date. */
   minDate?: Date;
+  /** Latest selectable date. */
   maxDate?: Date;
+  /** Additional class names for the calendar element. */
   className?: string;
 };
 

@@ -61,14 +61,21 @@ function SideSheetClose({ ...props }: DrawerPrimitive.Close.Props) {
 // SideSheetContent (Portal + optional Backdrop + Popup)
 // =============================================================================
 
-export interface SideSheetContentProps extends DrawerPrimitive.Popup.Props {}
+export interface SideSheetContentProps extends DrawerPrimitive.Popup.Props {
+  /**
+   * Forwarded to the underlying portal. Pass `{ container }` to render the sheet
+   * inside a specific element instead of `document.body` — useful when the sheet
+   * belongs to a bounded surface such as a device frame or an embedded preview.
+   */
+  portalProps?: Omit<DrawerPrimitive.Portal.Props, 'children'>;
+}
 
-function SideSheetContent({ className, children, ...props }: SideSheetContentProps) {
+function SideSheetContent({ className, children, portalProps, ...props }: SideSheetContentProps) {
   const { variant, side } = use(SideSheetContext);
   const isModal = variant === 'modal';
 
   return (
-    <DrawerPrimitive.Portal>
+    <DrawerPrimitive.Portal {...portalProps}>
       {isModal && <DrawerPrimitive.Backdrop data-slot="side-sheet-backdrop" className="md-side-sheet-backdrop" />}
       <DrawerPrimitive.Viewport data-slot="side-sheet-viewport" className="md-side-sheet-viewport">
         <DrawerPrimitive.Popup

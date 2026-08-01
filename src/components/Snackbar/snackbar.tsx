@@ -10,11 +10,17 @@ import { IconButton } from '../IconButton/icon-button';
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export type SnackbarProps = React.ComponentProps<'output'> & {
+  /** How much room the message and action get. */
   layout?: 'singleLine' | 'twoLine' | 'longerAction';
+  /** The message. Keep it to one clause — snackbars are not for explanations. */
   message: React.ReactNode;
+  /** Label for the single optional action, such as “Undo”. */
   actionLabel?: string;
+  /** Called when the action is pressed. */
   onAction?: () => void;
+  /** Show a dismiss button. A snackbar with an action or a close button stays until dismissed. */
   closable?: boolean;
+  /** Called when the snackbar is dismissed. */
   onClose?: () => void;
 };
 
@@ -90,6 +96,7 @@ Snackbar.displayName = 'Snackbar';
 // ─── Snackbar Host (Sonner Toaster) ──────────────────────────────────────────
 
 export type SnackbarHostProps = Omit<React.ComponentProps<typeof SonnerToaster>, 'position'> & {
+  /** Where queued snackbars appear on screen. */
   position?: React.ComponentProps<typeof SonnerToaster>['position'];
 };
 

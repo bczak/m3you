@@ -11,10 +11,15 @@ import { SplitButtonCtx } from './split-button-context';
 // =============================================================================
 
 export interface SplitButtonProps extends React.ComponentProps<'div'> {
+  /** Visual emphasis, applied to both halves. */
   variant?: 'filled' | 'tonal' | 'elevated' | 'outlined';
+  /** Size on the M3 scale, applied to both halves. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Corner style of the outer edges. */
   shape?: 'round' | 'square';
+  /** Change corner radius while a half is held. */
   morph?: boolean;
+  /** Renders the selected state on both halves. */
   selected?: boolean;
 }
 

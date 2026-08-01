@@ -72,7 +72,14 @@ const SIZE_CONFIG = {
 
 type SliderSize = keyof typeof SIZE_CONFIG;
 
-export type SliderProps = Omit<React.ComponentProps<'input'>, 'type' | 'size'> & {
+// `value`, `defaultValue`, `min`, `max` and `step` are all redeclared below with
+// narrower types. Without omitting the native ones first, TypeScript intersects
+// the two declarations and tooling reports the wider DOM type
+// (`string | number | readonly string[]`) instead of `number`.
+export type SliderProps = Omit<
+  React.ComponentProps<'input'>,
+  'type' | 'size' | 'value' | 'defaultValue' | 'min' | 'max' | 'step'
+> & {
   /** Current value (controlled). */
   value?: number;
   /** Default value (uncontrolled). */

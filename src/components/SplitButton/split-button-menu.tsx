@@ -14,7 +14,9 @@ import { useSplitButton } from './split-button-context';
 
 export interface SplitButtonMenuProps {
   children?: React.ReactNode;
+  /** Which side of the button the menu opens towards. */
   side?: 'top' | 'bottom';
+  /** How the menu aligns to the button along that side. */
   align?: 'start' | 'end' | 'center';
 }
 

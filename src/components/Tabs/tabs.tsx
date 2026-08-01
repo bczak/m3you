@@ -10,6 +10,7 @@ import { cx } from '../../lib/cx';
    ============================================================================= */
 
 export type TabsProps = React.ComponentProps<'div'> & {
+  /** `primary` sits directly under an app bar; `secondary` sits inside a section that already has primary tabs. */
   variant?: 'primary' | 'secondary';
   /** Whether tabs stretch to fill available width or size to content */
   fullWidth?: boolean;

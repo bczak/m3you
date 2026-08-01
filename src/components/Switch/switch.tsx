@@ -15,9 +15,13 @@ import { cx } from '../../lib/cx';
  */
 
 export type SwitchProps = Omit<React.ComponentProps<'input'>, 'type'> & {
+  /** Checked state (controlled). Pair with `onCheckedChange`. */
   checked?: boolean;
+  /** Colour role. */
   variant?: 'primary' | 'error';
+  /** Draw a check and cross inside the thumb. */
   showIcons?: boolean;
+  /** Called with the new checked state. The change should take effect immediately — a switch has no save step. */
   onCheckedChange?: (checked: boolean) => void;
 };
 

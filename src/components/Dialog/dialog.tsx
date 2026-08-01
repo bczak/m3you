@@ -51,7 +51,9 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
 // =============================================================================
 
 export interface DialogContentProps extends DialogPrimitive.Popup.Props {
+  /** Additional class names for the scrim. */
   overlayClassName?: string;
+  /** Inline styles for the scrim. */
   overlayStyle?: React.CSSProperties;
   portalProps?: Omit<DialogPrimitive.Portal.Props, 'children'>;
 }
@@ -79,6 +81,7 @@ function DialogContent({
 // =============================================================================
 
 export interface DialogHeaderProps extends React.ComponentProps<'div'> {
+  /** Centre the icon and title, the M3 layout for a dialog with a hero icon. */
   centered?: boolean;
 }
 
@@ -194,7 +197,9 @@ function FullScreenDialogContent({ className, children, ...props }: DialogPrimit
 // =============================================================================
 
 export interface FullScreenDialogHeaderProps extends React.ComponentProps<'div'> {
+  /** Leading icon, typically a close affordance. */
   icon?: React.ReactNode;
+  /** Trailing confirming action. */
   action?: React.ReactNode;
 }
 

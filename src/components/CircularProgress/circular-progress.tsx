@@ -8,11 +8,15 @@ import { drawCircularArc, drawWavyArc, sizeToDegrees } from './wavy-arc';
 export type CircularProgressVariant = 'flat' | 'wavy';
 
 export type CircularProgressProps = React.ComponentProps<'div'> & {
+  /** Diameter on the M3 scale. */
   size?: 'sm' | 'md' | 'lg';
+  /** Progress from 0 to 100. Ignored when indeterminate. */
   value?: number;
+  /** Whether the amount of work is known. */
   type?: 'determinate' | 'indeterminate';
   /** @deprecated Use `type="indeterminate"` instead. */
   indeterminate?: boolean;
+  /** Track thickness in pixels. */
   strokeWidth?: number;
   /** M3 Expressive appearance. Defaults to 'flat'. */
   variant?: CircularProgressVariant;

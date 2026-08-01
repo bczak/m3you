@@ -231,11 +231,13 @@ export const Showcase: Story = {
 export const Default: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuItem>Cut</MenuItem>
         <MenuItem>Copy</MenuItem>
@@ -248,11 +250,13 @@ export const Default: Story = {
 export const WithIcons: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuItem>
           <ScissorsIcon /> Cut
@@ -271,11 +275,13 @@ export const WithIcons: Story = {
 export const WithSupportingText: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuItem supportingText="View your profile">
           <UserIcon /> Profile
@@ -294,11 +300,13 @@ export const WithSupportingText: Story = {
 export const WithDividers: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuItem>
           <EditIcon /> Edit
@@ -324,11 +332,13 @@ export const WithDividers: Story = {
 export const WithDisabledItems: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuItem disabled>Undo</MenuItem>
         <MenuItem disabled>Redo</MenuItem>
@@ -344,11 +354,13 @@ export const WithDisabledItems: Story = {
 export const FullFeatured: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuItem supportingText="View your profile">
           <UserIcon /> Profile
@@ -386,11 +398,13 @@ export const FullFeatured: Story = {
 export const WithSubmenu: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuItem>
           <EditIcon /> Edit
@@ -425,11 +439,13 @@ export const WithSubmenu: Story = {
 export const NestedSubmenus: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuItem>Bold</MenuItem>
         <MenuItem>Italic</MenuItem>
@@ -470,11 +486,13 @@ export const NestedSubmenus: Story = {
 export const PositionTop: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="filled" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="filled" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent side="top" align="start">
         <MenuItem>Item One</MenuItem>
         <MenuItem>Item Two</MenuItem>
@@ -487,11 +505,13 @@ export const PositionTop: Story = {
 export const AlignEnd: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="filled" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="filled" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent side="bottom" align="end">
         <MenuItem>Item One</MenuItem>
         <MenuItem>Item Two</MenuItem>
@@ -504,11 +524,13 @@ export const AlignEnd: Story = {
 export const AlignCenter: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="filled" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="filled" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent side="bottom" align="center">
         <MenuItem>Item One</MenuItem>
         <MenuItem>Item Two</MenuItem>
@@ -525,11 +547,13 @@ export const AlignCenter: Story = {
 export const ButtonTrigger: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <Button variant="filled" size="sm" shape="round">
-          Open Menu
-        </Button>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <Button variant="filled" size="sm" shape="round">
+            Open Menu
+          </Button>
+        }
+      />
       <MenuContent>
         <MenuItem>
           <EditIcon /> Edit
@@ -565,11 +589,13 @@ export const Vibrant: Story = {
   },
   render: () => (
     <Menu color="vibrant" defaultOpen modal={false}>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="filled" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="filled" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuItem selected>
           <StarIcon /> Favorite
@@ -602,11 +628,13 @@ function ControlledStory() {
         </Button>
       </div>
       <Menu open={open} onOpenChange={setOpen}>
-        <MenuTrigger asChild>
-          <IconButton aria-label="Example action" variant="standard" size="sm">
-            <EllipsisVerticalIcon />
-          </IconButton>
-        </MenuTrigger>
+        <MenuTrigger
+          render={
+            <IconButton aria-label="Example action" variant="standard" size="sm">
+              <EllipsisVerticalIcon />
+            </IconButton>
+          }
+        />
         <MenuContent>
           <MenuItem>Cut</MenuItem>
           <MenuItem>Copy</MenuItem>
@@ -628,11 +656,13 @@ export const Controlled: Story = {
 export const Grouped: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuGroup>
           <MenuItem>
@@ -661,11 +691,13 @@ export const Grouped: Story = {
 export const GroupedThreeGroups: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent>
         <MenuGroup>
           <MenuItem>
@@ -718,11 +750,13 @@ export const GroupedThreeGroups: Story = {
 export const LongList: Story = {
   render: () => (
     <Menu>
-      <MenuTrigger asChild>
-        <IconButton aria-label="Example action" variant="standard" size="sm">
-          <EllipsisVerticalIcon />
-        </IconButton>
-      </MenuTrigger>
+      <MenuTrigger
+        render={
+          <IconButton aria-label="Example action" variant="standard" size="sm">
+            <EllipsisVerticalIcon />
+          </IconButton>
+        }
+      />
       <MenuContent style={{ maxHeight: 300 }}>
         {[
           'Argentina',

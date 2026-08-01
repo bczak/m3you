@@ -6,7 +6,9 @@ import { SHAPE_NAMES, SHAPE_POLYGONS } from './shapes';
 export type LoadingIndicatorVariant = 'uncontained' | 'contained';
 
 export type LoadingIndicatorProps = React.ComponentProps<'div'> & {
+  /** Diameter on the M3 scale. */
   size?: 'sm' | 'md' | 'lg';
+  /** Override the indicator colour. Defaults to the primary role. */
   color?: string;
   /** M3 appearance variant. Defaults to 'uncontained'. */
   variant?: LoadingIndicatorVariant;

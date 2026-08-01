@@ -4,7 +4,9 @@ import type * as React from 'react';
 import { cx } from '../../lib/cx';
 
 export type DividerProps = React.ComponentProps<'hr'> & {
+  /** `inset` indents the line to align with list text; `heavy` is thicker. */
   variant?: 'full-width' | 'inset' | 'heavy';
+  /** Draw the line horizontally or vertically. */
   orientation?: 'horizontal' | 'vertical';
 };
 

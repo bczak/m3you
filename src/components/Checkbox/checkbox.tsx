@@ -6,9 +6,13 @@ import * as React from 'react';
 import { cx } from '../../lib/cx';
 
 export type CheckboxProps = Omit<React.ComponentProps<'input'>, 'type'> & {
+  /** Checked state (controlled). Pair with `onCheckedChange`. */
   checked?: boolean;
+  /** Render the mixed state, for a parent whose children are partly selected. Visual only — you still control `checked`. */
   indeterminate?: boolean;
+  /** Colour role. `error` marks a checkbox that has failed validation. */
   variant?: 'primary' | 'error';
+  /** Called with the new checked state. */
   onCheckedChange?: (checked: boolean) => void;
 };
 

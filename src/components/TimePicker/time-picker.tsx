@@ -12,9 +12,16 @@ type Period = 'AM' | 'PM';
 type Selection = 'hours' | 'minutes';
 type ClockFormat = '12h' | '24h';
 type TimeValue = { hours: number; minutes: number };
-type TimePickerChangeHandler =
-  | React.Dispatch<React.SetStateAction<TimeValue>>
-  | React.Dispatch<React.SetStateAction<TimeValue | null>>;
+
+/**
+ * Called with the committed time.
+ *
+ * The component only ever emits a concrete `TimeValue`, never an updater
+ * function, so this is a plain callback. Passing a `useState` setter still
+ * works — `onChange={setTime}` type-checks — because a setter accepts a bare
+ * value as well as an updater.
+ */
+type TimePickerChangeHandler = (value: TimeValue) => void;
 
 // ── Clock Constants ─────────────────────────────────────────────────────────
 
@@ -273,15 +280,25 @@ const ClockDial = ({
 // =============================================================================
 
 export type TimePickerProps = {
+  /** Selected time (controlled). Always 24-hour, regardless of `format`. */
   value?: TimeValue | null;
+  /** Initially selected time when uncontrolled. */
   defaultValue?: TimeValue | null;
+  /** Called with the committed time. */
   onChange?: TimePickerChangeHandler;
+  /** Open state when used as a dialog (controlled). */
   open?: boolean;
+  /** Called when the dialog opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the dial and input show 12- or 24-hour time. Does not change the value shape. */
   format?: ClockFormat;
+  /** Text above the time fields. Defaults to “Select time”. */
   headerLabel?: string;
+  /** Dial layout. `auto` picks portrait or landscape from available space. */
   orientation?: Orientation;
+  /** Start on the dial or on the numeric input. */
   defaultMode?: TimePickerMode;
+  /** Additional class names for the root element. */
   className?: string;
 };
 

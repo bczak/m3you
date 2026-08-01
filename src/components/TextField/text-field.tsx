@@ -4,17 +4,29 @@ import * as React from 'react';
 import { cx } from '../../lib/cx';
 
 export type TextFieldProps = Omit<React.ComponentProps<'input'>, 'type'> & {
+  /** `filled` uses a tinted container; `outlined` uses a border. */
   variant?: 'filled' | 'outlined';
+  /** Native input type. */
   type?: 'text' | 'email' | 'password' | 'number' | 'search' | 'tel' | 'url';
+  /** Floating label. Animates into the outline on focus. */
   label?: string;
+  /** Guidance shown under the field. */
   supportingText?: string;
+  /** Message shown in place of `supportingText` while `error` is set. */
   errorText?: string;
+  /** Render the error state. Replaces `supportingText` with `errorText`. */
   error?: boolean;
+  /** Icon inside the field, before the text. */
   leadingIcon?: React.ReactNode;
+  /** Icon inside the field, after the text. */
   trailingIcon?: React.ReactNode;
+  /** Static text before the input value, such as a currency symbol. */
   prefixText?: string;
+  /** Static text after the input value, such as a unit. */
   suffixText?: string;
+  /** Show a character counter and cap input at this length. */
   maxCharCount?: number;
+  /** Called with the input's string value — saves reaching into the event. */
   onValueChange?: (value: string) => void;
 };
 

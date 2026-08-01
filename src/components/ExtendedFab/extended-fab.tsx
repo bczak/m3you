@@ -5,8 +5,11 @@ import { cx } from '../../lib/cx';
 import { Button, type ButtonProps } from '../Button/button';
 
 export type ExtendedFABProps = Omit<ButtonProps, 'shape'> & {
+  /** Icon shown before the label. */
   icon?: React.ReactNode;
+  /** Text label. Required — the component measures it to animate its own width. */
   label: string;
+  /** Use the lowered elevation. */
   lowered?: boolean;
 };
 

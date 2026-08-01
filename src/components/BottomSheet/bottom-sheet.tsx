@@ -56,13 +56,25 @@ export interface BottomSheetContentProps extends DrawerPrimitive.Popup.Props {
    * @default true
    */
   showDragHandle?: boolean;
+  /**
+   * Forwarded to the underlying portal. Pass `{ container }` to render the sheet
+   * inside a specific element instead of `document.body` — useful when the sheet
+   * belongs to a bounded surface such as a device frame or an embedded preview.
+   */
+  portalProps?: Omit<DrawerPrimitive.Portal.Props, 'children'>;
 }
 
-function BottomSheetContent({ className, children, showDragHandle = true, ...props }: BottomSheetContentProps) {
+function BottomSheetContent({
+  className,
+  children,
+  showDragHandle = true,
+  portalProps,
+  ...props
+}: BottomSheetContentProps) {
   const { isModal } = use(BottomSheetContext);
 
   return (
-    <DrawerPrimitive.Portal>
+    <DrawerPrimitive.Portal {...portalProps}>
       {isModal && <DrawerPrimitive.Backdrop data-slot="bottom-sheet-backdrop" className="md-bottom-sheet-backdrop" />}
       <DrawerPrimitive.Viewport data-slot="bottom-sheet-viewport" className="md-bottom-sheet-viewport">
         <DrawerPrimitive.Popup

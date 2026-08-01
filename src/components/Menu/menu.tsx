@@ -17,9 +17,13 @@ const MenuColorContext = React.createContext<MenuColor>('standard');
 export interface MenuProps {
   /** @deprecated accepted for backwards-compatible tests/stories; styling is token-driven. */
   color?: string;
+  /** Open state (controlled). Pair with `onOpenChange`. */
   open?: boolean;
+  /** Initial open state when uncontrolled. */
   defaultOpen?: boolean;
+  /** Called when the menu opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Trap focus and block interaction with the page behind the menu. */
   modal?: boolean;
   children?: React.ReactNode;
 }
@@ -40,17 +44,35 @@ Menu.displayName = 'Menu';
 // =============================================================================
 
 export interface MenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /**
+   * Render the trigger as your own element instead of a plain `<button>`:
+   * `<MenuTrigger render={<Button variant="outlined">Open</Button>} />`.
+   *
+   * This matches the `render` prop used by Dialog, Tooltip and the sheets, all of
+   * which forward to the same Base UI convention.
+   */
+  render?: React.ReactElement<Record<string, unknown>>;
+  /**
+   * @deprecated Use `render` instead, for consistency with the other components.
+   * `<MenuTrigger asChild><Button /></MenuTrigger>` still works and behaves
+   * identically to `<MenuTrigger render={<Button />} />`.
+   */
   asChild?: boolean;
 }
 
 const MenuTrigger = ({
+  render,
   asChild,
   children,
   ref,
   ...props
 }: MenuTriggerProps & { ref?: React.Ref<HTMLButtonElement> }) => {
-  if (asChild && React.isValidElement(children)) {
-    return <BaseMenu.Trigger ref={ref} render={children as React.ReactElement<Record<string, unknown>>} {...props} />;
+  // `asChild` took the element from `children`; `render` takes it as a prop.
+  // Resolve both to the single element Base UI expects.
+  const rendered = render ?? (asChild && React.isValidElement(children) ? children : undefined);
+
+  if (rendered) {
+    return <BaseMenu.Trigger ref={ref} render={rendered as React.ReactElement<Record<string, unknown>>} {...props} />;
   }
 
   return (
@@ -66,9 +88,18 @@ MenuTrigger.displayName = 'MenuTrigger';
 // =============================================================================
 
 export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Lay the items out as connected groups rather than a single surface. */
   grouped?: boolean;
+  /** Which side of the trigger the menu opens towards. */
   side?: 'top' | 'bottom';
+  /** How the menu aligns to the trigger along that side. */
   align?: 'start' | 'end' | 'center';
+  /**
+   * Forwarded to the underlying portal. Pass `{ container }` to render into a
+   * specific element instead of `document.body` — useful inside a bounded
+   * surface such as a device frame or an embedded preview.
+   */
+  portalProps?: Omit<BaseMenu.Portal.Props, 'children'>;
 }
 
 const MenuContent = ({
@@ -77,13 +108,14 @@ const MenuContent = ({
   side = 'bottom',
   align = 'start',
   children,
+  portalProps,
   ref,
   ...props
 }: MenuContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
   const color = use(MenuColorContext);
   const colorClass = color === 'vibrant' ? 'bg-tertiary-container' : 'bg-surface-container-low';
   return (
-    <BaseMenu.Portal>
+    <BaseMenu.Portal {...portalProps}>
       <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
         <BaseMenu.Popup
           ref={ref}
@@ -103,6 +135,7 @@ MenuContent.displayName = 'MenuContent';
 // =============================================================================
 
 export interface MenuGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Optional heading rendered above the group. */
   label?: React.ReactNode;
 }
 
@@ -160,12 +193,19 @@ function splitIcons(children: React.ReactNode): { icons: React.ReactNode[]; rest
 // =============================================================================
 
 export interface MenuItemProps extends React.ComponentPropsWithoutRef<'div'> {
+  /** Second line under the label. */
   supportingText?: React.ReactNode;
+  /** Whether choosing this item closes the menu. */
   closeOnSelect?: boolean;
+  /** Render the selected state and show a check. */
   selected?: boolean;
+  /** Icon before the label. */
   leadingIcon?: React.ReactNode;
+  /** Trailing text, typically a keyboard shortcut. */
   trailingText?: React.ReactNode;
+  /** Disable the item and skip it in keyboard navigation. */
   disabled?: boolean;
+  /** Called when the item is chosen. */
   onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
@@ -250,7 +290,9 @@ MenuSub.displayName = 'MenuSub';
 // =============================================================================
 
 export interface MenuSubTriggerProps extends React.ComponentPropsWithoutRef<'div'> {
+  /** Second line under the label. */
   supportingText?: React.ReactNode;
+  /** Disable the sub-menu and skip it in keyboard navigation. */
   disabled?: boolean;
 }
 
@@ -284,16 +326,24 @@ MenuSubTrigger.displayName = 'MenuSubTrigger';
 // MenuSubContent
 // =============================================================================
 
-export interface MenuSubContentProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface MenuSubContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * Forwarded to the underlying portal. Pass `{ container }` to render into a
+   * specific element instead of `document.body` — useful inside a bounded
+   * surface such as a device frame or an embedded preview.
+   */
+  portalProps?: Omit<BaseMenu.Portal.Props, 'children'>;
+}
 
 const MenuSubContent = ({
   className,
   children,
+  portalProps,
   ref,
   ...props
 }: MenuSubContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
   return (
-    <BaseMenu.Portal>
+    <BaseMenu.Portal {...portalProps}>
       <BaseMenu.Positioner sideOffset={4}>
         <BaseMenu.Popup ref={ref} className={cx('md-menu rounded-2xl p-1 shadow-md', className)} {...props}>
           {children}

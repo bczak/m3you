@@ -16,7 +16,9 @@ import { cx } from '../../lib/cx';
  */
 
 export type RadioButtonProps = Omit<React.ComponentProps<'input'>, 'type'> & {
+  /** Colour role. */
   variant?: 'primary' | 'error';
+  /** Called with this button's value when it is selected. */
   onValueChange?: (value: string) => void;
 };
 

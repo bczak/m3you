@@ -11,7 +11,9 @@ import { type UseButtonGroupSelectionOptions, useButtonGroupSelection } from './
 export interface ConnectedButtonGroupProps
   extends Omit<ButtonGroupProps, 'defaultValue'>,
     UseButtonGroupSelectionOptions {
+  /** Size applied to every button in the group, through context. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Corner style of the unselected segments. */
   shape?: 'round' | 'square';
 }
 
