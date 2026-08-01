@@ -29,6 +29,15 @@ const config: StorybookConfig = {
     // Tailwind CSS for Storybook stories (dev only, not shipped to consumers)
     config.plugins = config.plugins || [];
     config.plugins.push(tailwindVite());
+    // Rolldown (Vite 8) tree-shakes reselect (sideEffects: false) out of the production
+    // bundle but keeps @base-ui/utils' module-scope createSelectorCreator(...) call as a
+    // "side effect", leaving a call to an undefined identifier that breaks every
+    // floating-ui-based story (BottomSheet, Menu, Toolbar, Tooltip) in static builds.
+    // Declaring the function pure lets the orphaned call be dropped with its import.
+    // Dev mode is unaffected either way.
+    config.build = config.build || {};
+    config.build.rollupOptions = config.build.rollupOptions || {};
+    config.build.rollupOptions.treeshake = { manualPureFunctions: ['createSelectorCreator', 'lruMemoize'] };
     return config;
   },
 };

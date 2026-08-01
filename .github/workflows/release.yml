@@ -39,6 +39,12 @@ jobs:
       - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
       - run: bun install --frozen-lockfile
 
+      # Matches the pull-request gate. Without this a direct push to development
+      # can land lint errors that only surface later on someone's PR — which is
+      # exactly how an unlabelled SVG reached the branch.
+      - name: Lint and format
+        run: bunx biome check
+
       # The `storybook` vitest project renders stories in a real browser, so the
       # suite needs a Chromium binary. Without it half the test files silently
       # never run.
