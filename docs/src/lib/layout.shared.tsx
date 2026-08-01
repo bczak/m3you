@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router';
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { Logo } from '@/components/logo';
 import { SeedPicker } from '@/components/seed-picker';
@@ -16,30 +15,13 @@ export function baseOptions(): BaseLayoutProps {
     },
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
     links: [
-      {
-        type: 'custom',
-        children: (
-          <Link to="/components" className="m3-navlink">
-            Components
-          </Link>
-        ),
-      },
-      {
-        type: 'custom',
-        children: (
-          <Link to="/showcase" className="m3-navlink">
-            Showcase
-          </Link>
-        ),
-      },
-      {
-        type: 'custom',
-        children: (
-          <Link to="/theme" className="m3-navlink">
-            Theme
-          </Link>
-        ),
-      },
+      // `main` items, not `custom`: Fumadocs renders these itself, styled to
+      // match the surrounding chrome in both the top bar and the collapsed
+      // sidebar. A `custom` item is dropped in unstyled, which on narrow
+      // viewports left these looking like bare text under the search box.
+      { type: 'main', text: 'Components', url: '/components' },
+      { type: 'main', text: 'Showcase', url: '/showcase' },
+      { type: 'main', text: 'Theme', url: '/theme' },
       {
         type: 'custom',
         secondary: true,

@@ -1,0 +1,10 @@
+{
+  "projectId": "cbd619a7-058d-4526-a8c6-77bceb6470e5",
+  "shape": "storybook",
+  "pkg": "m3you",
+  "readmeHeader": ".design-sync/conventions.md",
+  "storybookStatic": ".design-sync/sb-reference",
+  "storybookConfigDir": ".storybook",
+  "buildCmd": "bun run build",
+  "entry": "dist/index.js"
+}

@@ -80,25 +80,35 @@
 .m3-seed__swatch {
   width: 1.125rem;
   height: 1.125rem;
+  flex: none;
   border-radius: 50%;
   cursor: pointer;
-  border: 2px solid transparent;
+  border: 0;
   outline-offset: 2px;
-  transition: transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-spring-default-spatial);
+  /* Selection and hover are drawn with a ring rather than a transform, so every
+     swatch keeps the same footprint. Scaling the selected one made the row look
+     like a set of mismatched sizes. */
+  box-shadow: 0 0 0 0 var(--md-sys-color-on-surface);
+  transition: box-shadow var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 }
 
 .m3-seed__swatch:hover {
-  transform: scale(1.15);
+  box-shadow:
+    0 0 0 2px var(--md-sys-color-surface),
+    0 0 0 3px var(--md-sys-color-outline);
 }
 
 .m3-seed__swatch[data-selected] {
-  border-color: var(--md-sys-color-on-surface);
-  transform: scale(1.15);
+  box-shadow:
+    0 0 0 2px var(--md-sys-color-surface),
+    0 0 0 4px var(--md-sys-color-on-surface);
 }
 
 .m3-seed__custom input {
-  width: 1.375rem;
-  height: 1.375rem;
+  /* Matches .m3-seed__swatch exactly — it sits in the same row. */
+  width: 1.125rem;
+  height: 1.125rem;
+  display: block;
   padding: 0;
   border: 0;
   border-radius: 50%;
