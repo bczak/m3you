@@ -1,8 +1,11 @@
 {
   "name": "m3you",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Material Design 3 Expressive component library for React",
   "type": "module",
+  "workspaces": [
+    "docs"
+  ],
   "license": "MIT",
   "author": "bczak",
   "repository": {
@@ -53,7 +56,10 @@
     "test:watch": "vitest",
     "chromatic": "bunx chromatic",
     "prepublishOnly": "bun run build",
-    "doctor": "bunx react-doctor@latest . --blocking warning"
+    "doctor": "bunx react-doctor@latest . --blocking warning",
+    "docs:dev": "bun run --cwd docs dev",
+    "docs:build": "bun run --cwd docs build",
+    "docs:preview": "bun run --cwd docs preview"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -89,6 +95,7 @@
     "react-dom": "19.2.7",
     "storybook": "10.4.6",
     "tailwindcss": "4.3.1",
+    "tinyglobby": "0.2.17",
     "typescript": "6.0.3",
     "vite": "8.1.0",
     "vite-plugin-dts": "5.0.3",
