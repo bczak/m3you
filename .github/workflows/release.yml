@@ -39,7 +39,6 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       should-publish: ${{ steps.version.outputs.should-publish }}
-      has-cloudflare: ${{ steps.secrets.outputs.cloudflare }}
     steps:
       - uses: actions/checkout@v5
 
@@ -68,23 +67,6 @@ jobs:
       - name: Type-check docs
         run: bun run --cwd docs types:check
 
-      # `secrets` is not available in a job-level `if`, so the presence check
-      # happens here and the deploy jobs gate on these outputs. Until the
-      # secrets are configured the run stays green and simply skips deploying,
-      # rather than failing on every push.
-      - name: Which credentials are configured?
-        id: secrets
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
-            echo "cloudflare=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "cloudflare=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Cloudflare secrets not set — skipping the site deploys."
-          fi
-
       - name: Is this version already on npm?
         id: version
         run: |
@@ -109,10 +91,12 @@ jobs:
   docs:
     name: Documentation site
     needs: verify
-    if: needs.verify.outputs.has-cloudflare == 'true'
     runs-on: ubuntu-latest
+    # The Cloudflare credentials live in this environment's secrets, so the job
+    # has to declare it — environment-scoped secrets are invisible to jobs that
+    # do not.
     environment:
-      name: production
+      name: development
       url: https://material.you
     steps:
       - uses: actions/checkout@v5
@@ -137,10 +121,9 @@ jobs:
   storybook:
     name: Storybook
     needs: verify
-    if: needs.verify.outputs.has-cloudflare == 'true'
     runs-on: ubuntu-latest
     environment:
-      name: production
+      name: development
       url: https://storybook.material.you
     steps:
       - uses: actions/checkout@v5
