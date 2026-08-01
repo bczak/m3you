@@ -47,25 +47,40 @@ Wrangler picks both variables up automatically; there is no login step. The
 first run of each creates the project — accept the suggested name, which matches
 the `--project-name` flag in the script.
 
-## Option A — deploy from CI (recommended)
+## Option A — release from CI (recommended)
 
-`.github/workflows/deploy-cloudflare.yml` runs the same two commands on every
-push to `development`, so nothing needs Wrangler installed locally and pushes
-publish automatically.
+`.github/workflows/release.yml` handles everything on every push to
+`development`:
 
-Add the token and account ID as repository secrets — **Settings → Secrets and
-variables → Actions → New repository secret**:
+| Job | What it does |
+|---|---|
+| `verify` | Library tests, documentation-coverage tests, docs type-check |
+| `docs` | Builds and deploys the site to `m3you-docs` |
+| `storybook` | Builds and deploys Storybook to `m3you-storybook` |
+| `npm` | Publishes the library — **only if `package.json` carries a version that is not on the registry** |
+
+That last condition is what makes the workflow safe to run on every push.
+Bumping the version in `package.json` *is* the release trigger; pushes that
+leave it alone redeploy the two sites and skip npm entirely.
+
+Add three repository secrets — **Settings → Secrets and variables → Actions →
+New repository secret**:
 
 | Secret | Value |
 |---|---|
 | `CLOUDFLARE_API_TOKEN` | the token created above |
 | `CLOUDFLARE_ACCOUNT_ID` | your account ID |
+| `NPM_TOKEN` | npm granular token, Read and write on `m3you` |
 
-The docs job runs `docs/tests` before deploying, so documentation that has
-drifted from the component exports fails the deploy instead of shipping.
+Jobs whose credentials are missing skip rather than fail, so the workflow stays
+green before the secrets exist — check the run summary for a note saying what
+was skipped.
 
-Trigger the first run from **Actions → Deploy to Cloudflare → Run workflow**, or
-just push.
+Nothing deploys until `verify` passes, so docs that have drifted from the
+component exports, or a failing component test, block the release rather than
+shipping.
+
+Trigger the first run from **Actions → Release → Run workflow**, or just push.
 
 ## Option B — deploy from your machine
 
@@ -204,7 +219,7 @@ npm publish
 ```bash
 bun run docs:dev           # dev server on :3000
 bun run docs:build         # static build into docs/.output/public
-bun --cwd docs run start   # serve the built output locally
+bun run --cwd docs start   # serve the built output locally
 
 bun run deploy:docs        # build + deploy to Cloudflare
 bun run deploy:storybook   # build + deploy Storybook to Cloudflare

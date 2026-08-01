@@ -1,8 +1,8 @@
 name: Docs
 
-# Cloudflare Pages does the deploying. This workflow only proves the docs still
-# build and that nothing has drifted out of the component registry — so a broken
-# docs build fails the PR rather than the deploy.
+# Pull-request check only. Pushes to development are covered by release.yml,
+# which runs the same verification before deploying — running both would just
+# duplicate the work.
 
 on:
   pull_request:
@@ -11,8 +11,6 @@ on:
       - 'docs/**'
       - 'package.json'
       - '.github/workflows/docs.yml'
-  push:
-    branches: [development]
 
 permissions:
   contents: read
@@ -32,13 +30,13 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Generate prop tables
-        run: bun --cwd docs run docgen
+        run: bun run --cwd docs docgen
 
       - name: Check documentation coverage
-        run: bun --cwd docs run test
+        run: bun run --cwd docs test
 
       - name: Type-check
-        run: bun --cwd docs run types:check
+        run: bun run --cwd docs types:check
 
       - name: Build site
-        run: bun --cwd docs run build
+        run: bun run --cwd docs build

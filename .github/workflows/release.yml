@@ -1,0 +1,187 @@
+name: Release
+
+# On every push to development: verify, then publish the documentation site and
+# Storybook to Cloudflare Pages, and publish the library to npm if — and only
+# if — package.json carries a version that is not on the registry yet.
+#
+# That last condition is what makes this safe to run on every push. Bumping the
+# version in package.json is the release trigger; pushes that do not touch it
+# redeploy the sites and skip npm.
+#
+# Repository secrets required (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   — Account → Cloudflare Pages → Edit
+#   CLOUDFLARE_ACCOUNT_ID  — right-hand sidebar of any domain overview
+#   NPM_TOKEN              — npm granular token, Read and write on `m3you`
+
+on:
+  push:
+    branches: [development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never let two releases overlap. Not cancel-in-progress: a half-finished npm
+# publish is worse than a queued one.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      should-publish: ${{ steps.version.outputs.should-publish }}
+      has-cloudflare: ${{ steps.secrets.outputs.cloudflare }}
+      has-npm: ${{ steps.secrets.outputs.npm }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - run: bun install --frozen-lockfile
+
+      - name: Library tests
+        run: bun run test
+
+      - name: Documentation coverage
+        run: bun run --cwd docs test
+
+      - name: Type-check docs
+        run: bun run --cwd docs types:check
+
+      # `secrets` is not available in a job-level `if`, so the presence check
+      # happens here and the deploy jobs gate on these outputs. Until the
+      # secrets are configured the run stays green and simply skips deploying,
+      # rather than failing on every push.
+      - name: Which credentials are configured?
+        id: secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "cloudflare=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "cloudflare=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare secrets not set — skipping the site deploys."
+          fi
+
+          if [ -n "$NPM_TOKEN" ]; then
+            echo "npm=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "npm=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::NPM_TOKEN not set — skipping the npm publish."
+          fi
+
+      - name: Is this version already on npm?
+        id: version
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          # Distinguish "this version does not exist" from "the registry did not
+          # answer". Treating a network blip as "not published" would send the
+          # job on to publish; better to fail loudly here.
+          if OUTPUT="$(npm view "m3you@$VERSION" version 2>&1)"; then
+            echo "m3you@$VERSION is already published ($OUTPUT) — npm publish will be skipped."
+            echo "should-publish=false" >> "$GITHUB_OUTPUT"
+          elif printf '%s' "$OUTPUT" | grep -qE 'E404|404 '; then
+            echo "m3you@$VERSION is not on the registry — it will be published."
+            echo "should-publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Could not reach the npm registry:"
+            printf '%s\n' "$OUTPUT"
+            exit 1
+          fi
+
+  docs:
+    name: Documentation site
+    needs: verify
+    if: needs.verify.outputs.has-cloudflare == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://material.you
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+      - run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run docs:build
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Through the environment, never interpolated into the shell: a branch
+          # name is attacker-influenceable on workflow_dispatch.
+          BRANCH: ${{ github.ref_name }}
+        run: >-
+          bunx wrangler pages deploy docs/.output/public
+          --project-name m3you-docs
+          --branch "$BRANCH"
+
+  storybook:
+    name: Storybook
+    needs: verify
+    if: needs.verify.outputs.has-cloudflare == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://storybook.material.you
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+      - run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run build-storybook
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          BRANCH: ${{ github.ref_name }}
+        run: >-
+          bunx wrangler pages deploy storybook-static
+          --project-name m3you-storybook
+          --branch "$BRANCH"
+
+  npm:
+    name: Publish to npm
+    needs: verify
+    if: needs.verify.outputs.should-publish == 'true' && needs.verify.outputs.has-npm == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/m3you
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      # setup-node writes the .npmrc that reads NODE_AUTH_TOKEN, so the token is
+      # never written to disk by a shell command or echoed into the log.
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - run: bun install --frozen-lockfile
+
+      - name: Publish
+        # `prepublishOnly` rebuilds the library, so the tarball always matches
+        # the committed source rather than whatever happens to be in dist/.
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: echo "Published m3you@$VERSION" >> "$GITHUB_STEP_SUMMARY"
