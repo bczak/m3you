@@ -9,7 +9,7 @@
     "dev": "vite dev",
     "prebuild": "bun run docgen",
     "build": "vite build && bun run scripts/postbuild.ts",
-    "start": "serve .output/public --config ./serve.json",
+    "start": "serve .output/public",
     "preview": "vite preview",
     "types:check": "tsc --noEmit",
     "test": "vitest run"

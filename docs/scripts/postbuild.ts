@@ -3,13 +3,16 @@
  *
  * TanStack Start's SPA mode prerenders real HTML for every route except the
  * root, which it leaves to the client. Without an `index.html` the site's home
- * page depends entirely on the host rewriting `/` to `_shell.html` — which
- * Cloudflare Pages does via `_redirects`, but plain static hosts and Cloudflare
- * Workers' `single-page-application` mode do not.
+ * page depends entirely on the host being told to rewrite `/` to `_shell.html`.
  *
  * Copying the shell to both filenames makes the output portable: `/` resolves
  * on any static host, and unknown paths fall back to the shell so the router
  * can render its own not-found page.
+ *
+ * This is also why there is no `_redirects` file. A catch-all rewrite to
+ * `/_shell.html` looks right but loops on Cloudflare Pages, which strips `.html`
+ * and 308s to `/_shell` — which matches the catch-all again. Real `index.html`
+ * and `404.html` files need no rewrite rules at all.
  */
 import { copyFileSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
