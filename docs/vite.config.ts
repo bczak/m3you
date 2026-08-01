@@ -31,16 +31,10 @@ export default defineConfig({
         },
       },
 
-      // `/` is listed explicitly: crawlLinks reports it as prerendered but emits
-      // no index.html, leaving the landing page — the most linked-to page on the
-      // site — as a client-rendered shell with no title for crawlers.
-      pages: [
-        { path: '/' },
-        { path: '/docs' },
-        { path: '/api/search' },
-        { path: 'llms-full.txt' },
-        { path: 'llms.txt' },
-      ],
+      // Listing `/` here does not help: in SPA mode `_shell.html` *is* the root
+      // render, so no index.html is emitted either way. scripts/postbuild.ts
+      // copies the shell into place instead.
+      pages: [{ path: '/docs' }, { path: '/api/search' }, { path: 'llms-full.txt' }, { path: 'llms.txt' }],
     }),
     react(),
     // please see https://tanstack.com/start/latest/docs/framework/react/guide/hosting#nitro for guides on hosting
