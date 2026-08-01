@@ -14,16 +14,46 @@ GitHub Pages does not fit: it permits only one custom domain per repository.
 Both projects are free on Cloudflare's Free plan (unlimited sites, 500 builds a
 month, unlimited bandwidth).
 
-## What you need to do
+## Option A — from the command line (fastest)
 
-Everything below happens in the Cloudflare dashboard — none of it can be done
-from this repository.
+`wrangler pages deploy` creates the project on first run, so there is no
+dashboard navigation to hunt through. The only dashboard step left is attaching
+the custom domains (step 4 below).
+
+```bash
+bunx wrangler login          # opens a browser once
+
+bun run deploy:docs          # builds, then creates/deploys m3you-docs
+bun run deploy:storybook     # builds, then creates/deploys m3you-storybook
+```
+
+The first run of each prompts to create the project — accept the name it
+suggests, which matches the `--project-name` flag in the script.
+
+This uploads a build made on your machine. It does not connect the project to
+Git, so pushes will not trigger rebuilds. To add that afterwards, open the
+project in the dashboard and use **Settings → Build → Connect to Git** with the
+build settings from the table above.
+
+## Option B — from the dashboard (with Git integration)
+
+### Finding Workers & Pages
+
+It lives at the **account** level, not inside a domain. If your sidebar shows
+DNS, SSL/TLS, Caching and Workers Routes, you are inside the `material.you`
+zone — click the account name in the top-left breadcrumb to go up a level.
+Direct link:
+
+```
+https://dash.cloudflare.com/?to=/:account/workers-and-pages
+```
+
+Newer dashboards label this section **Compute (Workers)**; the Pages tab is
+inside it either way.
 
 ### 1. Push this branch
 
 ```bash
-git add .
-git commit -m "docs: add documentation site"
 git push
 ```
 
@@ -58,6 +88,8 @@ Repeat **Create → Pages → Connect to Git** on the same repository:
 - Same `BUN_VERSION` variable.
 
 ### 4. Attach the domains
+
+(Required for both options.)
 
 `material.you` is already in your Cloudflare account, so this is two clicks each
 and no DNS records to copy by hand.
@@ -109,7 +141,10 @@ pull requests and does not deploy.
 ## Local equivalents
 
 ```bash
-bun run docs:dev        # dev server on :3000
-bun run docs:build      # static build into docs/.output/public
+bun run docs:dev           # dev server on :3000
+bun run docs:build         # static build into docs/.output/public
 bun --cwd docs run start   # serve the built output locally
+
+bun run deploy:docs        # build + deploy to Cloudflare
+bun run deploy:storybook   # build + deploy Storybook to Cloudflare
 ```

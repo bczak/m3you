@@ -59,7 +59,9 @@
     "doctor": "bunx react-doctor@latest . --blocking warning",
     "docs:dev": "bun run --cwd docs dev",
     "docs:build": "bun run --cwd docs build",
-    "docs:preview": "bun run --cwd docs preview"
+    "docs:preview": "bun run --cwd docs preview",
+    "deploy:docs": "bun run docs:build && bunx wrangler pages deploy docs/.output/public --project-name m3you-docs --branch development",
+    "deploy:storybook": "bun run build-storybook && bunx wrangler pages deploy storybook-static --project-name m3you-storybook --branch development"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
