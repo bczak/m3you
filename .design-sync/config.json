@@ -6,5 +6,25 @@
   "storybookStatic": ".design-sync/sb-reference",
   "storybookConfigDir": ".storybook",
   "buildCmd": "bun run build",
-  "entry": "dist/index.js"
+  "entry": "dist/index.js",
+  "titleMap": {
+    "FAB": "FAB",
+    "Search": "SearchBar",
+    "M3ComponentReplacements": null,
+    "InteractionPlayground": null
+  },
+  "overrides": {
+    "LinearProgress": { "cardMode": "column" },
+    "Snackbar": { "cardMode": "column" },
+    "Card": { "cardMode": "column" },
+    "Dialog": { "cardMode": "column" },
+    "List": { "cardMode": "column" },
+    "TextField": { "cardMode": "column" },
+    "Tabs": { "cardMode": "column" },
+    "Toolbar": { "cardMode": "column" },
+    "RadioButton": { "cardMode": "column" },
+    "Slider": { "cardMode": "column" },
+    "Menu": { "cardMode": "single", "primaryStory": "Showcase" },
+    "Tooltip": { "cardMode": "single" }
+  }
 }
