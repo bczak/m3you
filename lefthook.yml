@@ -1,0 +1,19 @@
+# Local git hooks. Installed by `bun run prepare`, which runs on `bun install`.
+#
+# These exist so mistakes surface in the second it takes to commit rather than
+# in CI several minutes later.
+
+commit-msg:
+  commands:
+    commitlint:
+      # semantic-release derives the version from this message; a malformed one
+      # silently produces no release.
+      run: bunx commitlint --edit {1}
+
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: '*.{ts,tsx,js,jsx,json,css}'
+      run: bunx biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true

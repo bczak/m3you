@@ -1,0 +1,108 @@
+name: Pull request
+
+# Verifies the change and publishes a Storybook preview so components can be
+# reviewed as rendered UI rather than as a diff. The preview URL is posted as a
+# single comment on the PR, updated in place on each push.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # commitlint needs the commits being added, which a shallow clone lacks.
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - run: bun install --frozen-lockfile
+
+      # A malformed message means semantic-release ships nothing for this change,
+      # so catch it here rather than discovering the missing release later.
+      - name: Lint commit messages
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: bunx commitlint --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
+
+      - name: Lint and format
+        run: bunx biome check
+
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Library tests
+        run: bun run test
+
+      - name: Generate prop tables
+        run: bun run --cwd docs docgen
+
+      - name: Documentation coverage
+        run: bun run --cwd docs test
+
+      - name: Type-check docs
+        run: bun run --cwd docs types:check
+
+  storybook-preview:
+    name: Storybook preview
+    needs: verify
+    # Forks cannot read the Cloudflare secrets, so skip rather than fail.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    environment:
+      name: development
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+      - run: bun install --frozen-lockfile
+
+      - name: Build Storybook
+        run: bun run build-storybook
+
+      - name: Deploy preview
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Through the environment: a branch name is attacker-controlled.
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          bunx wrangler pages deploy storybook-static \
+            --project-name m3you-storybook \
+            --branch "$BRANCH" 2>&1 | tee deploy.log
+
+          URL="$(grep -oE 'https://[a-z0-9]+\.m3you-storybook\.pages\.dev' deploy.log | tail -1)"
+          if [ -z "$URL" ]; then
+            echo "Could not determine the preview URL from wrangler output." >&2
+            exit 1
+          fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Comment the preview URL
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          URL: ${{ steps.deploy.outputs.url }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          BODY="$(printf '### Storybook preview\n\n%s\n\nBuilt from %s.' "$URL" "${SHA:0:7}")"
+
+          # Keep one comment and edit it, so pushing repeatedly does not spam the
+          # thread. Older gh versions lack --create-if-none, hence the fallback.
+          gh pr comment "$PR" --body "$BODY" --edit-last --create-if-none \
+            || gh pr comment "$PR" --body "$BODY"

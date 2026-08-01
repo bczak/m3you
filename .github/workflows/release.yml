@@ -1,63 +1,55 @@
 name: Release
 
-# On every push to development: verify, then publish the documentation site and
-# Storybook to Cloudflare Pages, and publish the library to npm if — and only
-# if — package.json carries a version that is not on the registry yet.
+# Runs on both release branches:
 #
-# That last condition is what makes this safe to run on every push. Bumping the
-# version in package.json is the release trigger; pushes that do not touch it
-# redeploy the sites and skip npm.
+#   development → prerelease on the `dev` dist-tag (0.2.1-dev.1, -dev.2, …)
+#   master      → stable release on `latest` (0.2.1, 0.3.0, …)
 #
-# Repository secrets required (Settings → Secrets and variables → Actions):
-#   CLOUDFLARE_API_TOKEN   — Account → Cloudflare Pages → Edit
-#   CLOUDFLARE_ACCOUNT_ID  — right-hand sidebar of any domain overview
+# semantic-release decides whether there is anything to release and what the
+# version is, from the commit messages since the last tag. A push containing
+# only `docs:` or `chore:` commits publishes nothing and simply redeploys the
+# sites.
 #
-# npm needs no secret: publishing uses Trusted Publishing, where npm verifies a
-# short-lived GitHub OIDC token instead of a stored credential. Configure it at
-# npmjs.com → m3you → Settings → Trusted Publisher, pointing at this repository
-# and the workflow file `release.yml`. Provenance attestations are generated
-# automatically as a result.
+# npm needs no secret: @semantic-release/npm exchanges the GitHub OIDC token for
+# a short-lived publish token (Trusted Publishing), configured at
+# npmjs.com → m3you → Settings → Trusted Publisher against this workflow file.
+# If the exchange fails it falls back to NPM_TOKEN, which is why that secret is
+# still passed through.
+#
+# Cloudflare credentials live in the `development` environment's secrets.
 
 on:
   push:
-    branches: [development]
+    branches: [development, master]
   workflow_dispatch:
 
 permissions:
   contents: read
 
-# Never let two releases overlap. Not cancel-in-progress: a half-finished npm
-# publish is worse than a queued one.
 concurrency:
-  group: release
+  group: release-${{ github.ref_name }}
   cancel-in-progress: false
 
 jobs:
   verify:
     name: Verify
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-      should-publish: ${{ steps.version.outputs.should-publish }}
     steps:
       - uses: actions/checkout@v5
-
       - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
-
       - run: bun install --frozen-lockfile
 
-      # The `storybook` vitest project runs stories in a real browser to check
-      # accessibility, so the suite needs a Chromium binary. Without this the
-      # run reports "42 passed (83)" — the browser project silently never runs.
+      # The `storybook` vitest project renders stories in a real browser, so the
+      # suite needs a Chromium binary. Without it half the test files silently
+      # never run.
       - name: Install Playwright Chromium
         run: bunx playwright install --with-deps chromium
 
       - name: Library tests
         run: bun run test
 
-      # docgen.json is generated and git-ignored. `docs build` regenerates it via
-      # its prebuild hook, but the tests run without building, so it has to be
-      # produced explicitly here.
+      # docgen.json is generated and git-ignored; the docs build regenerates it
+      # via a prebuild hook, but the tests run without building.
       - name: Generate prop tables
         run: bun run --cwd docs docgen
 
@@ -67,34 +59,48 @@ jobs:
       - name: Type-check docs
         run: bun run --cwd docs types:check
 
-      - name: Is this version already on npm?
-        id: version
-        run: |
-          VERSION="$(node -p "require('./package.json').version")"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+  release:
+    name: Release
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create tags and GitHub Releases
+      issues: write
+      pull-requests: write
+      id-token: write # mint the OIDC token npm exchanges for publish rights
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # semantic-release reads the full history to find the last release and
+          # everything committed since it.
+          fetch-depth: 0
 
-          # Distinguish "this version does not exist" from "the registry did not
-          # answer". Treating a network blip as "not published" would send the
-          # job on to publish; better to fail loudly here.
-          if OUTPUT="$(npm view "m3you@$VERSION" version 2>&1)"; then
-            echo "m3you@$VERSION is already published ($OUTPUT) — npm publish will be skipped."
-            echo "should-publish=false" >> "$GITHUB_OUTPUT"
-          elif printf '%s' "$OUTPUT" | grep -qE 'E404|404 '; then
-            echo "m3you@$VERSION is not on the registry — it will be published."
-            echo "should-publish=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Could not reach the npm registry:"
-            printf '%s\n' "$OUTPUT"
-            exit 1
-          fi
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      # Trusted Publishing requires npm 11.5.1 or newer; the npm bundled with
+      # Node is older.
+      - name: Upgrade npm
+        run: |
+          npm install -g npm@latest
+          npm --version
+
+      - run: bun install --frozen-lockfile
+
+      - name: semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Only used if the OIDC exchange fails.
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bunx semantic-release
 
   docs:
     name: Documentation site
     needs: verify
     runs-on: ubuntu-latest
-    # The Cloudflare credentials live in this environment's secrets, so the job
-    # has to declare it — environment-scoped secrets are invisible to jobs that
-    # do not.
     environment:
       name: development
       url: https://material.you
@@ -110,14 +116,11 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # Through the environment, never interpolated into the shell: a branch
-          # name is attacker-influenceable on workflow_dispatch.
+          # Through the environment, never interpolated into the shell.
           BRANCH: ${{ github.ref_name }}
         run: |
-          # `pages deploy` cannot create a project non-interactively, so ensure it
-          # exists first. Creating one that already exists is a harmless error.
           bunx wrangler pages project create m3you-docs \
-            --production-branch development 2>/dev/null || true
+            --production-branch master 2>/dev/null || true
 
           bunx wrangler pages deploy docs/.output/public \
             --project-name m3you-docs \
@@ -144,53 +147,9 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           BRANCH: ${{ github.ref_name }}
         run: |
-          # `pages deploy` cannot create a project non-interactively, so ensure it
-          # exists first. Creating one that already exists is a harmless error.
           bunx wrangler pages project create m3you-storybook \
-            --production-branch development 2>/dev/null || true
+            --production-branch master 2>/dev/null || true
 
           bunx wrangler pages deploy storybook-static \
             --project-name m3you-storybook \
             --branch "$BRANCH"
-
-  npm:
-    name: Publish to npm
-    needs: verify
-    if: needs.verify.outputs.should-publish == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      # Lets the runner mint the OIDC token npm exchanges for publish rights.
-      # Without it, Trusted Publishing fails with a missing-token error.
-      id-token: write
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
-
-      # Trusted Publishing landed in npm 11.5.1; the npm bundled with Node is
-      # older than that, so upgrade the CLI rather than relying on the runtime.
-      - name: Upgrade npm
-        run: |
-          npm install -g npm@latest
-          npm --version
-
-      - run: bun install --frozen-lockfile
-
-      - name: Publish
-        # No token: npm verifies the OIDC token from this workflow. That is also
-        # what lets it attach a provenance attestation automatically.
-        #
-        # `prepublishOnly` rebuilds the library, so the tarball always matches
-        # the committed source rather than whatever happens to be in dist/.
-        run: npm publish --access public
-
-      - name: Summary
-        env:
-          VERSION: ${{ needs.verify.outputs.version }}
-        run: echo "Published m3you@$VERSION" >> "$GITHUB_STEP_SUMMARY"
