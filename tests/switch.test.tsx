@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { Switch } from '../src/components/ui/switch';
 
 // Cleanup after each test to prevent DOM pollution
@@ -142,6 +142,19 @@ test('calls onCheckedChange when clicked', async () => {
   const input = screen.getByRole('switch');
   fireEvent.click(input);
   expect(checkedState).toBe(true);
+});
+
+test('composes native onChange with onCheckedChange and uncontrolled state', () => {
+  const onChange = vi.fn();
+  const onCheckedChange = vi.fn();
+  render(<Switch onChange={onChange} onCheckedChange={onCheckedChange} />);
+
+  const input = screen.getByRole('switch');
+  fireEvent.click(input);
+
+  expect(input).toBeChecked();
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onCheckedChange).toHaveBeenCalledWith(true);
 });
 
 test('toggles state when label is clicked', async () => {

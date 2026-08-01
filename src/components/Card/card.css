@@ -26,6 +26,11 @@
     z-index: 0;
   }
 
+  & > .salty-ripple .salty-ripple-surface::after {
+    width: var(--card-ripple-size);
+    height: var(--card-ripple-size);
+  }
+
   & > :not(.salty-ripple) {
     position: relative;
     z-index: 1;

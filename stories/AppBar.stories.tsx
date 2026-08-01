@@ -91,6 +91,10 @@ function AppBarPreview(args: ComponentProps<typeof AppBar>) {
   );
 }
 
+function AppBarShowcasePreview(args: ComponentProps<typeof AppBar>) {
+  return <AppBarPreview {...args} role="presentation" />;
+}
+
 function StoryStack({ children }: { children: React.ReactNode }) {
   return children;
 }
@@ -120,10 +124,10 @@ export const Variants: Story = {
   },
   render: () => (
     <StoryStack>
-      <AppBarPreview variant="search" searchLabel="Search product" />
-      <AppBarPreview variant="small" headline="Headline" />
-      <AppBarPreview variant="medium" headline="Headline" supportingText="Supporting text" />
-      <AppBarPreview variant="large" headline="Headline" supportingText="Supporting text" />
+      <AppBarShowcasePreview variant="search" searchLabel="Search product" />
+      <AppBarShowcasePreview variant="small" headline="Headline" />
+      <AppBarShowcasePreview variant="medium" headline="Headline" supportingText="Supporting text" />
+      <AppBarShowcasePreview variant="large" headline="Headline" supportingText="Supporting text" />
     </StoryStack>
   ),
 };
@@ -138,10 +142,10 @@ export const CenterAligned: Story = {
   },
   render: () => (
     <StoryStack>
-      <AppBarPreview variant="search" searchLabel="Search product" centerAligned />
-      <AppBarPreview variant="small" headline="Headline" centerAligned />
-      <AppBarPreview variant="medium" headline="Headline" supportingText="Supporting text" centerAligned />
-      <AppBarPreview variant="large" headline="Headline" supportingText="Supporting text" centerAligned />
+      <AppBarShowcasePreview variant="search" searchLabel="Search product" centerAligned />
+      <AppBarShowcasePreview variant="small" headline="Headline" centerAligned />
+      <AppBarShowcasePreview variant="medium" headline="Headline" supportingText="Supporting text" centerAligned />
+      <AppBarShowcasePreview variant="large" headline="Headline" supportingText="Supporting text" centerAligned />
     </StoryStack>
   ),
 };

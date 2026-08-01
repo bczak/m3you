@@ -137,6 +137,19 @@ test('uncontrolled change updates the value and fires onValueChange', async () =
   expect(onValueChange).toHaveBeenCalledWith(40);
 });
 
+test('composes native onChange with onValueChange and uncontrolled state', () => {
+  const onChange = vi.fn();
+  const onValueChange = vi.fn();
+  render(<Slider aria-label="Volume" onChange={onChange} onValueChange={onValueChange} />);
+
+  const slider = screen.getByRole('slider', { name: 'Volume' });
+  fireEvent.change(slider, { target: { value: '40' } });
+
+  expect(slider).toHaveValue('40');
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onValueChange).toHaveBeenCalledWith(40);
+});
+
 // Change handling (controlled)
 test('controlled change fires onValueChange without mutating internal state', async () => {
   const onValueChange = vi.fn();

@@ -44,7 +44,7 @@ type Story = StoryObj<typeof meta>;
 
 const InteractiveCheckbox = (props: React.ComponentProps<typeof Checkbox>) => {
   const [checked, setChecked] = useState(props.checked ?? false);
-  return <Checkbox {...props} checked={checked} onCheckedChange={setChecked} />;
+  return <Checkbox aria-label="Example checkbox" {...props} checked={checked} onCheckedChange={setChecked} />;
 };
 
 export const Default: Story = {
@@ -62,23 +62,23 @@ const VariantStory = ({ variant }: { variant: 'primary' | 'error' }) => {
     <div style={{ display: 'flex', gap: '64px' }}>
       {/* Unchecked */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-        <span style={{ fontSize: '12px', color: '#888' }}>Unchecked</span>
+        <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Unchecked</span>
         <InteractiveCheckbox variant={variant} />
         <InteractiveCheckbox variant={variant} disabled />
       </div>
 
       {/* Checked */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-        <span style={{ fontSize: '12px', color: '#888' }}>Checked</span>
+        <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Checked</span>
         <InteractiveCheckbox variant={variant} checked />
         <InteractiveCheckbox variant={variant} checked disabled />
       </div>
 
       {/* Indeterminate */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-        <span style={{ fontSize: '12px', color: '#888' }}>Indeterminate</span>
-        <Checkbox variant={variant} indeterminate />
-        <Checkbox variant={variant} indeterminate disabled />
+        <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Indeterminate</span>
+        <Checkbox aria-label="Example checkbox" variant={variant} indeterminate />
+        <Checkbox aria-label="Example checkbox" variant={variant} indeterminate disabled />
       </div>
     </div>
   );

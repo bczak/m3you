@@ -179,6 +179,7 @@ const MenuItem = ({
   className,
   children,
   onClick,
+  onKeyUp,
   ref,
   ...props
 }: MenuItemProps & { ref?: React.Ref<HTMLDivElement> }) => {
@@ -190,12 +191,7 @@ const MenuItem = ({
       disabled={disabled}
       onClick={onClick}
       closeOnClick={closeOnSelect}
-      onKeyUp={(event) => {
-        if ((event.key === ' ' || event.key === 'Enter') && !disabled) {
-          onClick?.(event as unknown as React.MouseEvent<HTMLElement>);
-        }
-        props.onKeyUp?.(event);
-      }}
+      onKeyUp={onKeyUp}
       data-disabled={disabled || undefined}
       data-selected={selected || undefined}
       className={cx('md-menu-item rounded-xl h-12 overflow-hidden', disabled && 'opacity-38', selectedClass, className)}

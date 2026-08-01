@@ -86,6 +86,8 @@ const Tab = ({
   badge,
   disabled,
   children,
+  onClick,
+  onKeyDown,
   ref,
   ...props
 }: TabProps & { ref?: React.Ref<HTMLButtonElement> }) => {
@@ -99,12 +101,15 @@ const Tab = ({
     if (!disabled) {
       onValueChange?.(value);
     }
-    props.onClick?.(e);
+    onClick?.(e);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     const tablist = e.currentTarget.closest('[role="tablist"]');
-    if (!tablist) return;
+    if (!tablist) {
+      onKeyDown?.(e);
+      return;
+    }
 
     const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'));
     const currentIndex = tabs.indexOf(e.currentTarget);
@@ -133,7 +138,7 @@ const Tab = ({
       }
     }
 
-    props.onKeyDown?.(e);
+    onKeyDown?.(e);
   };
 
   return (

@@ -60,19 +60,19 @@ export const Showcase: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
       {/* Row 1: 5 icon-only buttons, second selected */}
       <ConnectedButtonGroup selectionMode="single" defaultValue={[1]} shape="round">
-        <IconButton variant="tonal">
+        <IconButton aria-label="Example action" variant="tonal">
           <CircleStarIcon />
         </IconButton>
-        <IconButton variant="tonal">
+        <IconButton aria-label="Example action" variant="tonal">
           <CircleStarIcon />
         </IconButton>
-        <IconButton variant="tonal">
+        <IconButton aria-label="Example action" variant="tonal">
           <CircleStarIcon />
         </IconButton>
-        <IconButton variant="tonal">
+        <IconButton aria-label="Example action" variant="tonal">
           <CircleStarIcon />
         </IconButton>
-        <IconButton variant="tonal">
+        <IconButton aria-label="Example action" variant="tonal">
           <CircleStarIcon />
         </IconButton>
       </ConnectedButtonGroup>
@@ -95,13 +95,13 @@ export const Showcase: Story = {
 
       {/* Row 3: squared, 3 icon-only buttons, middle selected */}
       <ConnectedButtonGroup selectionMode="single" defaultValue={[1]} shape="square">
-        <IconButton variant="tonal">
+        <IconButton aria-label="Example action" variant="tonal">
           <CircleStarIcon />
         </IconButton>
-        <IconButton variant="tonal">
+        <IconButton aria-label="Example action" variant="tonal">
           <CircleStarIcon />
         </IconButton>
-        <IconButton variant="tonal">
+        <IconButton aria-label="Example action" variant="tonal">
           <CircleStarIcon />
         </IconButton>
       </ConnectedButtonGroup>
@@ -282,16 +282,16 @@ export const IconOnly: Story = {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
         {sizes.map((size) => (
           <ConnectedButtonGroup key={size} size={size} shape="round" selectionMode="multiple">
-            <IconButton variant="tonal">
+            <IconButton aria-label="Example action" variant="tonal">
               <BoldIcon />
             </IconButton>
-            <IconButton variant="tonal">
+            <IconButton aria-label="Example action" variant="tonal">
               <ItalicIcon />
             </IconButton>
-            <IconButton variant="tonal">
+            <IconButton aria-label="Example action" variant="tonal">
               <UnderlineIcon />
             </IconButton>
-            <IconButton variant="tonal">
+            <IconButton aria-label="Example action" variant="tonal">
               <StrikethroughIcon />
             </IconButton>
           </ConnectedButtonGroup>
@@ -308,16 +308,16 @@ export const IconOnlySquare: Story = {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
         {sizes.map((size) => (
           <ConnectedButtonGroup key={size} size={size} shape="square" selectionMode="single">
-            <IconButton variant="outlined">
+            <IconButton aria-label="Example action" variant="outlined">
               <AlignLeftIcon />
             </IconButton>
-            <IconButton variant="outlined">
+            <IconButton aria-label="Example action" variant="outlined">
               <AlignCenterIcon />
             </IconButton>
-            <IconButton variant="outlined">
+            <IconButton aria-label="Example action" variant="outlined">
               <AlignRightIcon />
             </IconButton>
-            <IconButton variant="outlined">
+            <IconButton aria-label="Example action" variant="outlined">
               <AlignJustifyIcon />
             </IconButton>
           </ConnectedButtonGroup>

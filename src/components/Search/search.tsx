@@ -41,6 +41,7 @@ const SearchView = ({
   mode = 'docked',
   autoFocus = true,
   children,
+  role,
   ref,
   ...props
 }: SearchViewProps & { ref?: React.Ref<HTMLDivElement> }) => {
@@ -75,7 +76,15 @@ const SearchView = ({
   }, [autoFocus]);
 
   return (
-    <search ref={ref} aria-label="Search" data-mode={mode} className={cx('md-search-view', className)} {...props}>
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: role resolves to a labelled search landmark or caller-provided dialog.
+    <div
+      ref={ref}
+      role={role ?? 'search'}
+      aria-label="Search"
+      data-mode={mode}
+      className={cx('md-search-view', className)}
+      {...props}
+    >
       {/* Header */}
       <div className="md-search-view__header">
         <IconButton variant="standard" size="sm" onClick={onBack} aria-label="Close search">
@@ -105,7 +114,7 @@ const SearchView = ({
 
       {/* Content */}
       <div className="md-search-view__content">{children}</div>
-    </search>
+    </div>
   );
 };
 SearchView.displayName = 'SearchView';

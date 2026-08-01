@@ -25,7 +25,7 @@ export const Default: Story = {
     disabled: false,
   },
   render: (args) => (
-    <FAB {...args}>
+    <FAB aria-label="Create" {...args}>
       <PlusIcon />
     </FAB>
   ),
@@ -36,7 +36,7 @@ const VariantStory = ({ variant }: { variant: 'standard' | 'filled' | 'elevated'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
       {sizes.map((size) => (
-        <FAB key={size} variant={variant} size={size}>
+        <FAB aria-label="Create" key={size} variant={variant} size={size}>
           <EditIcon />
         </FAB>
       ))}
@@ -47,13 +47,13 @@ const VariantStory = ({ variant }: { variant: 'standard' | 'filled' | 'elevated'
 export const AllSizes: Story = {
   render: () => (
     <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-      <FAB size="sm">
+      <FAB aria-label="Create" size="sm">
         <PlusIcon />
       </FAB>
-      <FAB size="md">
+      <FAB aria-label="Create" size="md">
         <PlusIcon />
       </FAB>
-      <FAB size="lg">
+      <FAB aria-label="Create" size="lg">
         <PlusIcon />
       </FAB>
     </div>
@@ -83,10 +83,10 @@ export const Outlined: Story = {
 export const Lowered: Story = {
   render: () => (
     <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-      <FAB size="md">
+      <FAB aria-label="Create" size="md">
         <NavigationIcon />
       </FAB>
-      <FAB size="md" lowered>
+      <FAB aria-label="Create" size="md" lowered>
         <NavigationIcon />
       </FAB>
     </div>

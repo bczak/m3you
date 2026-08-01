@@ -87,8 +87,9 @@ test('clicking a tab calls onValueChange with its value', async () => {
 
 test('a custom onClick handler on a tab is honored', async () => {
   const onClick = vi.fn();
+  const onValueChange = vi.fn();
   render(
-    <Tabs value="a">
+    <Tabs value="a" onValueChange={onValueChange}>
       <Tab value="a">A</Tab>
       <Tab value="b" onClick={onClick}>
         B
@@ -98,6 +99,7 @@ test('a custom onClick handler on a tab is honored', async () => {
 
   fireEvent.click(screen.getByRole('tab', { name: 'B' }));
   expect(onClick).toHaveBeenCalledTimes(1);
+  expect(onValueChange).toHaveBeenCalledWith('b');
 });
 
 test('clicking a disabled tab does not call onValueChange', async () => {

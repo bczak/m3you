@@ -16,7 +16,7 @@ bun add m3you
 npm install react react-dom
 ```
 
-React 18+ is required.
+React 19+ is required.
 
 ## Setup
 
@@ -96,7 +96,7 @@ bun run check          # Biome lint + format (auto-fix)
 
 ## Tech stack
 
-- **React 18+** with TypeScript
+- **React 19+** with TypeScript
 - **Plain CSS + CSS custom properties** (no runtime CSS-in-JS, no Tailwind in the shipped bundle)
 - **Vite** (library mode) + `vite-plugin-dts` for build
 - **Vitest** + `@testing-library/react` + `happy-dom` for tests

@@ -39,8 +39,6 @@ const StandardButtonGroup = ({
     onValueChange,
   });
 
-  const childArray = React.Children.toArray(children);
-
   return (
     <ButtonGroupContext value={{ size, shape, morph, selectedIndices, handleToggle }}>
       <ButtonGroup
@@ -51,14 +49,9 @@ const StandardButtonGroup = ({
         data-size={size}
         {...props}
       >
-        {childArray.map((child, index) => {
-          const key = React.isValidElement(child) ? child.key : index;
-          return (
-            <ButtonGroupItemContext key={key} value={{ index }}>
-              {child}
-            </ButtonGroupItemContext>
-          );
-        })}
+        {React.Children.map(children, (child, index) => (
+          <ButtonGroupItemContext value={{ index }}>{child}</ButtonGroupItemContext>
+        ))}
       </ButtonGroup>
     </ButtonGroupContext>
   );

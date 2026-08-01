@@ -233,16 +233,16 @@ export const IconOnly: Story = {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
         {sizes.map((size) => (
           <StandardButtonGroup key={size} size={size} shape="round" selectionMode="multiple" defaultValue={[0]}>
-            <IconButton variant="tonal">
+            <IconButton aria-label="Example action" variant="tonal">
               <BoldIcon />
             </IconButton>
-            <IconButton variant="tonal">
+            <IconButton aria-label="Example action" variant="tonal">
               <ItalicIcon />
             </IconButton>
-            <IconButton variant="tonal">
+            <IconButton aria-label="Example action" variant="tonal">
               <UnderlineIcon />
             </IconButton>
-            <IconButton variant="tonal">
+            <IconButton aria-label="Example action" variant="tonal">
               <StrikethroughIcon />
             </IconButton>
           </StandardButtonGroup>
@@ -259,16 +259,16 @@ export const IconOnlySquare: Story = {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
         {sizes.map((size) => (
           <StandardButtonGroup key={size} size={size} shape="square" selectionMode="single" defaultValue={[0]}>
-            <IconButton variant="outlined">
+            <IconButton aria-label="Example action" variant="outlined">
               <AlignLeftIcon />
             </IconButton>
-            <IconButton variant="outlined">
+            <IconButton aria-label="Example action" variant="outlined">
               <AlignCenterIcon />
             </IconButton>
-            <IconButton variant="outlined">
+            <IconButton aria-label="Example action" variant="outlined">
               <AlignRightIcon />
             </IconButton>
-            <IconButton variant="outlined">
+            <IconButton aria-label="Example action" variant="outlined">
               <AlignJustifyIcon />
             </IconButton>
           </StandardButtonGroup>

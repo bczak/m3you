@@ -27,7 +27,7 @@ export const Default: Story = {
   args: {
     items: defaultItems,
     children: (
-      <FAB>
+      <FAB aria-label="Create">
         <PlusIcon />
       </FAB>
     ),
@@ -40,7 +40,7 @@ export const Open: Story = {
     defaultOpen: true,
     items: defaultItems,
     children: (
-      <FAB>
+      <FAB aria-label="Create">
         <PlusIcon />
       </FAB>
     ),
@@ -63,7 +63,7 @@ export const WithScrim: Story = {
     items: defaultItems,
     scrim: true,
     children: (
-      <FAB>
+      <FAB aria-label="Create">
         <PlusIcon />
       </FAB>
     ),
@@ -74,7 +74,7 @@ export const FilledVariant: Story = {
   args: {
     items: defaultItems,
     children: (
-      <FAB variant="filled">
+      <FAB aria-label="Create" variant="filled">
         <PlusIcon />
       </FAB>
     ),
@@ -89,7 +89,7 @@ function ControlledStory() {
         Toggle: {open ? 'Open' : 'Closed'}
       </button>
       <FABMenu items={defaultItems} open={open} onOpenChange={setOpen}>
-        <FAB>
+        <FAB aria-label="Create">
           <PlusIcon />
         </FAB>
       </FABMenu>

@@ -49,10 +49,15 @@ const Chip = ({
     el.style.overflow = 'hidden';
     el.animate(
       [
-        { width: `${el.offsetWidth}px`, opacity: 1, padding: getComputedStyle(el).padding, marginRight: '0px' },
-        { width: '0px', opacity: 0, padding: '0px', marginRight: '-8px' },
+        { opacity: 1, transform: 'scaleX(1)' },
+        { opacity: 0, transform: 'scaleX(0)' },
       ],
-      { duration: 200, easing: 'cubic-bezier(0.2, 0, 0, 1)', fill: 'forwards' },
+      {
+        duration: 200,
+        easing: 'cubic-bezier(0.2, 0, 0, 1)',
+        fill: 'forwards',
+        composite: 'replace',
+      },
     ).onfinish = onClose;
   }, [onClose]);
 

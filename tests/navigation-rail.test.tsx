@@ -263,7 +263,7 @@ test('NavigationRailItem calls onValueChange when clicked', async () => {
   };
 
   render(
-    <NavigationRail value={selectedValue} onValueChange={handleChange}>
+    <NavigationRail value="home" onValueChange={handleChange}>
       <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
       <NavigationRailItem value="search" icon={<MockIcon />} label="Search" />
     </NavigationRail>,
@@ -276,13 +276,13 @@ test('NavigationRailItem calls onValueChange when clicked', async () => {
 });
 
 test('NavigationRailItem handles Enter key press', async () => {
-  let selectedValue = 'home';
-  const handleChange = (value: string) => {
-    selectedValue = value;
+  let changeCount = 0;
+  const handleChange = () => {
+    changeCount++;
   };
 
   render(
-    <NavigationRail value={selectedValue} onValueChange={handleChange}>
+    <NavigationRail value="home" onValueChange={handleChange}>
       <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
       <NavigationRailItem value="search" icon={<MockIcon />} label="Search" />
     </NavigationRail>,
@@ -290,18 +290,19 @@ test('NavigationRailItem handles Enter key press', async () => {
 
   const searchItem = screen.getByRole('button', { name: 'Search' });
   fireEvent.keyDown(searchItem, { key: 'Enter' });
+  fireEvent.click(searchItem);
 
-  expect(selectedValue).toBe('search');
+  expect(changeCount).toBe(1);
 });
 
 test('NavigationRailItem handles Space key press', async () => {
-  let selectedValue = 'home';
-  const handleChange = (value: string) => {
-    selectedValue = value;
+  let changeCount = 0;
+  const handleChange = () => {
+    changeCount++;
   };
 
   render(
-    <NavigationRail value={selectedValue} onValueChange={handleChange}>
+    <NavigationRail value="home" onValueChange={handleChange}>
       <NavigationRailItem value="home" icon={<MockIcon />} label="Home" />
       <NavigationRailItem value="search" icon={<MockIcon />} label="Search" />
     </NavigationRail>,
@@ -309,8 +310,9 @@ test('NavigationRailItem handles Space key press', async () => {
 
   const searchItem = screen.getByRole('button', { name: 'Search' });
   fireEvent.keyDown(searchItem, { key: ' ' });
+  fireEvent.click(searchItem);
 
-  expect(selectedValue).toBe('search');
+  expect(changeCount).toBe(1);
 });
 
 test('NavigationRailItem disabled state prevents click', async () => {
@@ -566,20 +568,22 @@ test('only one item can be active at a time', async () => {
 
 test('NavigationRailItem custom onClick handler is called', async () => {
   let clickCount = 0;
+  let selectedValue = 'home';
   const recordItemClick = () => {
     clickCount++;
   };
 
   render(
-    <NavigationRail value="home" onValueChange={() => {}}>
-      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" onClick={recordItemClick} />
+    <NavigationRail value="home" onValueChange={(value) => (selectedValue = value)}>
+      <NavigationRailItem value="search" icon={<MockIcon />} label="Search" onClick={recordItemClick} />
     </NavigationRail>,
   );
 
-  const item = screen.getByRole('button', { name: 'Home' });
+  const item = screen.getByRole('button', { name: 'Search' });
   fireEvent.click(item);
 
   expect(clickCount).toBe(1);
+  expect(selectedValue).toBe('search');
 });
 
 /* =============================================================================

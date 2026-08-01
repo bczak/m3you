@@ -379,6 +379,19 @@ test('mouse pointer down presses the ripple, and a click releases it (long press
   expect(surface).not.toHaveClass('--press');
 });
 
+test('ripple animation uses compositor-only transforms and stores size in CSS', () => {
+  const animateSpy = vi.spyOn(Element.prototype, 'animate');
+  const { host, surface } = renderRipple();
+
+  fireEvent.pointerDown(host, mouseDown);
+
+  expect(surface.style.getPropertyValue('--card-ripple-size')).toBe('1px');
+  const keyframes = animateSpy.mock.calls.at(-1)?.[0] as PropertyIndexedKeyframes;
+  expect(keyframes).toHaveProperty('transform');
+  expect(keyframes).not.toHaveProperty('height');
+  expect(keyframes).not.toHaveProperty('width');
+});
+
 test('a bare click presses then releases the ripple from the inactive phase', () => {
   const { host, surface } = renderRipple();
 

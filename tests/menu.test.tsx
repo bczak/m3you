@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
-import { afterEach, beforeAll, expect, test } from 'vitest';
+import { afterEach, beforeAll, expect, test, vi } from 'vitest';
 import {
   Menu,
   MenuContent,
@@ -390,24 +390,29 @@ test('Enter key on menu item activates it', async () => {
 
 test('Space key on menu item activates it', async () => {
   let clicked = false;
+  const onKeyUp = vi.fn();
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
       <MenuContent>
         <MenuItem
           data-testid="item"
+          closeOnSelect={false}
           onClick={() => {
             clicked = true;
           }}
+          onKeyUp={onKeyUp}
         >
           Item 1
         </MenuItem>
       </MenuContent>
     </Menu>,
   );
-  // Base UI handles space on keyUp, not keyDown
+  // Base UI gives non-native menu items button semantics on keyDown.
+  fireEvent.keyDown(screen.getByTestId('item'), { key: ' ' });
   fireEvent.keyUp(screen.getByTestId('item'), { key: ' ' });
   expect(clicked).toBe(true);
+  expect(onKeyUp).toHaveBeenCalledTimes(1);
 });
 
 test('ArrowDown on trigger opens menu', async () => {

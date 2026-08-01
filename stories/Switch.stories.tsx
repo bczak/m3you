@@ -42,6 +42,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
+    'aria-label': 'Example switch',
     variant: 'primary',
     showIcons: false,
     disabled: false,
@@ -54,20 +55,20 @@ const VariantStory = ({ variant }: { variant: 'primary' | 'error' }) => {
     <div style={{ display: 'flex', gap: '64px' }}>
       {/* Without icons */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-        <span style={{ fontSize: '12px', color: '#888' }}>No icons</span>
-        <Switch variant={variant} />
-        <Switch variant={variant} defaultChecked />
-        <Switch variant={variant} disabled />
-        <Switch variant={variant} defaultChecked disabled />
+        <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>No icons</span>
+        <Switch aria-label="Example switch" variant={variant} />
+        <Switch aria-label="Example switch" variant={variant} defaultChecked />
+        <Switch aria-label="Example switch" variant={variant} disabled />
+        <Switch aria-label="Example switch" variant={variant} defaultChecked disabled />
       </div>
 
       {/* With icons */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-        <span style={{ fontSize: '12px', color: '#888' }}>With icons</span>
-        <Switch variant={variant} showIcons />
-        <Switch variant={variant} showIcons defaultChecked />
-        <Switch variant={variant} showIcons disabled />
-        <Switch variant={variant} showIcons defaultChecked disabled />
+        <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>With icons</span>
+        <Switch aria-label="Example switch" variant={variant} showIcons />
+        <Switch aria-label="Example switch" variant={variant} showIcons defaultChecked />
+        <Switch aria-label="Example switch" variant={variant} showIcons disabled />
+        <Switch aria-label="Example switch" variant={variant} showIcons defaultChecked disabled />
       </div>
     </div>
   );

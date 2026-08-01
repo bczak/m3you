@@ -96,11 +96,26 @@ test('applies disabled state to label and input', () => {
 
 test('calls onCheckedChange with the new checked state on change', () => {
   const onCheckedChange = vi.fn();
-  render(<Checkbox onCheckedChange={onCheckedChange} />);
+  render(<Checkbox checked={false} onCheckedChange={onCheckedChange} />);
   const input = screen.getByRole('checkbox');
   fireEvent.click(input);
   expect(onCheckedChange).toHaveBeenCalledTimes(1);
   expect(onCheckedChange).toHaveBeenCalledWith(true);
+  expect(input).not.toBeChecked();
+});
+
+test('supports defaultChecked and composes both change callbacks', () => {
+  const onChange = vi.fn();
+  const onCheckedChange = vi.fn();
+  render(<Checkbox defaultChecked onChange={onChange} onCheckedChange={onCheckedChange} />);
+
+  const input = screen.getByRole('checkbox');
+  expect(input).toBeChecked();
+  fireEvent.click(input);
+
+  expect(input).not.toBeChecked();
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onCheckedChange).toHaveBeenCalledWith(false);
 });
 
 test('does not throw when no change handlers are provided', () => {

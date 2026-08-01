@@ -27,7 +27,7 @@ export const Default: Story = {
     defaultSelected: false,
   },
   render: (args) => (
-    <ToggleIconButton {...args}>
+    <ToggleIconButton aria-label="Toggle favorite" {...args}>
       <StarIcon />
     </ToggleIconButton>
   ),
@@ -45,14 +45,23 @@ const VariantStory = ({ variant }: { variant: 'standard' | 'filled' | 'elevated'
           <span style={{ fontSize: '14px', fontWeight: 600 }}>{width}</span>
           {shapes.map((shape) => (
             <div key={shape} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '12px', color: '#888' }}>{shape}</span>
+              <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>{shape}</span>
               {sizes.map((size) => (
-                <ToggleIconButton key={size} variant={variant} shape={shape} size={size} width={width} morph>
+                <ToggleIconButton
+                  aria-label="Toggle favorite"
+                  key={size}
+                  variant={variant}
+                  shape={shape}
+                  size={size}
+                  width={width}
+                  morph
+                >
                   <StarIcon />
                 </ToggleIconButton>
               ))}
               {sizes.map((size) => (
                 <ToggleIconButton
+                  aria-label="Toggle favorite"
                   key={`${size}-disabled`}
                   variant={variant}
                   shape={shape}

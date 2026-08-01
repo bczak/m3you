@@ -29,6 +29,7 @@ const Switch = ({
   showIcons = false,
   disabled,
   onCheckedChange,
+  onChange,
   ref,
   ...props
 }: SwitchProps & { ref?: React.Ref<HTMLInputElement> }) => {
@@ -46,7 +47,7 @@ const Switch = ({
       setInternalChecked(e.target.checked);
     }
     onCheckedChange?.(e.target.checked);
-    props.onChange?.(e);
+    onChange?.(e);
   };
 
   const checkedStr = String(checked);

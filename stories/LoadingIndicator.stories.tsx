@@ -53,11 +53,11 @@ export const Variants: Story = {
     <div style={{ display: 'flex', alignItems: 'center', gap: 48 }}>
       <div style={{ textAlign: 'center' }}>
         <LoadingIndicator size="lg" variant="uncontained" />
-        <div style={{ fontSize: 12, marginTop: 8, opacity: 0.6 }}>uncontained</div>
+        <div style={{ fontSize: 12, marginTop: 8, color: 'var(--md-sys-color-on-surface-variant)' }}>uncontained</div>
       </div>
       <div style={{ textAlign: 'center' }}>
         <LoadingIndicator size="lg" variant="contained" />
-        <div style={{ fontSize: 12, marginTop: 8, opacity: 0.6 }}>contained</div>
+        <div style={{ fontSize: 12, marginTop: 8, color: 'var(--md-sys-color-on-surface-variant)' }}>contained</div>
       </div>
     </div>
   ),
@@ -69,7 +69,7 @@ export const AllSizes: Story = {
       {(['sm', 'md', 'lg'] as const).map((size) => (
         <div key={size} style={{ textAlign: 'center' }}>
           <LoadingIndicator size={size} />
-          <div style={{ fontSize: 12, marginTop: 8, opacity: 0.6 }}>{size}</div>
+          <div style={{ fontSize: 12, marginTop: 8, color: 'var(--md-sys-color-on-surface-variant)' }}>{size}</div>
         </div>
       ))}
     </div>
@@ -82,7 +82,7 @@ export const ContainedSizes: Story = {
       {(['sm', 'md', 'lg'] as const).map((size) => (
         <div key={size} style={{ textAlign: 'center' }}>
           <LoadingIndicator size={size} variant="contained" />
-          <div style={{ fontSize: 12, marginTop: 8, opacity: 0.6 }}>{size}</div>
+          <div style={{ fontSize: 12, marginTop: 8, color: 'var(--md-sys-color-on-surface-variant)' }}>{size}</div>
         </div>
       ))}
     </div>
@@ -113,7 +113,9 @@ export const ExtraLarge: Story = {
 export const ShapesPreview: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-      <div style={{ fontSize: 14, opacity: 0.6, marginBottom: 8 }}>Static shapes (no animation)</div>
+      <div style={{ fontSize: 14, color: 'var(--md-sys-color-on-surface-variant)', marginBottom: 8 }}>
+        Static shapes (no animation)
+      </div>
       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
         {SHAPE_NAMES.map((name) => (
           <div key={name} style={{ textAlign: 'center' }}>
@@ -125,7 +127,7 @@ export const ShapesPreview: Story = {
                 clipPath: SHAPE_POLYGONS[name],
               }}
             />
-            <div style={{ fontSize: 12, opacity: 0.5, marginTop: 4 }}>{name}</div>
+            <div style={{ fontSize: 12, color: 'var(--md-sys-color-on-surface-variant)', marginTop: 4 }}>{name}</div>
           </div>
         ))}
       </div>

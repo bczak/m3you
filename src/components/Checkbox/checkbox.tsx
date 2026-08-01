@@ -14,14 +14,19 @@ export type CheckboxProps = Omit<React.ComponentProps<'input'>, 'type'> & {
 
 const Checkbox = ({
   className,
-  checked = false,
+  checked: checkedProp,
+  defaultChecked = false,
   indeterminate = false,
   variant = 'primary',
   disabled,
   onCheckedChange,
+  onChange,
   ref,
   ...props
 }: CheckboxProps & { ref?: React.Ref<HTMLInputElement> }) => {
+  const isControlled = checkedProp !== undefined;
+  const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
+  const checked = isControlled ? checkedProp : internalChecked;
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   // Merge refs
@@ -36,8 +41,11 @@ const Checkbox = ({
   }, [indeterminate]);
 
   const reportCheckedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isControlled) {
+      setInternalChecked(e.target.checked);
+    }
     onCheckedChange?.(e.target.checked);
-    props.onChange?.(e);
+    onChange?.(e);
   };
 
   // Determine visual state: indeterminate takes precedence over checked

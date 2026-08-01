@@ -52,10 +52,11 @@ test('SearchView renders children in content area', async () => {
   expect(screen.getByTestId('content-child')).toBeInTheDocument();
 });
 
-test('SearchView forwards ref to the search element', async () => {
+test('SearchView forwards ref to a div with search semantics', async () => {
   const ref = createRef<HTMLDivElement>();
   render(<SearchView ref={ref} autoFocus={false} />);
-  expect(ref.current?.tagName).toBe('SEARCH');
+  expect(ref.current?.tagName).toBe('DIV');
+  expect(ref.current).toHaveAttribute('role', 'search');
 });
 
 test('SearchView uncontrolled: typing updates the input value', async () => {

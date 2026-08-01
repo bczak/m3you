@@ -41,6 +41,7 @@ const RadioGroupItem = ({
       checked={group.value === value}
       variant={variant ?? group.variant}
       disabled={disabled ?? group.disabled}
+      aria-label={props['aria-label'] ?? value}
       onValueChange={handleValueChange}
       {...props}
     />

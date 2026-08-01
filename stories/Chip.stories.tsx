@@ -76,7 +76,7 @@ export const Default: Story = {
 const AssistStory = () => (
   <div style={{ display: 'flex', gap: '64px' }}>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Outlined</span>
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Outlined</span>
       <Chip type="assist" variant="outlined">
         Assist
       </Chip>
@@ -88,7 +88,7 @@ const AssistStory = () => (
       </Chip>
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Elevated</span>
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Elevated</span>
       <Chip type="assist" variant="elevated">
         Assist
       </Chip>
@@ -109,7 +109,7 @@ export const Assist: Story = {
 const FilterStory = () => (
   <div style={{ display: 'flex', gap: '64px' }}>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Outlined</span>
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Outlined</span>
       <InteractiveFilterChip variant="outlined">Filter</InteractiveFilterChip>
       <InteractiveFilterChip variant="outlined" selected>
         Selected
@@ -122,7 +122,7 @@ const FilterStory = () => (
       </Chip>
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Elevated</span>
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Elevated</span>
       <InteractiveFilterChip variant="elevated">Filter</InteractiveFilterChip>
       <InteractiveFilterChip variant="elevated" selected>
         Selected
@@ -144,7 +144,7 @@ export const Filter: Story = {
 const InputStory = () => (
   <div style={{ display: 'flex', gap: '64px' }}>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Outlined</span>
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Outlined</span>
       <Chip type="input" variant="outlined">
         Input
       </Chip>
@@ -162,7 +162,7 @@ const InputStory = () => (
       </Chip>
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Elevated</span>
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Elevated</span>
       <Chip type="input" variant="elevated">
         Input
       </Chip>
@@ -189,7 +189,7 @@ export const Input: Story = {
 const SuggestionStory = () => (
   <div style={{ display: 'flex', gap: '64px' }}>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Outlined</span>
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Outlined</span>
       <Chip type="suggestion" variant="outlined">
         Suggestion
       </Chip>
@@ -201,7 +201,7 @@ const SuggestionStory = () => (
       </Chip>
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Elevated</span>
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Elevated</span>
       <Chip type="suggestion" variant="elevated">
         Suggestion
       </Chip>
@@ -374,7 +374,15 @@ const AllCombinations = () => {
           <div style={{ display: 'flex', gap: '64px' }}>
             {variants.map((variant) => (
               <div key={variant} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <span style={{ fontSize: '12px', color: '#888', textTransform: 'capitalize' }}>{variant}</span>
+                <span
+                  style={{
+                    fontSize: '12px',
+                    color: 'var(--md-sys-color-on-surface-variant)',
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {variant}
+                </span>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <Chip type={type} variant={variant}>
                     Default

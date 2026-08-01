@@ -37,8 +37,6 @@ const ConnectedButtonGroup = ({
     onValueChange,
   });
 
-  const childArray = React.Children.toArray(children);
-
   return (
     <ButtonGroupContext value={{ size, shape, morph: false, selectedIndices, handleToggle }}>
       <ButtonGroup
@@ -49,14 +47,9 @@ const ConnectedButtonGroup = ({
         data-size={size}
         {...props}
       >
-        {childArray.map((child, index) => {
-          const key = React.isValidElement(child) ? child.key : index;
-          return (
-            <ButtonGroupItemContext key={key} value={{ index }}>
-              {child}
-            </ButtonGroupItemContext>
-          );
-        })}
+        {React.Children.map(children, (child, index) => (
+          <ButtonGroupItemContext value={{ index }}>{child}</ButtonGroupItemContext>
+        ))}
       </ButtonGroup>
     </ButtonGroupContext>
   );

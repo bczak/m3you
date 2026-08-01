@@ -44,6 +44,7 @@ const InteractiveRadio = (props: React.ComponentProps<typeof RadioButton>) => {
   const [checked, setChecked] = useState(props.checked ?? false);
   return (
     <RadioButton
+      aria-label="Example option"
       {...props}
       checked={checked}
       onChange={(e) => {
@@ -96,16 +97,16 @@ const VariantStory = ({ variant }: { variant: 'primary' | 'error' }) => {
     <div style={{ display: 'flex', gap: '64px' }}>
       {/* Unselected */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-        <span style={{ fontSize: '12px', color: '#888' }}>Unselected</span>
-        <RadioButton variant={variant} checked={false} readOnly />
-        <RadioButton variant={variant} checked={false} disabled readOnly />
+        <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Unselected</span>
+        <RadioButton aria-label="Example option" variant={variant} checked={false} readOnly />
+        <RadioButton aria-label="Example option" variant={variant} checked={false} disabled readOnly />
       </div>
 
       {/* Selected */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-        <span style={{ fontSize: '12px', color: '#888' }}>Selected</span>
-        <RadioButton variant={variant} checked readOnly />
-        <RadioButton variant={variant} checked disabled readOnly />
+        <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Selected</span>
+        <RadioButton aria-label="Example option" variant={variant} checked readOnly />
+        <RadioButton aria-label="Example option" variant={variant} checked disabled readOnly />
       </div>
     </div>
   );
@@ -138,7 +139,7 @@ function GroupedStory() {
           ))}
         </div>
       </RadioGroup>
-      <span style={{ fontSize: '12px', color: '#888' }}>
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>
         Selected: <strong>{value || 'none'}</strong>
       </span>
     </div>
@@ -179,7 +180,9 @@ function WithLabelsStory() {
             <RadioGroupItem value={item.value} style={{ marginTop: '2px' }} />
             <div>
               <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.label}</div>
-              <div style={{ fontSize: '12px', color: '#888' }}>{item.description}</div>
+              <div style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>
+                {item.description}
+              </div>
             </div>
           </div>
         ))}
@@ -210,15 +213,15 @@ const AllCombinations = () => {
         <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 600 }}>RadioGroup</h3>
         <div style={{ display: 'flex', gap: '64px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#888' }}>Primary</span>
+            <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Primary</span>
             <InteractiveRadioGroup variant="primary" />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#888' }}>Error</span>
+            <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Error</span>
             <InteractiveRadioGroup variant="error" />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#888' }}>Disabled</span>
+            <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Disabled</span>
             <InteractiveRadioGroup disabled />
           </div>
         </div>

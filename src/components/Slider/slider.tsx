@@ -111,6 +111,7 @@ const Slider = ({
   formatTooltip,
   icon,
   onValueChange,
+  onChange,
   ref,
   ...props
 }: SliderProps & { ref?: React.Ref<HTMLInputElement> }) => {
@@ -141,7 +142,7 @@ const Slider = ({
       setInternalValue(newValue);
     }
     onValueChange?.(newValue);
-    props.onChange?.(e);
+    onChange?.(e);
   };
 
   const tooltipLabel = formatTooltip ? formatTooltip(value) : String(value);

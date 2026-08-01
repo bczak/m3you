@@ -282,7 +282,7 @@ const ShowcaseSection = ({ side }: { side: Side }) => (
         fontWeight: 600,
         letterSpacing: '0.08em',
         textTransform: 'uppercase',
-        color: '#888',
+        color: 'var(--md-sys-color-on-surface-variant)',
       }}
     >
       Position: {side}

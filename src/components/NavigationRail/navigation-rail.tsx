@@ -165,6 +165,8 @@ const NavigationRailItem = ({
   label,
   badge,
   disabled,
+  onClick,
+  onKeyDown,
   ref,
   ...props
 }: NavigationRailItemProps & { ref?: React.Ref<HTMLButtonElement> }) => {
@@ -176,14 +178,7 @@ const NavigationRailItem = ({
     if (!disabled) {
       onValueChange?.(value);
     }
-    props.onClick?.(e);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-      onValueChange?.(value);
-    }
-    props.onKeyDown?.(e);
+    onClick?.(e);
   };
 
   return (
@@ -202,7 +197,7 @@ const NavigationRailItem = ({
         className,
       )}
       onClick={selectRailItem}
-      onKeyDown={handleKeyDown}
+      onKeyDown={onKeyDown}
       {...props}
     >
       <span className="md-navigation-rail-item__surface">
@@ -264,6 +259,7 @@ const NavigationRailMenuButton = ({
   collapsedIcon,
   expandedIcon,
   children,
+  onClick,
   ref,
   ...props
 }: NavigationRailMenuButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
@@ -271,7 +267,7 @@ const NavigationRailMenuButton = ({
 
   const toggleRailState = (e: React.MouseEvent<HTMLButtonElement>) => {
     onStateChange?.(state === 'collapsed' ? 'expanded' : 'collapsed');
-    props.onClick?.(e);
+    onClick?.(e);
   };
 
   const hasAnimatedIcons = collapsedIcon != null && expandedIcon != null;

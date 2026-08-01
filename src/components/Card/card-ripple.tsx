@@ -22,6 +22,19 @@ type RippleGeometry = {
 
 type RipplePhase = 'inactive' | 'touch-delay' | 'holding' | 'waiting-for-click';
 type RippleHostElement = HTMLElement & { disabled?: boolean };
+type CapturedListener = readonly [string, EventListener];
+
+const addCapturedListeners = (target: HTMLElement, listeners: CapturedListener[]) => {
+  for (const [eventName, listener] of listeners) {
+    target.addEventListener(eventName, listener, CAPTURED_LISTENER_OPTIONS);
+  }
+
+  return () => {
+    for (const [eventName, listener] of listeners) {
+      target.removeEventListener(eventName, listener, CAPTURED_LISTENER_OPTIONS);
+    }
+  };
+};
 
 const getRippleGeometry = (height: number, width: number): RippleGeometry => {
   const maxDimension = Math.max(height, width);
@@ -229,10 +242,9 @@ const CardRipple = ({
       const start = `${startPoint.x}px,${startPoint.y}px`;
       const end = `${endPoint.x}px,${endPoint.y}px`;
 
+      surface.style.setProperty('--card-ripple-size', geometryRef.current.size);
       animationRef.current = surface.animate(
         {
-          height: [geometryRef.current.size, geometryRef.current.size],
-          width: [geometryRef.current.size, geometryRef.current.size],
           transform: [`translate(${start}) scale(1)`, `translate(${end}) scale(${geometryRef.current.scale})`],
         },
         {
@@ -392,7 +404,7 @@ const CardRipple = ({
 
     // Mirror the upstream ripple's capture listeners so the card surface can
     // observe pointer transitions before React click handlers run.
-    const listeners: Array<readonly [string, EventListener]> = [
+    const listeners: CapturedListener[] = [
       ['click', handleClick as EventListener],
       ['contextmenu', handleContextMenu as EventListener],
       ['pointercancel', handlePointerCancel as EventListener],
@@ -402,18 +414,13 @@ const CardRipple = ({
       ['pointerup', handlePointerUp as EventListener],
     ];
 
-    for (const [eventName, listener] of listeners) {
-      parent.addEventListener(eventName, listener, CAPTURED_LISTENER_OPTIONS);
-    }
+    const removeListeners = addCapturedListeners(parent, listeners);
 
     return () => {
       clearReleaseTimeout();
       clearTouchDelayTimeout();
       cancelAnimation();
-
-      for (const [eventName, listener] of listeners) {
-        parent.removeEventListener(eventName, listener, CAPTURED_LISTENER_OPTIONS);
-      }
+      removeListeners();
     };
   }, [
     cancelAnimation,

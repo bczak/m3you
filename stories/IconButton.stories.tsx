@@ -27,7 +27,7 @@ export const Default: Story = {
     disabled: false,
   },
   render: (args) => (
-    <IconButton {...args}>
+    <IconButton aria-label="Example action" {...args}>
       <StarIcon />
     </IconButton>
   ),
@@ -45,14 +45,23 @@ const VariantStory = ({ variant }: { variant: 'standard' | 'filled' | 'elevated'
           <span style={{ fontSize: '14px', fontWeight: 600 }}>{width}</span>
           {shapes.map((shape) => (
             <div key={shape} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '12px', color: '#888' }}>{shape}</span>
+              <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>{shape}</span>
               {sizes.map((size) => (
-                <IconButton key={size} variant={variant} shape={shape} size={size} width={width} morph>
+                <IconButton
+                  aria-label="Example action"
+                  key={size}
+                  variant={variant}
+                  shape={shape}
+                  size={size}
+                  width={width}
+                  morph
+                >
                   <StarIcon />
                 </IconButton>
               ))}
               {sizes.map((size) => (
                 <IconButton
+                  aria-label="Example action"
                   key={`${size}-disabled`}
                   variant={variant}
                   shape={shape}
@@ -104,10 +113,10 @@ export const Selected: Story = {
             <span style={{ fontSize: '14px', fontWeight: 600 }}>{shape}</span>
             {variants.map((variant) => (
               <div key={variant} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <IconButton variant={variant} shape={shape} morph selected={false}>
+                <IconButton aria-label="Example action" variant={variant} shape={shape} morph selected={false}>
                   <StarIcon />
                 </IconButton>
-                <IconButton variant={variant} shape={shape} morph selected>
+                <IconButton aria-label="Example action" variant={variant} shape={shape} morph selected>
                   <StarIcon />
                 </IconButton>
               </div>

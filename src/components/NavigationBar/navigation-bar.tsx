@@ -115,6 +115,8 @@ const NavigationBarItem = ({
   badge,
   hideInactiveLabel = false,
   disabled,
+  onClick,
+  onKeyDown,
   ref,
   ...props
 }: NavigationBarItemProps & { ref?: React.Ref<HTMLButtonElement> }) => {
@@ -126,14 +128,7 @@ const NavigationBarItem = ({
     if (!disabled) {
       onValueChange?.(value);
     }
-    props.onClick?.(e);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-      onValueChange?.(value);
-    }
-    props.onKeyDown?.(e);
+    onClick?.(e);
   };
 
   const showLabel = !hideInactiveLabel || isActive;
@@ -154,7 +149,7 @@ const NavigationBarItem = ({
         className,
       )}
       onClick={selectNavigationItem}
-      onKeyDown={handleKeyDown}
+      onKeyDown={onKeyDown}
       {...props}
     >
       {orientation === 'vertical' ? (

@@ -46,7 +46,7 @@ export const Playground: Story = {
     ripple: true,
   },
   render: (args) => (
-    <Card {...args} onClick={() => {}} style={{ width: 340, padding: 24 }}>
+    <Card {...args} style={{ width: 340, padding: 24 }}>
       <div className="sb-m3-demo-stack">
         <div className="sb-m3-demo-row" style={{ justifyContent: 'space-between' }}>
           <div className="sb-m3-demo-stack" style={{ gap: 8 }}>

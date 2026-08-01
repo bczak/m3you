@@ -72,7 +72,7 @@ export const Default: Story = {
   },
   render: (args) => (
     <div style={{ width: 320 }}>
-      <Slider {...args} />
+      <Slider aria-label="Example value" {...args} />
     </div>
   ),
 };
@@ -86,8 +86,8 @@ const SizesStory = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: 320 }}>
       {sizes.map((size) => (
         <div key={size} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '12px', color: '#888' }}>{size}</span>
-          <Slider size={size} defaultValue={50} showTooltip />
+          <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>{size}</span>
+          <Slider aria-label="Example value" size={size} defaultValue={50} showTooltip />
         </div>
       ))}
     </div>
@@ -107,8 +107,8 @@ const DisabledStory = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: 320 }}>
       {sizes.map((size) => (
         <div key={size} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '12px', color: '#888' }}>{size}</span>
-          <Slider size={size} defaultValue={50} disabled />
+          <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>{size}</span>
+          <Slider aria-label="Example value" size={size} defaultValue={50} disabled />
         </div>
       ))}
     </div>
@@ -124,24 +124,24 @@ export const Disabled: Story = {
 const DiscreteStory = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: 320 }}>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Step 10 (xs)</span>
-      <Slider size="xs" min={0} max={100} step={10} defaultValue={40} showTooltip />
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Step 10 (xs)</span>
+      <Slider aria-label="Example value" size="xs" min={0} max={100} step={10} defaultValue={40} showTooltip />
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Step 10 (sm)</span>
-      <Slider size="sm" min={0} max={100} step={10} defaultValue={40} showTooltip />
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Step 10 (sm)</span>
+      <Slider aria-label="Example value" size="sm" min={0} max={100} step={10} defaultValue={40} showTooltip />
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Step 10 (md)</span>
-      <Slider size="md" min={0} max={100} step={10} defaultValue={40} showTooltip />
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Step 10 (md)</span>
+      <Slider aria-label="Example value" size="md" min={0} max={100} step={10} defaultValue={40} showTooltip />
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Step 25 (lg)</span>
-      <Slider size="lg" min={0} max={100} step={25} defaultValue={50} showTooltip />
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Step 25 (lg)</span>
+      <Slider aria-label="Example value" size="lg" min={0} max={100} step={25} defaultValue={50} showTooltip />
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Step 25 (xl)</span>
-      <Slider size="xl" min={0} max={100} step={25} defaultValue={50} showTooltip />
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Step 25 (xl)</span>
+      <Slider aria-label="Example value" size="xl" min={0} max={100} step={25} defaultValue={50} showTooltip />
     </div>
   </div>
 );
@@ -160,9 +160,9 @@ const VerticalStory = () => {
       {sizes.map((size) => (
         <div key={size} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           <div style={{ height: 200 }}>
-            <Slider size={size} orientation="vertical" defaultValue={60} showTooltip />
+            <Slider aria-label="Example value" size={size} orientation="vertical" defaultValue={60} showTooltip />
           </div>
-          <span style={{ fontSize: '12px', color: '#888' }}>{size}</span>
+          <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>{size}</span>
         </div>
       ))}
     </div>
@@ -180,9 +180,18 @@ const VerticalDiscreteStory = () => (
     {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
       <div key={size} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
         <div style={{ height: 200 }}>
-          <Slider size={size} orientation="vertical" min={0} max={100} step={20} defaultValue={60} showTooltip />
+          <Slider
+            aria-label="Example value"
+            size={size}
+            orientation="vertical"
+            min={0}
+            max={100}
+            step={20}
+            defaultValue={60}
+            showTooltip
+          />
         </div>
-        <span style={{ fontSize: '12px', color: '#888' }}>{size}</span>
+        <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>{size}</span>
       </div>
     ))}
   </div>
@@ -198,8 +207,8 @@ const WithIconStory = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: 320 }}>
     {(['md', 'lg', 'xl'] as const).map((size) => (
       <div key={size} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <span style={{ fontSize: '12px', color: '#888' }}>{size}</span>
-        <Slider size={size} defaultValue={65} icon={<Volume2Icon />} showTooltip />
+        <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>{size}</span>
+        <Slider aria-label="Example value" size={size} defaultValue={65} icon={<Volume2Icon />} showTooltip />
       </div>
     ))}
   </div>
@@ -214,16 +223,31 @@ export const WithIcon: Story = {
 const TooltipFormattingStory = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', width: 320 }}>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Volume (%)</span>
-      <Slider defaultValue={70} showTooltip formatTooltip={(v) => `${v}%`} />
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Volume (%)</span>
+      <Slider aria-label="Example value" defaultValue={70} showTooltip formatTooltip={(v) => `${v}%`} />
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Temperature (°C)</span>
-      <Slider min={16} max={30} defaultValue={22} showTooltip formatTooltip={(v) => `${v}°`} />
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Temperature (°C)</span>
+      <Slider
+        aria-label="Example value"
+        min={16}
+        max={30}
+        defaultValue={22}
+        showTooltip
+        formatTooltip={(v) => `${v}°`}
+      />
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <span style={{ fontSize: '12px', color: '#888' }}>Price range ($)</span>
-      <Slider min={0} max={500} step={10} defaultValue={150} showTooltip formatTooltip={(v) => `$${v}`} />
+      <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Price range ($)</span>
+      <Slider
+        aria-label="Example value"
+        min={0}
+        max={500}
+        step={10}
+        defaultValue={150}
+        showTooltip
+        formatTooltip={(v) => `$${v}`}
+      />
     </div>
   </div>
 );
@@ -239,7 +263,13 @@ const ControlledStory = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: 320 }}>
-      <Slider value={value} onValueChange={setValue} showTooltip formatTooltip={(v) => `${v}%`} />
+      <Slider
+        aria-label="Example value"
+        value={value}
+        onValueChange={setValue}
+        showTooltip
+        formatTooltip={(v) => `${v}%`}
+      />
       <div style={{ display: 'flex', gap: '8px' }}>
         {[0, 25, 50, 75, 100].map((v) => (
           <button
@@ -282,9 +312,11 @@ const AllSizesOverview = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: 360 }}>
           {sizes.map((size) => (
             <div key={size} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <span style={{ fontSize: '12px', color: '#888', width: 20 }}>{size}</span>
+              <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)', width: 20 }}>
+                {size}
+              </span>
               <div style={{ flex: 1 }}>
-                <Slider size={size} defaultValue={50} showTooltip />
+                <Slider aria-label="Example value" size={size} defaultValue={50} showTooltip />
               </div>
             </div>
           ))}
@@ -297,9 +329,11 @@ const AllSizesOverview = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: 360 }}>
           {sizes.map((size) => (
             <div key={size} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <span style={{ fontSize: '12px', color: '#888', width: 20 }}>{size}</span>
+              <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)', width: 20 }}>
+                {size}
+              </span>
               <div style={{ flex: 1 }}>
-                <Slider size={size} step={10} defaultValue={50} showTooltip />
+                <Slider aria-label="Example value" size={size} step={10} defaultValue={50} showTooltip />
               </div>
             </div>
           ))}
@@ -313,9 +347,9 @@ const AllSizesOverview = () => {
           {sizes.map((size) => (
             <div key={size} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
               <div style={{ height: 180 }}>
-                <Slider size={size} orientation="vertical" defaultValue={50} showTooltip />
+                <Slider aria-label="Example value" size={size} orientation="vertical" defaultValue={50} showTooltip />
               </div>
-              <span style={{ fontSize: '12px', color: '#888' }}>{size}</span>
+              <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>{size}</span>
             </div>
           ))}
         </div>

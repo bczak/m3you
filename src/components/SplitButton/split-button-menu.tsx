@@ -28,6 +28,7 @@ const SplitButtonMenu = ({ children, side = 'bottom', align = 'end' }: SplitButt
         render={
           <button
             type="button"
+            aria-label="Open menu"
             className={cx('md-button', 'md-split-button__trigger')}
             data-variant={variant}
             data-size={size}
