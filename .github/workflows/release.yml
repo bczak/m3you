@@ -47,6 +47,12 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      # The `storybook` vitest project runs stories in a real browser to check
+      # accessibility, so the suite needs a Chromium binary. Without this the
+      # run reports "42 passed (83)" — the browser project silently never runs.
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+
       - name: Library tests
         run: bun run test
 
