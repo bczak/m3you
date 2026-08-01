@@ -14,7 +14,10 @@ export const Route = createRootRoute({
       { name: 'description', content: appTagline },
       { name: 'theme-color', content: '#416699' },
     ],
-    links: [{ rel: 'stylesheet', href: appCss }],
+    links: [
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+    ],
   }),
   component: RootComponent,
 });
