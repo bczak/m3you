@@ -18,7 +18,7 @@ bun add m3you
 npm install react react-dom
 ```
 
-React 19+ is required.
+React 18 or newer is required.
 
 ## Setup
 
@@ -171,7 +171,7 @@ props tables are generated from the TypeScript source — see
 
 ## Tech stack
 
-- **React 19+** with TypeScript
+- **React 18+** with TypeScript (developed against React 19)
 - **Plain CSS + CSS custom properties** (no runtime CSS-in-JS, no Tailwind in the shipped bundle)
 - **Vite** (library mode) + `vite-plugin-dts` for build
 - **Vitest** + `@testing-library/react` + `happy-dom` for tests

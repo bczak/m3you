@@ -42,8 +42,16 @@ const ConnectedButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithout
       onValueChange,
     });
 
+    // Memoised so every button in the group does not redraw on each render.
+    const groupValue = React.useMemo(
+      () => ({ size, shape, morph: false, selectedIndices, handleToggle }),
+      [size, shape, selectedIndices, handleToggle],
+    );
+    const itemCount = React.Children.count(children);
+    const itemContexts = React.useMemo(() => Array.from({ length: itemCount }, (_, index) => ({ index })), [itemCount]);
+
     return (
-      <ButtonGroupContext.Provider value={{ size, shape, morph: false, selectedIndices, handleToggle }}>
+      <ButtonGroupContext.Provider value={groupValue}>
         <ButtonGroup
           ref={ref}
           orientation={orientation}
@@ -53,7 +61,7 @@ const ConnectedButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithout
           {...props}
         >
           {React.Children.map(children, (child, index) => (
-            <ButtonGroupItemContext.Provider value={{ index }}>{child}</ButtonGroupItemContext.Provider>
+            <ButtonGroupItemContext.Provider value={itemContexts[index]}>{child}</ButtonGroupItemContext.Provider>
           ))}
         </ButtonGroup>
       </ButtonGroupContext.Provider>

@@ -40,6 +40,9 @@ jobs:
       - name: Lint and format
         run: bunx biome check
 
+      - name: Type-check library
+        run: bun run types:check
+
       - name: Install Playwright Chromium
         run: bunx playwright install --with-deps chromium
 
@@ -54,6 +57,48 @@ jobs:
 
       - name: Type-check docs
         run: bun run --cwd docs types:check
+
+  react-18:
+    name: React 18
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - run: bun install --frozen-lockfile
+
+      # peerDependencies allow react >=18, but development happens on 19. Without
+      # this job a React-19-only construct — ref-as-prop, `use()`, or
+      # `<Context value>` — lands green and breaks only for consumers.
+      #
+      # --no-save leaves react@19 in package.json, which docs/ needs for fumadocs.
+      # It does rewrite bun.lock, so no later step may use --frozen-lockfile.
+      - name: Downgrade React to 18
+        run: bun add --no-save react@18.3.1 react-dom@18.3.1 @types/react@18.3.27 @types/react-dom@18.3.7
+
+      # Without this, a swap that silently no-ops would pass the job by
+      # re-testing React 19 — the exact failure this job exists to catch.
+      - name: Assert React 18 resolved
+        run: |
+          RUNTIME="$(bun --print 'require("react/package.json").version')"
+          TYPES="$(bun --print 'require("@types/react/package.json").version')"
+          echo "react@$RUNTIME  @types/react@$TYPES"
+          case "$RUNTIME" in 18.*) ;; *) echo "expected react 18, got $RUNTIME" >&2; exit 1 ;; esac
+          case "$TYPES"   in 18.*) ;; *) echo "expected @types/react 18, got $TYPES" >&2; exit 1 ;; esac
+
+      - name: Type-check against React 18 types
+        run: bun run types:check
+
+      # Only the `unit` project: `storybook` needs a Playwright browser and tests
+      # stories, not React compatibility.
+      - name: Library tests
+        run: bunx vitest run --project unit
+
+      # vite-plugin-dts runs a real tsc emit, so this proves the published .d.ts
+      # can still be generated against the 18 typings.
+      - name: Build
+        run: bun run build
 
   storybook-preview:
     name: Storybook preview

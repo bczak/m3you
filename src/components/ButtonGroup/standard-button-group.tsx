@@ -45,8 +45,16 @@ const StandardButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutR
       onValueChange,
     });
 
+    // Memoised so every button in the group does not redraw on each render.
+    const groupValue = React.useMemo(
+      () => ({ size, shape, morph, selectedIndices, handleToggle }),
+      [size, shape, morph, selectedIndices, handleToggle],
+    );
+    const itemCount = React.Children.count(children);
+    const itemContexts = React.useMemo(() => Array.from({ length: itemCount }, (_, index) => ({ index })), [itemCount]);
+
     return (
-      <ButtonGroupContext.Provider value={{ size, shape, morph, selectedIndices, handleToggle }}>
+      <ButtonGroupContext.Provider value={groupValue}>
         <ButtonGroup
           ref={ref}
           orientation={orientation}
@@ -56,7 +64,7 @@ const StandardButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutR
           {...props}
         >
           {React.Children.map(children, (child, index) => (
-            <ButtonGroupItemContext.Provider value={{ index }}>{child}</ButtonGroupItemContext.Provider>
+            <ButtonGroupItemContext.Provider value={itemContexts[index]}>{child}</ButtonGroupItemContext.Provider>
           ))}
         </ButtonGroup>
       </ButtonGroupContext.Provider>

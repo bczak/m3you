@@ -35,11 +35,30 @@ src/components/Button/
 
 1. **CSS** co-located as `{name}.css` in the component directory, imported as a side-effect in the `.tsx` file
 2. **Variants** via data attributes (`data-variant`, `data-size`, `data-shape`, etc.) — styled in CSS
-3. **Component** implemented with React ref forwarding
+3. **Component** implemented with `React.forwardRef<TElement, React.PropsWithoutRef<XProps>>(…)`
 4. **Class names**: `md-{component}` for root, `md-{component}__{part}` for sub-elements
 5. **Utility**: `cx()` from `src/lib/cx.ts` — minimal class name joiner (filters falsy, joins with space)
 
 All public components and types are re-exported from `src/index.tsx`.
+
+### React 18 compatibility (peer range is `>=18.0.0`)
+
+Development happens on React 19, so React 19-only constructs type-check and test
+green here while breaking every React 18 consumer. Do not use:
+
+- **`ref` as a plain prop.** React 18 strips `ref` before it reaches the props
+  object. Use `forwardRef` — including for thin wrappers that only spread
+  `{...props}` into a Base UI primitive, since `ref` rides along in that spread.
+- **`use(SomeContext)`** — use `useContext`.
+- **`<SomeContext value={…}>`** — use `<SomeContext.Provider value={…}>`.
+
+The `React.PropsWithoutRef<XProps>` in the type argument is load-bearing: under
+`@types/react` 18 the render function receives the raw props, whose `LegacyRef`
+includes `string`, which the rest-spread then fails to pass to Base UI. Keep
+`React.MutableRefObject` where refs are written to — 18's `RefObject` has a
+`readonly current`.
+
+The `React 18` CI job in `.github/workflows/pr.yml` is what catches all of this.
 
 ### Styling — Three-Tier Token Architecture
 
