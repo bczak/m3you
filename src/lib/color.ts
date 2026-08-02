@@ -53,7 +53,8 @@ const TOKEN_GETTERS: [string, (s: DynamicScheme) => number][] = [
   ['--md-sys-color-surface-container', (s) => s.surfaceContainer],
   ['--md-sys-color-surface-container-high', (s) => s.surfaceContainerHigh],
   ['--md-sys-color-surface-container-highest', (s) => s.surfaceContainerHighest],
-  ['--md-sys-color-surface-tint', (s) => s.surfaceTint],
+  // Surface tint is an alias of Primary in the M3 role collection.
+  ['--md-sys-color-surface-tint', (s) => s.primary],
 
   // Outline
   ['--md-sys-color-outline', (s) => s.outline],
@@ -93,11 +94,17 @@ export function generateM3Theme(seedHex: string): { light: TokenMap; dark: Token
 
 export function applyM3Theme(seedHex: string, element?: HTMLElement): void {
   const el = element ?? document.documentElement;
-  const isDark = el.getAttribute('data-theme') === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches;
   const { light, dark } = generateM3Theme(seedHex);
-  const tokens = isDark ? dark : light;
 
-  for (const [name, value] of Object.entries(tokens)) {
-    el.style.setProperty(name, value);
+  for (const [name, lightValue] of Object.entries(light)) {
+    const role = name.replace('--md-sys-color-', '');
+    const lightName = `--md-seed-color-${role}-light`;
+    const darkName = `--md-seed-color-${role}-dark`;
+    el.style.setProperty(lightName, lightValue);
+    el.style.setProperty(darkName, dark[name]);
+    el.style.setProperty(
+      name,
+      role === 'surface-tint' ? 'var(--md-sys-color-primary)' : `light-dark(var(${lightName}), var(${darkName}))`,
+    );
   }
 }

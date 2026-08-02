@@ -126,15 +126,15 @@
      ═══════════════════════════════════════════════════════════════════════════ */
 
   --md-sys-typescale-display-xlarge-emphasized-weight: 475;
-  --md-sys-typescale-display-large-emphasized-weight: 475;
-  --md-sys-typescale-display-medium-emphasized-weight: 475;
-  --md-sys-typescale-display-small-emphasized-weight: 475;
+  --md-sys-typescale-display-large-emphasized-weight: 500;
+  --md-sys-typescale-display-medium-emphasized-weight: 500;
+  --md-sys-typescale-display-small-emphasized-weight: 500;
 
-  --md-sys-typescale-headline-large-emphasized-weight: 475;
-  --md-sys-typescale-headline-medium-emphasized-weight: 475;
-  --md-sys-typescale-headline-small-emphasized-weight: 475;
+  --md-sys-typescale-headline-large-emphasized-weight: 500;
+  --md-sys-typescale-headline-medium-emphasized-weight: 500;
+  --md-sys-typescale-headline-small-emphasized-weight: 500;
 
-  --md-sys-typescale-title-large-emphasized-weight: 550;
+  --md-sys-typescale-title-large-emphasized-weight: 500;
   --md-sys-typescale-title-medium-emphasized-weight: 600;
   --md-sys-typescale-title-small-emphasized-weight: 600;
 
