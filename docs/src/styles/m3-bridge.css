@@ -14,6 +14,19 @@
    already flip under `[data-theme="dark"]`.
    ============================================================================= */
 
+/* Typeface — Google Sans rather than the library's Roboto Flex default.
+   The shipped library points `--md-ref-typeface-*` at "Roboto Flex", "Roboto",
+   system-ui and ships no font, so the site previously fell through to the
+   system sans. Google Sans is loaded in `__root.tsx`.
+
+   `html:root` outranks the library's plain `:root` regardless of import order,
+   and driving the *reference* typefaces means every typescale token follows —
+   site chrome and rendered components alike, the same approach Storybook takes. */
+html:root {
+  --md-ref-typeface-brand: "Google Sans", "Google Sans Text", system-ui, sans-serif;
+  --md-ref-typeface-plain: "Google Sans Text", "Google Sans", system-ui, sans-serif;
+}
+
 :root,
 .dark {
   /* Surfaces */
@@ -59,6 +72,18 @@
 
 body {
   font-family: var(--md-sys-typescale-body-large-font, ui-sans-serif, system-ui, sans-serif);
+}
+
+/* Display-scale text takes the brand face, body and UI text the plain one —
+   which is the split the two Google Sans cuts exist for. Without this
+   everything inherits body's plain face and `--md-ref-typeface-brand` is
+   never actually used anywhere on the site. */
+.m3-hero__title,
+#nd-docs-layout h1,
+#nd-page h1,
+#nd-docs-layout h2,
+#nd-page h2 {
+  font-family: var(--md-ref-typeface-brand);
 }
 
 #nd-docs-layout h1,

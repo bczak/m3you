@@ -15,6 +15,15 @@ export const Route = createRootRoute({
       { name: 'theme-color', content: '#416699' },
     ],
     links: [
+      // Google Sans, matching Storybook's `preview-head.html`. `m3-bridge.css`
+      // re-points the M3 reference typefaces at it; without these links that
+      // override would fall through to the system sans.
+      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+      { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Google+Sans+Text:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap',
+      },
       { rel: 'stylesheet', href: appCss },
       { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
     ],
