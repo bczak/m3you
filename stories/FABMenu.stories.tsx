@@ -81,6 +81,19 @@ export const FilledVariant: Story = {
   },
 };
 
+export const TertiaryColor: Story = {
+  args: {
+    defaultOpen: true,
+    color: 'tertiary-container',
+    items: defaultItems,
+    children: (
+      <FAB aria-label="Create">
+        <PlusIcon />
+      </FAB>
+    ),
+  },
+};
+
 function ControlledStory() {
   const [open, setOpen] = useState(false);
   return (

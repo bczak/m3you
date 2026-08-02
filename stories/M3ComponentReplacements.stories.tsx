@@ -9,6 +9,7 @@ import {
   NavigationRailItem,
   NavigationRailSection,
 } from '../src/components/NavigationRail/navigation-rail';
+import { Toolbar } from '../src/components/Toolbar/toolbar';
 
 const meta = {
   title: 'Guidance/M3 Component Replacements',
@@ -17,7 +18,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Material 3 retired Navigation Drawer and Segmented Buttons in May 2025. Use expanded Navigation Rail and Connected Button Group for new expressive designs.',
+          'Material 3 retired Navigation Drawer, Segmented Buttons, and the deprecated Bottom App Bar kit set. Use expanded Navigation Rail, Connected Button Group, and Toolbar respectively; no legacy BottomAppBar component is introduced.',
       },
     },
   },
@@ -103,5 +104,21 @@ export const SegmentedButtonsToConnectedGroup: Story = {
         Read the official M3 status
       </a>
     </div>
+  ),
+};
+
+export const BottomAppBarToToolbar: Story = {
+  render: () => (
+    <section style={{ display: 'grid', gap: 16, maxWidth: 720 }}>
+      <h2 style={{ margin: 0 }}>Bottom app bar maps to Toolbar</h2>
+      <p style={{ margin: 0 }}>
+        Use a horizontal <code>Toolbar</code> at the bottom edge for the deprecated kit configuration.
+      </p>
+      <Toolbar layout="horizontal" color="standard" aria-label="Document actions">
+        <Button variant="text">Archive</Button>
+        <Button variant="text">Move</Button>
+        <Button variant="text">Share</Button>
+      </Toolbar>
+    </section>
   ),
 };

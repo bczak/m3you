@@ -8,7 +8,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['size', 'value', 'type', 'strokeWidth', 'variant'],
+      include: ['size', 'value', 'type', 'thickness', 'strokeWidth', 'variant'],
       expanded: true,
     },
   },
@@ -39,6 +39,12 @@ const meta = {
     strokeWidth: {
       control: { type: 'range', min: 1, max: 12, step: 1 },
       description: 'Thickness of the arc stroke in px.',
+      table: { category: 'Appearance', defaultValue: { summary: '4' } },
+    },
+    thickness: {
+      control: 'inline-radio',
+      options: [4, 8],
+      description: 'Kit-backed physical stroke thickness. This overrides the legacy free-form strokeWidth extension.',
       table: { category: 'Appearance', defaultValue: { summary: '4' } },
     },
   },
@@ -121,5 +127,16 @@ export const Wavy: Story = {
         </div>
       </ShowcasePanel>
     </ShowcaseGrid>
+  ),
+};
+
+export const Thickness: Story = {
+  render: () => (
+    <div className="sb-m3-demo-row">
+      <CircularProgress value={64} thickness={4} />
+      <CircularProgress value={64} thickness={8} />
+      <CircularProgress value={64} variant="wavy" thickness={4} />
+      <CircularProgress value={64} variant="wavy" thickness={8} />
+    </div>
   ),
 };

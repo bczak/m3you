@@ -53,7 +53,7 @@ Following `@material/web`'s pattern:
   - `sys.elevation.css` — 6 levels as box-shadow values
   - `sys.motion.css` — 7 easing curves + 16 durations + spring approximations
   - `sys.state.css` — hover/focus/pressed/dragged/disabled opacities
-  - `sys.color.css` — Light theme (29 tokens, seed #416699)
+  - `sys.color.css` — Light theme (49 roles, seed #416699)
   - `sys.color.dark.css` — Dark theme via `@media (prefers-color-scheme: dark)` + `[data-theme="dark"]`
 
 - M3 color system: `primary`, `secondary`, `tertiary`, `error`, `surface`, `surface-container`, `outline` etc.

@@ -49,11 +49,11 @@ function App() {
 
 | Category | Components |
 |---|---|
-| **Actions** | Button, ButtonGroup, ConnectedButtonGroup, IconButton, ToggleButton, ToggleIconButton, Fab, ExtendedFab, FabMenu |
-| **Communication** | Badge, Snackbar, CircularProgress, LinearProgress, LoadingIndicator |
-| **Containment** | Card, Carousel, List, Dialog, BottomSheet, SideSheet, Tooltip, Divider, Toolbar |
+| **Actions** | Button, ButtonGroup, ConnectedButtonGroup, IconButton, ToggleButton, ToggleIconButton, FAB, ExtendedFAB, ExtendableFAB, FABMenu |
+| **Communication** | Avatar, Badge, Snackbar, CircularProgress, LinearProgress, LoadingIndicator |
+| **Containment** | Card, Carousel, List, ListItemAccordion, ListItemSwipe, Dialog, BottomSheet, SideSheet, Tooltip, Divider, Toolbar |
 | **Navigation** | NavigationBar, NavigationRail, Tabs, AppBar, SearchBar |
-| **Selection** | Checkbox, Chip, Switch, RadioButton, Slider, DatePicker, TimePicker |
+| **Selection** | Checkbox, Chip, ChipGroup, Switch, RadioButton, Slider, RangeSlider, DatePicker, TimePicker |
 | **Text Input** | TextField (filled, outlined) |
 | **Menu** | Menu with sub-menus, groups, dividers |
 
@@ -67,6 +67,7 @@ m3you implements every component family currently recommended by the [Material 3
 | [Lists](https://m3.material.io/components/lists/overview) | `List`, `ListItem`, `ListDivider` | Expressive standard and segmented appearances |
 | [Navigation drawer](https://m3.material.io/components/navigation-drawer/overview) | Expanded `NavigationRail` | Retired by M3 in May 2025 |
 | [Segmented buttons](https://m3.material.io/components/segmented-buttons/overview) | `ConnectedButtonGroup` | Retired by M3 in May 2025 |
+| Deprecated Bottom App Bar kit set | Horizontal `Toolbar` | Replacement mapping; no legacy component |
 
 ### Navigation drawer replacement
 
@@ -94,6 +95,23 @@ Connected button groups provide the same single- or multiple-selection behavior 
   <Button>Grid</Button>
 </ConnectedButtonGroup>
 ```
+
+### Bottom app bar replacement
+
+The deprecated Bottom App Bar kit set maps to a horizontal `Toolbar`. m3you does not introduce a legacy `BottomAppBar` API.
+
+```tsx
+<Toolbar layout="horizontal" aria-label="Document actions">
+  <Button variant="text">Archive</Button>
+  <Button variant="text">Share</Button>
+</Toolbar>
+```
+
+### Deliberate extensions and exclusions
+
+The following compatible m3you extensions remain available alongside kit-backed defaults: elevated `IconButton` and `ToggleIconButton`, `RichTooltip`, heavy/inset `Divider`, extra FAB sizes and legacy variants, elevated Input Chip, bare Card composition, Display XLarge, and LoadingIndicator size variants.
+
+Segmented Button sheets, shape sheets, keyboard diagrams, layout grids, and decorative kit pages are reference material rather than standalone components. XR canvases are permanently outside this library's web scope.
 
 ### Carousel accessibility
 

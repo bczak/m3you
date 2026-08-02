@@ -8,7 +8,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['variant', 'size', 'lowered', 'disabled'],
+      include: ['variant', 'size', 'color', 'fabSize', 'lowered', 'disabled'],
     },
   },
   tags: ['autodocs'],
@@ -89,6 +89,36 @@ export const Lowered: Story = {
       <FAB aria-label="Create" size="md" lowered>
         <NavigationIcon />
       </FAB>
+    </div>
+  ),
+};
+
+export const KitSizesAndColors: Story = {
+  render: () => (
+    <div style={{ display: 'grid', gap: 24 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+        {(['small', 'medium', 'large'] as const).map((fabSize) => (
+          <FAB key={fabSize} aria-label={`${fabSize} create action`} fabSize={fabSize}>
+            <PlusIcon />
+          </FAB>
+        ))}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+        {(
+          [
+            'primary',
+            'secondary',
+            'tertiary',
+            'primary-container',
+            'secondary-container',
+            'tertiary-container',
+          ] as const
+        ).map((color) => (
+          <FAB key={color} aria-label={`${color} create action`} color={color} fabSize="small">
+            <EditIcon />
+          </FAB>
+        ))}
+      </div>
     </div>
   ),
 };

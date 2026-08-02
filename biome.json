@@ -36,7 +36,15 @@
     }
   },
   "files": {
-    "includes": ["**", "!docs/src/routeTree.gen.ts", "!docs/.output", "!docs/.source", "!.design-sync/overrides"]
+    "includes": [
+      "**",
+      "!docs/src/routeTree.gen.ts",
+      "!docs/.output",
+      "!docs/.source",
+      "!.design-sync/overrides",
+      "!.design-sync/measurements.json",
+      "!.claude"
+    ]
   },
   "overrides": [
     {

@@ -2,6 +2,10 @@ import type { ReactDoctorConfig } from 'react-doctor/api';
 
 export default {
   ignore: {
+    // Generated/reference bundles are inputs to the visual audit, not authored
+    // application source. Scanning their minified vendored React/axe code only
+    // reports upstream implementation details that this package cannot change.
+    files: ['ds-bundle/**', '.design-sync/sb-reference/**'],
     rules: [
       'react-doctor/no-derived-useState',
       'react-doctor/no-mirror-prop-effect',
@@ -26,6 +30,15 @@ export default {
       'deslop/unused-file',
       'deslop/unused-export',
     ],
+    overrides: [
+      {
+        files: ['src/components/TimePicker/time-picker.tsx'],
+        // TimePicker is an always-rendered, consumer-positioned dialog surface,
+        // not a component that owns modal open/close state. Native showModal()
+        // would incorrectly move that responsibility into this presentation API.
+        rules: ['react-doctor/prefer-html-dialog'],
+      },
+    ],
   },
 
   rules: {
@@ -38,8 +51,6 @@ export default {
     //   - role="progressbar" (LoadingIndicator) — functional ARIA with
     //     aria-valuemin/valuemax; <progress> is a determinate form element,
     //     semantically wrong for an animated indicator.
-    //   - role="button" (Card, interactive) — a real <button> may not contain
-    //     the interactive children a Card can hold (nested-interactive).
     //   - role="group" (ButtonGroup, SplitButton) — correct WAI-ARIA grouping;
     //     no native tag equivalent.
     'react-doctor/prefer-tag-over-role': 'off',

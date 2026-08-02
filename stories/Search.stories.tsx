@@ -153,6 +153,28 @@ export const DockedView: Story = {
   ),
 };
 
+export const ExpressiveView: Story = {
+  parameters: { layout: 'padded' },
+  render: () => (
+    <div style={{ width: 360, height: 420 }}>
+      <SearchView
+        mode="docked"
+        appearance="expressive"
+        defaultValue="expressive"
+        autoFocus={false}
+        placeholder="Search"
+        style={{ height: '100%' }}
+      >
+        {recentSuggestions.map((item) => (
+          <SearchSuggestionItem key={item.label} icon={item.icon}>
+            {item.label}
+          </SearchSuggestionItem>
+        ))}
+      </SearchView>
+    </div>
+  ),
+};
+
 // ─── SearchView mode: 'fullScreen' — mobile full-bleed view ────────────────
 function PhoneFrame({ children }: { children: React.ReactNode }) {
   return (

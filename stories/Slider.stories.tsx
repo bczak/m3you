@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Volume2Icon } from 'lucide-react';
 import { useState } from 'react';
-import { Slider } from '../src/components/Slider/slider';
+import { RangeSlider, Slider } from '../src/components/Slider/slider';
 
 const meta = {
   title: 'Selection/Slider',
@@ -9,7 +9,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['size', 'orientation', 'min', 'max', 'step', 'showTooltip', 'disabled'],
+      include: ['size', 'orientation', 'mode', 'origin', 'min', 'max', 'step', 'showTooltip', 'disabled'],
       expanded: true,
     },
   },
@@ -25,6 +25,12 @@ const meta = {
       options: ['horizontal', 'vertical'],
       description: 'Layout axis of the slider.',
       table: { category: 'Appearance', defaultValue: { summary: 'horizontal' } },
+    },
+    mode: {
+      control: 'inline-radio',
+      options: ['standard', 'centered'],
+      description: 'Standard fills from the minimum; centered fills outward from the origin.',
+      table: { category: 'Appearance', defaultValue: { summary: 'standard' } },
     },
     min: {
       control: 'number',
@@ -297,6 +303,54 @@ const ControlledStory = () => {
 
 export const Controlled: Story = {
   render: () => <ControlledStory />,
+};
+
+// ─── Centered and range modes ───────────────────────────────
+
+export const Centered: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32, width: 360 }}>
+      <Slider aria-label="Balance" mode="centered" min={-100} max={100} defaultValue={-35} showTooltip />
+      <Slider aria-label="Custom origin" mode="centered" origin={25} defaultValue={70} showTooltip />
+    </div>
+  ),
+};
+
+function ControlledRangeStory() {
+  const [value, setValue] = useState<[number, number]>([25, 75]);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: 360 }}>
+      <RangeSlider
+        value={value}
+        onValueChange={setValue}
+        step={5}
+        showTooltip
+        lowerInputProps={{ 'aria-label': 'Minimum price' }}
+        upperInputProps={{ 'aria-label': 'Maximum price' }}
+      />
+      <output aria-live="polite">
+        {value[0]}–{value[1]}
+      </output>
+    </div>
+  );
+}
+
+export const Range: Story = {
+  render: () => <ControlledRangeStory />,
+};
+
+export const RangeVertical: Story = {
+  render: () => (
+    <div style={{ height: 260 }}>
+      <RangeSlider
+        orientation="vertical"
+        defaultValue={[20, 80]}
+        showTooltip
+        lowerInputProps={{ 'aria-label': 'Minimum value' }}
+        upperInputProps={{ 'aria-label': 'Maximum value' }}
+      />
+    </div>
+  ),
 };
 
 // ─── All sizes overview ─────────────────────────────────────
