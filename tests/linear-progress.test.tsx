@@ -6,40 +6,41 @@ import { LinearProgress } from '../src/components/LinearProgress/linear-progress
 test('renders determinate progress from the provided value', async () => {
   const { container } = render(<LinearProgress value={54} />);
   const progress = screen.getByRole('progressbar', { name: 'Progress: 54%' });
-  const indicator = container.querySelector('.md-linear-progress__indicator') as HTMLDivElement;
+  const row = container.querySelector('.md-linear-progress__row') as HTMLDivElement;
 
   expect(progress).toHaveAttribute('aria-valuenow', '54');
   expect(progress).toHaveAttribute('aria-valuemin', '0');
   expect(progress).toHaveAttribute('aria-valuemax', '100');
-  expect(indicator.style.width).toBe('54%');
+  expect(row.style.getPropertyValue('--_value')).toBe('54%');
+  expect(container.querySelector('.md-linear-progress__active')).not.toBeNull();
 });
 
 test('clamps determinate values to the valid range', async () => {
   const { container, rerender } = render(<LinearProgress value={-12} />);
   let progress = screen.getByRole('progressbar', { name: 'Progress: 0%' });
-  let indicator = container.querySelector('.md-linear-progress__indicator') as HTMLDivElement;
+  const row = container.querySelector('.md-linear-progress__row') as HTMLDivElement;
 
   expect(progress).toHaveAttribute('aria-valuenow', '0');
-  expect(indicator.style.width).toBe('0%');
+  expect(row.style.getPropertyValue('--_value')).toBe('0%');
 
   rerender(<LinearProgress value={140} />);
   progress = screen.getByRole('progressbar', { name: 'Progress: 100%' });
-  indicator = container.querySelector('.md-linear-progress__indicator') as HTMLDivElement;
 
   expect(progress).toHaveAttribute('aria-valuenow', '100');
-  expect(indicator.style.width).toBe('100%');
+  expect(progress).toHaveAttribute('data-complete');
+  expect(container.querySelector('.md-linear-progress__complete')).not.toBeNull();
 });
 
 test('renders indeterminate progress without determinate aria values', async () => {
   const { container } = render(<LinearProgress type="indeterminate" />);
   const progress = screen.getByRole('progressbar', { name: 'Loading' });
-  const indicator = container.querySelector('.md-linear-progress__indicator') as HTMLDivElement;
+  const segment = container.querySelector('.md-linear-progress__indeterminate-segment');
 
   expect(progress).not.toHaveAttribute('aria-valuenow');
   expect(progress).not.toHaveAttribute('aria-valuemin');
   expect(progress).not.toHaveAttribute('aria-valuemax');
-  expect(indicator).toHaveAttribute('data-indeterminate', 'true');
-  expect(indicator.style.width).toBe('');
+  expect(segment).not.toBeNull();
+  expect(container.querySelectorAll('.md-linear-progress__indeterminate-segment')).toHaveLength(1);
 });
 
 test('passes through standard div props and merges className', async () => {
@@ -87,11 +88,11 @@ test('wavy determinate at 100% flattens to a complete bar (no wave)', async () =
   expect(container.querySelector('svg path')).toBeNull();
 });
 
-test('wavy determinate at 0% renders only the track (no stop/active)', async () => {
+test('wavy determinate at 0% renders the split track and terminal stop', async () => {
   const { container } = render(<LinearProgress variant="wavy" value={0} />);
 
   expect(container.querySelector('.md-linear-progress__active')).toBeNull();
-  expect(container.querySelector('.md-linear-progress__stop')).toBeNull();
+  expect(container.querySelector('.md-linear-progress__stop')).not.toBeNull();
   expect(container.querySelector('.md-linear-progress__track')).not.toBeNull();
 });
 
@@ -102,11 +103,10 @@ test('deprecated `indeterminate` prop resolves to the indeterminate type', async
   expect(progress).toHaveAttribute('data-type', 'indeterminate');
   expect(progress).toHaveAttribute('data-indeterminate', 'true');
   expect(progress).not.toHaveAttribute('aria-valuenow');
-  const indicator = container.querySelector('.md-linear-progress__indicator') as HTMLDivElement;
-  expect(indicator).toHaveAttribute('data-indeterminate', 'true');
+  expect(container.querySelector('.md-linear-progress__indeterminate-segment')).not.toBeNull();
 });
 
-test('wavy indeterminate renders masked wave with animated bands', async () => {
+test('wavy indeterminate renders one physical-pixel wave segment', async () => {
   const { container } = render(<LinearProgress variant="wavy" type="indeterminate" />);
   const progress = screen.getByRole('progressbar', { name: 'Loading' });
 
@@ -115,7 +115,6 @@ test('wavy indeterminate renders masked wave with animated bands', async () => {
   expect(progress).not.toHaveAttribute('aria-valuenow');
 
   expect(container.querySelector('svg path')).not.toBeNull();
-  expect(container.querySelector('.md-linear-progress__band-primary')).not.toBeNull();
-  expect(container.querySelector('.md-linear-progress__band-secondary')).not.toBeNull();
-  expect(container.querySelector('.md-linear-progress__wave-track')).not.toBeNull();
+  expect(container.querySelectorAll('.md-linear-progress__indeterminate-segment')).toHaveLength(1);
+  expect(container.querySelector('.md-linear-progress__indeterminate-track')).not.toBeNull();
 });

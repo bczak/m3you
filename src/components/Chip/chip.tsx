@@ -1,10 +1,9 @@
 import './chip.css';
 import { Check, X } from 'lucide-react';
-import { Ripple } from 'm3-ripple';
 import type * as React from 'react';
 import { useCallback, useRef } from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 export type ChipProps = Omit<React.ComponentProps<'button'>, 'type'> & {
   /** What the chip is for: `assist` triggers an action, `filter` narrows a set, `input` represents user-entered data, `suggestion` offers a next step. */
@@ -15,6 +14,8 @@ export type ChipProps = Omit<React.ComponentProps<'button'>, 'type'> & {
   selected?: boolean;
   /** Icon before the label. On a selected filter chip this is conventionally a check. */
   leadingIcon?: React.ReactNode;
+  /** 24px avatar configuration for input chips. */
+  avatar?: React.ReactNode;
   /** Icon after the label, usually a remove affordance on input chips. */
   trailingIcon?: React.ReactNode;
   /** Called when an input chip's remove affordance is pressed. */
@@ -27,6 +28,7 @@ const Chip = ({
   variant = 'outlined',
   selected = false,
   leadingIcon,
+  avatar,
   trailingIcon,
   onClose,
   disabled,
@@ -44,7 +46,8 @@ const Chip = ({
   const showCloseButton = type === 'input' && Boolean(onClose);
 
   // Determine if we have leading/trailing icons for padding
-  const hasLeadingIcon = Boolean(leadingIcon) || isFilterChip;
+  const hasAvatar = type === 'input' && Boolean(avatar);
+  const hasLeadingIcon = hasAvatar || Boolean(leadingIcon) || (isFilterChip && selected);
   const hasTrailingIcon = Boolean(trailingIcon) || showCloseButton;
 
   // Animate chip out then call onClose
@@ -94,6 +97,7 @@ const Chip = ({
     'data-selected': String(selected),
     'data-has-leading-icon': hasLeadingIcon || undefined,
     'data-has-trailing-icon': hasTrailingIcon || undefined,
+    'data-has-avatar': hasAvatar || undefined,
   };
 
   const body = (
@@ -103,7 +107,12 @@ const Chip = ({
           <Check />
         </span>
       )}
-      {!isFilterChip && leadingIcon && (
+      {hasAvatar && (
+        <span aria-hidden="true" className="md-chip__avatar">
+          {avatar}
+        </span>
+      )}
+      {!isFilterChip && !hasAvatar && leadingIcon && (
         <span aria-hidden="true" className="md-chip__leading-icon">
           {leadingIcon}
         </span>
@@ -150,6 +159,7 @@ const Chip = ({
           disabled={disabled}
           className="md-chip__close"
         >
+          <Ripple />
           <X aria-hidden="true" />
         </button>
       </span>

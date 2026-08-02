@@ -37,12 +37,12 @@ test('renders suggestion chip type', () => {
 // Chip — Filter type
 // =============================================================================
 
-test('filter chip renders filter icon and sets aria-pressed/data-has-leading-icon', () => {
+test('filter chip reserves its leading slot only after selection', () => {
   const { container } = render(<Chip type="filter">Filter</Chip>);
   const chip = screen.getByRole('button', { name: 'Filter' });
   expect(chip).toHaveAttribute('data-type', 'filter');
   expect(chip).toHaveAttribute('aria-pressed', 'false');
-  expect(chip).toHaveAttribute('data-has-leading-icon', 'true');
+  expect(chip).not.toHaveAttribute('data-has-leading-icon');
   const filterIcon = container.querySelector('.md-chip__filter-icon');
   expect(filterIcon).toBeInTheDocument();
   expect(filterIcon).toHaveAttribute('aria-hidden', 'true');

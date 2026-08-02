@@ -6,6 +6,7 @@
    ============================================================================= */
 
 .md-chip {
+  box-sizing: border-box;
   position: relative;
   display: inline-flex;
   height: 32px;
@@ -33,7 +34,6 @@
 
   &:disabled {
     pointer-events: none;
-    opacity: var(--md-sys-state-disabled-opacity);
   }
 
   & svg {
@@ -60,15 +60,7 @@
   &[data-variant="outlined"] {
     background-color: transparent;
     color: var(--md-sys-color-on-surface-variant);
-    border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 30%, transparent);
-
-    &:hover {
-      background-color: color-mix(
-        in srgb,
-        var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity),
-        transparent
-      );
-    }
+    border: 1px solid var(--md-sys-color-outline-variant);
   }
 
   /* ── Variant: elevated ── */
@@ -77,33 +69,49 @@
     color: var(--md-sys-color-on-surface);
     box-shadow: var(--md-sys-elevation-1);
     border: none;
-
-    &:hover {
-      box-shadow: var(--md-sys-elevation-2);
-      background-color: var(--md-sys-color-surface-container);
-    }
   }
 
   /* ── Filter selected ── */
-  &[data-type="filter"][data-selected="true"][data-variant="outlined"] {
+  &:is([data-type="filter"], [data-type="input"], [data-type="suggestion"])[data-selected="true"] {
     background-color: var(--md-sys-color-secondary-container);
     color: var(--md-sys-color-on-secondary-container);
     border-color: transparent;
-
-    &:hover {
-      background-color: color-mix(in srgb, var(--md-sys-color-secondary-container) 90%, transparent);
-    }
   }
 
-  &[data-type="filter"][data-selected="true"][data-variant="elevated"] {
-    background-color: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
-    box-shadow: var(--md-sys-elevation-2);
-
-    &:hover {
-      background-color: color-mix(in srgb, var(--md-sys-color-secondary-container) 90%, transparent);
-    }
+  &[data-type="assist"] .md-chip__leading-icon {
+    color: var(--md-sys-color-primary);
   }
+
+  &[data-type="input"] {
+    padding-inline: 12px;
+  }
+
+  &[data-type="input"][data-has-leading-icon] {
+    padding-inline-start: 8px;
+  }
+
+  &[data-type="input"][data-has-avatar] {
+    padding-inline-start: 4px;
+    border-radius: calc(32px / 2);
+  }
+}
+
+.md-chip:is(:disabled, [data-disabled]) {
+  color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
+  box-shadow: none;
+}
+
+.md-chip:is(:disabled, [data-disabled])[data-variant="elevated"] {
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+}
+
+.md-chip:is(:disabled, [data-disabled])[data-variant="outlined"] {
+  border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  background-color: transparent;
 }
 
 /* ── Filter check icon container ── */
@@ -114,10 +122,11 @@
   overflow: hidden;
   transition: width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
   width: 0;
-  margin-right: 8px;
+  margin-right: 0;
 
   &[data-selected="true"] {
     width: 18px;
+    margin-right: 8px;
   }
 
   & svg {
@@ -127,6 +136,24 @@
 
   &[data-selected="true"] svg {
     transform: scale(1);
+  }
+}
+
+.md-chip__avatar {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  overflow: hidden;
+  border-radius: 50%;
+
+  & > :is(img, svg) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
@@ -156,7 +183,6 @@
 
 .md-chip[data-disabled] {
   pointer-events: none;
-  opacity: var(--md-sys-state-disabled-opacity);
 }
 
 .md-chip__primary {
@@ -184,26 +210,23 @@
 
 /* ── Close button (input chips) ── */
 .md-chip__close {
+  box-sizing: border-box;
+  position: relative;
   display: inline-flex;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  padding: 2px;
+  padding: 0;
   margin-left: 8px;
   border: none;
   background: transparent;
   color: inherit;
   outline: none;
+  overflow: hidden;
   transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
-
-  &:hover {
-    background-color: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) var(--md-sys-state-pressed-opacity),
-      transparent
-    );
-  }
 
   &:focus-visible {
     outline: 1px solid var(--md-sys-color-primary);

@@ -1,7 +1,12 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeAll, expect, test } from 'vitest';
-import { RadioButton, RadioGroup, RadioGroupItem } from '../src/components/ui/radio-button';
+import { RadioButton } from '../src/components/RadioButton/radio-button';
+import { RadioGroup } from '../src/components/RadioButton/radio-group';
+import { RadioGroupItem } from '../src/components/RadioButton/radio-group-item';
+
+const radioCss = readFileSync('src/components/RadioButton/radio-button.css', 'utf8');
 
 // Polyfill Element.animate for m3-ripple (happy-dom lacks it)
 beforeAll(() => {
@@ -40,11 +45,13 @@ test('renders radio button in selected state when checked', async () => {
   expect(input).toBeChecked();
 });
 
-test('renders hidden native input with sr-only class', async () => {
+test('renders the visually hidden native input with its canonical class', async () => {
   render(<RadioButton data-testid="radio" />);
   const input = screen.getByRole('radio');
-  expect(input).toHaveClass('sr-only');
+  expect(input).toHaveClass('md-radio__input');
   expect(input).toHaveAttribute('type', 'radio');
+  expect(radioCss).toContain('.md-radio__input {');
+  expect(radioCss).toContain('clip: rect(0, 0, 0, 0)');
 });
 
 // =============================================================================
@@ -54,27 +61,29 @@ test('renders hidden native input with sr-only class', async () => {
 test('applies primary variant border when unselected', async () => {
   render(<RadioButton data-testid="radio" />);
   const { outer } = getOuterAndInner();
-  expect(outer).toHaveClass('border-outline');
-  expect(outer).not.toHaveClass('border-primary');
+  expect(outer).toHaveAttribute('data-variant', 'primary');
+  expect(outer).toHaveAttribute('data-selected', 'false');
 });
 
 test('applies primary variant border when selected', async () => {
   render(<RadioButton checked data-testid="radio" />);
   const { outer } = getOuterAndInner();
-  expect(outer).toHaveClass('border-primary');
-  expect(outer).not.toHaveClass('border-outline');
+  expect(outer).toHaveAttribute('data-variant', 'primary');
+  expect(outer).toHaveAttribute('data-selected', 'true');
 });
 
 test('applies error variant border when unselected', async () => {
   render(<RadioButton variant="error" data-testid="radio" />);
   const { outer } = getOuterAndInner();
-  expect(outer).toHaveClass('border-error');
+  expect(outer).toHaveAttribute('data-variant', 'error');
+  expect(outer).toHaveAttribute('data-selected', 'false');
 });
 
 test('applies error variant border when selected', async () => {
   render(<RadioButton variant="error" checked data-testid="radio" />);
   const { outer } = getOuterAndInner();
-  expect(outer).toHaveClass('border-error');
+  expect(outer).toHaveAttribute('data-variant', 'error');
+  expect(outer).toHaveAttribute('data-selected', 'true');
 });
 
 // =============================================================================
@@ -84,53 +93,52 @@ test('applies error variant border when selected', async () => {
 test('inner dot scales up when selected', async () => {
   render(<RadioButton checked data-testid="radio" />);
   const { inner } = getOuterAndInner();
-  expect(inner).toHaveClass('scale-100');
-  expect(inner).toHaveClass('size-2.5');
+  expect(inner).toHaveAttribute('data-selected', 'true');
 });
 
 test('inner dot scales down when unselected', async () => {
   render(<RadioButton data-testid="radio" />);
   const { inner } = getOuterAndInner();
-  expect(inner).toHaveClass('scale-0');
-  expect(inner).toHaveClass('size-0');
+  expect(inner).toHaveAttribute('data-selected', 'false');
 });
 
 test('inner dot uses primary background when selected', async () => {
   render(<RadioButton checked data-testid="radio" />);
   const { inner } = getOuterAndInner();
-  expect(inner).toHaveClass('bg-primary');
+  expect(inner).toHaveAttribute('data-variant', 'primary');
 });
 
 test('inner dot uses error background when selected with error variant', async () => {
   render(<RadioButton variant="error" checked data-testid="radio" />);
   const { inner } = getOuterAndInner();
-  expect(inner).toHaveClass('bg-error');
+  expect(inner).toHaveAttribute('data-variant', 'error');
 });
 
 // =============================================================================
 // RadioButton — Dimensions & Spacing
 // =============================================================================
 
-test('has 48dp touch target (size-12)', async () => {
+test('has a 48dp touch target in shipped CSS', async () => {
   render(<RadioButton data-testid="radio" />);
   const { label } = getOuterAndInner();
-  expect(label).toHaveClass('size-12');
+  expect(label).toHaveClass('md-radio');
+  expect(radioCss).toContain('width: 48px;\n  height: 48px;');
 });
 
-test('has 40dp state layer (size-10)', async () => {
+test('has a 40dp event-receiving state layer', async () => {
   render(<RadioButton data-testid="radio" />);
   const label = screen.getByRole('radio').closest('label');
   const stateLayer = label?.firstElementChild;
-  expect(stateLayer).toHaveClass('size-10');
-  expect(stateLayer).toHaveClass('rounded-full');
+  expect(stateLayer).toHaveClass('md-radio__state-layer');
+  expect(radioCss).toContain('width: 40px;\n  height: 40px;');
 });
 
-test('outer circle is 20dp (size-5)', async () => {
+test('outer circle is a 20dp border-box ring', async () => {
   render(<RadioButton data-testid="radio" />);
   const { outer } = getOuterAndInner();
-  expect(outer).toHaveClass('size-5');
-  expect(outer).toHaveClass('rounded-full');
-  expect(outer).toHaveClass('border-2');
+  expect(outer).toHaveClass('md-radio__outer');
+  expect(radioCss).toContain('width: 20px;\n  height: 20px;');
+  expect(radioCss).toContain('border: 2px solid');
 });
 
 // =============================================================================
@@ -140,8 +148,7 @@ test('outer circle is 20dp (size-5)', async () => {
 test('applies disabled styles when disabled', async () => {
   render(<RadioButton disabled data-testid="radio" />);
   const label = screen.getByRole('radio').closest('label');
-  expect(label).toHaveClass('opacity-38');
-  expect(label).toHaveClass('pointer-events-none');
+  expect(label).toHaveAttribute('data-disabled');
 });
 
 test('native input is disabled when disabled prop is true', async () => {
@@ -153,9 +160,9 @@ test('native input is disabled when disabled prop is true', async () => {
 test('disabled selected radio shows correct styles', async () => {
   render(<RadioButton disabled checked data-testid="radio" />);
   const label = screen.getByRole('radio').closest('label');
-  expect(label).toHaveClass('opacity-38');
+  expect(label).toHaveAttribute('data-disabled');
   const { outer } = getOuterAndInner();
-  expect(outer).toHaveClass('border-primary');
+  expect(outer).toHaveAttribute('data-selected', 'true');
 });
 
 // =============================================================================
@@ -230,32 +237,35 @@ test('merges custom className', async () => {
   render(<RadioButton className="custom-class" data-testid="radio" />);
   const label = screen.getByRole('radio').closest('label');
   expect(label).toHaveClass('custom-class');
-  expect(label).toHaveClass('size-12');
+  expect(label).toHaveClass('md-radio');
 });
 
 // =============================================================================
 // RadioButton — State layer hover
 // =============================================================================
 
-test('state layer has primary hover when selected', async () => {
+test('state layer inherits the primary role when selected', async () => {
   render(<RadioButton checked data-testid="radio" />);
   const label = screen.getByRole('radio').closest('label');
   const stateLayer = label?.firstElementChild;
-  expect(stateLayer).toHaveClass('group-hover:bg-primary/8');
+  expect(stateLayer).toHaveClass('md-radio__state-layer');
+  expect(label).toHaveAttribute('data-selected', 'true');
 });
 
-test('state layer has outline hover when unselected primary', async () => {
+test('state layer uses the neutral role when unselected', async () => {
   render(<RadioButton data-testid="radio" />);
   const label = screen.getByRole('radio').closest('label');
   const stateLayer = label?.firstElementChild;
-  expect(stateLayer).toHaveClass('group-hover:bg-outline/8');
+  expect(stateLayer).toHaveClass('md-radio__state-layer');
+  expect(label).toHaveAttribute('data-selected', 'false');
 });
 
-test('state layer has error hover when error variant', async () => {
+test('state layer uses the error role for the error variant', async () => {
   render(<RadioButton variant="error" data-testid="radio" />);
   const label = screen.getByRole('radio').closest('label');
   const stateLayer = label?.firstElementChild;
-  expect(stateLayer).toHaveClass('group-hover:bg-error/8');
+  expect(stateLayer).toHaveClass('md-radio__state-layer');
+  expect(label).toHaveAttribute('data-variant', 'error');
 });
 
 // =============================================================================
@@ -417,7 +427,7 @@ test('items inherit variant from group', async () => {
     </RadioGroup>,
   );
   const { outer } = getOuterAndInner();
-  expect(outer).toHaveClass('border-error');
+  expect(outer).toHaveAttribute('data-variant', 'error');
 });
 
 test('item variant overrides group variant', async () => {
@@ -427,8 +437,7 @@ test('item variant overrides group variant', async () => {
     </RadioGroup>,
   );
   const { outer } = getOuterAndInner();
-  expect(outer).toHaveClass('border-primary');
-  expect(outer).not.toHaveClass('border-error');
+  expect(outer).toHaveAttribute('data-variant', 'primary');
 });
 
 // =============================================================================
@@ -502,18 +511,20 @@ test('forwards ref to RadioGroupItem input', async () => {
 // RadioButton — Transitions & Animations
 // =============================================================================
 
-test('outer circle has transition classes', async () => {
+test('outer circle has a tokenized color transition', async () => {
   render(<RadioButton data-testid="radio" />);
   const { outer } = getOuterAndInner();
-  expect(outer).toHaveClass('transition-colors');
-  expect(outer).toHaveClass('duration-200');
-  expect(outer).toHaveClass('ease-out');
+  expect(outer).toHaveClass('md-radio__outer');
+  expect(radioCss).toContain(
+    'transition: border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard)',
+  );
 });
 
-test('inner dot has transition classes', async () => {
+test('inner dot has a tokenized transform transition', async () => {
   render(<RadioButton data-testid="radio" />);
   const { inner } = getOuterAndInner();
-  expect(inner).toHaveClass('transition-transform');
-  expect(inner).toHaveClass('duration-200');
-  expect(inner).toHaveClass('ease-out');
+  expect(inner).toHaveClass('md-radio__inner');
+  expect(radioCss).toContain(
+    'transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard)',
+  );
 });

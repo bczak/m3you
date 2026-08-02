@@ -1,197 +1,141 @@
-/* =============================================================================
-   Linear Progress — M3 Expressive
-   Two appearance variants: `flat` (classic 4px bar) and `wavy` (M3 Expressive
-   sine-wave indicator with gap + stop at the end).
-   ============================================================================= */
+/* M3 Expressive linear progress: physical SVG geometry, split tracks, and one
+   indeterminate segment. */
 
 .md-linear-progress {
   --_thickness: 4px;
-  --_amplitude: 3px;
-  --_wavelength: 40px;
-  --_indeterminate-wavelength: 24px;
+  --_amplitude: 4px;
+  --_wavelength: 20px;
   --_color: var(--md-linear-progress-color, var(--md-sys-color-primary));
   --_track-color: var(--md-linear-progress-track-color, var(--md-sys-color-secondary-container));
 
   position: relative;
   display: block;
   width: 100%;
+  height: var(--_thickness);
   box-sizing: border-box;
   color: var(--_color);
-}
-
-/* -------------------------------------------------------------------------- */
-/* Flat variant (default, backwards compatible)                               */
-/* -------------------------------------------------------------------------- */
-
-.md-linear-progress[data-variant="flat"] {
-  height: var(--_thickness);
   overflow: hidden;
-  border-radius: calc(var(--_thickness) / 2);
-  background-color: var(--_track-color);
 }
 
-.md-linear-progress__indicator {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  width: 0;
-  border-radius: inherit;
-  background-color: var(--_color);
-  transition: width var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
-}
-
-.md-linear-progress__indicator[data-indeterminate] {
-  width: 35%;
-  animation: md-linear-progress-flat-indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-}
-
-@keyframes md-linear-progress-flat-indeterminate {
-  0% {
-    left: -35%;
-  }
-  100% {
-    left: 100%;
-  }
-}
-
-/* -------------------------------------------------------------------------- */
-/* Wavy variant — M3 Expressive                                               */
-/* -------------------------------------------------------------------------- */
-
-.md-linear-progress[data-variant="wavy"] {
-  /* Room for the peaks + valleys plus the stroke width. */
+.md-linear-progress[data-variant="wavy"]:not([data-low-value]):not([data-complete]) {
   height: calc(var(--_thickness) + var(--_amplitude) * 2);
-  overflow: hidden;
 }
 
 .md-linear-progress__row {
   display: flex;
-  align-items: center;
-  height: 100%;
   width: 100%;
+  height: 100%;
+  align-items: center;
 }
 
 .md-linear-progress__active {
   position: relative;
-  flex: none;
+  display: block;
   width: var(--_value, 0%);
-  height: 100%;
+  height: var(--_thickness);
+  flex: none;
   overflow: hidden;
+  border-radius: calc(var(--_thickness) / 2);
+  background-color: var(--_color);
   color: var(--_color);
 }
 
-.md-linear-progress__wave {
-  display: block;
+.md-linear-progress[data-variant="wavy"]:not([data-low-value]) .md-linear-progress__active {
   height: 100%;
+  border-radius: 0;
+  background-color: transparent;
 }
 
-/* Slide exactly one wavelength per cycle — loops seamlessly because the wave
-   is periodic. Keep it on the SVG (not the <path>) so masking maths stays
-   in the untransformed userSpaceOnUse frame. */
+.md-linear-progress__wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 2048px;
+  max-width: none;
+  height: 100%;
+  overflow: visible;
+}
+
 .md-linear-progress__wave--sliding {
   animation: md-linear-progress-wave-slide 1.5s linear infinite;
   will-change: transform;
 }
 
 @keyframes md-linear-progress-wave-slide {
-  from {
-    transform: translateX(0);
-  }
   to {
     transform: translateX(calc(var(--_wavelength) * -1));
   }
 }
 
 .md-linear-progress__gap {
-  flex: 0 0 var(--_thickness);
+  width: 4px;
+  height: 1px;
+  flex: 0 0 4px;
 }
 
 .md-linear-progress__track {
-  flex: 1 1 auto;
   height: var(--_thickness);
+  min-width: 0;
+  flex: 1 1 auto;
   border-radius: calc(var(--_thickness) / 2);
   background-color: var(--_track-color);
 }
 
 .md-linear-progress__stop {
-  flex: 0 0 var(--_thickness);
+  width: var(--_thickness);
   height: var(--_thickness);
-  border-radius: calc(var(--_thickness) / 2);
+  flex: 0 0 var(--_thickness);
+  border-radius: 50%;
   background-color: var(--_color);
 }
 
 .md-linear-progress__complete {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
   height: var(--_thickness);
   border-radius: calc(var(--_thickness) / 2);
   background-color: var(--_color);
-  margin-block: calc(var(--_amplitude));
+  transform: translateY(-50%);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Wavy indeterminate — two mask bands slide across a static wave.            */
-/* -------------------------------------------------------------------------- */
-
-.md-linear-progress[data-variant="wavy"][data-indeterminate] {
-  color: var(--_color);
+.md-linear-progress__indeterminate-track {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: var(--_thickness);
+  border-radius: calc(var(--_thickness) / 2);
+  background-color: var(--_track-color);
+  transform: translateY(-50%);
 }
 
-.md-linear-progress[data-variant="wavy"][data-indeterminate] .md-linear-progress__wave {
-  width: 100%;
+.md-linear-progress__indeterminate-segment {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 40%;
   height: 100%;
-  overflow: visible;
+  overflow: hidden;
+  border-radius: calc(var(--_thickness) / 2);
+  background-color: var(--_color);
+  color: var(--_color);
+  animation: md-linear-progress-indeterminate 2.1s var(--md-sys-motion-easing-standard) infinite;
 }
 
-.md-linear-progress__wave-track {
-  fill: var(--_track-color);
+.md-linear-progress[data-variant="wavy"] .md-linear-progress__indeterminate-segment {
+  border-radius: 0;
+  background-color: transparent;
 }
 
-/* Keyframes mirror @m3e/web so the primary + secondary segments pass each
-   other with the same cadence as the official M3 Expressive example. */
-.md-linear-progress__band-primary {
-  animation: md-linear-progress-band-primary 2.1s linear infinite;
-}
+@keyframes md-linear-progress-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
 
-.md-linear-progress__band-secondary {
-  animation: md-linear-progress-band-secondary 2.1s linear infinite;
-  animation-delay: 1.15s;
-  animation-fill-mode: backwards;
-}
-
-@keyframes md-linear-progress-band-primary {
-  0% {
-    transform: translateX(-145.167%);
-    width: 8%;
-  }
-  20% {
-    transform: translateX(-113.333%);
-    width: 48%;
-  }
-  60% {
-    transform: translateX(56.333%);
-    width: 78%;
-  }
-  100% {
-    transform: translateX(100%);
-    width: 8%;
-  }
-}
-
-@keyframes md-linear-progress-band-secondary {
-  0% {
-    transform: translateX(-54.888%);
-    width: 8%;
-  }
-  20% {
-    transform: translateX(-20%);
-    width: 48%;
-  }
-  60% {
-    transform: translateX(60%);
-    width: 78%;
-  }
-  100% {
-    transform: translateX(160%);
-    width: 8%;
+  to {
+    transform: translateX(350%);
   }
 }
 

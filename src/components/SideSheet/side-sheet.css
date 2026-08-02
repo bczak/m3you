@@ -25,16 +25,23 @@
   z-index: 50;
 }
 
+.md-side-sheet-viewport[data-variant="standard"] {
+  pointer-events: none;
+}
+
 /* ── Content ── */
 .md-side-sheet-content {
+  box-sizing: border-box;
   position: fixed;
   top: 0;
   z-index: 50;
   display: flex;
   height: 100%;
-  max-width: 400px;
+  width: min(320px, 100vw);
+  max-width: 320px;
   flex-direction: column;
   outline: none;
+  pointer-events: auto;
 
   &[data-variant="standard"] {
     background-color: var(--md-sys-color-surface);
@@ -42,6 +49,7 @@
 
   &[data-variant="modal"] {
     background-color: var(--md-sys-color-surface-container-low);
+    border-radius: var(--md-sys-shape-corner-large);
   }
 
   &[data-side="right"] {
@@ -75,10 +83,12 @@
 
 /* ── Header ── */
 .md-side-sheet-header {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 24px 24px 12px;
+  min-height: 64px;
+  gap: 4px;
+  padding: 8px 12px 8px 16px;
 
   &[data-has-back][data-variant="modal"] {
     padding-left: 16px;
@@ -88,9 +98,13 @@
 /* ── Title ── */
 .md-side-sheet-title {
   flex: 1;
-  font-size: 1.5rem;
-  line-height: 2rem;
-  color: var(--md-sys-color-on-surface);
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-title-large-font);
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  letter-spacing: var(--md-sys-typescale-title-large-tracking);
 }
 
 /* ── Body ── */
@@ -102,7 +116,13 @@
 
 /* ── Divider ── */
 .md-side-sheet-divider {
-  border-color: var(--md-sys-color-outline-variant);
+  box-sizing: border-box;
+  width: 100%;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: var(--md-sys-color-outline-variant);
 }
 
 /* ── Footer ── */
@@ -111,4 +131,28 @@
   align-items: center;
   gap: 8px;
   padding: 16px 24px 24px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+/* Base UI drawer transforms live with the component so direct imports work. */
+[data-slot="side-sheet-content"][data-swipe-direction="right"] {
+  transform: translateX(var(--drawer-swipe-movement-x, 0px));
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+}
+
+[data-slot="side-sheet-content"][data-swipe-direction="right"]:is([data-starting-style], [data-ending-style]) {
+  transform: translateX(100%);
+}
+
+[data-slot="side-sheet-content"][data-swipe-direction="left"] {
+  transform: translateX(var(--drawer-swipe-movement-x, 0px));
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+}
+
+[data-slot="side-sheet-content"][data-swipe-direction="left"]:is([data-starting-style], [data-ending-style]) {
+  transform: translateX(-100%);
+}
+
+[data-slot="side-sheet-content"][data-swiping] {
+  transition: none;
 }

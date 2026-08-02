@@ -37,57 +37,32 @@ const Snackbar = ({
   ref,
   ...props
 }: SnackbarProps & { ref?: React.Ref<HTMLOutputElement> }) => {
-  const isLongerAction = layout === 'longerAction';
+  const hasActions = Boolean(actionLabel || closable);
 
   return (
     <output ref={ref} aria-live="polite" className={cx('md-snackbar', className)} data-layout={layout} {...props}>
-      {isLongerAction ? (
-        <>
-          <span className="md-snackbar__message">{message}</span>
-          <div className="md-snackbar__actions">
-            {actionLabel && (
-              <Button variant="text" size="xs" shape="round" morph onClick={onAction} className="md-snackbar__action">
-                {actionLabel}
-              </Button>
-            )}
-            {closable && (
-              <IconButton
-                variant="standard"
-                size="xs"
-                shape="round"
-                aria-label="Dismiss"
-                onClick={onClose}
-                className="md-snackbar__close"
-              >
-                <X aria-hidden="true" />
-              </IconButton>
-            )}
-          </div>
-        </>
-      ) : (
-        <>
-          <span className="md-snackbar__message">{message}</span>
-          <div className="md-snackbar__actions">
-            {actionLabel && (
-              <Button variant="text" size="xs" shape="round" morph onClick={onAction} className="md-snackbar__action">
-                {actionLabel}
-              </Button>
-            )}
-            {closable && (
-              <IconButton
-                variant="standard"
-                size="xs"
-                shape="round"
-                aria-label="Dismiss"
-                onClick={onClose}
-                className="md-snackbar__close"
-              >
-                <X aria-hidden="true" />
-              </IconButton>
-            )}
-          </div>
-        </>
-      )}
+      <span className="md-snackbar__message">{message}</span>
+      {hasActions ? (
+        <div className="md-snackbar__actions">
+          {actionLabel ? (
+            <Button variant="text" size="sm" shape="round" morph onClick={onAction} className="md-snackbar__action">
+              {actionLabel}
+            </Button>
+          ) : null}
+          {closable ? (
+            <IconButton
+              variant="standard"
+              size="sm"
+              shape="round"
+              aria-label="Dismiss"
+              onClick={onClose}
+              className="md-snackbar__close"
+            >
+              <X aria-hidden="true" />
+            </IconButton>
+          ) : null}
+        </div>
+      ) : null}
     </output>
   );
 };
@@ -114,8 +89,8 @@ const SnackbarHost = ({ position = 'bottom-center', ...props }: SnackbarHostProp
           display: 'flex',
           justifyContent: 'center',
           transitionProperty: 'opacity',
-          transitionDuration: '150ms',
-          transitionTimingFunction: 'ease-out',
+          transitionDuration: 'var(--md-sys-motion-duration-short2)',
+          transitionTimingFunction: 'var(--md-sys-motion-easing-standard-decelerate)',
         },
       }}
       {...props}

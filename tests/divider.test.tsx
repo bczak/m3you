@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test } from 'vitest';
-import { Divider } from '../src/components/ui/divider';
+import { Divider } from '../src/components/Divider/divider';
 
 afterEach(() => {
   cleanup();

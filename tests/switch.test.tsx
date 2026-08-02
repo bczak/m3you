@@ -1,7 +1,10 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
-import { Switch } from '../src/components/ui/switch';
+import { Switch } from '../src/components/Switch/switch';
+
+const switchCss = readFileSync('src/components/Switch/switch.css', 'utf8');
 
 // Cleanup after each test to prevent DOM pollution
 afterEach(() => {
@@ -31,54 +34,55 @@ test('renders switch in checked state when checked prop is true', async () => {
 });
 
 // Variant tests
-test('renders primary variant track styles when unchecked', async () => {
+test('exposes the unchecked primary track state to shipped CSS', async () => {
   render(<Switch variant="primary" data-testid="switch" />);
   const { track } = getTrackAndThumb();
-  expect(track).toHaveClass('border-outline');
-  expect(track).toHaveClass('bg-surface-container-highest');
+  expect(track).toHaveAttribute('data-variant', 'primary');
+  expect(track).toHaveAttribute('data-checked', 'false');
 });
 
 test('renders primary variant track styles when checked', async () => {
   render(<Switch variant="primary" checked data-testid="switch" />);
   const { track } = getTrackAndThumb();
-  expect(track).toHaveClass('border-primary');
-  expect(track).toHaveClass('bg-primary');
+  expect(track).toHaveAttribute('data-variant', 'primary');
+  expect(track).toHaveAttribute('data-checked', 'true');
 });
 
 test('renders error variant track styles when unchecked', async () => {
   render(<Switch variant="error" data-testid="switch" />);
   const { track } = getTrackAndThumb();
-  expect(track).toHaveClass('border-error');
-  expect(track).toHaveClass('bg-surface-container-highest');
+  expect(track).toHaveAttribute('data-variant', 'error');
+  expect(track).toHaveAttribute('data-checked', 'false');
 });
 
 test('renders error variant track styles when checked', async () => {
   render(<Switch variant="error" checked data-testid="switch" />);
   const { track } = getTrackAndThumb();
-  expect(track).toHaveClass('border-error');
-  expect(track).toHaveClass('bg-error');
+  expect(track).toHaveAttribute('data-variant', 'error');
+  expect(track).toHaveAttribute('data-checked', 'true');
 });
 
 // Size tests (track dimensions)
-test('track has correct M3 dimensions', async () => {
+test('track has correct M3 dimensions in shipped CSS', async () => {
   render(<Switch data-testid="switch" />);
   const { track } = getTrackAndThumb();
-  expect(track).toHaveClass('h-8'); // 32px
-  expect(track).toHaveClass('w-[52px]');
-  expect(track).toHaveClass('rounded-full');
+  expect(track).toHaveClass('md-switch__track');
+  expect(switchCss).toContain('height: 32px;\n  width: 52px;');
+  expect(switchCss).toContain('border-radius: calc(32px / 2)');
 });
 
 // Thumb tests
 test('thumb is smaller when unchecked without icon', async () => {
   render(<Switch data-testid="switch" />);
   const { thumb } = getTrackAndThumb();
-  expect(thumb).toHaveClass('size-4'); // 16px
+  expect(thumb).toHaveAttribute('data-checked', 'false');
+  expect(thumb).toHaveAttribute('data-with-icon', 'false');
 });
 
 test('thumb is larger when checked', async () => {
   render(<Switch checked data-testid="switch" />);
   const { thumb } = getTrackAndThumb();
-  expect(thumb).toHaveClass('size-6'); // 24px
+  expect(thumb).toHaveAttribute('data-checked', 'true');
 });
 
 // Icon tests
@@ -98,7 +102,8 @@ test('shows icons when showIcons is true', async () => {
 test('thumb is larger when unchecked with icons', async () => {
   render(<Switch showIcons data-testid="switch" />);
   const { thumb } = getTrackAndThumb();
-  expect(thumb).toHaveClass('size-6'); // 24px with icon
+  expect(thumb).toHaveAttribute('data-with-icon', 'true');
+  expect(thumb).toHaveAttribute('data-checked', 'false');
 });
 
 // Disabled state tests
@@ -107,8 +112,7 @@ test('renders disabled state correctly', async () => {
   const input = screen.getByRole('switch');
   const { label } = getTrackAndThumb();
   expect(input).toBeDisabled();
-  expect(label).toHaveClass('opacity-38');
-  expect(label).toHaveClass('pointer-events-none');
+  expect(label).toHaveAttribute('data-disabled');
 });
 
 test('does not call onCheckedChange when disabled', async () => {
@@ -202,10 +206,11 @@ test('has correct aria-checked attribute when checked', async () => {
   expect(input).toHaveAttribute('aria-checked', 'true');
 });
 
-test('native input is screen reader only', async () => {
+test('native input uses the canonical visually-hidden class', async () => {
   render(<Switch data-testid="switch" />);
   const input = screen.getByRole('switch');
-  expect(input).toHaveClass('sr-only');
+  expect(input).toHaveClass('md-switch__input');
+  expect(switchCss).toContain('clip: rect(0, 0, 0, 0)');
 });
 
 // Custom className test
@@ -216,27 +221,29 @@ test('accepts custom className', async () => {
 });
 
 // Transition classes test
-test('has transition classes for animations', async () => {
+test('has tokenized transitions for animations', async () => {
   render(<Switch data-testid="switch" />);
   const { track } = getTrackAndThumb();
-  expect(track).toHaveClass('transition-all');
-  expect(track).toHaveClass('duration-300');
-  expect(track).toHaveClass('ease-out');
+  expect(track).toHaveClass('md-switch__track');
+  expect(switchCss).toContain(
+    'background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard)',
+  );
 });
 
 // Focus ring test
-test('has focus ring classes for keyboard navigation', async () => {
+test('has a visible focus outline for keyboard navigation', async () => {
   render(<Switch data-testid="switch" />);
-  const { track } = getTrackAndThumb();
-  expect(track).toHaveClass('focus-visible:ring-2');
-  expect(track).toHaveClass('focus-visible:ring-ring');
+  const { label } = getTrackAndThumb();
+  expect(label).toHaveClass('md-switch');
+  expect(switchCss).toContain('&:has(input:focus-visible) {');
+  expect(switchCss).toContain('outline: 2px solid var(--md-sys-color-primary)');
 });
 
 // State layer tests
 test('has state layer for hover effects', async () => {
   render(<Switch data-testid="switch" />);
   const { label } = getTrackAndThumb();
-  const stateLayer = label?.querySelector('.size-10.rounded-full');
+  const stateLayer = label?.querySelector('.md-switch__state-layer');
   expect(stateLayer).toBeInTheDocument();
 });
 
@@ -264,7 +271,8 @@ test('works with all props combined', async () => {
 
   expect(input).toBeChecked();
   expect(label).toHaveClass('custom-combined-class');
-  expect(track).toHaveClass('bg-error');
+  expect(track).toHaveAttribute('data-variant', 'error');
+  expect(track).toHaveAttribute('data-checked', 'true');
   expect(ref.current).toBeInstanceOf(HTMLInputElement);
   expect(document.querySelectorAll('svg').length).toBe(2);
 

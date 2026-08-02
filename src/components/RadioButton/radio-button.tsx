@@ -1,8 +1,7 @@
 import './radio-button.css';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 /**
  * Material Design 3 Radio Button Component
@@ -54,50 +53,26 @@ const RadioButton = ({
 
   return (
     <label
-      className={cx('md-radio group size-12', disabled && 'opacity-38 pointer-events-none', className)}
+      className={cx('md-radio', className)}
       data-variant={variant}
       data-selected={String(checked)}
       data-disabled={disabled || undefined}
     >
-      {/* Ripple overlay (48dp — full touch target) */}
-      <span
-        className={cx(
-          'md-radio__ripple size-10 rounded-full',
-          variant === 'error'
-            ? 'group-hover:bg-error/8'
-            : checked
-              ? 'group-hover:bg-primary/8'
-              : 'group-hover:bg-outline/8',
-        )}
-      >
-        <Ripple />
-      </span>
-
       {/* State layer (40dp circular — hover/focus bg) */}
-      <span className="md-radio__state-layer size-10 rounded-full" />
+      <span className="md-radio__state-layer">
+        <Ripple disabled={disabled} />
+      </span>
 
       {/* Visual radio button (20dp outer circle) */}
       <span
         aria-hidden="true"
-        className={cx(
-          'md-radio__outer size-5 rounded-full border-2 transition-all transition-colors duration-200 ease-out',
-          variant === 'error' ? 'border-error' : checked ? 'border-primary' : 'border-outline',
-        )}
+        className="md-radio__outer"
         data-outer=""
         data-variant={variant}
         data-selected={String(checked)}
       >
         {/* Inner dot (10dp when selected) */}
-        <span
-          className={cx(
-            'md-radio__inner transition-all transition-transform duration-200 ease-out',
-            checked ? 'scale-100 size-2.5' : 'scale-0 size-0',
-            variant === 'error' ? 'bg-error' : 'bg-primary',
-          )}
-          data-inner=""
-          data-variant={variant}
-          data-selected={String(checked)}
-        />
+        <span className="md-radio__inner" data-inner="" data-variant={variant} data-selected={String(checked)} />
       </span>
 
       {/* Hidden native input for accessibility */}
@@ -107,7 +82,7 @@ const RadioButton = ({
         {...(isControlled ? { checked } : { defaultChecked })}
         disabled={disabled}
         onChange={updateRadioChecked}
-        className="md-radio__input sr-only"
+        className="md-radio__input"
         {...props}
       />
     </label>

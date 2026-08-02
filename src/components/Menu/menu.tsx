@@ -1,11 +1,10 @@
 import './menu.css';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Check, ChevronRight } from 'lucide-react';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
 import { use } from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 type MenuColor = 'standard' | 'vibrant';
 const MenuColorContext = React.createContext<MenuColor>('standard');
@@ -113,13 +112,14 @@ const MenuContent = ({
   ...props
 }: MenuContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
   const color = use(MenuColorContext);
-  const colorClass = color === 'vibrant' ? 'bg-tertiary-container' : 'bg-surface-container-low';
   return (
     <BaseMenu.Portal {...portalProps}>
       <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
         <BaseMenu.Popup
           ref={ref}
-          className={cx('md-menu rounded-2xl p-1', grouped ? 'gap-1' : 'shadow-md', !grouped && colorClass, className)}
+          className={cx('md-menu', className)}
+          data-color={color}
+          data-grouped={grouped || undefined}
           {...props}
         >
           {children}
@@ -149,9 +149,7 @@ const MenuGroup = ({
   return (
     <BaseMenu.Group ref={ref} className={cx('md-menu-group', className)} {...props}>
       {label ? <MenuLabel>{label}</MenuLabel> : null}
-      <div data-menu-group="" className="rounded-2xl shadow-md">
-        {children}
-      </div>
+      {children}
     </BaseMenu.Group>
   );
 };
@@ -161,11 +159,9 @@ MenuGroup.displayName = 'MenuGroup';
 // MenuLabel
 // =============================================================================
 
-const MenuLabel = ({
-  className,
-  ref,
-  ...props
-}: React.ComponentPropsWithoutRef<'div'> & { ref?: React.Ref<HTMLDivElement> }) => (
+export interface MenuLabelProps extends React.ComponentPropsWithoutRef<'div'> {}
+
+const MenuLabel = ({ className, ref, ...props }: MenuLabelProps & { ref?: React.Ref<HTMLDivElement> }) => (
   <BaseMenu.GroupLabel ref={ref} className={cx('md-menu-label', className)} {...props} />
 );
 MenuLabel.displayName = 'MenuLabel';
@@ -224,7 +220,6 @@ const MenuItem = ({
   ...props
 }: MenuItemProps & { ref?: React.Ref<HTMLDivElement> }) => {
   const color = use(MenuColorContext);
-  const selectedClass = selected ? (color === 'vibrant' ? 'bg-tertiary' : 'bg-tertiary-container') : undefined;
   return (
     <BaseMenu.Item
       ref={ref}
@@ -234,10 +229,11 @@ const MenuItem = ({
       onKeyUp={onKeyUp}
       data-disabled={disabled || undefined}
       data-selected={selected || undefined}
-      className={cx('md-menu-item rounded-xl h-12 overflow-hidden', disabled && 'opacity-38', selectedClass, className)}
+      data-color={color}
+      className={cx('md-menu-item', className)}
       {...props}
     >
-      <Ripple hoverOpacity={0} />
+      <Ripple />
       {selected && !leadingIcon ? <Check aria-hidden="true" /> : null}
       {leadingIcon}
       {supportingText ? <MenuItemContent supportingText={supportingText}>{children}</MenuItemContent> : children}
@@ -304,15 +300,17 @@ const MenuSubTrigger = ({
   ref,
   ...props
 }: MenuSubTriggerProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const color = use(MenuColorContext);
   return (
     <BaseMenu.SubmenuTrigger
       ref={ref}
       disabled={disabled}
       data-disabled={disabled || undefined}
-      className={cx('md-menu-item rounded-xl h-12 overflow-hidden', disabled && 'opacity-38', className)}
+      data-color={color}
+      className={cx('md-menu-item', className)}
       {...props}
     >
-      <Ripple hoverOpacity={0} />
+      <Ripple />
       {supportingText ? <MenuItemContent supportingText={supportingText}>{children}</MenuItemContent> : children}
       <span className="md-menu-item__chevron" aria-hidden="true">
         <ChevronRight />
@@ -345,7 +343,7 @@ const MenuSubContent = ({
   return (
     <BaseMenu.Portal {...portalProps}>
       <BaseMenu.Positioner sideOffset={4}>
-        <BaseMenu.Popup ref={ref} className={cx('md-menu rounded-2xl p-1 shadow-md', className)} {...props}>
+        <BaseMenu.Popup ref={ref} className={cx('md-menu', className)} {...props}>
           {children}
         </BaseMenu.Popup>
       </BaseMenu.Positioner>

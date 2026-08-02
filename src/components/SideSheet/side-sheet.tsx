@@ -77,7 +77,11 @@ function SideSheetContent({ className, children, portalProps, ...props }: SideSh
   return (
     <DrawerPrimitive.Portal {...portalProps}>
       {isModal && <DrawerPrimitive.Backdrop data-slot="side-sheet-backdrop" className="md-side-sheet-backdrop" />}
-      <DrawerPrimitive.Viewport data-slot="side-sheet-viewport" className="md-side-sheet-viewport">
+      <DrawerPrimitive.Viewport
+        data-slot="side-sheet-viewport"
+        data-variant={variant}
+        className="md-side-sheet-viewport"
+      >
         <DrawerPrimitive.Popup
           data-slot="side-sheet-content"
           data-variant={variant}

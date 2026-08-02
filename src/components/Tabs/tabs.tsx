@@ -1,9 +1,8 @@
 import './tabs.css';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
 import { use } from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 /* =============================================================================
    Tabs - Container component (role="tablist")
@@ -95,7 +94,7 @@ const Tab = ({
   const { value: selectedValue, onValueChange, variant, fullWidth } = useTabs();
   const isActive = selectedValue === value;
   const hasLabel = React.Children.count(children) > 0;
-  const hasIcon = !!icon && (variant === 'primary' || !hasLabel);
+  const hasIcon = !!icon;
 
   const selectTab = (e: React.MouseEvent<HTMLButtonElement>) => {
     /* v8 ignore next -- React never fires onClick on a disabled button */
@@ -155,6 +154,7 @@ const Tab = ({
       data-active={String(isActive)}
       data-has-badge={String(!!badge)}
       data-has-icon={String(hasIcon)}
+      data-has-label={String(hasLabel)}
       data-full-width={String(fullWidth)}
       className={cx('md-tab', className)}
       onClick={selectTab}

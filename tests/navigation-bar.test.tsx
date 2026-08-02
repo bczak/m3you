@@ -1,7 +1,10 @@
+import { readFileSync } from 'node:fs';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { expect, test } from 'vitest';
-import { NavigationBar, NavigationBarItem } from '../src/components/ui/navigation-bar';
+import { NavigationBar, NavigationBarItem } from '../src/components/NavigationBar/navigation-bar';
+
+const navigationBarCss = readFileSync('src/components/NavigationBar/navigation-bar.css', 'utf8');
 
 // Mock icon component for testing
 const MockIcon = () => <svg data-testid="mock-icon" />;
@@ -198,7 +201,7 @@ test('NavigationBarItem disabled state prevents click', async () => {
   expect(searchItem).toBeDisabled();
 });
 
-test('NavigationBarItem applies active state classes', async () => {
+test('NavigationBarItem exposes its active state to shipped CSS', async () => {
   render(
     <NavigationBar value="home" onValueChange={() => {}}>
       <NavigationBarItem value="home" icon={<MockIcon />} label="Home" />
@@ -207,7 +210,8 @@ test('NavigationBarItem applies active state classes', async () => {
   );
 
   const homeItem = screen.getByRole('button', { name: 'Home' });
-  expect(homeItem).toHaveClass('text-primary');
+  expect(homeItem).toHaveClass('md-navigation-bar-item');
+  expect(homeItem).toHaveAttribute('data-active', 'true');
 });
 
 test('NavigationBarItem applies inactive state classes', async () => {
@@ -219,7 +223,7 @@ test('NavigationBarItem applies inactive state classes', async () => {
   );
 
   const searchItem = screen.getByRole('button', { name: 'Search' });
-  expect(searchItem).not.toHaveClass('text-primary');
+  expect(searchItem).not.toHaveAttribute('data-active');
 });
 
 test('NavigationBarItem forwards ref correctly', async () => {
@@ -257,11 +261,11 @@ test('NavigationBarItem hides inactive label when hideInactiveLabel is true', as
 
   // Active item label should be visible
   const homeLabel = screen.getByText('Home');
-  expect(homeLabel).toHaveClass('opacity-100');
+  expect(homeLabel).not.toHaveAttribute('data-hidden');
 
   // Inactive item label should be hidden
   const searchLabel = screen.getByText('Search');
-  expect(searchLabel).toHaveClass('opacity-0');
+  expect(searchLabel).toHaveAttribute('data-hidden', 'true');
 });
 
 test('NavigationBarItem shows all labels when hideInactiveLabel is false', async () => {
@@ -275,8 +279,8 @@ test('NavigationBarItem shows all labels when hideInactiveLabel is false', async
   const homeLabel = screen.getByText('Home');
   const searchLabel = screen.getByText('Search');
 
-  expect(homeLabel).toHaveClass('opacity-100');
-  expect(searchLabel).toHaveClass('opacity-100');
+  expect(homeLabel).not.toHaveAttribute('data-hidden');
+  expect(searchLabel).not.toHaveAttribute('data-hidden');
 });
 
 /* =============================================================================
@@ -321,17 +325,17 @@ test('only one item can be active at a time', async () => {
    Layout Tests
    ============================================================================= */
 
-test('NavigationBar has correct layout classes', async () => {
+test('NavigationBar exposes the canonical vertical layout contract', async () => {
   render(
     <NavigationBar value="home" onValueChange={() => {}}>
       <NavigationBarItem value="home" icon={<MockIcon />} label="Home" />
     </NavigationBar>,
   );
   const nav = screen.getByRole('navigation');
-  expect(nav).toHaveClass('fixed');
-  expect(nav).toHaveClass('bottom-0');
-  expect(nav).toHaveClass('flex');
-  expect(nav).toHaveClass('h-20');
+  expect(nav).toHaveClass('md-navigation-bar');
+  expect(nav).toHaveAttribute('data-orientation', 'vertical');
+  expect(navigationBarCss).toContain('min-height: 64px');
+  expect(navigationBarCss).toContain('background-color: var(--md-sys-color-surface-container)');
 });
 
 test('NavigationBarItem has flex layout (vertical)', async () => {
@@ -341,9 +345,8 @@ test('NavigationBarItem has flex layout (vertical)', async () => {
     </NavigationBar>,
   );
   const item = screen.getByRole('button', { name: 'Home' });
-  expect(item).toHaveClass('flex');
-  expect(item).toHaveClass('flex-col');
-  expect(item).toHaveClass('items-center');
+  expect(item).toHaveClass('md-navigation-bar-item');
+  expect(item).toHaveAttribute('data-orientation', 'vertical');
 });
 
 test('NavigationBarItem has flex layout (horizontal)', async () => {
@@ -353,24 +356,24 @@ test('NavigationBarItem has flex layout (horizontal)', async () => {
     </NavigationBar>,
   );
   const item = screen.getByRole('button', { name: 'Home' });
-  expect(item).toHaveClass('flex');
-  expect(item).toHaveClass('flex-row');
-  expect(item).toHaveClass('items-center');
+  expect(item).toHaveClass('md-navigation-bar-item');
+  expect(item).toHaveAttribute('data-orientation', 'horizontal');
 });
 
 /* =============================================================================
    Focus Management Tests
    ============================================================================= */
 
-test('NavigationBarItem has focus-visible styles', async () => {
+test('NavigationBarItem has an accessible shipped focus-visible outline', async () => {
   render(
     <NavigationBar value="home" onValueChange={() => {}}>
       <NavigationBarItem value="home" icon={<MockIcon />} label="Home" />
     </NavigationBar>,
   );
   const item = screen.getByRole('button', { name: 'Home' });
-  expect(item).toHaveClass('focus-visible:ring-2');
-  expect(item).toHaveClass('focus-visible:ring-ring');
+  expect(item).toHaveClass('md-navigation-bar-item');
+  expect(navigationBarCss).toContain('&:focus-visible {');
+  expect(navigationBarCss).toContain('outline: 2px solid var(--md-sys-color-primary)');
 });
 
 /* =============================================================================
@@ -445,10 +448,9 @@ test('horizontal NavigationBarItems cover the inactive indicator, badge, and hid
   );
   // Active item: badge rendered and label visible.
   expect(screen.getByTestId('h-badge')).toBeInTheDocument();
-  expect(screen.getByText('Home')).toHaveClass('opacity-100');
+  expect(screen.getByText('Home')).not.toHaveAttribute('data-hidden');
   // Inactive item: label hidden.
   const searchLabel = screen.getByText('Search');
-  expect(searchLabel).toHaveClass('opacity-0');
   expect(searchLabel).toHaveAttribute('data-hidden', 'true');
 });
 

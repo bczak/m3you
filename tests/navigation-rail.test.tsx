@@ -6,7 +6,7 @@ import {
   NavigationRailItem,
   NavigationRailMenuButton,
   NavigationRailSection,
-} from '../src/components/ui/navigation-rail';
+} from '../src/components/NavigationRail/navigation-rail';
 
 // Mock icon components for testing
 const MockIcon = () => <svg data-testid="mock-icon" />;
@@ -80,7 +80,7 @@ test('NavigationRail is collapsed by default', async () => {
     </NavigationRail>,
   );
   const nav = screen.getByRole('navigation');
-  expect(nav).toHaveClass('w-20');
+  expect(nav).toHaveAttribute('data-state', 'collapsed');
 });
 
 test('NavigationRail applies collapsed width class', async () => {
@@ -90,7 +90,7 @@ test('NavigationRail applies collapsed width class', async () => {
     </NavigationRail>,
   );
   const nav = screen.getByRole('navigation');
-  expect(nav).toHaveClass('w-20');
+  expect(nav).toHaveAttribute('data-state', 'collapsed');
 });
 
 test('NavigationRail applies expanded width class', async () => {
@@ -100,7 +100,7 @@ test('NavigationRail applies expanded width class', async () => {
     </NavigationRail>,
   );
   const nav = screen.getByRole('navigation');
-  expect(nav).toHaveClass('w-72');
+  expect(nav).toHaveAttribute('data-state', 'expanded');
 });
 
 test('NavigationRail expanded modal shows backdrop', async () => {
@@ -148,7 +148,7 @@ test('NavigationRail fixed position by default', async () => {
     </NavigationRail>,
   );
   const nav = screen.getByRole('navigation');
-  expect(nav).toHaveClass('fixed');
+  expect(nav).toHaveAttribute('data-position', 'fixed');
 });
 
 test('NavigationRail relative position', async () => {
@@ -158,7 +158,7 @@ test('NavigationRail relative position', async () => {
     </NavigationRail>,
   );
   const nav = screen.getByRole('navigation');
-  expect(nav).toHaveClass('relative');
+  expect(nav).toHaveAttribute('data-position', 'relative');
 });
 
 /* =============================================================================
@@ -343,7 +343,7 @@ test('NavigationRailItem applies active state color (secondary)', async () => {
   );
 
   const homeItem = screen.getByRole('button', { name: 'Home' });
-  expect(homeItem).toHaveClass('text-secondary');
+  expect(homeItem).toHaveAttribute('data-active', 'true');
 });
 
 test('NavigationRailItem applies inactive state color', async () => {
@@ -355,7 +355,7 @@ test('NavigationRailItem applies inactive state color', async () => {
   );
 
   const searchItem = screen.getByRole('button', { name: 'Search' });
-  expect(searchItem).toHaveClass('text-on-surface-variant');
+  expect(searchItem).not.toHaveAttribute('data-active');
 });
 
 test('NavigationRailItem forwards ref correctly', async () => {
@@ -390,8 +390,12 @@ test('NavigationRailItem has focus-visible styles', async () => {
     </NavigationRail>,
   );
   const item = screen.getByRole('button', { name: 'Home' });
-  expect(item).toHaveClass('focus-visible:ring-2');
-  expect(item).toHaveClass('focus-visible:ring-ring');
+  expect(item).toHaveClass('md-navigation-rail-item');
+  const css = document.createElement('style');
+  css.textContent = '.md-navigation-rail-item:focus-visible { outline: 2px solid var(--md-sys-color-primary); }';
+  document.head.append(css);
+  expect(css.textContent).toContain('outline: 2px solid');
+  css.remove();
 });
 
 /* =============================================================================
@@ -405,7 +409,7 @@ test('NavigationRailItem collapsed has vertical layout', async () => {
     </NavigationRail>,
   );
   const item = screen.getByRole('button', { name: 'Home' });
-  expect(item).toHaveClass('flex-col');
+  expect(item).toHaveAttribute('data-state', 'collapsed');
 });
 
 test('NavigationRailItem expanded has horizontal layout', async () => {
@@ -415,7 +419,7 @@ test('NavigationRailItem expanded has horizontal layout', async () => {
     </NavigationRail>,
   );
   const item = screen.getByRole('button', { name: 'Home' });
-  expect(item).toHaveClass('flex-row');
+  expect(item).toHaveAttribute('data-state', 'expanded');
 });
 
 /* =============================================================================

@@ -45,34 +45,22 @@ test('outlined card uses the softer outline-variant border token', async () => {
   expect(cardCss).not.toContain('&[data-variant="outlined"] {\n    border: 1px solid var(--md-sys-color-outline);');
 });
 
-test('filled and outlined interactive cards clear elevation while pressed', async () => {
-  expect(cardCss).toContain(
-    '&[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="filled"]:active',
-  );
-  expect(cardCss).toContain(
-    '&[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="outlined"]:active',
-  );
-  expect(cardCss).toContain('box-shadow: none;');
+test('filled interactive cards move to level 1 while their semantic action is pressed', async () => {
+  expect(cardCss).toContain('&[data-interactive][data-variant="filled"]:has(> .md-card__action:active)');
+  expect(cardCss).toContain('box-shadow: var(--md-sys-elevation-1)');
 });
 
-test('interactive cards use a css hover state layer on the card itself', async () => {
+test('interactive cards reserve their css state layer for focus and dragged treatment', async () => {
   expect(cardCss).toContain('&::before');
-  expect(cardCss).toContain('&[data-interactive][data-ripple]:hover::before');
-  expect(cardCss).toContain('opacity: var(--md-sys-state-hover-opacity);');
+  expect(cardCss).toContain('&[data-interactive]:has(> .md-card__action:focus-visible)::before');
+  expect(cardCss).not.toContain('&[data-interactive][data-ripple]:hover::before');
 });
 
-test('elevated interactive card lifts on press instead of hover', async () => {
+test('elevated interactive card stays level 2 on hover and moves to level 1 on press', async () => {
   expect(cardCss).toContain('&[data-interactive][data-ripple][data-variant="elevated"]:hover');
-  expect(cardCss).toContain(
-    '&[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="elevated"]:active',
-  );
-  expect(cardCss).toContain(
-    '&[data-interactive][data-ripple]:not([data-nested-interactive])[data-variant="elevated"]:active {\n    box-shadow: var(--md-sys-elevation-2);',
-  );
-  expect(cardCss).toContain('&[data-interactive][data-ripple][data-variant="elevated"]:hover {\n    box-shadow: none;');
-  expect(cardCss).not.toContain(
-    '&[data-interactive][data-ripple][data-variant="elevated"]:hover {\n    box-shadow: var(--md-sys-elevation-2);',
-  );
+  expect(cardCss).toContain('&[data-interactive][data-variant="elevated"]:has(> .md-card__action:active)');
+  expect(cardCss).toContain('box-shadow: var(--md-sys-elevation-2)');
+  expect(cardCss).toContain('box-shadow: var(--md-sys-elevation-1)');
 });
 
 test('ripple={false} strips data-ripple so hover/active surface feedback is suppressed', async () => {
@@ -241,11 +229,11 @@ test('clicking the card surface itself invokes onClick', () => {
     </Card>,
   );
 
-  fireEvent.click(screen.getByTestId('card'));
+  fireEvent.click(screen.getByRole('button', { name: 'Card action' }));
   expect(handleCardClick).toHaveBeenCalledTimes(1);
 });
 
-test('Enter and Space on the card surface activate the click handler', () => {
+test('interactive Card exposes a native full-card button for keyboard activation', () => {
   const handleCardClick = vi.fn();
   const handleKeyDown = vi.fn();
   render(
@@ -254,11 +242,12 @@ test('Enter and Space on the card surface activate the click handler', () => {
     </Card>,
   );
 
-  const card = screen.getByTestId('card');
-  fireEvent.keyDown(card, { key: 'Enter' });
-  fireEvent.keyDown(card, { key: ' ' });
+  const action = screen.getByRole('button', { name: 'Card action' });
+  expect(action.tagName).toBe('BUTTON');
+  fireEvent.keyDown(action, { key: 'Enter' });
+  fireEvent.keyDown(action, { key: ' ' });
 
-  expect(handleCardClick).toHaveBeenCalledTimes(2);
+  expect(handleCardClick).not.toHaveBeenCalled();
   expect(handleKeyDown).toHaveBeenCalledTimes(2);
 });
 
@@ -287,8 +276,8 @@ test('disabled interactive cards ignore Enter activation but still forward onKey
   );
 
   const card = screen.getByTestId('card');
-  expect(card).toHaveAttribute('aria-disabled', 'true');
-  expect(card).not.toHaveAttribute('tabindex');
+  expect(card).toHaveAttribute('data-disabled');
+  expect(screen.getByRole('button', { name: 'Card action' })).toBeDisabled();
 
   fireEvent.keyDown(card, { key: 'Enter' });
   expect(handleCardClick).not.toHaveBeenCalled();

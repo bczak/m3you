@@ -18,50 +18,43 @@
 
   &[data-disabled] {
     pointer-events: none;
-    opacity: var(--md-sys-state-disabled-opacity);
   }
-}
 
-/* ── Ripple overlay (48px — full touch target) ── */
-.md-radio__ripple {
-  pointer-events: none;
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  overflow: hidden;
+  &:has(input:focus-visible) {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: -2px;
+    border-radius: 50%;
+  }
 }
 
 /* ── State layer (40px — hover/focus bg) ── */
 .md-radio__state-layer {
-  pointer-events: none;
+  pointer-events: auto;
   position: absolute;
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  overflow: hidden;
+  color: var(--md-sys-color-on-surface);
   transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 }
 
-/* Hover state layers */
-.md-radio[data-variant="primary"][data-selected="true"]:hover .md-radio__state-layer {
-  background-color: color-mix(in srgb, var(--md-sys-color-primary) var(--md-sys-state-hover-opacity), transparent);
+.md-radio[data-variant="primary"][data-selected="true"] .md-radio__state-layer {
+  color: var(--md-sys-color-primary);
 }
 
-.md-radio[data-variant="primary"][data-selected="false"]:hover .md-radio__state-layer {
-  background-color: color-mix(in srgb, var(--md-sys-color-outline) var(--md-sys-state-hover-opacity), transparent);
+.md-radio[data-variant="error"] .md-radio__state-layer {
+  color: var(--md-sys-color-error);
 }
 
-.md-radio[data-variant="error"]:hover .md-radio__state-layer {
-  background-color: color-mix(in srgb, var(--md-sys-color-error) var(--md-sys-state-hover-opacity), transparent);
-}
-
-/* ── Outer circle (18px — matches Checkbox box) ── */
+/* ── Outer circle (20px border-box) ── */
 .md-radio__outer {
+  box-sizing: border-box;
   pointer-events: none;
   position: relative;
   display: flex;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
@@ -70,7 +63,7 @@
   transition: border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
   &[data-selected="false"][data-variant="primary"] {
-    border-color: var(--md-sys-color-outline);
+    border-color: var(--md-sys-color-on-surface-variant);
   }
 
   &[data-selected="false"][data-variant="error"] {
@@ -84,6 +77,22 @@
   &[data-selected="true"][data-variant="error"] {
     border-color: var(--md-sys-color-error);
   }
+}
+
+.md-radio[data-disabled] .md-radio__outer {
+  border-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
+}
+
+.md-radio[data-disabled] .md-radio__inner {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
 }
 
 /* ── Inner dot (10px when selected, scale(0) when not) ── */

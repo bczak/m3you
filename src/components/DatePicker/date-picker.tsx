@@ -1,9 +1,8 @@
 import './date-picker.css';
 import { Check, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 

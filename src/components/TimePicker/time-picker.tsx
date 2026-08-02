@@ -1,9 +1,8 @@
 import './time-picker.css';
 import { Clock, Keyboard } from 'lucide-react';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -457,7 +456,7 @@ const TimePicker = ({
         <div className="md-time-picker__display-row">
           <button
             type="button"
-            className={cx('md-time-picker__time-box', selection === 'hours' && 'border-primary')}
+            className="md-time-picker__time-box"
             data-selected={String(selection === 'hours')}
             data-mode="dial"
             onClick={() => setSelection('hours')}
@@ -468,7 +467,7 @@ const TimePicker = ({
           <span className="md-time-picker__colon">:</span>
           <button
             type="button"
-            className={cx('md-time-picker__time-box', selection === 'minutes' && 'border-primary')}
+            className="md-time-picker__time-box"
             data-selected={String(selection === 'minutes')}
             data-mode="dial"
             onClick={() => setSelection('minutes')}
@@ -482,10 +481,7 @@ const TimePicker = ({
           <div className="md-time-picker__field-group">
             <input
               ref={hourInputRef}
-              className={cx(
-                'md-time-picker__time-box md-time-picker__time-input',
-                selection === 'hours' && 'border-primary',
-              )}
+              className="md-time-picker__time-box md-time-picker__time-input"
               data-selected={String(selection === 'hours')}
               data-mode="input"
               value={displayHour()}
@@ -504,10 +500,7 @@ const TimePicker = ({
           <div className="md-time-picker__field-group">
             <input
               ref={minuteInputRef}
-              className={cx(
-                'md-time-picker__time-box md-time-picker__time-input',
-                selection === 'minutes' && 'border-primary',
-              )}
+              className="md-time-picker__time-box md-time-picker__time-input"
               data-selected={String(selection === 'minutes')}
               data-mode="input"
               value={current.minutes.toString().padStart(2, '0')}
@@ -563,7 +556,9 @@ const TimePicker = ({
     <div
       ref={ref}
       className={cx('md-time-picker', className)}
-      role={open !== undefined ? 'dialog' : undefined}
+      role="dialog"
+      aria-label={headerText}
+      aria-modal={open !== undefined || undefined}
       data-layout={landscape && !isInput ? 'landscape' : 'portrait'}
     >
       {(!landscape || isInput) && (

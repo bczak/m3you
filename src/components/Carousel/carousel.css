@@ -8,12 +8,12 @@
   --md-carousel-gap: 8px;
   --md-carousel-inline-padding: 16px;
   --md-carousel-block-padding: 8px;
-  --md-carousel-item-height: 220px;
+  --md-carousel-item-height: 204px;
   --md-carousel-large-item-max-width: 360px;
-  --md-carousel-medium-item-width: clamp(96px, 24cqi, 240px);
-  --md-carousel-small-item-width: clamp(40px, 10cqi, 56px);
+  --md-carousel-medium-item-width: 120px;
+  --md-carousel-small-item-width: 56px;
   --md-carousel-item-shape: var(--md-sys-shape-corner-extra-large);
-  --md-carousel-uncontained-item-width: min(80cqi, 320px);
+  --md-carousel-uncontained-item-width: clamp(154px, 40cqi, 163px);
 
   display: block;
   inline-size: 100%;
@@ -22,7 +22,7 @@
 }
 
 .md-carousel[data-layout="full-screen"] {
-  --md-carousel-item-height: min(100svh, 720px);
+  --md-carousel-item-height: 100svh;
 }
 
 .md-carousel__header {
@@ -181,7 +181,8 @@
   outline: none;
   isolation: isolate;
   transition:
-    border-radius var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-default-spatial),
+    border-radius var(--md-sys-motion-duration-spring-default-spatial)
+    var(--md-sys-motion-easing-spring-default-spatial),
     box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
@@ -195,6 +196,10 @@
     cursor: default;
     opacity: var(--md-sys-state-disabled-opacity);
   }
+}
+
+.md-carousel-item__action > .salty-ripple {
+  z-index: 2;
 }
 
 .md-carousel-item__content {

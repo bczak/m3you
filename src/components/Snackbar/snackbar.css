@@ -1,19 +1,19 @@
 /* =============================================================================
    Snackbar — M3 Spec
-   Shape: extra-small (4px), BG: inverse-surface, Elevation: level5
+   Shape: extra-small (4px), BG: inverse-surface, Elevation: level3
    Single-line: 48px, Two-line: 68px
    Source: m3.material.io/components/snackbar/specs
    ============================================================================= */
 
 .md-snackbar {
   display: flex;
-  width: 100%;
-  min-width: 288px;
-  max-width: 568px;
+  box-sizing: border-box;
+  width: min(344px, calc(100vw - 32px));
+  min-width: 0;
   border-radius: var(--md-sys-shape-corner-extra-small);
   background-color: var(--md-sys-color-inverse-surface);
   color: var(--md-sys-color-inverse-on-surface);
-  box-shadow: var(--md-sys-elevation-5);
+  box-shadow: var(--md-sys-elevation-3);
   animation: snackbar-slide-up var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard-decelerate);
 
   &[data-layout="singleLine"] {
@@ -56,27 +56,16 @@
 
 .md-snackbar[data-layout="longerAction"] .md-snackbar__actions {
   justify-content: flex-end;
-  padding: 0 8px 2px;
+  gap: 4px;
+  padding: 0 8px 8px 16px;
 }
 
 /* Action button — 3-class specificity (0,3,0) beats button.css's (0,2,0) */
 .md-snackbar .md-snackbar__action.md-button {
   color: var(--md-sys-color-inverse-primary);
 
-  &:hover {
-    background-color: color-mix(
-      in srgb,
-      var(--md-sys-color-inverse-primary) var(--md-sys-state-hover-opacity),
-      transparent
-    );
-  }
-
-  &:active {
-    background-color: color-mix(
-      in srgb,
-      var(--md-sys-color-inverse-primary) var(--md-sys-state-pressed-opacity),
-      transparent
-    );
+  &:focus-visible {
+    outline-color: currentColor;
   }
 }
 
@@ -84,19 +73,14 @@
 .md-snackbar .md-snackbar__close.md-icon-button {
   color: var(--md-sys-color-inverse-on-surface);
 
-  &:hover {
-    background-color: color-mix(
-      in srgb,
-      var(--md-sys-color-inverse-on-surface) var(--md-sys-state-hover-opacity),
-      transparent
-    );
+  &:focus-visible {
+    outline-color: currentColor;
   }
+}
 
-  &:active {
-    background-color: color-mix(
-      in srgb,
-      var(--md-sys-color-inverse-on-surface) var(--md-sys-state-pressed-opacity),
-      transparent
-    );
-  }
+.md-snackbar .md-snackbar__action.md-button,
+.md-snackbar .md-snackbar__close.md-icon-button {
+  flex: none;
+  min-width: 40px;
+  height: 40px;
 }

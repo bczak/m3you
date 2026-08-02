@@ -175,14 +175,14 @@ test('clicking AM/PM toggles period', async () => {
 test('hours selection is active by default', async () => {
   render(<ControlledTimePicker />);
   const hoursBtn = screen.getByRole('button', { name: 'Hours' });
-  expect(hoursBtn).toHaveClass('border-primary');
+  expect(hoursBtn).toHaveAttribute('data-selected', 'true');
 });
 
 test('clicking minutes button switches selection', async () => {
   render(<ControlledTimePicker />);
   const minutesBtn = screen.getByRole('button', { name: 'Minutes' });
   fireEvent.click(minutesBtn);
-  expect(minutesBtn).toHaveClass('border-primary');
+  expect(minutesBtn).toHaveAttribute('data-selected', 'true');
 });
 
 // =============================================================================
@@ -378,7 +378,7 @@ test('dial pointer selects an hour and advances to minutes on pointer up (12h)',
 
   fireEvent.pointerUp(dial, { pointerId: 1 });
   // After releasing on hours, the dial advances to minutes selection
-  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveClass('border-primary');
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveAttribute('data-selected', 'true');
 });
 
 test('dial pointer move is ignored when not dragging', async () => {
@@ -394,7 +394,7 @@ test('dial pointer up is ignored when not dragging', async () => {
   const dial = setupDial(screen.getByTestId('clock-dial'));
   // pointerUp without pointerDown → early return, selection stays on hours
   fireEvent.pointerUp(dial, { pointerId: 1 });
-  expect(screen.getByRole('button', { name: 'Hours' })).toHaveClass('border-primary');
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveAttribute('data-selected', 'true');
 });
 
 test('dial pointer at top maps to 12 and upper-left normalizes the angle (12h)', async () => {
@@ -451,7 +451,7 @@ test('dial pointer sets minutes when minutes selection is active', async () => {
 
   // Releasing while on minutes keeps minutes selected (no advance)
   fireEvent.pointerUp(dial, { pointerId: 1 });
-  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveClass('border-primary');
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveAttribute('data-selected', 'true');
 });
 
 // =============================================================================
@@ -461,9 +461,9 @@ test('dial pointer sets minutes when minutes selection is active', async () => {
 test('clicking the hours button returns selection to hours', async () => {
   render(<ControlledTimePicker />);
   fireEvent.click(screen.getByRole('button', { name: 'Minutes' }));
-  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveClass('border-primary');
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveAttribute('data-selected', 'true');
   fireEvent.click(screen.getByRole('button', { name: 'Hours' }));
-  expect(screen.getByRole('button', { name: 'Hours' })).toHaveClass('border-primary');
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveAttribute('data-selected', 'true');
 });
 
 // =============================================================================
@@ -483,9 +483,9 @@ test('clicking AM switches the period from PM back to AM', async () => {
 // Non-dialog (inline) mode — emit path
 // =============================================================================
 
-test('inline (non-dialog) uncontrolled picker updates its own value', async () => {
+test('standalone picker is its own dialog surface and updates uncontrolled value', async () => {
   render(<TimePicker defaultValue={{ hours: 10, minutes: 0 }} format="12h" orientation="portrait" />);
-  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(screen.getByRole('dialog')).toHaveClass('md-time-picker');
   fireEvent.click(screen.getByText('PM'));
   expect(screen.getByText('PM')).toHaveAttribute('aria-pressed', 'true');
   // 10 AM → 22 PM, still displays 10 in 12h
@@ -523,7 +523,7 @@ test('input mode hour field (12h) converts PM and ignores invalid input', async 
   );
   const hourInput = screen.getByRole('textbox', { name: 'Hours' });
   fireEvent.focus(hourInput);
-  expect(hourInput).toHaveClass('border-primary');
+  expect(hourInput).toHaveAttribute('data-selected', 'true');
 
   // PM, 5 → 17 → displays 05
   fireEvent.change(hourInput, { target: { value: '5' } });
@@ -569,7 +569,7 @@ test('input mode minute field handles focus, range, and invalid input', async ()
   );
   const minuteInput = screen.getByRole('textbox', { name: 'Minutes' });
   fireEvent.focus(minuteInput);
-  expect(minuteInput).toHaveClass('border-primary');
+  expect(minuteInput).toHaveAttribute('data-selected', 'true');
 
   fireEvent.change(minuteInput, { target: { value: '45' } });
   expect(minuteInput).toHaveValue('45');

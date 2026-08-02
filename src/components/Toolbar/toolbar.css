@@ -35,9 +35,13 @@
   --_toolbar-padding-block: 8px;
 
   width: fit-content;
-  min-block-size: 56px;
-  border-radius: 999px;
-  box-shadow: var(--md-sys-elevation-2);
+  min-block-size: 64px;
+  border-radius: 32px;
+  box-shadow: var(--md-sys-elevation-3);
+}
+
+.md-toolbar[data-layout="vertical"] {
+  min-inline-size: 64px;
 }
 
 .md-toolbar[data-color="standard"] {
@@ -47,7 +51,7 @@
 
 .md-toolbar[data-color="vibrant"] {
   background-color: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary);
+  color: var(--md-sys-color-on-primary-container);
 }
 
 .md-toolbar[data-color="vibrant"] .md-icon-button[data-variant="standard"],
@@ -72,18 +76,16 @@
   border-color: color-mix(in srgb, currentColor 40%, transparent);
 }
 
-.md-toolbar[data-color="vibrant"] .md-icon-button[data-variant="standard"]:hover,
-.md-toolbar[data-color="vibrant"] .md-icon-button[data-variant="outlined"]:hover,
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="text"]:hover,
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="outlined"]:hover {
-  background-color: color-mix(in srgb, currentColor var(--md-sys-state-hover-opacity), transparent);
+.md-toolbar[data-color="standard"] :is(.md-icon-button, .md-button)[data-selected="true"][data-variant="standard"],
+.md-toolbar[data-color="standard"] :is(.md-icon-button, .md-button)[data-selected="true"][data-variant="text"] {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
 }
 
-.md-toolbar[data-color="vibrant"] .md-icon-button[data-variant="standard"]:active,
-.md-toolbar[data-color="vibrant"] .md-icon-button[data-variant="outlined"]:active,
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="text"]:active,
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="outlined"]:active {
-  background-color: color-mix(in srgb, currentColor var(--md-sys-state-pressed-opacity), transparent);
+.md-toolbar[data-color="vibrant"]
+  :is(.md-icon-button, .md-button)[data-selected="true"]:is([data-variant="standard"], [data-variant="text"]) {
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
 }
 
 .md-toolbar[data-layout="horizontal"] {

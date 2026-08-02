@@ -18,13 +18,18 @@
 
   &[data-disabled] {
     pointer-events: none;
-    opacity: var(--md-sys-state-disabled-opacity);
+  }
+
+  &:has(input:focus-visible) {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: -2px;
+    border-radius: 50%;
   }
 }
 
 /* ── State layer (40px) ── */
 .md-checkbox__state-layer {
-  pointer-events: none;
+  pointer-events: auto;
   position: absolute;
   display: flex;
   width: 40px;
@@ -32,23 +37,21 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  overflow: hidden;
+  color: var(--md-sys-color-on-surface);
   transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 }
 
-.md-checkbox[data-variant="primary"]:hover .md-checkbox__state-layer {
-  background-color: color-mix(in srgb, var(--md-sys-color-primary) var(--md-sys-state-hover-opacity), transparent);
+.md-checkbox[data-variant="primary"][data-checked="true"] .md-checkbox__state-layer {
+  color: var(--md-sys-color-primary);
 }
 
-.md-checkbox[data-variant="error"]:hover .md-checkbox__state-layer {
-  background-color: color-mix(in srgb, var(--md-sys-color-error) var(--md-sys-state-hover-opacity), transparent);
+.md-checkbox[data-variant="error"] .md-checkbox__state-layer {
+  color: var(--md-sys-color-error);
 }
 
 .md-checkbox:has(input:focus-visible) .md-checkbox__state-layer {
-  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) var(--md-sys-state-focus-opacity), transparent);
-}
-
-.md-checkbox[data-variant="error"]:has(input:focus-visible) .md-checkbox__state-layer {
-  background-color: color-mix(in srgb, var(--md-sys-color-error) var(--md-sys-state-focus-opacity), transparent);
+  background-color: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 /* ── Visual box (18px) ── */
@@ -62,7 +65,7 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  border: 1.5px solid transparent;
+  border: 2px solid transparent;
   border-radius: 2px;
   transition:
     color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
@@ -77,7 +80,7 @@
 
   /* Unchecked */
   &[data-checked="false"][data-variant="primary"] {
-    border-color: var(--md-sys-color-outline);
+    border-color: var(--md-sys-color-on-surface-variant);
   }
 
   &[data-checked="false"][data-variant="error"] {
@@ -96,6 +99,24 @@
     background-color: var(--md-sys-color-error);
     color: var(--md-sys-color-on-error);
   }
+}
+
+.md-checkbox[data-disabled] .md-checkbox__box[data-checked="false"] {
+  border-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
+}
+
+.md-checkbox[data-disabled] .md-checkbox__box[data-checked="true"] {
+  border-color: transparent;
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
+  color: var(--md-sys-color-surface);
 }
 
 /* ── Check / minus icon animation ── */

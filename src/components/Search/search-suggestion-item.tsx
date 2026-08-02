@@ -1,8 +1,7 @@
 import './search.css';
-import { Ripple } from 'm3-ripple';
 import type * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 // =============================================================================
 // SearchSuggestionItem

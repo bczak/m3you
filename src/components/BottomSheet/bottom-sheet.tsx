@@ -76,9 +76,14 @@ function BottomSheetContent({
   return (
     <DrawerPrimitive.Portal {...portalProps}>
       {isModal && <DrawerPrimitive.Backdrop data-slot="bottom-sheet-backdrop" className="md-bottom-sheet-backdrop" />}
-      <DrawerPrimitive.Viewport data-slot="bottom-sheet-viewport" className="md-bottom-sheet-viewport">
+      <DrawerPrimitive.Viewport
+        data-slot="bottom-sheet-viewport"
+        data-modal={isModal || undefined}
+        className="md-bottom-sheet-viewport"
+      >
         <DrawerPrimitive.Popup
           data-slot="bottom-sheet-content"
+          data-modal={isModal || undefined}
           className={cx('md-bottom-sheet-content', className)}
           {...props}
         >

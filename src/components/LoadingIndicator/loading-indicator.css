@@ -11,25 +11,23 @@
   aspect-ratio: 1 / 1;
 
   --_color: var(--md-loading-indicator-color, var(--md-sys-color-primary));
-  --_container-color: var(--md-loading-indicator-container-color, var(--md-sys-color-secondary-container));
-  /* Inner indicator diameter as a % of the outer square.
-     Uncontained: 38/38 × 0.842 ≈ 84.2% (M3 spec: indicator fills the box).
-     Contained:   32/48 ≈ 66.7% (M3 spec: 32dp indicator inside a 48dp container). */
-  --_indicator-ratio: 84.2%;
+  --_container-color: var(--md-loading-indicator-container-color, var(--md-sys-color-primary-container));
+  --_indicator-size: 38px;
 
   &[data-variant="contained"] {
-    --_color: var(--md-loading-indicator-color, var(--md-sys-color-on-secondary-container));
-    --_indicator-ratio: 66.7%;
+    --_color: var(--md-loading-indicator-color, var(--md-sys-color-on-primary-container));
   }
 
   &[data-size="sm"] {
     width: 24px;
+    --_indicator-size: 19px;
   }
   &[data-size="md"] {
     width: 48px;
   }
   &[data-size="lg"] {
     width: 64px;
+    --_indicator-size: 50.667px;
   }
 }
 
@@ -47,8 +45,9 @@
 }
 
 .md-loading-indicator__indicator {
-  aspect-ratio: 1 / 1;
-  width: var(--_indicator-ratio);
+  width: var(--_indicator-size);
+  height: var(--_indicator-size);
+  flex: none;
   background-color: var(--_color);
   transform-origin: center;
   will-change: transform, clip-path;
@@ -60,37 +59,37 @@
   0% {
     clip-path: var(--_polygon-soft-burst);
     transform: rotate(0deg);
-    animation-timing-function: cubic-bezier(0.5, 0.2, 0, 0.8);
+    animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
   14% {
     clip-path: var(--_polygon-7-sided-cookie);
     transform: rotate(154deg);
-    animation-timing-function: cubic-bezier(0.5, 0.2, 0, 0.8);
+    animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
   29% {
     clip-path: var(--_polygon-pentagon);
     transform: rotate(309deg);
-    animation-timing-function: cubic-bezier(0.5, 0.2, 0, 0.8);
+    animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
   43% {
     clip-path: var(--_polygon-pill);
     transform: rotate(463deg);
-    animation-timing-function: cubic-bezier(0.5, 0.2, 0, 0.8);
+    animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
   57% {
     clip-path: var(--_polygon-very-sunny);
     transform: rotate(617deg);
-    animation-timing-function: cubic-bezier(0.5, 0.2, 0, 0.8);
+    animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
   71% {
     clip-path: var(--_polygon-4-sided-cookie);
     transform: rotate(771deg);
-    animation-timing-function: cubic-bezier(0.5, 0.2, 0, 0.8);
+    animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
   83% {
     clip-path: var(--_polygon-oval);
     transform: rotate(926deg);
-    animation-timing-function: cubic-bezier(0.5, 0.2, 0, 0.8);
+    animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
   100% {
     clip-path: var(--_polygon-soft-burst);

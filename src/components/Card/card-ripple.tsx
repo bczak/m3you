@@ -64,8 +64,8 @@ const setOptionalStyleVariable = (element: HTMLElement, name: string, value?: nu
  * while the card only reacts when the card surface itself is pressed.
  */
 const CardRipple = ({
-  hoverOpacity,
-  pressedOpacity,
+  hoverOpacity = 0.08,
+  pressedOpacity = 0.1,
   disabled = false,
   className = '',
   style,

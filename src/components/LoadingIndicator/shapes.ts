@@ -160,20 +160,6 @@ const samplePath = (d: string, maxPoints: number): Point[] => {
   return points;
 };
 
-const bbox = (pts: Point[]) => {
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const p of pts) {
-    if (p.x < minX) minX = p.x;
-    if (p.x > maxX) maxX = p.x;
-    if (p.y < minY) minY = p.y;
-    if (p.y > maxY) maxY = p.y;
-  }
-  return { minX, minY, width: maxX - minX, height: maxY - minY };
-};
-
 const signedArea = (pts: Point[]) => {
   let area = 0;
   for (let i = 0; i < pts.length; i++) {
@@ -215,16 +201,11 @@ const bestCircularShift = (target: Point[], source: Point[]): number => {
 };
 
 const normalizePointSets = (sets: Point[][]): Point[][] => {
-  const normalized = sets.map((pts) => {
-    const b = bbox(pts);
-    /* v8 ignore next -- no built-in shape has a degenerate (zero-size) bounding box, so the || 1 fallback is unreachable */
-    const scale = Math.max(b.width, b.height) || 1;
-    const w = b.width / scale;
-    const h = b.height / scale;
-    const ox = (1 - w) / 2;
-    const oy = (1 - h) / 2;
-    return pts.map((p) => ({ x: (p.x - b.minX) / scale + ox, y: (p.y - b.minY) / scale + oy }));
-  });
+  // Every source path shares the kit's 380×380 shape sheet. Mapping that
+  // common canvas directly preserves the intentional relative scale between
+  // polygons; independently fitting every bounding box makes small shapes
+  // incorrectly expand to fill the frame.
+  const normalized = sets.map((pts) => pts.map((point) => ({ x: point.x / 380, y: point.y / 380 })));
 
   const reference = normalized[0];
   const refSign = Math.sign(signedArea(reference));

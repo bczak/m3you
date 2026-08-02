@@ -29,6 +29,10 @@ export function getCarouselLargeCount(viewportWidth: number) {
   return 1;
 }
 
+export function getClampedCarouselLargeCount(viewportWidth: number, itemCount: number) {
+  return Math.min(getCarouselLargeCount(viewportWidth), Math.max(itemCount - 2, 1));
+}
+
 export function getCarouselSizeRoles(
   layout: CarouselLayout,
   count: number,
@@ -48,7 +52,7 @@ export function getCarouselSizeRoles(
   }
   if (reducedMotion) return Array.from({ length: count }, () => 'uniform');
 
-  const largeCount = Math.min(getCarouselLargeCount(viewportWidth), Math.max(count - 2, 1));
+  const largeCount = getClampedCarouselLargeCount(viewportWidth, count);
   const largeStart = Math.min(active, count - largeCount);
   const largeEnd = largeStart + largeCount - 1;
   const mediumIndex = largeEnd + 1 < count ? largeEnd + 1 : largeStart - 1;

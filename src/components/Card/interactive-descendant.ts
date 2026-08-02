@@ -37,6 +37,10 @@ const isFromInteractiveDescendant = (
 
   const interactiveAncestor = target.closest(selector);
 
+  if (interactiveAncestor?.hasAttribute('data-card-action')) {
+    return false;
+  }
+
   return interactiveAncestor !== null && interactiveAncestor !== currentTarget;
 };
 
