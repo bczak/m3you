@@ -6,6 +6,7 @@
    ============================================================================= */
 
 .md-badge {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -29,7 +30,7 @@
     font-size: var(--md-sys-typescale-label-small-size);
     line-height: var(--md-sys-typescale-label-small-line-height);
     font-weight: var(--md-sys-typescale-label-small-weight);
-    letter-spacing: var(--md-sys-typescale-label-small-tracking);
+    letter-spacing: 0.1px;
   }
 
   /* ── Color variants ── */

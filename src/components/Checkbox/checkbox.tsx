@@ -1,9 +1,8 @@
 import './checkbox.css';
 import { Check, Minus } from 'lucide-react';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 export type CheckboxProps = Omit<React.ComponentProps<'input'>, 'type'> & {
   /** Checked state (controlled). Pair with `onCheckedChange`. */
@@ -59,10 +58,15 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Checkb
     const isVisuallyChecked = indeterminate || checked;
 
     return (
-      <label className={cx('md-checkbox', className)} data-variant={variant} data-disabled={disabled || undefined}>
+      <label
+        className={cx('md-checkbox', className)}
+        data-variant={variant}
+        data-checked={String(isVisuallyChecked)}
+        data-disabled={disabled || undefined}
+      >
         {/* State layer (40px circular) */}
         <span className="md-checkbox__state-layer">
-          <Ripple />
+          <Ripple disabled={disabled} pressedOpacity={0.12} />
         </span>
 
         {/* Visual checkbox (18px) */}

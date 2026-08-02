@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { cx } from '../../lib/cx';
 import { Button } from '../Button/button';
+import type { FABColor } from '../Fab/fab';
 
 // =============================================================================
 // Types
@@ -21,6 +22,8 @@ export interface FABMenuItemOption {
 type FABMenuTriggerProps = React.ComponentProps<'button'> & {
   icon?: React.ReactNode;
   label?: React.ReactNode;
+  color?: FABColor;
+  'data-fab-color'?: FABColor;
 };
 
 export interface FABMenuProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -36,6 +39,8 @@ export interface FABMenuProps extends React.HTMLAttributes<HTMLDivElement> {
   scrim?: boolean;
   /** Icon shown on the trigger while the menu is open. Defaults to a cross. */
   closeIcon?: React.ReactNode;
+  /** Color role shared by menu segments and an unconfigured trigger. */
+  color?: FABColor;
   children: React.ReactElement<FABMenuTriggerProps>;
 }
 
@@ -52,6 +57,7 @@ const FABMenu = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<FABMenuPr
       onOpenChange,
       scrim = false,
       closeIcon,
+      color = 'secondary-container',
       className,
       children,
       ...props
@@ -173,7 +179,12 @@ const FABMenu = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<FABMenuPr
       'aria-expanded': open,
       'aria-haspopup': 'menu',
       'aria-controls': menuId,
+      'data-fab-color': children.props['data-fab-color'] ?? color,
     };
+
+    if (children.props.color === undefined) {
+      triggerOverrides.color = color;
+    }
 
     if (open) {
       if (isExtendedFAB) {
@@ -222,6 +233,7 @@ const FABMenu = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<FABMenuPr
                 shape="round"
                 size="md"
                 className="md-fab-menu-item"
+                data-fab-color={color}
                 data-state={state}
                 style={{ transitionDelay: `${delay}ms` }}
                 tabIndex={open ? 0 : -1}

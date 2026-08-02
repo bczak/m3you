@@ -1,15 +1,14 @@
 import './carousel.css';
 
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 import {
   type CarouselLayout,
   type CarouselScrollMode,
   clampCarouselIndex,
-  getCarouselLargeCount,
   getCarouselSizeRoles,
+  getClampedCarouselLargeCount,
   getNearestCarouselItem,
   resolveCarouselScrollMode,
 } from './carousel-layout';
@@ -130,7 +129,7 @@ function applyCarouselRoles(
   const previousRects = reducedMotion ? [] : items.map((item) => item.getBoundingClientRect());
   const width = viewport.getBoundingClientRect().width || viewport.clientWidth;
   const roles = getCarouselSizeRoles(layout, items.length, activeIndex, width, reducedMotion);
-  const largeCount = getCarouselLargeCount(width);
+  const largeCount = getClampedCarouselLargeCount(width, items.length);
   viewport.style.setProperty('--md-carousel-large-count', String(largeCount));
   viewport.style.setProperty('--md-carousel-reserved-gaps', `${(largeCount + 1) * 8}px`);
   for (let index = 0; index < items.length; index += 1) {

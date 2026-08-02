@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test } from 'vitest';
-import { Badge, BadgeAnchor } from '../src/components/ui/badge';
+import { Badge, BadgeAnchor } from '../src/components/Badge/badge';
 
 afterEach(() => {
   cleanup();

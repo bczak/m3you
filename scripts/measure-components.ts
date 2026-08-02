@@ -57,31 +57,42 @@ type Measurement = {
   story: string;
   title: string;
   name: string;
-  elements: {
-    selector: string;
-    variant?: string;
-    size?: string;
-    shape?: string;
-    selected?: string;
-    width: number;
-    height: number;
-    borderRadius: string;
-    padding: string;
-    gap: string;
-    fontSize: string;
-    fontWeight: string;
-    lineHeight: string;
-    letterSpacing: string;
-    background: string;
-    color: string;
-    border: string;
-  }[];
+  elements: ElementMeasurement[];
+  themes: {
+    light: ElementMeasurement[];
+    dark: ElementMeasurement[];
+  };
+};
+
+type ElementMeasurement = {
+  selector: string;
+  variant?: string;
+  size?: string;
+  shape?: string;
+  selected?: string;
+  data: Record<string, string>;
+  width: number;
+  height: number;
+  borderRadius: string;
+  padding: string;
+  gap: string;
+  fontSize: string;
+  fontWeight: string;
+  lineHeight: string;
+  letterSpacing: string;
+  background: string;
+  color: string;
+  border: string;
+  boxShadow: string;
+  opacity: number;
+  outline: string;
+  boxSizing: string;
 };
 
 const results: Measurement[] = [];
 
 for (const [i, story] of stories.entries()) {
-  const url = `${origin}/iframe.html?id=${encodeURIComponent(story.id)}&viewMode=story`;
+  const url = `${origin}/iframe.html?id=${encodeURIComponent(story.id)}&viewMode=story&globals=theme:light`;
 
   // A story that misses the deadline once is usually just slow under the load of
   // a full sweep, not broken — a second attempt separates the two, so a silently
@@ -107,60 +118,86 @@ for (const [i, story] of stories.entries()) {
     continue;
   }
 
-  const elements = await page.evaluate(() => {
-    // Every component root, not just the outermost one. Restricting to outermost
-    // hid every nested component from the audit — a Badge inside a BadgeAnchor,
-    // a Tab inside Tabs, a list item inside a List were all invisible.
-    // A root is an element carrying a bare `md-{component}` class; BEM sub-parts
-    // (`md-{component}__{part}`) are the noise we still want to skip.
-    const isRoot = (c: string) => /^md-[a-z0-9-]+$/.test(c) && !c.includes('__');
-    const roots = [...document.querySelectorAll<HTMLElement>('[class*="md-"]')].filter((element) =>
-      element.className.toString().split(/\s+/).some(isRoot),
-    );
+  const captureElements = () =>
+    page.evaluate(() => {
+      // Every component root, not just the outermost one. Restricting to outermost
+      // hid every nested component from the audit — a Badge inside a BadgeAnchor,
+      // a Tab inside Tabs, a list item inside a List were all invisible.
+      // A root is an element carrying a bare `md-{component}` class; BEM sub-parts
+      // (`md-{component}__{part}`) are the noise we still want to skip.
+      const isRoot = (c: string) => /^md-[a-z0-9-]+$/.test(c) && !c.includes('__');
+      const roots = [...document.querySelectorAll<HTMLElement>('[class*="md-"]')].filter((element) =>
+        element.className.toString().split(/\s+/).some(isRoot),
+      );
 
-    // Stories repeat the same component many times over; the audit cares about
-    // the set of distinct geometries, so collapse exact duplicates and count them.
-    const seen = new Map<string, ReturnType<typeof measure>>();
+      // Stories repeat the same component many times over; the audit cares about
+      // the set of distinct geometries, so collapse exact duplicates and count them.
+      const seen = new Map<string, ReturnType<typeof measure>>();
 
-    function measure(element: HTMLElement) {
-      const cs = getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-      const classes = element.className.toString().split(/\s+/);
-      return {
-        selector: classes.find(isRoot) ?? classes[0],
-        variant: element.dataset.variant,
-        size: element.dataset.size,
-        shape: element.dataset.shape,
-        selected: element.dataset.selected,
-        count: 1,
-        width: Math.round(rect.width * 100) / 100,
-        height: Math.round(rect.height * 100) / 100,
-        borderRadius: cs.borderRadius,
-        padding: cs.padding,
-        gap: cs.gap,
-        fontSize: cs.fontSize,
-        fontWeight: cs.fontWeight,
-        lineHeight: cs.lineHeight,
-        letterSpacing: cs.letterSpacing,
-        background: cs.backgroundColor,
-        color: cs.color,
-        border: cs.border,
-      };
+      function measure(element: HTMLElement) {
+        const cs = getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        const classes = element.className.toString().split(/\s+/);
+        return {
+          selector: classes.find(isRoot) ?? classes[0],
+          variant: element.dataset.variant,
+          size: element.dataset.size,
+          shape: element.dataset.shape,
+          selected: element.dataset.selected,
+          data: { ...element.dataset },
+          count: 1,
+          width: Math.round(rect.width * 100) / 100,
+          height: Math.round(rect.height * 100) / 100,
+          borderRadius: cs.borderRadius,
+          padding: cs.padding,
+          gap: cs.gap,
+          fontSize: cs.fontSize,
+          fontWeight: cs.fontWeight,
+          lineHeight: cs.lineHeight,
+          letterSpacing: cs.letterSpacing,
+          background: cs.backgroundColor,
+          color: cs.color,
+          border: cs.border,
+          boxShadow: cs.boxShadow,
+          opacity: Number(cs.opacity),
+          outline: cs.outline,
+          boxSizing: cs.boxSizing,
+        };
+      }
+
+      for (const element of roots) {
+        const row = measure(element);
+        const { count: _count, ...identity } = row;
+        const key = JSON.stringify(identity);
+        const existing = seen.get(key);
+        if (existing) existing.count += 1;
+        else seen.set(key, row);
+      }
+
+      return [...seen.values()].slice(0, 60);
+    });
+
+  const elements = await captureElements();
+  const darkUrl = `${origin}/iframe.html?id=${encodeURIComponent(story.id)}&viewMode=story&globals=theme:dark`;
+  let darkMounted = false;
+  for (let attempt = 0; attempt < 2 && !darkMounted; attempt++) {
+    try {
+      await page.goto(darkUrl, { waitUntil: 'networkidle', timeout: 20_000 });
+      await page.waitForSelector('[class*="md-"]', { state: 'attached', timeout: 10_000 });
+      darkMounted = true;
+    } catch {
+      /* retry once, then keep an explicit empty dark result */
     }
+  }
+  const darkElements = darkMounted ? await captureElements() : [];
 
-    for (const element of roots) {
-      const row = measure(element);
-      const { count: _count, ...identity } = row;
-      const key = JSON.stringify(identity);
-      const existing = seen.get(key);
-      if (existing) existing.count += 1;
-      else seen.set(key, row);
-    }
-
-    return [...seen.values()].slice(0, 60);
+  results.push({
+    story: story.id,
+    title: story.title,
+    name: story.name,
+    elements,
+    themes: { light: elements, dark: darkElements },
   });
-
-  results.push({ story: story.id, title: story.title, name: story.name, elements });
   if ((i + 1) % 25 === 0) console.log(`  … ${i + 1}/${stories.length}`);
 }
 

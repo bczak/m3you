@@ -17,7 +17,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'inline-radio',
-      options: ['search', 'small', 'medium', 'large'],
+      options: ['search', 'small', 'small-image', 'medium', 'large'],
     },
   },
   tags: ['autodocs'],
@@ -126,8 +126,28 @@ export const Variants: Story = {
     <StoryStack>
       <AppBarShowcasePreview variant="search" searchLabel="Search product" />
       <AppBarShowcasePreview variant="small" headline="Headline" />
+      <AppBarShowcasePreview
+        variant="small-image"
+        image={
+          <svg viewBox="0 0 160 40" role="img" aria-label="M3 You">
+            <rect width="160" height="40" rx="12" fill="var(--md-sys-color-primary-container)" />
+            <text x="80" y="27" textAnchor="middle" fill="var(--md-sys-color-on-primary-container)" fontSize="20">
+              M3 You
+            </text>
+          </svg>
+        }
+      />
       <AppBarShowcasePreview variant="medium" headline="Headline" supportingText="Supporting text" />
       <AppBarShowcasePreview variant="large" headline="Headline" supportingText="Supporting text" />
+    </StoryStack>
+  ),
+};
+
+export const OnScrollElevation: Story = {
+  render: () => (
+    <StoryStack>
+      <AppBarShowcasePreview variant="small" headline="Flat" elevation="flat" />
+      <AppBarShowcasePreview variant="small" headline="Content scrolled beneath" elevation="on-scroll" />
     </StoryStack>
   ),
 };

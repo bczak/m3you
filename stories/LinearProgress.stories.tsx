@@ -8,7 +8,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['value', 'type', 'variant'],
+      include: ['value', 'type', 'variant', 'thickness'],
       expanded: true,
     },
   },
@@ -29,6 +29,12 @@ const meta = {
       control: { type: 'range', min: 0, max: 100, step: 1 },
       description: 'Completion percentage (0–100). Ignored when `type="indeterminate"`.',
       table: { category: 'Behavior', defaultValue: { summary: '0' } },
+    },
+    thickness: {
+      control: 'inline-radio',
+      options: [4, 8],
+      description: 'Physical track thickness in pixels.',
+      table: { category: 'Appearance', defaultValue: { summary: '4' } },
     },
   },
   tags: ['autodocs'],
@@ -113,6 +119,17 @@ export const Wavy: Story = {
           <LinearProgress variant="wavy" type="indeterminate" />
         </ShowcasePanel>
       </ShowcaseGrid>
+    </div>
+  ),
+};
+
+export const Thickness: Story = {
+  render: () => (
+    <div className="sb-m3-demo-stack" style={{ width: 340 }}>
+      <LinearProgress value={54} thickness={4} />
+      <LinearProgress value={54} thickness={8} />
+      <LinearProgress value={54} variant="wavy" thickness={4} />
+      <LinearProgress value={54} variant="wavy" thickness={8} />
     </div>
   ),
 };

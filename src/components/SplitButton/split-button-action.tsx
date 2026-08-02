@@ -1,10 +1,8 @@
 import '../Button/button.css';
 import './split-button.css';
-import { Ripple } from 'm3-ripple';
-import type * as React from 'react';
-import { forwardRef } from 'react';
-
+import * as React from 'react';
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 import { useSplitButton } from './split-button-context';
 
 // =============================================================================
@@ -13,9 +11,9 @@ import { useSplitButton } from './split-button-context';
 
 export interface SplitButtonActionProps extends React.ComponentProps<'button'> {}
 
-const SplitButtonAction = forwardRef<HTMLButtonElement, React.PropsWithoutRef<SplitButtonActionProps>>(
-  ({ className, children, ...props }, ref) => {
-    const { variant, size, shape, morph, selected } = useSplitButton();
+const SplitButtonAction = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<SplitButtonActionProps>>(
+  ({ className, children, disabled: disabledProp, ...props }, ref) => {
+    const { variant, size, shape, morph, selected, disabled } = useSplitButton();
     const selectedValue = selected !== undefined ? String(selected) : undefined;
 
     return (
@@ -29,6 +27,7 @@ const SplitButtonAction = forwardRef<HTMLButtonElement, React.PropsWithoutRef<Sp
         data-morph={morph || undefined}
         data-selected={selectedValue}
         aria-pressed={selected !== undefined ? selected : undefined}
+        disabled={disabled || disabledProp}
         {...props}
       >
         <Ripple />

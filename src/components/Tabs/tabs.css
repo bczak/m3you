@@ -7,6 +7,7 @@
 
 /* ── Tabs container (tablist) ── */
 .md-tabs {
+  --md-tabs-container-color: var(--md-sys-color-surface);
   position: relative;
   display: flex;
   width: 100%;
@@ -14,7 +15,8 @@
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  background-color: var(--md-tabs-container-color);
+  box-shadow: inset 0 -1px 0 var(--md-sys-color-outline-variant);
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
@@ -66,15 +68,17 @@
   /* ── Primary variant ── */
   &[data-variant="primary"] {
     flex-direction: column;
-    gap: 2px;
-    padding-inline: 12px;
+    gap: 0;
+    padding-inline: 16px;
 
-    &[data-has-icon="false"] {
+    &[data-has-icon="false"],
+    &[data-has-icon="true"][data-has-label="false"] {
       height: 48px;
     }
 
-    &[data-has-icon="true"] {
-      height: 72px;
+    &[data-has-icon="true"][data-has-label="true"] {
+      height: 64px;
+      gap: 2px;
     }
 
     &[data-active="true"] {
@@ -88,8 +92,12 @@
 
   /* ── Secondary variant ── */
   &[data-variant="secondary"] {
-    padding-inline: 12px;
+    padding-inline: 16px;
     height: 48px;
+
+    &[data-has-icon="true"][data-has-label="true"] {
+      gap: 8px;
+    }
 
     &[data-active="true"] {
       color: var(--md-sys-color-on-surface);
@@ -99,31 +107,18 @@
       color: var(--md-sys-color-on-surface);
     }
   }
-
-  &[data-variant="primary"][data-has-badge="true"] {
-    padding-inline: 16px;
-  }
-
-  &[data-variant="secondary"][data-has-badge="true"] {
-    padding-inline-start: 16px;
-    padding-inline-end: 28px;
-  }
 }
 
 /* ── Tab icon wrapper (primary) ── */
 .md-tab__icon {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
 }
 
 /* ── Tab badge on icon ── */
 .md-tab__badge {
-  position: absolute;
-  top: -4px;
-  right: -6px;
-  z-index: 10;
   display: flex;
   min-width: 16px;
   align-items: center;
@@ -132,10 +127,6 @@
 
 /* ── Tab badge on label ── */
 .md-tab__badge--label {
-  position: absolute;
-  top: -8px;
-  right: -16px;
-  z-index: 10;
   display: flex;
   min-width: 16px;
   align-items: center;
@@ -144,7 +135,10 @@
 
 /* ── Tab label ── */
 .md-tab__label {
-  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   font-family: var(--md-sys-typescale-title-small-font);
   font-size: var(--md-sys-typescale-title-small-size);
   line-height: var(--md-sys-typescale-title-small-line-height);
@@ -156,23 +150,23 @@
 .md-tab__indicator {
   position: absolute;
   bottom: 0;
-  border-radius: 2px 2px 0 0;
   transition:
     width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     left var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
-  /* Primary indicator: centered 50% width, 2px tall */
+  /* Primary indicator: the tab's padded content width, 3px tall. */
   &[data-variant="primary"][data-active="true"] {
-    height: 2px;
-    width: 50%;
+    height: 3px;
+    width: calc(100% - 32px);
     left: 50%;
     transform: translateX(-50%);
+    border-radius: 3px 3px 0 0;
     background-color: var(--md-sys-color-primary);
   }
 
   &[data-variant="primary"][data-active="false"] {
-    height: 2px;
+    height: 3px;
     width: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -185,6 +179,7 @@
     left: 0;
     right: 0;
     background-color: var(--md-sys-color-primary);
+    border-radius: 0;
   }
 
   &[data-variant="secondary"][data-active="false"] {

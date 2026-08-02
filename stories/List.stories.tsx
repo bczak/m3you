@@ -3,7 +3,7 @@ import { ArchiveIcon, InboxIcon, MoreVerticalIcon, StarIcon, UserIcon } from 'lu
 import { useState } from 'react';
 
 import { IconButton } from '../src/components/IconButton/icon-button';
-import { List, ListDivider, ListItem } from '../src/components/List/list';
+import { List, ListDivider, ListItem, ListItemAccordion, ListItemSwipe } from '../src/components/List/list';
 import { ShowcaseGrid, ShowcasePanel } from './_helpers/storybook-showcase';
 
 const meta = {
@@ -216,6 +216,54 @@ export const ContentAndStates: Story = {
         supportingText="Ordering is intentionally owned by a sortable abstraction"
         dragged
       />
+    </List>
+  ),
+};
+
+export const Density: Story = {
+  render: () => (
+    <ShowcaseGrid>
+      {([0, -2, -4] as const).map((density) => (
+        <ShowcasePanel
+          key={density}
+          eyebrow={`Density ${density}`}
+          title={density === 0 ? 'Default' : `${Math.abs(density)}px denser`}
+          description="Child controls retain their independent 48px targets."
+        >
+          <List density={density} appearance="segmented">
+            <ListItem headline="One-line item" />
+            <ListItem headline="Two-line item" supportingText="Supporting information" />
+            <ListItem overline="Overline" headline="Three-line item" supportingText="Supporting information" />
+          </List>
+        </ShowcasePanel>
+      ))}
+    </ShowcaseGrid>
+  ),
+};
+
+export const DisclosureAndSwipe: Story = {
+  render: () => (
+    <List appearance="segmented" aria-label="Expressive list interactions">
+      <ListItemAccordion
+        headline="Notification details"
+        supportingText="A native disclosure button labels its panel"
+        leading={<InboxIcon aria-hidden="true" />}
+      >
+        Choose which events can send notifications from your account settings.
+      </ListItemAccordion>
+      <ListItemSwipe startAction="Archive" endAction="Delete">
+        <div
+          style={{
+            boxSizing: 'border-box',
+            minHeight: 72,
+            padding: 16,
+            background: 'var(--md-sys-color-surface)',
+            color: 'var(--md-sys-color-on-surface)',
+          }}
+        >
+          Swipe this message in either direction
+        </div>
+      </ListItemSwipe>
     </List>
   ),
 };

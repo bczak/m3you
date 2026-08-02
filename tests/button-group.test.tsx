@@ -1,11 +1,11 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
+import { Button } from '../src/components/Button/button';
+import { ButtonGroup } from '../src/components/ButtonGroup/button-group';
 import { ButtonGroupContext, useButtonGroup } from '../src/components/ButtonGroup/button-group-context';
 import { ConnectedButtonGroup } from '../src/components/ButtonGroup/connected-button-group';
 import { StandardButtonGroup } from '../src/components/ButtonGroup/standard-button-group';
-import { Button } from '../src/components/ui/button';
-import { ButtonGroup } from '../src/components/ui/button-group';
 
 afterEach(cleanup);
 

@@ -1,9 +1,7 @@
 import './search.css';
-import { Ripple } from 'm3-ripple';
-import type * as React from 'react';
-import { forwardRef } from 'react';
-
+import * as React from 'react';
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 // =============================================================================
 // SearchSuggestionItem
@@ -16,7 +14,7 @@ export type SearchSuggestionItemProps = React.ComponentProps<'button'> & {
   trailingIcon?: React.ReactNode;
 };
 
-const SearchSuggestionItem = forwardRef<HTMLButtonElement, React.PropsWithoutRef<SearchSuggestionItemProps>>(
+const SearchSuggestionItem = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<SearchSuggestionItemProps>>(
   ({ className, icon, trailingIcon, children, ...props }, ref) => (
     <button ref={ref} type="button" className={cx('md-search-suggestion-item', className)} {...props}>
       <Ripple />

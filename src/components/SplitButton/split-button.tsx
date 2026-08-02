@@ -1,7 +1,7 @@
 import '../Button/button.css';
 import './split-button.css';
-import type * as React from 'react';
-import { forwardRef, useMemo, useState } from 'react';
+import * as React from 'react';
+import { useMemo, useState } from 'react';
 
 import { cx } from '../../lib/cx';
 import { SplitButtonCtx } from './split-button-context';
@@ -21,18 +21,30 @@ export interface SplitButtonProps extends React.ComponentProps<'div'> {
   morph?: boolean;
   /** Renders the selected state on both halves. */
   selected?: boolean;
+  /** Disables both the action and menu trigger. */
+  disabled?: boolean;
 }
 
-const SplitButton = forwardRef<HTMLDivElement, React.PropsWithoutRef<SplitButtonProps>>(
+const SplitButton = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SplitButtonProps>>(
   (
-    { variant = 'filled', size = 'sm', shape = 'round', morph = false, selected, className, children, ...props },
+    {
+      variant = 'filled',
+      size = 'sm',
+      shape = 'round',
+      morph = true,
+      selected,
+      disabled = false,
+      className,
+      children,
+      ...props
+    },
     ref,
   ) => {
     const [open, setOpen] = useState(false);
     const selectedValue = selected !== undefined ? String(selected) : undefined;
     const contextValue = useMemo(
-      () => ({ variant, size, shape, morph, selected, open, setOpen }),
-      [variant, size, shape, morph, selected, open],
+      () => ({ variant, size, shape, morph, selected, disabled, open, setOpen }),
+      [variant, size, shape, morph, selected, disabled, open],
     );
 
     return (
@@ -46,6 +58,7 @@ const SplitButton = forwardRef<HTMLDivElement, React.PropsWithoutRef<SplitButton
           data-shape={shape}
           data-morph={morph || undefined}
           data-selected={selectedValue}
+          data-disabled={disabled || undefined}
           data-open={open || undefined}
           role="group"
           {...props}

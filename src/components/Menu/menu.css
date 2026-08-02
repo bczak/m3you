@@ -1,6 +1,6 @@
 /* =============================================================================
    Menu — M3 Expressive Spec
-   Container: surface-container, elevation level 2, shape corner-large (16px)
+   Container: surface-container-low, elevation level 3, shape corner-large (16px)
    Items: 48px height, body-large text, on-surface color
    Source: m3.material.io/components/menus/specs
    ============================================================================= */
@@ -19,12 +19,16 @@
   gap: 2px;
   border-radius: var(--md-sys-shape-corner-large);
   padding: 4px;
-  background-color: var(--md-sys-color-surface-container);
+  background-color: var(--md-sys-color-surface-container-low);
   color: var(--md-sys-color-on-surface);
-  box-shadow: var(--md-sys-elevation-2);
+  box-shadow: var(--md-sys-elevation-3);
+
+  &[data-color="vibrant"] {
+    background-color: var(--md-sys-color-tertiary-container);
+  }
 
   /* Grouped: transparent wrapper, groups provide their own container */
-  &:has(.md-menu-group) {
+  &[data-grouped] {
     overflow: visible;
     gap: 2px;
     border-radius: 0;
@@ -40,9 +44,9 @@
   flex-direction: column;
   gap: 2px;
   padding: 4px;
-  background-color: var(--md-sys-color-surface-container);
+  background-color: var(--md-sys-color-surface-container-low);
   color: var(--md-sys-color-on-surface);
-  box-shadow: var(--md-sys-elevation-2);
+  box-shadow: var(--md-sys-elevation-3);
 
   /* Middle groups: all corners inner radius */
   border-radius: var(--md-sys-shape-corner-small);
@@ -65,12 +69,32 @@
   }
 }
 
+.md-menu[data-color="vibrant"] .md-menu-group {
+  background-color: var(--md-sys-color-tertiary-container);
+}
+
+.md-menu-label {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  padding-inline: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+}
+
 /* ── Menu item ── */
 .md-menu-item {
   --_outer-radius: var(--md-sys-shape-corner-medium); /* 12px */
   --_inner-radius: var(--md-sys-shape-corner-extra-small); /* 4px */
 
   position: relative;
+  z-index: 0;
+  isolation: isolate;
+  box-sizing: border-box;
   display: flex;
   height: 48px;
   cursor: pointer;
@@ -79,45 +103,70 @@
   gap: 8px;
   overflow: hidden;
   border-radius: var(--_inner-radius);
-  padding-inline: 12px;
+  padding-inline: 16px;
   color: var(--md-sys-color-on-surface);
-  font-family: var(--md-sys-typescale-body-medium-font);
-  font-size: var(--md-sys-typescale-body-medium-size);
-  line-height: var(--md-sys-typescale-body-medium-line-height);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
   outline: none;
   transition:
     color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
-  /* ── Non-grouped: connected corners within .md-menu ── */
-
-  &:first-child {
-    border-top-left-radius: var(--_outer-radius);
-    border-top-right-radius: var(--_outer-radius);
+  /* 44px painted surface centered in the 48px keyboard/pointer row. */
+  &::before {
+    position: absolute;
+    z-index: -1;
+    inset: 2px 4px;
+    border-radius: inherit;
+    background-color: var(--_menu-item-container, transparent);
+    content: "";
   }
 
-  &:last-child {
-    border-bottom-left-radius: var(--_outer-radius);
-    border-bottom-right-radius: var(--_outer-radius);
-  }
-
-  &:only-child {
-    border-radius: var(--_outer-radius);
-  }
-
-  /* ── States ── */
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  & > .salty-ripple {
+    inset: 2px 4px;
+    width: auto;
+    height: auto;
+    border-radius: inherit;
   }
 
   &:focus-visible {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: -2px;
+  }
+
+  &:focus-visible > .salty-ripple .salty-ripple-surface::before {
+    opacity: var(--md-sys-state-focus-opacity);
+  }
+
+  &[data-selected] {
+    --_menu-item-container: var(--md-sys-color-tertiary-container);
+    border-radius: var(--_outer-radius);
+    color: var(--md-sys-color-on-tertiary-container);
+  }
+
+  &[data-selected][data-color="vibrant"] {
+    --_menu-item-container: var(--md-sys-color-tertiary);
+    color: var(--md-sys-color-on-tertiary);
   }
 
   &[data-disabled] {
     pointer-events: none;
-    opacity: var(--md-sys-state-disabled-opacity);
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+      transparent
+    );
+  }
+
+  &[data-disabled][data-selected] {
+    --_menu-item-container: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
   }
 
   /* Icon sizing — direct SVG children */
@@ -143,6 +192,18 @@
   white-space: nowrap;
 }
 
+.md-menu-item__trailing {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  text-align: end;
+}
+
 .md-menu-item__supporting {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -154,7 +215,10 @@
 
 /* ── Menu divider ── */
 .md-menu-divider {
-  border: none;
+  box-sizing: border-box;
+  height: 1px;
+  padding: 0;
+  border: 0;
   border-top: 1px solid var(--md-sys-color-outline-variant);
   margin-block: 0;
   margin-inline: 8px;
@@ -173,21 +237,4 @@
     width: 20px;
     height: 20px;
   }
-}
-
-/* ── Grouped: reset all items to inner radius ── */
-.md-menu-group .md-menu-item {
-  border-radius: var(--md-sys-shape-corner-extra-small);
-}
-
-/* Very first item across all groups: top corners outer */
-.md-menu-group:first-child > .md-menu-item:first-child {
-  border-top-left-radius: var(--md-sys-shape-corner-medium);
-  border-top-right-radius: var(--md-sys-shape-corner-medium);
-}
-
-/* Very last item across all groups: bottom corners outer */
-.md-menu-group:last-child > .md-menu-item:last-child {
-  border-bottom-left-radius: var(--md-sys-shape-corner-medium);
-  border-bottom-right-radius: var(--md-sys-shape-corner-medium);
 }

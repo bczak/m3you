@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CalendarIcon, MapPinIcon, SparklesIcon, StarIcon, UserIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Chip } from '../src/components/Chip/chip';
+import { ChipGroup } from '../src/components/ChipGroup/chip-group';
 
 const meta = {
   title: 'Selection/Chip',
@@ -279,13 +280,13 @@ const InteractiveFilterGroupStory = () => {
   };
 
   return (
-    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+    <ChipGroup layout="wrap">
       {labels.map((label) => (
         <Chip key={label} type="filter" selected={selected.has(label)} onClick={() => toggle(label)}>
           {label}
         </Chip>
       ))}
-    </div>
+    </ChipGroup>
   );
 };
 
@@ -297,13 +298,13 @@ const InteractiveInputGroupStory = () => {
   const [tags, setTags] = useState(['React', 'TypeScript', 'Material 3', 'Storybook', 'CSS']);
 
   return (
-    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+    <ChipGroup layout="wrap">
       {tags.map((tag) => (
         <Chip key={tag} type="input" onClose={() => setTags((t) => t.filter((v) => v !== tag))}>
           {tag}
         </Chip>
       ))}
-    </div>
+    </ChipGroup>
   );
 };
 
@@ -323,9 +324,11 @@ export const RemovableInput: Story = {
   render: () => <RemovableInputStory />,
 };
 
-const Avatar = ({ name, index }: { name: string; index: number }) => (
+const ChipAvatar = ({ name, index }: { name: string; index: number }) => (
   <img
-    src={`https://i.pravatar.cc/24?img=${index}`}
+    src={`data:image/svg+xml,${encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" fill="hsl(${index * 37} 45% 70%)"/><text x="12" y="16" text-anchor="middle" font-size="10">${name[0]}</text></svg>`,
+    )}`}
     alt={name}
     style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover' }}
   />
@@ -341,18 +344,18 @@ const WithAvatarStory = () => {
   const [visible, setVisible] = useState(people);
 
   return (
-    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+    <ChipGroup layout="wrap">
       {visible.map((p) => (
         <Chip
           key={p.name}
           type="input"
-          leadingIcon={<Avatar name={p.name} index={p.img} />}
+          avatar={<ChipAvatar name={p.name} index={p.img} />}
           onClose={() => setVisible((v) => v.filter((x) => x.name !== p.name))}
         >
           {p.name}
         </Chip>
       ))}
-    </div>
+    </ChipGroup>
   );
 };
 

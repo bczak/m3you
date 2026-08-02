@@ -4,10 +4,16 @@
    ============================================================================= */
 
 :root {
-  --md-sys-state-hover-opacity: 0.08;
-  --md-sys-state-focus-opacity: 0.12;
-  --md-sys-state-pressed-opacity: 0.12;
-  --md-sys-state-dragged-opacity: 0.16;
+  /* Raw scalar steps used by component-specific Expressive state recipes. */
+  --md-sys-state-opacity-08: 0.08;
+  --md-sys-state-opacity-10: 0.1;
+  --md-sys-state-opacity-12: 0.12;
+  --md-sys-state-opacity-16: 0.16;
+
+  --md-sys-state-hover-opacity: var(--md-sys-state-opacity-08);
+  --md-sys-state-focus-opacity: var(--md-sys-state-opacity-10);
+  --md-sys-state-pressed-opacity: var(--md-sys-state-opacity-10);
+  --md-sys-state-dragged-opacity: var(--md-sys-state-opacity-16);
   --md-sys-state-disabled-opacity: 0.38;
-  --md-sys-state-disabled-container-opacity: 0.12;
+  --md-sys-state-disabled-container-opacity: var(--md-sys-state-opacity-10);
 }

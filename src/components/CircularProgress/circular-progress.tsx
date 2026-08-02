@@ -1,6 +1,6 @@
 import './circular-progress.css';
-import type * as React from 'react';
-import { forwardRef, useEffect, useId, useMemo, useRef } from 'react';
+import * as React from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 
 import { cx } from '../../lib/cx';
 import { drawCircularArc, drawWavyArc, sizeToDegrees } from './wavy-arc';
@@ -18,6 +18,8 @@ export type CircularProgressProps = React.ComponentProps<'div'> & {
   indeterminate?: boolean;
   /** Track thickness in pixels. */
   strokeWidth?: number;
+  /** Kit-backed physical stroke thickness. Overrides strokeWidth when provided. */
+  thickness?: 4 | 8;
   /** M3 Expressive appearance. Defaults to 'flat'. */
   variant?: CircularProgressVariant;
 };
@@ -27,7 +29,8 @@ const WAVY_DIAMETER: Record<'sm' | 'md' | 'lg', number> = { sm: 28, md: 48, lg: 
 
 /** M3 Expressive tokens for the wavy variant (px). */
 const WAVY_AMPLITUDE = 1.6;
-const WAVY_WAVELENGTH = 15;
+const ARC_GAP = 4;
+const FLAT_DIAMETER = { sm: 24, md: 40, lg: 48 } as const;
 
 /**
  * Indeterminate cycle from @m3e/web. Four equal phases give
@@ -58,7 +61,7 @@ const computeWavyIndeterminateSweep = (
   return maxSweep - (maxSweep - minSweep) * smoothStep((u - phase * 3) / phase);
 };
 
-const CircularProgress = forwardRef<HTMLDivElement, React.PropsWithoutRef<CircularProgressProps>>(
+const CircularProgress = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<CircularProgressProps>>(
   (
     {
       className,
@@ -67,12 +70,14 @@ const CircularProgress = forwardRef<HTMLDivElement, React.PropsWithoutRef<Circul
       type = 'determinate',
       indeterminate = false,
       strokeWidth = 4,
+      thickness,
       variant = 'flat',
       ...props
     },
     ref,
   ) => {
     const clampedValue = Math.min(100, Math.max(0, value));
+    const resolvedStrokeWidth = thickness ?? strokeWidth;
     const isWavy = variant === 'wavy';
     const resolvedType = indeterminate ? 'indeterminate' : type;
     const isIndeterminate = resolvedType === 'indeterminate';
@@ -90,6 +95,7 @@ const CircularProgress = forwardRef<HTMLDivElement, React.PropsWithoutRef<Circul
       'data-variant': variant,
       'data-indeterminate': isIndeterminate || undefined,
       'data-type': resolvedType,
+      'data-thickness': resolvedStrokeWidth,
       ...props,
     };
 
@@ -99,7 +105,8 @@ const CircularProgress = forwardRef<HTMLDivElement, React.PropsWithoutRef<Circul
           rootProps={rootProps}
           clampedValue={clampedValue}
           indeterminate={isIndeterminate}
-          strokeWidth={strokeWidth}
+          strokeWidth={resolvedStrokeWidth}
+          diameter={FLAT_DIAMETER[size]}
         />
       );
     }
@@ -111,7 +118,7 @@ const CircularProgress = forwardRef<HTMLDivElement, React.PropsWithoutRef<Circul
         clampedValue={clampedValue}
         indeterminate={isIndeterminate}
         diameter={diameter}
-        strokeWidth={strokeWidth}
+        strokeWidth={resolvedStrokeWidth}
         maskId={maskId}
       />
     );
@@ -128,46 +135,65 @@ type FlatProps = {
   clampedValue: number;
   indeterminate: boolean;
   strokeWidth: number;
+  diameter: number;
 };
 
-const FlatCircularProgress = ({ rootProps, clampedValue, indeterminate, strokeWidth }: FlatProps) => {
+const FlatCircularProgress = ({ rootProps, clampedValue, indeterminate, strokeWidth, diameter }: FlatProps) => {
   const { ref, ...rest } = rootProps;
-  const radius = 20;
+  const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (clampedValue / 100) * circumference;
+  const progressLength = (clampedValue / 100) * circumference;
+  const hasTwoArcs = clampedValue > 0 && clampedValue < 100;
+  const indicatorLength = hasTwoArcs ? Math.max(progressLength - ARC_GAP, 0) : progressLength;
+  const trackLength = hasTwoArcs
+    ? Math.max(circumference - progressLength - ARC_GAP, 0)
+    : circumference - progressLength;
 
   return (
     <div {...rest} ref={ref}>
       <svg
         aria-hidden="true"
-        viewBox="0 0 48 48"
+        viewBox={`0 0 ${diameter} ${diameter}`}
         fill="none"
         className="md-circular-progress__svg"
         data-indeterminate={indeterminate || undefined}
       >
         <circle
-          cx="24"
-          cy="24"
+          cx={diameter / 2}
+          cy={diameter / 2}
           r={radius}
           strokeWidth={strokeWidth}
           fill="none"
           className="md-circular-progress__track"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+          style={
+            indeterminate
+              ? undefined
+              : {
+                  strokeDasharray: `${trackLength} ${circumference}`,
+                  strokeDashoffset: -(progressLength + (hasTwoArcs ? ARC_GAP / 2 : 0)),
+                  transform: 'rotate(-90deg)',
+                  transformOrigin: 'center',
+                }
+          }
         />
         <circle
-          cx="24"
-          cy="24"
+          cx={diameter / 2}
+          cy={diameter / 2}
           r={radius}
           strokeWidth={strokeWidth}
           fill="none"
           strokeLinecap="round"
           className="md-circular-progress__indicator"
           data-indeterminate={indeterminate || undefined}
+          vectorEffect="non-scaling-stroke"
           style={
             indeterminate
               ? undefined
               : {
-                  strokeDasharray: circumference,
-                  strokeDashoffset,
+                  strokeDasharray: `${indicatorLength} ${circumference}`,
+                  strokeDashoffset: hasTwoArcs ? -ARC_GAP / 2 : 0,
                   transform: 'rotate(-90deg)',
                   transformOrigin: 'center',
                 }
@@ -195,10 +221,13 @@ const WavyCircularProgress = ({ rootProps, clampedValue, indeterminate, diameter
   const { ref, ...rest } = rootProps;
   const activeRef = useRef<SVGPathElement>(null);
   const trackRef = useRef<SVGPathElement>(null);
+  const waveAmplitude = WAVY_AMPLITUDE * (strokeWidth / 4);
+  const geometryDiameter = Math.max(1, diameter - waveAmplitude * 2 - strokeWidth);
+  const wavelength = (Math.PI * geometryDiameter) / 9;
 
   const minDegrees = useMemo(
-    () => sizeToDegrees(strokeWidth * 2, diameter, strokeWidth, WAVY_AMPLITUDE),
-    [diameter, strokeWidth],
+    () => sizeToDegrees(strokeWidth * 2, geometryDiameter, strokeWidth, waveAmplitude),
+    [geometryDiameter, strokeWidth, waveAmplitude],
   );
 
   // Animate the indeterminate sweep in a requestAnimationFrame loop — the
@@ -211,20 +240,19 @@ const WavyCircularProgress = ({ rootProps, clampedValue, indeterminate, diameter
 
     const tick = (now: number) => {
       const elapsed = now - start;
-      const sweep = computeWavyIndeterminateSweep(elapsed, diameter, strokeWidth, WAVY_AMPLITUDE);
+      const sweep = computeWavyIndeterminateSweep(elapsed, geometryDiameter, strokeWidth, waveAmplitude);
       const active = drawWavyArc({
-        diameter,
+        diameter: geometryDiameter,
         strokeWidth,
-        wavelength: WAVY_WAVELENGTH,
-        amplitude: WAVY_AMPLITUDE,
+        wavelength,
+        amplitude: waveAmplitude,
         endAngle: sweep,
       });
-      const trackGap = sizeToDegrees(strokeWidth, diameter, strokeWidth, WAVY_AMPLITUDE);
       const track = drawCircularArc({
-        diameter,
+        diameter: geometryDiameter,
         strokeWidth,
-        amplitude: WAVY_AMPLITUDE,
-        gap: trackGap,
+        amplitude: waveAmplitude,
+        gap: ARC_GAP / 2,
         startAngle: sweep,
       });
       activeRef.current?.setAttribute('d', active.path);
@@ -234,27 +262,27 @@ const WavyCircularProgress = ({ rootProps, clampedValue, indeterminate, diameter
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [indeterminate, diameter, strokeWidth]);
+  }, [indeterminate, geometryDiameter, strokeWidth, waveAmplitude, wavelength]);
 
   const viewBox = useMemo(
-    () => drawCircularArc({ diameter, strokeWidth, amplitude: WAVY_AMPLITUDE, endAngle: 20 }).viewBox,
-    [diameter, strokeWidth],
+    () => drawCircularArc({ diameter: geometryDiameter, strokeWidth, amplitude: waveAmplitude, endAngle: 20 }).viewBox,
+    [geometryDiameter, strokeWidth, waveAmplitude],
   );
 
   if (indeterminate) {
-    const initialSweep = 18 + sizeToDegrees(strokeWidth, diameter, strokeWidth, WAVY_AMPLITUDE) * 2;
+    const initialSweep = 18 + sizeToDegrees(ARC_GAP, geometryDiameter, strokeWidth, waveAmplitude) * 2;
     const initialActive = drawWavyArc({
-      diameter,
+      diameter: geometryDiameter,
       strokeWidth,
-      wavelength: WAVY_WAVELENGTH,
-      amplitude: WAVY_AMPLITUDE,
+      wavelength,
+      amplitude: waveAmplitude,
       endAngle: initialSweep,
     });
     const initialTrack = drawCircularArc({
-      diameter,
+      diameter: geometryDiameter,
       strokeWidth,
-      amplitude: WAVY_AMPLITUDE,
-      gap: sizeToDegrees(strokeWidth, diameter, strokeWidth, WAVY_AMPLITUDE),
+      amplitude: waveAmplitude,
+      gap: ARC_GAP / 2,
       startAngle: initialSweep,
     });
 
@@ -297,13 +325,13 @@ const WavyCircularProgress = ({ rootProps, clampedValue, indeterminate, diameter
 
   // Clamp amplitude to 0 for very small or full sweeps — M3 Expressive flattens
   // the wave at both ends so a near-empty arc or full ring stays legible.
-  const amplitude = degrees <= minDegrees + minDegrees / 2 || degrees === 360 ? 0 : WAVY_AMPLITUDE;
+  const amplitude = degrees <= minDegrees + minDegrees / 2 || degrees === 360 ? 0 : waveAmplitude;
   const hasGap = degrees > 0 && degrees < 360;
   const activeArc = drawCircularArc({
-    diameter,
+    diameter: geometryDiameter,
     strokeWidth,
-    amplitude: WAVY_AMPLITUDE,
-    gap: hasGap ? strokeWidth : 0,
+    amplitude: waveAmplitude,
+    gap: hasGap ? ARC_GAP / 2 : 0,
     endAngle: degrees,
   });
 
@@ -313,19 +341,19 @@ const WavyCircularProgress = ({ rootProps, clampedValue, indeterminate, diameter
   const fullWavy =
     amplitude > 0
       ? drawWavyArc({
-          diameter,
+          diameter: geometryDiameter,
           strokeWidth,
-          wavelength: WAVY_WAVELENGTH,
+          wavelength,
           amplitude,
           endAngle: 360,
         })
       : null;
 
   const inactiveArc = drawCircularArc({
-    diameter,
+    diameter: geometryDiameter,
     strokeWidth,
-    amplitude: WAVY_AMPLITUDE,
-    gap: degrees > 0 ? strokeWidth : 0,
+    amplitude: waveAmplitude,
+    gap: degrees > 0 ? ARC_GAP / 2 : 0,
     startAngle: degrees,
     endAngle: 360,
   });

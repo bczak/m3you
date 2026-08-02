@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { afterEach, expect, test, vi } from 'vitest';
 
 // The real @material/material-color-utilities ships extensionless ESM imports that
@@ -24,24 +26,17 @@ vi.mock('@material/material-color-utilities', () => {
 
 import { applyM3Theme, generateM3Theme } from '../src/lib/color';
 
-const originalMatchMedia = window.matchMedia;
-
 afterEach(() => {
-  window.matchMedia = originalMatchMedia;
   document.documentElement.removeAttribute('data-theme');
   document.documentElement.removeAttribute('style');
 });
-
-const mockMatchMedia = (matches: boolean) => {
-  window.matchMedia = vi.fn().mockReturnValue({ matches } as MediaQueryList) as typeof window.matchMedia;
-};
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
 
 test('generateM3Theme returns light and dark token maps with valid hex values', async () => {
   const theme = generateM3Theme('#416699');
 
-  expect(Object.keys(theme.light).length).toBeGreaterThan(0);
+  expect(Object.keys(theme.light)).toHaveLength(49);
   expect(Object.keys(theme.light).length).toBe(Object.keys(theme.dark).length);
 
   for (const value of Object.values(theme.light)) {
@@ -54,40 +49,50 @@ test('generateM3Theme returns light and dark token maps with valid hex values', 
   // Light and dark schemes differ for surface.
   expect(theme.light['--md-sys-color-surface']).not.toBe(theme.dark['--md-sys-color-surface']);
   expect(theme.light['--md-sys-color-primary']).toMatch(HEX);
+  expect(theme.light['--md-sys-color-surface-tint']).toBe(theme.light['--md-sys-color-primary']);
+  expect(theme.dark['--md-sys-color-surface-tint']).toBe(theme.dark['--md-sys-color-primary']);
 });
 
-test('applyM3Theme sets light tokens on documentElement by default', async () => {
-  mockMatchMedia(false);
-
+test('applyM3Theme writes both modes and a live light-dark mapping on documentElement', async () => {
   const result = applyM3Theme('#416699');
+  const theme = generateM3Theme('#416699');
 
   expect(result).toBeUndefined();
   const primary = document.documentElement.style.getPropertyValue('--md-sys-color-primary');
-  expect(primary).not.toBe('');
-  expect(primary).toBe(generateM3Theme('#416699').light['--md-sys-color-primary']);
+  expect(primary).toBe('light-dark(var(--md-seed-color-primary-light), var(--md-seed-color-primary-dark))');
+  expect(document.documentElement.style.getPropertyValue('--md-seed-color-primary-light')).toBe(
+    theme.light['--md-sys-color-primary'],
+  );
+  expect(document.documentElement.style.getPropertyValue('--md-seed-color-primary-dark')).toBe(
+    theme.dark['--md-sys-color-primary'],
+  );
+  expect(document.documentElement.style.getPropertyValue('--md-sys-color-surface-tint')).toBe(
+    'var(--md-sys-color-primary)',
+  );
 });
 
-test('applyM3Theme uses dark tokens when data-theme="dark"', async () => {
-  mockMatchMedia(false);
-  document.documentElement.setAttribute('data-theme', 'dark');
+test('generated mappings switch live through element, ancestor, and system color-scheme', async () => {
+  const ancestor = document.createElement('section');
+  const el = document.createElement('div');
+  ancestor.append(el);
+  document.body.append(ancestor);
+  applyM3Theme('#ff0000', el);
+  const mapping = el.style.getPropertyValue('--md-sys-color-primary');
 
-  applyM3Theme('#416699');
+  el.dataset.theme = 'dark';
+  expect(el.style.getPropertyValue('--md-sys-color-primary')).toBe(mapping);
+  el.removeAttribute('data-theme');
+  ancestor.dataset.theme = 'light';
+  expect(el.style.getPropertyValue('--md-sys-color-primary')).toBe(mapping);
+  ancestor.remove();
 
-  const primary = document.documentElement.style.getPropertyValue('--md-sys-color-primary');
-  expect(primary).toBe(generateM3Theme('#416699').dark['--md-sys-color-primary']);
-});
-
-test('applyM3Theme uses dark tokens when prefers-color-scheme is dark', async () => {
-  mockMatchMedia(true);
-
-  applyM3Theme('#ff0000');
-
-  const primary = document.documentElement.style.getPropertyValue('--md-sys-color-primary');
-  expect(primary).toBe(generateM3Theme('#ff0000').dark['--md-sys-color-primary']);
+  const globals = readFileSync(resolve(process.cwd(), 'src/styles/globals.css'), 'utf8');
+  expect(globals).toContain(':root {\n  color-scheme: light dark;');
+  expect(globals).toContain('[data-theme="light"]');
+  expect(globals).toContain('[data-theme="dark"]');
 });
 
 test('applyM3Theme targets a provided element', async () => {
-  mockMatchMedia(false);
   const el = document.createElement('div');
 
   applyM3Theme('#00ff00', el);

@@ -1,7 +1,8 @@
 /* =============================================================================
    FAB — M3 Expressive Spec
    Icon-only floating action button. Wraps IconButton with elevation + shape.
-   Sizes: sm (40×40), md (56×56), lg (96×96)
+   Kit sizes: small (56×56), medium (80×80), large (96×96).
+   Legacy IconButton sizes remain supported as extensions.
    Source: m3.material.io/components/floating-action-button/specs
    ============================================================================= */
 
@@ -20,6 +21,19 @@
     border-radius: var(--md-sys-shape-corner-large);
   }
 
+  /* ── Kit medium: 80×80 ── */
+  &[data-fab-size="medium"] {
+    --_height: 80px;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--md-sys-shape-corner-large-increased);
+
+    & svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
   /* ── Shape + size override: corner-extra-large for lg (96×96) ── */
   &[data-size="lg"][data-shape="square"] {
     --_height: 96px;
@@ -33,15 +47,6 @@
     }
   }
 
-  /* ── Tonal uses no default elevation unless lowered is explicit ── */
-  &[data-variant="tonal"]:not([data-lowered]) {
-    box-shadow: none;
-
-    &:hover {
-      box-shadow: none;
-    }
-  }
-
   /* ── Lowered elevation ── */
   &[data-lowered] {
     box-shadow: var(--md-sys-elevation-1);
@@ -50,4 +55,51 @@
       box-shadow: var(--md-sys-elevation-2);
     }
   }
+}
+
+/* Explicit kit color roles win over the compatibility variant API. */
+.md-icon-button.md-fab[data-fab-color="primary"] {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.md-icon-button.md-fab[data-fab-color="secondary"] {
+  background-color: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
+}
+
+.md-icon-button.md-fab[data-fab-color="tertiary"] {
+  background-color: var(--md-sys-color-tertiary);
+  color: var(--md-sys-color-on-tertiary);
+}
+
+.md-icon-button.md-fab[data-fab-color="primary-container"] {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.md-icon-button.md-fab[data-fab-color="secondary-container"] {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.md-icon-button.md-fab[data-fab-color="tertiary-container"] {
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+
+/* Color-role rules are intentionally followed by a higher-specificity disabled
+   treatment so import/bundle order cannot repaint disabled FABs as enabled. */
+.md-icon-button.md-fab:disabled[data-fab-color] {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+    transparent
+  );
+  color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
+  box-shadow: none;
 }

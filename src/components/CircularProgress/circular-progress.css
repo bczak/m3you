@@ -42,7 +42,7 @@
 }
 
 .md-circular-progress__track {
-  stroke: transparent;
+  stroke: var(--_track-color);
 }
 
 .md-circular-progress__indicator {

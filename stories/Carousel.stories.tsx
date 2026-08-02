@@ -93,7 +93,7 @@ function LayoutExample({ layout, title }: { layout: CarouselLayout; title: strin
   return (
     <div style={{ paddingBlock: 24 }}>
       <Carousel label={title} title={title} layout={layout} showAllAction={showAll} itemHeight={260}>
-        <Items />
+        {Items({})}
       </Carousel>
     </div>
   );
@@ -111,7 +111,7 @@ function ResponsiveLayoutCoverage({ sizeClass }: { sizeClass: string }) {
           showAllAction={layout === 'full-screen' ? undefined : showAll}
           itemHeight={layout === 'full-screen' ? 240 : 160}
         >
-          <Items count={5} multiAspect={layout === 'uncontained-multi-aspect'} />
+          {Items({ count: 5, multiAspect: layout === 'uncontained-multi-aspect' })}
         </Carousel>
       ))}
     </div>
@@ -140,7 +140,7 @@ export const UncontainedMultiAspect: Story = {
         showAllAction={showAll}
         itemHeight={300}
       >
-        <Items multiAspect />
+        {Items({ multiAspect: true })}
       </Carousel>
     </div>
   ),
@@ -165,7 +165,7 @@ export const FullScreen: Story = {
   },
   render: () => (
     <Carousel label="Immersive travel stories" layout="full-screen" itemHeight={520}>
-      <Items count={5} />
+      {Items({ count: 5 })}
     </Carousel>
   ),
 };

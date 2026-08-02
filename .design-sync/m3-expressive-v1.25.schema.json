@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source",
+    "version",
+    "scope",
+    "excluded",
+    "audit",
+    "tolerance",
+    "stateOpacity",
+    "geometry",
+    "roles",
+    "elevation",
+    "typography",
+    "motion",
+    "apiDefaults",
+    "componentCoverage",
+    "documentedExtensions",
+    "intentionalNonComponents"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "source": { "const": "m3ui.fig" },
+    "version": { "const": "M3 Expressive V1.25" },
+    "scope": { "const": "web" },
+    "excluded": { "type": "array", "items": { "type": "string" } },
+    "audit": { "type": "object" },
+    "tolerance": { "type": "object" },
+    "stateOpacity": { "type": "object", "additionalProperties": { "type": "number" } },
+    "geometry": { "type": "object" },
+    "roles": { "type": "object", "additionalProperties": { "type": "string" } },
+    "elevation": { "type": "object" },
+    "typography": { "type": "object" },
+    "motion": { "type": "object" },
+    "apiDefaults": { "type": "object" },
+    "componentCoverage": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "documentedExtensions": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "intentionalNonComponents": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+  }
+}

@@ -1,6 +1,7 @@
 import './bottom-sheet.css';
 import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
 import * as React from 'react';
+import { useContext } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -33,8 +34,7 @@ function BottomSheet({ modal = true, children, ...props }: BottomSheetProps) {
 // BottomSheetTrigger
 // =============================================================================
 
-// Base UI's Trigger.Props narrows its own ref to HTMLButtonElement, so take
-// that rather than the wider HTMLElement the exotic component advertises.
+// Base UI narrows Trigger's ref to its rendered button element.
 const BottomSheetTrigger = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<DrawerPrimitive.Trigger.Props>>(
   ({ ...props }, ref) => <DrawerPrimitive.Trigger data-slot="bottom-sheet-trigger" ref={ref} {...props} />,
 );
@@ -72,15 +72,20 @@ const BottomSheetContent = React.forwardRef<
   React.ComponentRef<typeof DrawerPrimitive.Popup>,
   React.PropsWithoutRef<BottomSheetContentProps>
 >(({ className, children, showDragHandle = true, portalProps, ...props }, ref) => {
-  const { isModal } = React.useContext(BottomSheetContext);
+  const { isModal } = useContext(BottomSheetContext);
 
   return (
     <DrawerPrimitive.Portal {...portalProps}>
       {isModal && <DrawerPrimitive.Backdrop data-slot="bottom-sheet-backdrop" className="md-bottom-sheet-backdrop" />}
-      <DrawerPrimitive.Viewport data-slot="bottom-sheet-viewport" className="md-bottom-sheet-viewport">
+      <DrawerPrimitive.Viewport
+        data-slot="bottom-sheet-viewport"
+        data-modal={isModal || undefined}
+        className="md-bottom-sheet-viewport"
+      >
         <DrawerPrimitive.Popup
           data-slot="bottom-sheet-content"
           ref={ref}
+          data-modal={isModal || undefined}
           className={cx('md-bottom-sheet-content', className)}
           {...props}
         >

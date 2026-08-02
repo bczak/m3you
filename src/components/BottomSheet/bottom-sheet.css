@@ -28,38 +28,49 @@
 
 /* ── Popup / Content ── */
 .md-bottom-sheet-content {
+  box-sizing: border-box;
   position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
   display: flex;
-  max-width: 640px;
+  width: min(640px, calc(100% - 32px));
+  max-height: calc(100dvh - 72px);
   flex-direction: column;
   margin-inline: auto;
   margin-top: 72px;
   border-radius: var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large) 0 0;
   background-color: var(--md-sys-color-surface-container-low);
-  box-shadow: var(--md-sys-elevation-1);
+  box-shadow: var(--md-sys-elevation-3);
   outline: none;
 
   @media (min-width: 640px) {
-    margin-inline: 56px;
     margin-top: 56px;
+    max-height: calc(100dvh - 56px);
   }
+}
+
+.md-bottom-sheet-content[data-modal] {
+  box-shadow: none;
 }
 
 /* ── Drag Handle ── */
 .md-bottom-sheet-drag-handle {
+  position: relative;
+  box-sizing: border-box;
   display: flex;
+  height: 48px;
+  flex: 0 0 48px;
+  align-items: center;
   justify-content: center;
-  padding-block: 22px;
+  padding-block: 0;
 }
 
 .md-bottom-sheet-drag-handle__indicator {
   width: 32px;
   height: 4px;
   border-radius: 2px;
-  background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 40%, transparent);
+  background-color: var(--md-sys-color-outline);
 }
 
 /* ── Body ── */

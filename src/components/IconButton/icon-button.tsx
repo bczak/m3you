@@ -1,9 +1,7 @@
 import './icon-button.css';
-import { Ripple } from 'm3-ripple';
-import type * as React from 'react';
-import { forwardRef } from 'react';
-
+import * as React from 'react';
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 import { useButtonGroup } from '../ButtonGroup/button-group-context';
 
 export type IconButtonProps = React.ComponentProps<'button'> & {
@@ -21,7 +19,7 @@ export type IconButtonProps = React.ComponentProps<'button'> & {
   selected?: boolean;
 };
 
-const IconButton = forwardRef<HTMLButtonElement, React.PropsWithoutRef<IconButtonProps>>(
+const IconButton = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<IconButtonProps>>(
   (
     {
       className,

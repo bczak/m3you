@@ -1,7 +1,7 @@
 /* =============================================================================
    DatePicker — M3 Spec
-   Plain calendar surface. Container: 328px, shape extra-large (28px),
-   surface-container-high bg. Calendar grid: 7-col, day cells 40px circle.
+   Plain calendar surface. Container: 360px. Calendar pitch: 48px with
+   40px selector pills.
    Source: m3.material.io/components/date-pickers/specs
    ============================================================================= */
 
@@ -9,7 +9,8 @@
    the container (Dialog, Card, or custom wrapper). Width matches M3 spec. */
 .md-date-picker {
   display: inline-flex;
-  width: 328px;
+  width: 360px;
+  box-sizing: border-box;
   flex-direction: column;
 }
 
@@ -31,6 +32,8 @@
   align-items: center;
   justify-content: center;
   border: none;
+  margin: 0;
+  padding: 0;
   border-radius: 50%;
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
@@ -41,9 +44,14 @@
     background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
   }
 
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
+
   & svg {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -51,15 +59,21 @@
 .md-date-picker__selector-btn {
   position: relative;
   display: flex;
+  box-sizing: border-box;
+  height: 40px;
   align-items: center;
   gap: 4px;
   border: none;
-  border-radius: var(--md-sys-shape-corner-small);
-  padding: 4px 8px;
+  border-radius: 20px;
+  margin: 0;
+  padding: 0 12px;
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
-  font-weight: 500;
-  font-size: 14px;
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
   cursor: pointer;
   transition: background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
 
@@ -79,6 +93,11 @@
 
   &[data-open="true"] svg {
     transform: rotate(180deg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
   }
 }
 
@@ -105,7 +124,7 @@
      so the panel doesn't resize when switching between grid and list views.
      border-box makes padding count inside the height, not on top of it. */
   box-sizing: border-box;
-  height: 280px;
+  height: 336px;
   overflow-y: auto;
   padding-block: 8px;
 }
@@ -118,12 +137,18 @@
   align-items: center;
   gap: 12px;
   border: none;
+  margin: 0;
   background: transparent;
   padding: 12px 16px;
   text-align: left;
   font-size: 14px;
   color: var(--md-sys-color-on-background);
   transition: background-color 100ms;
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: -2px;
+  }
 
   &:hover {
     background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
@@ -150,13 +175,16 @@
 
 .md-date-picker__weekday {
   display: flex;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   align-items: center;
   justify-content: center;
-  font-weight: 500;
-  font-size: var(--md-sys-typescale-body-small-size);
-  color: var(--md-sys-color-on-background);
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 /* ── Calendar section (day grid) ── */
@@ -168,6 +196,7 @@
 .md-date-picker__grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 48px;
 }
 
 .md-date-picker__grid[data-anim="slide-left"] {
@@ -180,8 +209,8 @@
 
 /* ── Day cell (empty placeholder for outside-month) ── */
 .md-date-picker__day-empty {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
 }
 
 /* ── Day cell (button) ── */
@@ -190,21 +219,34 @@
   display: flex;
   width: 40px;
   height: 40px;
+  align-self: center;
+  justify-self: center;
+  box-sizing: border-box;
   cursor: pointer;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   border: none;
+  margin: 0;
+  padding: 0;
   background: transparent;
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--md-sys-color-on-background);
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  color: var(--md-sys-color-on-surface);
   transition:
     background-color 150ms,
     color 150ms;
 
   &:hover {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
   }
 
   &[data-state="today"] {
@@ -221,7 +263,11 @@
     color: var(--md-sys-color-on-primary);
 
     &:hover {
-      background-color: color-mix(in srgb, var(--md-sys-color-primary) 90%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--md-sys-color-primary),
+        var(--md-sys-color-on-primary) calc(var(--md-sys-state-hover-opacity) * 100%)
+      );
     }
   }
 

@@ -1,85 +1,34 @@
 import './slider.css';
-import { Ripple } from 'm3-ripple';
+
 import * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
-/**
- * Per-size configuration matching M3 spec measurements.
- *
- * Track shape = outer corner radius of the track.
- * Inner radius (near handle) is more squared than outer.
- * Label container (tooltip) is 44x48dp for all sizes.
- * Inset icon is only supported for md, lg, xl.
- */
 const SIZE_CONFIG = {
-  xs: {
-    trackHeight: 16,
-    handleHeight: 44,
-    handleWidth: 4,
-    handlePressedWidth: 2,
-    gap: 4,
-    pressedGap: 2,
-    trackShape: 8,
-    innerRadius: 2,
-    iconSize: 0,
-  },
-  sm: {
-    trackHeight: 24,
-    handleHeight: 44,
-    handleWidth: 4,
-    handlePressedWidth: 2,
-    gap: 4,
-    pressedGap: 2,
-    trackShape: 8,
-    innerRadius: 2,
-    iconSize: 0,
-  },
-  md: {
-    trackHeight: 40,
-    handleHeight: 52,
-    handleWidth: 4,
-    handlePressedWidth: 2,
-    gap: 6,
-    pressedGap: 2,
-    trackShape: 12,
-    innerRadius: 4,
-    iconSize: 24,
-  },
-  lg: {
-    trackHeight: 56,
-    handleHeight: 68,
-    handleWidth: 4,
-    handlePressedWidth: 2,
-    gap: 8,
-    pressedGap: 3,
-    trackShape: 16,
-    innerRadius: 6,
-    iconSize: 24,
-  },
-  xl: {
-    trackHeight: 96,
-    handleHeight: 108,
-    handleWidth: 4,
-    handlePressedWidth: 2,
-    gap: 10,
-    pressedGap: 4,
-    trackShape: 28,
-    innerRadius: 8,
-    iconSize: 32,
-  },
+  xs: { trackHeight: 16, handleHeight: 44, trackShape: 8, iconSize: 0 },
+  sm: { trackHeight: 24, handleHeight: 44, trackShape: 8, iconSize: 0 },
+  md: { trackHeight: 40, handleHeight: 52, trackShape: 12, iconSize: 24 },
+  lg: { trackHeight: 56, handleHeight: 68, trackShape: 16, iconSize: 24 },
+  xl: { trackHeight: 96, handleHeight: 108, trackShape: 28, iconSize: 32 },
 } as const;
 
 type SliderSize = keyof typeof SIZE_CONFIG;
+type SliderOrientation = 'horizontal' | 'vertical';
+type SliderMode = 'standard' | 'centered';
+type RangeValue = [number, number];
 
-// `value`, `defaultValue`, `min`, `max` and `step` are all redeclared below with
-// narrower types. Without omitting the native ones first, TypeScript intersects
-// the two declarations and tooling reports the wider DOM type
-// (`string | number | readonly string[]`) instead of `number`.
-export type SliderProps = Omit<
+const HANDLE_WIDTH = 4;
+const PRESSED_HANDLE_WIDTH = 2;
+const HANDLE_GAP = 6;
+const INNER_TRACK_RADIUS = 2;
+const HANDLE_EDGE = HANDLE_GAP + HANDLE_WIDTH / 2;
+
+type NativeSliderProps = Omit<
   React.ComponentProps<'input'>,
   'type' | 'size' | 'value' | 'defaultValue' | 'min' | 'max' | 'step'
-> & {
+>;
+
+export type SliderProps = NativeSliderProps & {
   /** Current value (controlled). */
   value?: number;
   /** Default value (uncontrolled). */
@@ -92,17 +41,167 @@ export type SliderProps = Omit<
   step?: number;
   /** Callback when value changes. */
   onValueChange?: (value: number) => void;
+  /** Standard fills from minimum; centered fills from origin. */
+  mode?: SliderMode;
+  /** Fill origin in centered mode. Defaults to the midpoint. */
+  origin?: number;
   /** Size variant. */
   size?: SliderSize;
   /** Orientation of the slider. */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: SliderOrientation;
   /** Show value tooltip while dragging. */
   showTooltip?: boolean;
   /** Custom format function for the tooltip value. */
   formatTooltip?: (value: number) => string;
-  /** Inset icon rendered inside the active track (md, lg, xl only per M3 spec). */
+  /** Inset icon rendered inside the active track (md, lg, xl only). */
   icon?: React.ReactNode;
 };
+
+export type RangeSliderInputProps = Omit<
+  React.ComponentPropsWithoutRef<'input'>,
+  'type' | 'size' | 'value' | 'defaultValue' | 'min' | 'max' | 'step' | 'disabled'
+> & { ref?: React.Ref<HTMLInputElement> };
+
+export type RangeSliderProps = Omit<React.ComponentProps<'div'>, 'defaultValue' | 'onChange'> & {
+  /** Ordered controlled lower and upper values. */
+  value?: RangeValue;
+  /** Initial lower and upper values for uncontrolled use. */
+  defaultValue?: RangeValue;
+  /** Called with clamped, ordered values. */
+  onValueChange?: (value: RangeValue) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  size?: SliderSize;
+  orientation?: SliderOrientation;
+  showTooltip?: boolean;
+  formatTooltip?: (value: number) => string;
+  disabled?: boolean;
+  /** Native props, including accessible naming and a ref, for the lower input. */
+  lowerInputProps?: RangeSliderInputProps;
+  /** Native props, including accessible naming and a ref, for the upper input. */
+  upperInputProps?: RangeSliderInputProps;
+};
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, Number.isFinite(value) ? value : min));
+}
+
+function snap(value: number, min: number, max: number, step?: number) {
+  const clamped = clamp(value, min, max);
+  if (!step || step <= 0) return clamped;
+  const precision = Math.max(0, `${step}`.split('.')[1]?.length ?? 0);
+  return clamp(Number((min + Math.round((clamped - min) / step) * step).toFixed(precision)), min, max);
+}
+
+function normalizeRange(value: readonly [number, number], min: number, max: number, step?: number): RangeValue {
+  const first = snap(value[0], min, max, step);
+  const second = snap(value[1], min, max, step);
+  return first <= second ? [first, second] : [second, first];
+}
+
+function valuePercent(value: number, min: number, max: number) {
+  const range = max - min;
+  return range > 0 ? ((clamp(value, min, max) - min) / range) * 100 : 0;
+}
+
+function assignRef<T>(ref: React.Ref<T> | undefined, value: T | null) {
+  if (typeof ref === 'function') ref(value);
+  else if (ref) (ref as React.MutableRefObject<T | null>).current = value;
+}
+
+function segmentRadii(
+  orientation: SliderOrientation,
+  outerRadius: number,
+  outerAtStart: boolean,
+  outerAtEnd: boolean,
+): React.CSSProperties {
+  const startRadius = outerAtStart ? outerRadius : INNER_TRACK_RADIUS;
+  const endRadius = outerAtEnd ? outerRadius : INNER_TRACK_RADIUS;
+  return orientation === 'vertical'
+    ? {
+        borderBottomLeftRadius: startRadius,
+        borderBottomRightRadius: startRadius,
+        borderTopLeftRadius: endRadius,
+        borderTopRightRadius: endRadius,
+      }
+    : {
+        borderTopLeftRadius: startRadius,
+        borderBottomLeftRadius: startRadius,
+        borderTopRightRadius: endRadius,
+        borderBottomRightRadius: endRadius,
+      };
+}
+
+function segmentPosition(orientation: SliderOrientation, start: string, length: string): React.CSSProperties {
+  return orientation === 'vertical' ? { bottom: start, height: length } : { left: start, width: length };
+}
+
+function pointerValue(
+  event: React.PointerEvent,
+  track: HTMLElement,
+  orientation: SliderOrientation,
+  min: number,
+  max: number,
+  step?: number,
+) {
+  const bounds = track.getBoundingClientRect();
+  let ratio =
+    orientation === 'vertical'
+      ? 1 - (event.clientY - bounds.top) / Math.max(bounds.height, 1)
+      : (event.clientX - bounds.left) / Math.max(bounds.width, 1);
+  if (orientation === 'horizontal' && getComputedStyle(track).direction === 'rtl') ratio = 1 - ratio;
+  return snap(min + clamp(ratio, 0, 1) * (max - min), min, max, step);
+}
+
+type SliderHandleProps = {
+  percent: number;
+  orientation: SliderOrientation;
+  size: SliderSize;
+  handleHeight: number;
+  dragging: boolean;
+  disabled?: boolean;
+  tooltip?: React.ReactNode;
+  onPointerDown: React.PointerEventHandler<HTMLDivElement>;
+  onPointerMove: React.PointerEventHandler<HTMLDivElement>;
+  onPointerUp: React.PointerEventHandler<HTMLDivElement>;
+};
+
+const SliderHandle = ({
+  percent,
+  orientation,
+  size,
+  handleHeight,
+  dragging,
+  disabled,
+  tooltip,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+}: SliderHandleProps) => (
+  <div
+    className="md-slider__handle"
+    data-size={size}
+    data-dragging={dragging || undefined}
+    data-disabled={disabled || undefined}
+    style={orientation === 'vertical' ? { bottom: `${percent}%` } : { left: `${percent}%` }}
+    onPointerDown={onPointerDown}
+    onPointerMove={onPointerMove}
+    onPointerUp={onPointerUp}
+    onPointerCancel={onPointerUp}
+  >
+    <Ripple disabled={disabled} />
+    {tooltip}
+    <span
+      className="md-slider__thumb"
+      style={
+        orientation === 'vertical'
+          ? { height: dragging ? PRESSED_HANDLE_WIDTH : HANDLE_WIDTH, width: handleHeight }
+          : { width: dragging ? PRESSED_HANDLE_WIDTH : HANDLE_WIDTH, height: handleHeight }
+      }
+    />
+  </div>
+);
 
 const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderProps>>(
   (
@@ -110,12 +209,14 @@ const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderPr
       className,
       value: valueProp,
       defaultValue = 0,
-      min = 0,
-      max = 100,
+      min: minProp = 0,
+      max: maxProp = 100,
       step,
       disabled,
       size = 'md',
       orientation = 'horizontal',
+      mode = 'standard',
+      origin: originProp,
       showTooltip = false,
       formatTooltip,
       icon,
@@ -125,158 +226,152 @@ const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderPr
     },
     ref,
   ) => {
-    const isControlled = valueProp !== undefined;
-    const [internalValue, setInternalValue] = React.useState(defaultValue);
-    const value = isControlled ? valueProp : internalValue;
-
+    const min = Math.min(minProp, maxProp);
+    const max = Math.max(minProp, maxProp);
+    const controlled = valueProp !== undefined;
+    const [internalValue, setInternalValue] = React.useState(() => snap(defaultValue, min, max, step));
+    const value = snap(controlled ? valueProp : internalValue, min, max, step);
+    const origin = snap(originProp ?? (min + max) / 2, min, max, step);
+    const percent = valuePercent(value, min, max);
+    const originPercent = valuePercent(origin, min, max);
+    const config = SIZE_CONFIG[size];
+    const trackRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
+    const [dragging, setDragging] = React.useState(false);
+    const activePointer = React.useRef<number | null>(null);
+
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-    const [isDragging, setIsDragging] = React.useState(false);
+    const updateValue = React.useCallback(
+      (nextValue: number) => {
+        const next = snap(nextValue, min, max, step);
+        if (!controlled) setInternalValue(next);
+        onValueChange?.(next);
+      },
+      [controlled, max, min, onValueChange, step],
+    );
 
-    const range = max - min;
-    const percent = range > 0 ? ((value - min) / range) * 100 : 0;
-    const clampedPercent = Math.min(100, Math.max(0, percent));
-
-    const isDiscrete = step !== undefined && step > 0;
-    const stopCount = isDiscrete ? Math.floor(range / step) + 1 : 0;
-
-    const config = SIZE_CONFIG[size];
-    const gapPx = isDragging ? config.pressedGap : config.gap;
-    const handleWidthPx = isDragging ? config.handlePressedWidth : config.handleWidth;
-    const isVertical = orientation === 'vertical';
-
-    const updateSliderValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = Number(e.target.value);
-      if (!isControlled) {
-        setInternalValue(newValue);
-      }
-      onValueChange?.(newValue);
-      onChange?.(e);
+    const updateFromPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!trackRef.current) return;
+      updateValue(pointerValue(event, trackRef.current, orientation, min, max, step));
     };
 
+    const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (disabled || event.button !== 0) return;
+      activePointer.current = event.pointerId;
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+      inputRef.current?.focus();
+      setDragging(true);
+      updateFromPointer(event);
+    };
+
+    const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (activePointer.current === event.pointerId) updateFromPointer(event);
+    };
+
+    const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (activePointer.current !== event.pointerId) return;
+      updateFromPointer(event);
+      activePointer.current = null;
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      setDragging(false);
+    };
+
+    const activeStart =
+      mode === 'centered' && percent < originPercent
+        ? `calc(${percent}% + ${HANDLE_EDGE}px)`
+        : `${mode === 'centered' ? originPercent : 0}%`;
+    const activeLength =
+      mode === 'centered'
+        ? `max(${Math.abs(percent - originPercent)}% - ${HANDLE_EDGE}px, 0px)`
+        : `max(${percent}% - ${HANDLE_EDGE}px, 0px)`;
+    const activeStyle = {
+      ...segmentPosition(orientation, activeStart, activeLength),
+      ...segmentRadii(orientation, config.trackShape, mode === 'standard', false),
+    };
+    const beforeEnd = mode === 'centered' && percent >= originPercent ? originPercent : percent;
+    const beforeLength = `max(${beforeEnd}% - ${percent <= originPercent ? HANDLE_EDGE : 0}px, 0px)`;
+    const afterStartPercent = mode === 'centered' && percent < originPercent ? originPercent : percent;
+    const afterStart = `calc(${afterStartPercent}% + ${percent >= originPercent ? HANDLE_EDGE : 0}px)`;
+    const afterLength = `max(${100 - afterStartPercent}% - ${percent >= originPercent ? HANDLE_EDGE : 0}px, 0px)`;
+    const isDiscrete = step !== undefined && step > 0;
+    const stopCount = isDiscrete ? Math.floor((max - min) / step) + 1 : 0;
     const tooltipLabel = formatTooltip ? formatTooltip(value) : String(value);
-
-    const outerR = config.trackShape;
-    const innerR = config.innerRadius;
-
-    const activeTrackStyle = isVertical
-      ? {
-          height: `max(${clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-          borderBottomLeftRadius: `${outerR}px`,
-          borderBottomRightRadius: `${outerR}px`,
-          borderTopLeftRadius: `${innerR}px`,
-          borderTopRightRadius: `${innerR}px`,
-        }
-      : {
-          width: `max(${clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-          borderTopLeftRadius: `${outerR}px`,
-          borderBottomLeftRadius: `${outerR}px`,
-          borderTopRightRadius: `${innerR}px`,
-          borderBottomRightRadius: `${innerR}px`,
-        };
-
-    const inactiveTrackStyle = isVertical
-      ? {
-          height: `max(${100 - clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-          borderTopLeftRadius: `${outerR}px`,
-          borderTopRightRadius: `${outerR}px`,
-          borderBottomLeftRadius: `${innerR}px`,
-          borderBottomRightRadius: `${innerR}px`,
-        }
-      : {
-          width: `max(${100 - clampedPercent}% - ${gapPx + handleWidthPx / 2}px, 0px)`,
-          borderTopRightRadius: `${outerR}px`,
-          borderBottomRightRadius: `${outerR}px`,
-          borderTopLeftRadius: `${innerR}px`,
-          borderBottomLeftRadius: `${innerR}px`,
-        };
-
-    // Show inset icon only for md, lg, xl per M3 spec
-    const showIcon = icon && config.iconSize > 0;
-    const sizeClass = { xs: 'h-12', sm: 'h-12', md: 'h-14', lg: 'h-18', xl: 'h-28' }[size];
-    const orientationClass = isVertical ? 'h-full flex-col' : 'w-full items-center';
 
     return (
       <div
-        className={cx('md-slider', sizeClass, orientationClass, className)}
+        className={cx('md-slider', className)}
         data-size={size}
         data-orientation={orientation}
+        data-mode={mode}
         data-disabled={disabled || undefined}
-        data-dragging={isDragging || undefined}
-        onPointerDown={() => setIsDragging(true)}
-        onPointerUp={() => setIsDragging(false)}
-        onPointerLeave={() => setIsDragging(false)}
+        data-dragging={dragging || undefined}
       >
-        {/* Custom visual track */}
         <div
+          ref={trackRef}
           className="md-slider__track"
-          style={isVertical ? { width: `${config.trackHeight}px` } : { height: `${config.trackHeight}px` }}
+          style={orientation === 'vertical' ? { width: config.trackHeight } : { height: config.trackHeight }}
         >
-          {/* Active track */}
-          <div className="md-slider__track-active" style={activeTrackStyle}>
-            {/* Inset icon — M3 spec: only for md, lg, xl sizes */}
-            {showIcon && (
-              <span
-                className="md-slider__icon"
-                style={{ width: `${config.iconSize}px`, height: `${config.iconSize}px` }}
-              >
+          {mode === 'centered' ? (
+            <span
+              className="md-slider__track-inactive"
+              data-segment="before"
+              style={{
+                ...segmentPosition(orientation, '0%', beforeLength),
+                ...segmentRadii(orientation, config.trackShape, true, false),
+              }}
+            />
+          ) : null}
+          <span className="md-slider__track-active" style={activeStyle}>
+            {icon && config.iconSize > 0 ? (
+              <span className="md-slider__icon" style={{ width: config.iconSize, height: config.iconSize }}>
                 {icon}
               </span>
-            )}
-          </div>
-
-          {/* Inactive track */}
-          <div className="md-slider__track-inactive" style={inactiveTrackStyle} />
-
-          {/* Stop indicators for discrete slider */}
-          {isDiscrete &&
-            stopCount > 0 &&
-            Array.from({ length: stopCount }, (_, i) => {
-              const stopPercent = stopCount <= 1 ? 0 : (i / (stopCount - 1)) * 100;
-              const isActive = stopPercent <= clampedPercent;
-              const distFromHandle = Math.abs(stopPercent - clampedPercent);
-              if (distFromHandle < 2) return null;
-              const stopValue = min + i * step;
-              const insetPx = outerR * (1 - (2 * stopPercent) / 100);
-              const pos = `calc(${stopPercent}% + ${insetPx}px)`;
-              return (
-                <div
-                  key={stopValue}
-                  className="md-slider__stop"
-                  data-active={String(isActive)}
-                  style={isVertical ? { bottom: pos } : { left: pos }}
-                />
-              );
-            })}
-
-          {/* Handle */}
-          <div
-            className="md-slider__handle"
-            style={isVertical ? { bottom: `${clampedPercent}%` } : { left: `${clampedPercent}%` }}
-          >
-            {/* Value tooltip — M3 label container: 44x48dp */}
-            {showTooltip && isDragging && <div className="md-slider__tooltip">{tooltipLabel}</div>}
-
-            {/* State layer for ripple */}
-            <span className="md-slider__state-layer">
-              <Ripple />
-            </span>
-
-            {/* Visual handle capsule */}
-            <div
-              className="md-slider__thumb"
-              style={
-                isVertical
-                  ? { height: `${handleWidthPx}px`, width: `${config.handleHeight}px` }
-                  : { width: `${handleWidthPx}px`, height: `${config.handleHeight}px` }
-              }
-            />
-          </div>
+            ) : null}
+          </span>
+          <span
+            className="md-slider__track-inactive"
+            data-segment="after"
+            style={{
+              ...segmentPosition(orientation, afterStart, afterLength),
+              ...segmentRadii(orientation, config.trackShape, false, true),
+            }}
+          />
+          {isDiscrete
+            ? Array.from({ length: stopCount }, (_, index) => {
+                const stopPercent = stopCount <= 1 ? 0 : (index / (stopCount - 1)) * 100;
+                if (Math.abs(stopPercent - percent) < 2) return null;
+                const stopValue = min + index * step;
+                const active =
+                  mode === 'standard'
+                    ? stopPercent <= percent
+                    : stopPercent >= Math.min(percent, originPercent) &&
+                      stopPercent <= Math.max(percent, originPercent);
+                return (
+                  <span
+                    key={stopValue}
+                    className="md-slider__stop"
+                    data-active={active}
+                    style={orientation === 'vertical' ? { bottom: `${stopPercent}%` } : { left: `${stopPercent}%` }}
+                  />
+                );
+              })
+            : null}
+          <SliderHandle
+            percent={percent}
+            orientation={orientation}
+            size={size}
+            handleHeight={config.handleHeight}
+            dragging={dragging}
+            disabled={disabled}
+            tooltip={showTooltip && dragging ? <span className="md-slider__tooltip">{tooltipLabel}</span> : null}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+          />
         </div>
-
-        {/* Native range input (invisible, overlaid for accessibility) */}
         <input
+          {...props}
           ref={inputRef}
           type="range"
           min={min}
@@ -285,15 +380,12 @@ const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderPr
           value={value}
           disabled={disabled}
           aria-orientation={orientation}
-          onChange={updateSliderValue}
+          onChange={(event) => {
+            updateValue(Number(event.target.value));
+            onChange?.(event);
+          }}
           className="md-slider__input"
           data-orientation={orientation}
-          style={
-            isVertical
-              ? { writingMode: 'vertical-lr', direction: 'rtl', WebkitAppearance: 'slider-vertical' as never }
-              : undefined
-          }
-          {...props}
         />
       </div>
     );
@@ -301,4 +393,207 @@ const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderPr
 );
 Slider.displayName = 'Slider';
 
-export { Slider };
+const RangeSlider = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<RangeSliderProps>>(
+  (
+    {
+      value: valueProp,
+      defaultValue = [0, 100],
+      onValueChange,
+      min: minProp = 0,
+      max: maxProp = 100,
+      step,
+      size = 'md',
+      orientation = 'horizontal',
+      showTooltip = false,
+      formatTooltip,
+      disabled = false,
+      lowerInputProps = {},
+      upperInputProps = {},
+      className,
+      ...props
+    },
+    ref,
+  ) => {
+    const min = Math.min(minProp, maxProp);
+    const max = Math.max(minProp, maxProp);
+    const controlled = valueProp !== undefined;
+    const [internalValue, setInternalValue] = React.useState<RangeValue>(() =>
+      normalizeRange(defaultValue, min, max, step),
+    );
+    const value = normalizeRange(controlled ? valueProp : internalValue, min, max, step);
+    const [lower, upper] = value;
+    const lowerPercent = valuePercent(lower, min, max);
+    const upperPercent = valuePercent(upper, min, max);
+    const config = SIZE_CONFIG[size];
+    const trackRef = React.useRef<HTMLDivElement>(null);
+    const lowerRef = React.useRef<HTMLInputElement | null>(null);
+    const upperRef = React.useRef<HTMLInputElement | null>(null);
+    const [dragging, setDragging] = React.useState<'lower' | 'upper' | null>(null);
+    const activePointer = React.useRef<number | null>(null);
+    const { ref: lowerInputRef, onChange: lowerOnChange, className: lowerClassName, ...lowerRest } = lowerInputProps;
+    const { ref: upperInputRef, onChange: upperOnChange, className: upperClassName, ...upperRest } = upperInputProps;
+
+    const updateValue = React.useCallback(
+      (next: RangeValue) => {
+        const normalized = normalizeRange(next, min, max, step);
+        if (!controlled) setInternalValue(normalized);
+        onValueChange?.(normalized);
+      },
+      [controlled, max, min, onValueChange, step],
+    );
+
+    const updateFromPointer = (thumb: 'lower' | 'upper', event: React.PointerEvent<HTMLDivElement>) => {
+      if (!trackRef.current) return;
+      const next = pointerValue(event, trackRef.current, orientation, min, max, step);
+      updateValue(thumb === 'lower' ? [Math.min(next, upper), upper] : [lower, Math.max(next, lower)]);
+    };
+
+    const pointerHandlers = (thumb: 'lower' | 'upper') => ({
+      onPointerDown: (event: React.PointerEvent<HTMLDivElement>) => {
+        if (disabled || event.button !== 0) return;
+        activePointer.current = event.pointerId;
+        event.currentTarget.setPointerCapture?.(event.pointerId);
+        (thumb === 'lower' ? lowerRef : upperRef).current?.focus();
+        setDragging(thumb);
+        updateFromPointer(thumb, event);
+      },
+      onPointerMove: (event: React.PointerEvent<HTMLDivElement>) => {
+        if (activePointer.current === event.pointerId && dragging === thumb) updateFromPointer(thumb, event);
+      },
+      onPointerUp: (event: React.PointerEvent<HTMLDivElement>) => {
+        if (activePointer.current !== event.pointerId) return;
+        updateFromPointer(thumb, event);
+        activePointer.current = null;
+        event.currentTarget.releasePointerCapture?.(event.pointerId);
+        setDragging(null);
+      },
+    });
+
+    const setLowerRef = React.useCallback(
+      (node: HTMLInputElement | null) => {
+        lowerRef.current = node;
+        assignRef(lowerInputRef, node);
+      },
+      [lowerInputRef],
+    );
+    const setUpperRef = React.useCallback(
+      (node: HTMLInputElement | null) => {
+        upperRef.current = node;
+        assignRef(upperInputRef, node);
+      },
+      [upperInputRef],
+    );
+    const label = (number: number) => (formatTooltip ? formatTooltip(number) : String(number));
+
+    return (
+      <div
+        {...props}
+        ref={ref}
+        className={cx('md-slider md-range-slider', className)}
+        data-size={size}
+        data-orientation={orientation}
+        data-disabled={disabled || undefined}
+        data-dragging={dragging || undefined}
+      >
+        <div
+          ref={trackRef}
+          className="md-slider__track"
+          style={orientation === 'vertical' ? { width: config.trackHeight } : { height: config.trackHeight }}
+        >
+          <span
+            className="md-slider__track-inactive"
+            data-segment="before"
+            style={{
+              ...segmentPosition(orientation, '0%', `max(${lowerPercent}% - ${HANDLE_EDGE}px, 0px)`),
+              ...segmentRadii(orientation, config.trackShape, true, false),
+            }}
+          />
+          <span
+            className="md-slider__track-active"
+            style={{
+              ...segmentPosition(
+                orientation,
+                `calc(${lowerPercent}% + ${HANDLE_EDGE}px)`,
+                `max(${upperPercent - lowerPercent}% - ${HANDLE_EDGE * 2}px, 0px)`,
+              ),
+              ...segmentRadii(orientation, config.trackShape, false, false),
+            }}
+          />
+          <span
+            className="md-slider__track-inactive"
+            data-segment="after"
+            style={{
+              ...segmentPosition(
+                orientation,
+                `calc(${upperPercent}% + ${HANDLE_EDGE}px)`,
+                `max(${100 - upperPercent}% - ${HANDLE_EDGE}px, 0px)`,
+              ),
+              ...segmentRadii(orientation, config.trackShape, false, true),
+            }}
+          />
+          <SliderHandle
+            percent={lowerPercent}
+            orientation={orientation}
+            size={size}
+            handleHeight={config.handleHeight}
+            dragging={dragging === 'lower'}
+            disabled={disabled}
+            tooltip={
+              showTooltip && dragging === 'lower' ? <span className="md-slider__tooltip">{label(lower)}</span> : null
+            }
+            {...pointerHandlers('lower')}
+          />
+          <SliderHandle
+            percent={upperPercent}
+            orientation={orientation}
+            size={size}
+            handleHeight={config.handleHeight}
+            dragging={dragging === 'upper'}
+            disabled={disabled}
+            tooltip={
+              showTooltip && dragging === 'upper' ? <span className="md-slider__tooltip">{label(upper)}</span> : null
+            }
+            {...pointerHandlers('upper')}
+          />
+        </div>
+        <input
+          {...lowerRest}
+          ref={setLowerRef}
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={lower}
+          disabled={disabled}
+          aria-label={lowerRest['aria-label'] ?? (lowerRest['aria-labelledby'] ? undefined : 'Lower value')}
+          aria-orientation={orientation}
+          className={cx('md-slider__input md-range-slider__input', lowerClassName)}
+          onChange={(event) => {
+            updateValue([Math.min(Number(event.target.value), upper), upper]);
+            lowerOnChange?.(event);
+          }}
+        />
+        <input
+          {...upperRest}
+          ref={setUpperRef}
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={upper}
+          disabled={disabled}
+          aria-label={upperRest['aria-label'] ?? (upperRest['aria-labelledby'] ? undefined : 'Upper value')}
+          aria-orientation={orientation}
+          className={cx('md-slider__input md-range-slider__input', upperClassName)}
+          onChange={(event) => {
+            updateValue([lower, Math.max(Number(event.target.value), lower)]);
+            upperOnChange?.(event);
+          }}
+        />
+      </div>
+    );
+  },
+);
+RangeSlider.displayName = 'RangeSlider';
+
+export { RangeSlider, Slider };

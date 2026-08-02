@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, test } from 'vitest';
-import { Button } from '../src/components/ui/button';
+import { Button } from '../src/components/Button/button';
 import {
   RichTooltip,
   RichTooltipContent,
@@ -9,7 +9,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '../src/components/ui/tooltip';
+} from '../src/components/Tooltip/tooltip';
 
 afterEach(() => {
   cleanup();

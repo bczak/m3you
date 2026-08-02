@@ -1,10 +1,10 @@
 import './menu.css';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Check, ChevronRight } from 'lucide-react';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-
+import { useContext } from 'react';
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 type MenuColor = 'standard' | 'vibrant';
 const MenuColorContext = React.createContext<MenuColor>('standard');
@@ -99,19 +99,15 @@ export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const MenuContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuContentProps>>(
   ({ className, grouped, side = 'bottom', align = 'start', children, portalProps, ...props }, ref) => {
-    const color = React.useContext(MenuColorContext);
-    const colorClass = color === 'vibrant' ? 'bg-tertiary-container' : 'bg-surface-container-low';
+    const color = useContext(MenuColorContext);
     return (
       <BaseMenu.Portal {...portalProps}>
         <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
           <BaseMenu.Popup
             ref={ref}
-            className={cx(
-              'md-menu rounded-2xl p-1',
-              grouped ? 'gap-1' : 'shadow-md',
-              !grouped && colorClass,
-              className,
-            )}
+            className={cx('md-menu', className)}
+            data-color={color}
+            data-grouped={grouped || undefined}
             {...props}
           >
             {children}
@@ -137,9 +133,7 @@ const MenuGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuGro
     return (
       <BaseMenu.Group ref={ref} className={cx('md-menu-group', className)} {...props}>
         {label ? <MenuLabel>{label}</MenuLabel> : null}
-        <div data-menu-group="" className="rounded-2xl shadow-md">
-          {children}
-        </div>
+        {children}
       </BaseMenu.Group>
     );
   },
@@ -150,7 +144,9 @@ MenuGroup.displayName = 'MenuGroup';
 // MenuLabel
 // =============================================================================
 
-const MenuLabel = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<React.ComponentPropsWithoutRef<'div'>>>(
+export interface MenuLabelProps extends React.ComponentPropsWithoutRef<'div'> {}
+
+const MenuLabel = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuLabelProps>>(
   ({ className, ...props }, ref) => (
     <BaseMenu.GroupLabel ref={ref} className={cx('md-menu-label', className)} {...props} />
   ),
@@ -213,8 +209,7 @@ const MenuItem = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuItem
     },
     ref,
   ) => {
-    const color = React.useContext(MenuColorContext);
-    const selectedClass = selected ? (color === 'vibrant' ? 'bg-tertiary' : 'bg-tertiary-container') : undefined;
+    const color = useContext(MenuColorContext);
     return (
       <BaseMenu.Item
         ref={ref}
@@ -224,15 +219,11 @@ const MenuItem = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuItem
         onKeyUp={onKeyUp}
         data-disabled={disabled || undefined}
         data-selected={selected || undefined}
-        className={cx(
-          'md-menu-item rounded-xl h-12 overflow-hidden',
-          disabled && 'opacity-38',
-          selectedClass,
-          className,
-        )}
+        data-color={color}
+        className={cx('md-menu-item', className)}
         {...props}
       >
-        <Ripple hoverOpacity={0} />
+        <Ripple />
         {selected && !leadingIcon ? <Check aria-hidden="true" /> : null}
         {leadingIcon}
         {supportingText ? <MenuItemContent supportingText={supportingText}>{children}</MenuItemContent> : children}
@@ -296,15 +287,17 @@ export interface MenuSubTriggerProps extends React.ComponentPropsWithoutRef<'div
 
 const MenuSubTrigger = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuSubTriggerProps>>(
   ({ supportingText, disabled = false, className, children, ...props }, ref) => {
+    const color = useContext(MenuColorContext);
     return (
       <BaseMenu.SubmenuTrigger
         ref={ref}
         disabled={disabled}
         data-disabled={disabled || undefined}
-        className={cx('md-menu-item rounded-xl h-12 overflow-hidden', disabled && 'opacity-38', className)}
+        data-color={color}
+        className={cx('md-menu-item', className)}
         {...props}
       >
-        <Ripple hoverOpacity={0} />
+        <Ripple />
         {supportingText ? <MenuItemContent supportingText={supportingText}>{children}</MenuItemContent> : children}
         <span className="md-menu-item__chevron" aria-hidden="true">
           <ChevronRight />
@@ -333,7 +326,7 @@ const MenuSubContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<Me
     return (
       <BaseMenu.Portal {...portalProps}>
         <BaseMenu.Positioner sideOffset={4}>
-          <BaseMenu.Popup ref={ref} className={cx('md-menu rounded-2xl p-1 shadow-md', className)} {...props}>
+          <BaseMenu.Popup ref={ref} className={cx('md-menu', className)} {...props}>
             {children}
           </BaseMenu.Popup>
         </BaseMenu.Positioner>

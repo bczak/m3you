@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeAll, expect, test, vi } from 'vitest';
@@ -12,7 +13,9 @@ import {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
-} from '../src/components/ui/menu';
+} from '../src/components/Menu/menu';
+
+const menuCss = readFileSync('src/components/Menu/menu.css', 'utf8');
 
 // Polyfill Element.prototype.animate for m3-ripple (happy-dom lacks Web Animations API)
 beforeAll(() => {
@@ -176,7 +179,7 @@ test('disabled menu item has aria-disabled', async () => {
   expect(screen.getByTestId('item')).toHaveAttribute('aria-disabled', 'true');
 });
 
-test('disabled menu item has opacity class', async () => {
+test('disabled menu item exposes its disabled state to shipped CSS', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -187,7 +190,7 @@ test('disabled menu item has opacity class', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('item')).toHaveClass('opacity-38');
+  expect(screen.getByTestId('item')).toHaveAttribute('data-disabled', 'true');
 });
 
 test('selected menu item renders check icon', async () => {
@@ -305,7 +308,8 @@ test('standard color uses surface-container-low background', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('content')).toHaveClass('bg-surface-container-low');
+  expect(screen.getByTestId('content')).toHaveAttribute('data-color', 'standard');
+  expect(menuCss).toContain('background-color: var(--md-sys-color-surface-container-low)');
 });
 
 test('vibrant color uses tertiary-container background', async () => {
@@ -317,7 +321,7 @@ test('vibrant color uses tertiary-container background', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('content')).toHaveClass('bg-tertiary-container');
+  expect(screen.getByTestId('content')).toHaveAttribute('data-color', 'vibrant');
 });
 
 test('standard selected item has tertiary-container bg', async () => {
@@ -331,7 +335,8 @@ test('standard selected item has tertiary-container bg', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('item')).toHaveClass('bg-tertiary-container');
+  expect(screen.getByTestId('item')).toHaveAttribute('data-selected', 'true');
+  expect(screen.getByTestId('item')).toHaveAttribute('data-color', 'standard');
 });
 
 test('vibrant selected item has tertiary bg', async () => {
@@ -345,7 +350,8 @@ test('vibrant selected item has tertiary bg', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('item')).toHaveClass('bg-tertiary');
+  expect(screen.getByTestId('item')).toHaveAttribute('data-selected', 'true');
+  expect(screen.getByTestId('item')).toHaveAttribute('data-color', 'vibrant');
 });
 
 // =============================================================================
@@ -485,7 +491,7 @@ test('MenuGroup has role="group"', async () => {
   expect(group).toHaveAttribute('role', 'group');
 });
 
-test('MenuGroup renders data-menu-group on inner container', async () => {
+test('MenuGroup carries its layout styles on the semantic group itself', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -497,10 +503,8 @@ test('MenuGroup renders data-menu-group on inner container', async () => {
     </Menu>,
   );
   const group = screen.getByTestId('group');
-  const inner = group.querySelector('[data-menu-group]');
-  expect(inner).toBeTruthy();
-  expect(inner).toHaveClass('rounded-2xl');
-  expect(inner).toHaveClass('shadow-md');
+  expect(group).toHaveClass('md-menu-group');
+  expect(group.querySelector('.md-menu-item')).not.toBeNull();
 });
 
 test('MenuGroup renders label outside data-menu-group container', async () => {
@@ -540,9 +544,8 @@ test('grouped MenuContent has no background and uses gap', async () => {
     </Menu>,
   );
   const content = screen.getByTestId('content');
-  expect(content).toHaveClass('gap-1');
-  expect(content).not.toHaveClass('bg-surface-container-low');
-  expect(content).not.toHaveClass('shadow-md');
+  expect(content).toHaveClass('md-menu');
+  expect(content).toHaveAttribute('data-grouped');
 });
 
 // =============================================================================
@@ -559,7 +562,8 @@ test('MenuItem contains a ripple element', async () => {
     </Menu>,
   );
   const item = screen.getByTestId('item');
-  expect(item).toHaveClass('overflow-hidden');
+  expect(item).toHaveClass('md-menu-item');
+  expect(item.querySelector('.salty-ripple')).not.toBeNull();
 });
 
 // =============================================================================
@@ -808,7 +812,7 @@ test('MenuSubTrigger supports a disabled state and supporting text', async () =>
     </Menu>,
   );
   const subTrigger = screen.getByTestId('sub-trigger');
-  expect(subTrigger).toHaveClass('opacity-38');
+  expect(subTrigger).toHaveClass('md-menu-item');
   expect(subTrigger).toHaveAttribute('data-disabled', 'true');
   expect(subTrigger.textContent).toContain('Opens more options');
 });
@@ -835,7 +839,7 @@ test('MenuSubContent is not visible when submenu is closed', async () => {
 // M3 Expressive Styling
 // =============================================================================
 
-test('menu content has rounded-2xl for M3 expressive corners', async () => {
+test('menu content uses the expressive corner token', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -844,10 +848,11 @@ test('menu content has rounded-2xl for M3 expressive corners', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('content')).toHaveClass('rounded-2xl');
+  expect(screen.getByTestId('content')).toHaveClass('md-menu');
+  expect(menuCss).toContain('border-radius: var(--md-sys-shape-corner-large)');
 });
 
-test('menu items have rounded-xl for inner corners', async () => {
+test('menu items use canonical painted-surface geometry', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -856,10 +861,11 @@ test('menu items have rounded-xl for inner corners', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('item')).toHaveClass('rounded-xl');
+  expect(screen.getByTestId('item')).toHaveClass('md-menu-item');
+  expect(menuCss).toContain('--_inner-radius: var(--md-sys-shape-corner-extra-small)');
 });
 
-test('menu items have h-12 for 48dp height', async () => {
+test('menu items have a 48dp semantic row', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -868,10 +874,11 @@ test('menu items have h-12 for 48dp height', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('item')).toHaveClass('h-12');
+  expect(screen.getByTestId('item')).toHaveClass('md-menu-item');
+  expect(menuCss).toContain('height: 48px');
 });
 
-test('menu content has p-1 for 4dp container padding', async () => {
+test('menu content has 4dp container padding', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -880,10 +887,11 @@ test('menu content has p-1 for 4dp container padding', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('content')).toHaveClass('p-1');
+  expect(screen.getByTestId('content')).toHaveClass('md-menu');
+  expect(menuCss).toContain('padding: 4px');
 });
 
-test('menu content has shadow-md for elevation', async () => {
+test('menu content uses level-3 elevation', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -892,5 +900,6 @@ test('menu content has shadow-md for elevation', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('content')).toHaveClass('shadow-md');
+  expect(screen.getByTestId('content')).toHaveClass('md-menu');
+  expect(menuCss).toContain('box-shadow: var(--md-sys-elevation-3)');
 });

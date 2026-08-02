@@ -1,6 +1,5 @@
 import './card.css';
-import type * as React from 'react';
-import { forwardRef } from 'react';
+import * as React from 'react';
 
 import { cx } from '../../lib/cx';
 import { CardRipple } from './card-ripple';
@@ -35,15 +34,22 @@ export type CardProps = React.ComponentProps<'div'> & {
   disabled?: boolean;
   /** Show a Material ripple on press. Set this whenever the card is clickable. */
   ripple?: boolean;
+  /** Controlled dragged state (level 1 elevation with a 16% state layer). */
+  dragged?: boolean;
+  /** Accessible name for the full-card action overlay. Falls back to `aria-label`. */
+  interactiveLabel?: string;
 };
 
-const Card = forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
+const Card = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
   (
     {
       className,
       variant = 'filled',
       disabled,
       ripple,
+      dragged = false,
+      interactiveLabel,
+      'aria-label': ariaLabel,
       onClick,
       onKeyDown,
       onPointerCancelCapture,
@@ -58,27 +64,6 @@ const Card = forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
   ) => {
     const isInteractive = Boolean(onClick);
     const shouldRenderRipple = ripple ?? isInteractive;
-
-    const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (isFromInteractiveDescendant(e.target, e.currentTarget)) {
-        return;
-      }
-
-      onClick?.(e);
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (isFromInteractiveDescendant(e.target, e.currentTarget)) {
-        onKeyDown?.(e);
-        return;
-      }
-
-      if (isInteractive && !disabled && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
-      }
-      onKeyDown?.(e);
-    };
 
     // Capture-phase pointer tracking lets the card know when the pointer is over
     // a nested control so surface feedback can stay quiet for child interactions.
@@ -121,44 +106,25 @@ const Card = forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
 
     const content = (
       <>
-        {shouldRenderRipple && !disabled && <CardRipple hoverOpacity={0} />}
-        {children}
+        {shouldRenderRipple && !disabled && <CardRipple pressedOpacity={0.1} />}
+        {isInteractive ? (
+          <button
+            type="button"
+            className="md-card__action"
+            data-card-action=""
+            aria-label={interactiveLabel ?? ariaLabel ?? 'Card action'}
+            disabled={disabled}
+            onClick={(event) => onClick?.(event as unknown as React.MouseEvent<HTMLDivElement>)}
+          />
+        ) : null}
+        <div className="md-card__content">{children}</div>
       </>
     );
 
-    if (isInteractive) {
-      return (
-        // biome-ignore lint/a11y/useSemanticElements: Card preserves div semantics/styling while supporting button-like behavior.
-        <div
-          ref={ref}
-          role="button"
-          tabIndex={!disabled ? 0 : undefined}
-          aria-disabled={disabled ? true : undefined}
-          onClick={!disabled ? handleClick : undefined}
-          onKeyDown={handleKeyDown}
-          onPointerOverCapture={handlePointerOverCapture}
-          onPointerOutCapture={handlePointerOutCapture}
-          onPointerDownCapture={handlePointerDownCapture}
-          onPointerUpCapture={handlePointerUpCapture}
-          onPointerCancelCapture={handlePointerCancelCapture}
-          className={cx('md-card', className)}
-          data-variant={variant}
-          data-interactive=""
-          data-ripple={shouldRenderRipple && !disabled ? '' : undefined}
-          data-disabled={disabled || undefined}
-          {...props}
-        >
-          {content}
-        </div>
-      );
-    }
-
     return (
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-      // biome-ignore lint/a11y/noStaticElementInteractions: Card capture handlers forward props and track nested interactions for ripple state.
+      // biome-ignore lint/a11y/noStaticElementInteractions: capture handlers coordinate nested surface feedback.
       <div
         ref={ref}
-        role="presentation"
         onKeyDown={onKeyDown}
         onPointerOverCapture={handlePointerOverCapture}
         onPointerOutCapture={handlePointerOutCapture}
@@ -167,8 +133,10 @@ const Card = forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
         onPointerCancelCapture={handlePointerCancelCapture}
         className={cx('md-card', className)}
         data-variant={variant}
+        data-interactive={isInteractive ? '' : undefined}
         data-ripple={shouldRenderRipple && !disabled ? '' : undefined}
         data-disabled={disabled || undefined}
+        data-dragged={dragged || undefined}
         {...props}
       >
         {content}

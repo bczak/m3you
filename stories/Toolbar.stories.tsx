@@ -96,7 +96,7 @@ function DockedIconRow(args: ComponentProps<typeof Toolbar>) {
     <Toolbar {...args}>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Download"
         selected={selectedProp('download')}
@@ -106,7 +106,7 @@ function DockedIconRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Delete"
         selected={selectedProp('delete')}
@@ -116,7 +116,7 @@ function DockedIconRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Enhance"
         selected={selectedProp('enhance')}
@@ -126,7 +126,7 @@ function DockedIconRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Share"
         selected={selectedProp('share')}
@@ -136,7 +136,7 @@ function DockedIconRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Save"
         selected={selectedProp('save')}
@@ -161,7 +161,7 @@ function FloatingFormatRow(args: ComponentProps<typeof Toolbar>) {
     <Toolbar {...args}>
       <IconButton
         variant="filled"
-        size="xs"
+        size="sm"
         morph
         aria-label="Bold"
         selected={selectedProp('bold')}
@@ -173,7 +173,7 @@ function FloatingFormatRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Italic"
         selected={selectedProp('italic')}
@@ -185,7 +185,7 @@ function FloatingFormatRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Underline"
         selected={selectedProp('underline')}
@@ -197,7 +197,7 @@ function FloatingFormatRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Decorate"
         selected={selectedProp('decorate')}
@@ -207,7 +207,7 @@ function FloatingFormatRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="More formatting options"
         selected={selectedProp('more')}
@@ -232,7 +232,7 @@ function DockedCenterFabRow(args: ComponentProps<typeof Toolbar>) {
     <Toolbar {...args}>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Back"
         selected={selectedProp('back')}
@@ -242,7 +242,7 @@ function DockedCenterFabRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Forward"
         selected={selectedProp('forward')}
@@ -262,7 +262,7 @@ function DockedCenterFabRow(args: ComponentProps<typeof Toolbar>) {
       </FAB>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Files"
         selected={selectedProp('files')}
@@ -272,7 +272,7 @@ function DockedCenterFabRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="More options"
         selected={selectedProp('more')}
@@ -297,7 +297,7 @@ function DockedCenterWideIconRow(args: ComponentProps<typeof Toolbar>) {
     <Toolbar {...args}>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Back"
         selected={selectedProp('back')}
@@ -307,7 +307,7 @@ function DockedCenterWideIconRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Download"
         selected={selectedProp('download')}
@@ -317,7 +317,7 @@ function DockedCenterWideIconRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="filled"
-        size="xs"
+        size="sm"
         width="wide"
         morph
         aria-label="Create"
@@ -328,7 +328,7 @@ function DockedCenterWideIconRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Files"
         selected={selectedProp('files')}
@@ -338,7 +338,7 @@ function DockedCenterWideIconRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="More options"
         selected={selectedProp('more')}
@@ -364,7 +364,7 @@ function FloatingWithSideSquareActionRow(args: ComponentProps<typeof Toolbar>) {
       <Toolbar {...args}>
         <IconButton
           variant="standard"
-          size="xs"
+          size="sm"
           morph
           aria-label="Turn camera off"
           selected={selectedProp('camera')}
@@ -374,7 +374,7 @@ function FloatingWithSideSquareActionRow(args: ComponentProps<typeof Toolbar>) {
         </IconButton>
         <IconButton
           variant="standard"
-          size="xs"
+          size="sm"
           morph
           aria-label="Mute microphone"
           selected={selectedProp('microphone')}
@@ -384,7 +384,7 @@ function FloatingWithSideSquareActionRow(args: ComponentProps<typeof Toolbar>) {
         </IconButton>
         <IconButton
           variant="standard"
-          size="xs"
+          size="sm"
           morph
           aria-label="Raise hand"
           selected={selectedProp('hand')}
@@ -394,7 +394,7 @@ function FloatingWithSideSquareActionRow(args: ComponentProps<typeof Toolbar>) {
         </IconButton>
         <IconButton
           variant="standard"
-          size="xs"
+          size="sm"
           morph
           aria-label="More options"
           selected={selectedProp('more')}
@@ -484,7 +484,7 @@ function DockedSlotRow(args: ComponentProps<typeof Toolbar>) {
       leading={
         <IconButton
           variant="standard"
-          size="xs"
+          size="sm"
           morph
           aria-label="Download"
           selected={selectedProp('download')}
@@ -496,7 +496,7 @@ function DockedSlotRow(args: ComponentProps<typeof Toolbar>) {
       trailing={
         <IconButton
           variant="standard"
-          size="xs"
+          size="sm"
           morph
           aria-label="Share"
           selected={selectedProp('share')}
@@ -508,7 +508,7 @@ function DockedSlotRow(args: ComponentProps<typeof Toolbar>) {
     >
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Delete"
         selected={selectedProp('delete')}
@@ -597,7 +597,7 @@ function DockedMixedButtonRow(args: ComponentProps<typeof Toolbar>) {
       </SplitButton>
       <IconButton
         variant="outlined"
-        size="xs"
+        size="sm"
         morph
         aria-label="More options"
         selected={selectedProp('more')}
@@ -621,7 +621,7 @@ function VerticalToolbarRow(args: ComponentProps<typeof Toolbar>) {
     <Toolbar {...args}>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Download"
         selected={selectedProp('download')}
@@ -631,7 +631,7 @@ function VerticalToolbarRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Delete"
         selected={selectedProp('delete')}
@@ -641,7 +641,7 @@ function VerticalToolbarRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="Share"
         selected={selectedProp('share')}
@@ -651,7 +651,7 @@ function VerticalToolbarRow(args: ComponentProps<typeof Toolbar>) {
       </IconButton>
       <IconButton
         variant="standard"
-        size="xs"
+        size="sm"
         morph
         aria-label="More options"
         selected={selectedProp('more')}

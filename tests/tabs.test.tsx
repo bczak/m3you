@@ -134,7 +134,7 @@ test('primary tab with icon, label and badge shows icon, badge-on-icon and label
   expect(container.querySelector('.md-tab__label')).not.toBeNull();
 });
 
-test('secondary tab with icon and label hides the icon but shows the label', async () => {
+test('secondary tab supports the expressive icon-and-label row configuration', async () => {
   const { container } = render(
     <Tabs variant="secondary">
       <Tab value="a" icon={<span>i</span>}>
@@ -144,8 +144,8 @@ test('secondary tab with icon and label hides the icon but shows the label', asy
   );
 
   const tab = screen.getByRole('tab');
-  expect(tab).toHaveAttribute('data-has-icon', 'false');
-  expect(container.querySelector('.md-tab__icon')).toBeNull();
+  expect(tab).toHaveAttribute('data-has-icon', 'true');
+  expect(container.querySelector('.md-tab__icon')).not.toBeNull();
   expect(container.querySelector('.md-tab__label')).not.toBeNull();
 });
 

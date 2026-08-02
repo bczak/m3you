@@ -1,6 +1,6 @@
 /* =============================================================================
    NavigationBar — M3 Spec
-   Container: height 80px (vertical) / 64px (horizontal), bg surface
+   Container: 64px cross-axis, bg surface-container
    Active indicator: 56x32 secondary-container, corner-full
    Icons: 24px, Label: title-small, Active weight bold (700)
    Inactive: on-surface-variant
@@ -19,24 +19,24 @@
   width: 100%;
   align-items: stretch;
   justify-content: flex-start;
-  background-color: var(--md-sys-color-surface);
+  background-color: var(--md-sys-color-surface-container);
 
   &[data-orientation="vertical"] {
     /* min-height (not a fixed height) so the device safe area extends the bar
        downward instead of being absorbed into the 80px content box under
        box-sizing: border-box (which would squish/clip the labels). */
-    min-height: 80px;
-    padding-block: 6px;
+    min-height: 64px;
+    padding-block: 4px;
     /* Reserve the bottom safe area (e.g. iOS home indicator) below the items.
        Requires viewport-fit=cover on the host page for env() to be non-zero. */
-    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
   }
 
   &[data-orientation="horizontal"] {
     min-height: 64px;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 20px;
     padding-block: 12px;
     padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
@@ -63,6 +63,7 @@
   &:focus-visible {
     outline: 2px solid var(--md-sys-color-primary);
     outline-offset: 2px;
+    border-radius: var(--md-sys-shape-corner-medium);
   }
 
   &:disabled {
@@ -78,16 +79,19 @@
   }
 
   &[data-active="true"] {
-    color: var(--md-sys-color-on-surface);
     --md-navigation-bar-state-layer-color: var(--md-sys-color-on-secondary-container);
+  }
+
+  &[data-active="true"][data-orientation="vertical"] {
+    color: var(--md-sys-color-secondary);
+  }
+
+  &[data-active="true"][data-orientation="horizontal"] {
+    color: var(--md-sys-color-on-secondary-container);
   }
 
   &[data-active="true"] svg {
     color: var(--md-sys-color-on-secondary-container);
-  }
-
-  &:not([data-active="true"]):hover {
-    color: var(--md-sys-color-on-surface);
   }
 
   &[data-orientation="vertical"] {
@@ -101,7 +105,7 @@
     height: 40px;
     flex-direction: row;
     gap: 4px;
-    padding-inline: 20px;
+    padding-inline: 16px;
     white-space: nowrap;
   }
 }
@@ -251,10 +255,15 @@
 }
 
 .md-navigation-bar-item[data-orientation="vertical"]:hover .md-navigation-bar-item__state-layer,
-.md-navigation-bar-item[data-orientation="vertical"]:focus-visible .md-navigation-bar-item__state-layer,
-.md-navigation-bar-item[data-orientation="horizontal"]:hover .md-navigation-bar-item__state-layer--horizontal,
-.md-navigation-bar-item[data-orientation="horizontal"]:focus-visible .md-navigation-bar-item__state-layer--horizontal {
+.md-navigation-bar-item[data-orientation="horizontal"]:hover .md-navigation-bar-item__state-layer--horizontal {
   opacity: var(--md-sys-state-hover-opacity);
+}
+
+.md-navigation-bar-item[data-orientation="vertical"]:focus-visible .md-navigation-bar-item__state-layer,
+.md-navigation-bar-item[data-orientation="horizontal"]:focus-visible .md-navigation-bar-item__state-layer--horizontal,
+.md-navigation-bar-item[data-orientation="vertical"]:active .md-navigation-bar-item__state-layer,
+.md-navigation-bar-item[data-orientation="horizontal"]:active .md-navigation-bar-item__state-layer--horizontal {
+  opacity: var(--md-sys-state-focus-opacity);
 }
 
 /* ── Horizontal icon ── */

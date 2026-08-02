@@ -1,12 +1,15 @@
 import './app-bar.css';
-import type * as React from 'react';
-import { forwardRef } from 'react';
+import * as React from 'react';
 
 import { cx } from '../../lib/cx';
 
 export type AppBarProps = React.ComponentProps<'header'> & {
   /** Bar height and headline treatment. `search` turns the bar itself into a search field. */
-  variant?: 'search' | 'small' | 'medium' | 'large';
+  variant?: 'search' | 'small' | 'small-image' | 'medium' | 'large';
+  /** Flat at the top of content, or Surface Container after content scrolls beneath it. */
+  elevation?: 'flat' | 'on-scroll';
+  /** Image content used by the `small-image` configuration. */
+  image?: React.ReactNode;
   /** The screen title. */
   headline?: string;
   /** Secondary line under the headline. */
@@ -25,11 +28,13 @@ export type AppBarProps = React.ComponentProps<'header'> & {
   centerAligned?: boolean;
 };
 
-const AppBar = forwardRef<HTMLElement, React.PropsWithoutRef<AppBarProps>>(
+const AppBar = React.forwardRef<HTMLElement, React.PropsWithoutRef<AppBarProps>>(
   (
     {
       className,
       variant = 'small',
+      elevation = 'flat',
+      image,
       headline,
       subtitle,
       supportingText,
@@ -48,7 +53,13 @@ const AppBar = forwardRef<HTMLElement, React.PropsWithoutRef<AppBarProps>>(
 
     if (variant === 'search') {
       return (
-        <header ref={ref} className={cx('md-app-bar', className)} data-variant={variant} {...props}>
+        <header
+          ref={ref}
+          className={cx('md-app-bar', className)}
+          data-variant={variant}
+          data-elevation={elevation}
+          {...props}
+        >
           <div className="md-app-bar__search-row">
             {leadingIcon ? (
               <div className="md-app-bar__leading" data-slot="leading">
@@ -79,14 +90,20 @@ const AppBar = forwardRef<HTMLElement, React.PropsWithoutRef<AppBarProps>>(
       </div>
     );
 
-    if (variant === 'small') {
+    if (variant === 'small' || variant === 'small-image') {
       return (
-        <header ref={ref} className={cx('md-app-bar', className)} data-variant={variant} {...props}>
+        <header
+          ref={ref}
+          className={cx('md-app-bar', className)}
+          data-variant={variant}
+          data-elevation={elevation}
+          {...props}
+        >
           <div className="md-app-bar__small-row" data-center-aligned={centerAligned || undefined}>
             <div className="md-app-bar__leading" data-slot="leading" data-empty={!leadingIcon || undefined}>
               {leadingIcon}
             </div>
-            {labelBlock}
+            {variant === 'small-image' ? <div className="md-app-bar__image">{image}</div> : labelBlock}
             <div className="md-app-bar__trailing" data-slot="actions" data-empty={!trailingIcons || undefined}>
               {trailingIcons}
             </div>
@@ -97,7 +114,13 @@ const AppBar = forwardRef<HTMLElement, React.PropsWithoutRef<AppBarProps>>(
     }
 
     return (
-      <header ref={ref} className={cx('md-app-bar', className)} data-variant={variant} {...props}>
+      <header
+        ref={ref}
+        className={cx('md-app-bar', className)}
+        data-variant={variant}
+        data-elevation={elevation}
+        {...props}
+      >
         <div className="md-app-bar__top-row">
           <div className="md-app-bar__leading" data-slot="leading" data-empty={!leadingIcon || undefined}>
             {leadingIcon}

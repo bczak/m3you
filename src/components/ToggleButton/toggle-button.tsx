@@ -1,4 +1,5 @@
-import { forwardRef, type MouseEvent, type PropsWithoutRef, useState } from 'react';
+import * as React from 'react';
+import { type MouseEvent, useState } from 'react';
 import type { ButtonProps } from '../Button/button';
 import { Button } from '../Button/button';
 
@@ -11,8 +12,8 @@ export type ToggleButtonProps = ButtonProps & {
   onSelectedChange?: (selected: boolean) => void;
 };
 
-const ToggleButton = forwardRef<HTMLButtonElement, PropsWithoutRef<ToggleButtonProps>>(
-  ({ defaultSelected = false, selected: selectedProp, onSelectedChange, onClick, ...props }, ref) => {
+const ToggleButton = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ToggleButtonProps>>(
+  ({ defaultSelected = false, selected: selectedProp, onSelectedChange, onClick, morph = true, ...props }, ref) => {
     const isControlled = selectedProp !== undefined;
     const [internalSelected, setInternalSelected] = useState(defaultSelected);
     const selected = isControlled ? selectedProp : internalSelected;
@@ -26,7 +27,7 @@ const ToggleButton = forwardRef<HTMLButtonElement, PropsWithoutRef<ToggleButtonP
       onClick?.(e);
     };
 
-    return <Button ref={ref} selected={selected} onClick={toggleSelected} {...props} />;
+    return <Button ref={ref} selected={selected} morph={morph} onClick={toggleSelected} {...props} />;
   },
 );
 ToggleButton.displayName = 'ToggleButton';

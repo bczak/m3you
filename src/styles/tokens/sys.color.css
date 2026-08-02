@@ -54,7 +54,7 @@
   --md-sys-color-surface-container: #eeedf2;
   --md-sys-color-surface-container-high: #e8e8ec;
   --md-sys-color-surface-container-highest: #e2e2e7;
-  --md-sys-color-surface-tint: #3a5f92;
+  --md-sys-color-surface-tint: var(--md-sys-color-primary);
 
   /* Outline */
   --md-sys-color-outline: #737780;

@@ -1,9 +1,9 @@
 import './list.css';
 
-import { Ripple } from 'm3-ripple';
+import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 export type ListAppearance = 'standard' | 'segmented';
 
@@ -12,6 +12,8 @@ export type ListMode = 'static' | 'single-action' | 'multi-action' | 'single-sel
 type ListBaseProps = Omit<React.ComponentProps<'ul'>, 'defaultValue' | 'onChange'> & {
   /** Expressive segmented containers are the recommended M3 appearance. */
   appearance?: ListAppearance;
+  /** Density offset applied to row heights. */
+  density?: 0 | -2 | -4;
 };
 
 export type ListNonSelectionProps = ListBaseProps & {
@@ -88,6 +90,44 @@ export type ListItemProps = Omit<React.ComponentProps<'li'>, 'children' | 'onCli
 export type ListDividerProps = Omit<React.ComponentProps<'li'>, 'children'> & {
   /** Indent the line to align with the row's text rather than its leading content. */
   inset?: boolean;
+};
+
+export type ListItemAccordionProps = Omit<React.ComponentProps<'li'>, 'children' | 'onChange'> & {
+  /** Primary line for the disclosure button. */
+  headline: React.ReactNode;
+  /** Optional line above the headline. */
+  overline?: React.ReactNode;
+  /** Optional supporting line below the headline. */
+  supportingText?: React.ReactNode;
+  /** Optional leading content. */
+  leading?: React.ReactNode;
+  /** Optional trailing content rendered before the disclosure icon. */
+  trailing?: React.ReactNode;
+  /** Disclosure panel content. */
+  children?: React.ReactNode;
+  /** Controlled expanded state. */
+  expanded?: boolean;
+  /** Initial expanded state for uncontrolled use. */
+  defaultExpanded?: boolean;
+  /** Called whenever the disclosure state is requested to change. */
+  onExpandedChange?: (expanded: boolean) => void;
+  /** Disable the disclosure button. */
+  disabled?: boolean;
+};
+
+export type ListItemSwipeSide = 'start' | 'end' | null;
+
+export type ListItemSwipeProps = Omit<React.ComponentProps<'li'>, 'onChange'> & {
+  /** Controlled side revealed behind the item, or null when closed. */
+  revealedSide?: ListItemSwipeSide;
+  /** Initial revealed side for uncontrolled use. */
+  defaultRevealedSide?: ListItemSwipeSide;
+  /** Called whenever a swipe, Escape, or action requests a new revealed side. */
+  onRevealedSideChange?: (side: ListItemSwipeSide) => void;
+  /** Action exposed by dragging toward the inline end. */
+  startAction?: React.ReactNode;
+  /** Action exposed by dragging toward the inline start. */
+  endAction?: React.ReactNode;
 };
 
 type ListContextValue = {
@@ -196,6 +236,7 @@ const List = React.forwardRef<HTMLUListElement, React.PropsWithoutRef<ListProps>
   (
     {
       appearance = 'segmented',
+      density = 0,
       mode = 'static',
       value: selectionValue,
       defaultValue: defaultSelectionValue,
@@ -358,6 +399,7 @@ const List = React.forwardRef<HTMLUListElement, React.PropsWithoutRef<ListProps>
           ref={setRootRef}
           className={cx('md-list', className)}
           data-appearance={appearance}
+          data-density={density}
           data-mode={mode}
           role={selectionMode ? 'listbox' : listProps.role}
           aria-multiselectable={isMulti || undefined}
@@ -599,4 +641,199 @@ const ListDivider = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListDi
 );
 ListDivider.displayName = 'ListDivider';
 
-export { List, ListDivider, ListItem };
+const ListItemAccordion = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemAccordionProps>>(
+  (
+    {
+      headline,
+      overline,
+      supportingText,
+      leading,
+      trailing,
+      children,
+      expanded: expandedProp,
+      defaultExpanded = false,
+      onExpandedChange,
+      disabled = false,
+      className,
+      ...props
+    },
+    ref,
+  ) => {
+    const [internalExpanded, setInternalExpanded] = React.useState(defaultExpanded);
+    const controlled = expandedProp !== undefined;
+    const expanded = controlled ? expandedProp : internalExpanded;
+    const buttonId = React.useId();
+    const panelId = React.useId();
+    const lineCount = overline && supportingText ? 3 : overline || supportingText ? 2 : 1;
+
+    const updateExpanded = () => {
+      if (disabled) return;
+      const next = !expanded;
+      if (!controlled) setInternalExpanded(next);
+      onExpandedChange?.(next);
+    };
+
+    return (
+      <li
+        {...props}
+        ref={ref}
+        className={cx('md-list-item md-list-item-accordion', className)}
+        data-lines={lineCount}
+        data-expanded={expanded || undefined}
+        data-disabled={disabled || undefined}
+      >
+        <button
+          id={buttonId}
+          type="button"
+          className="md-list-item__action md-list-item-accordion__trigger"
+          aria-expanded={expanded}
+          aria-controls={panelId}
+          disabled={disabled}
+          onClick={updateExpanded}
+        >
+          <Ripple disabled={disabled} />
+          {leading ? <span className="md-list-item__leading">{leading}</span> : null}
+          <span className="md-list-item__content">
+            {overline ? <span className="md-list-item__overline">{overline}</span> : null}
+            <span className="md-list-item__headline">{headline}</span>
+            {supportingText ? <span className="md-list-item__supporting-text">{supportingText}</span> : null}
+          </span>
+          {trailing ? <span className="md-list-item__trailing">{trailing}</span> : null}
+          <ChevronDown className="md-list-item-accordion__icon" aria-hidden="true" />
+        </button>
+        <section id={panelId} aria-labelledby={buttonId} className="md-list-item-accordion__panel" hidden={!expanded}>
+          {children}
+        </section>
+      </li>
+    );
+  },
+);
+ListItemAccordion.displayName = 'ListItemAccordion';
+
+const SWIPE_REVEAL_PX = 72;
+const SWIPE_THRESHOLD_PX = 48;
+
+function renderSwipeAction(action: React.ReactNode, side: Exclude<ListItemSwipeSide, null>, close: () => void) {
+  if (!action) return null;
+  if (React.isValidElement<React.ComponentProps<'button'>>(action) && action.type === 'button') {
+    const actionProps = action.props;
+    return React.cloneElement(action, {
+      className: cx('md-list-item-swipe__action', `md-list-item-swipe__action--${side}`, actionProps.className),
+      onClick: (event: React.MouseEvent<HTMLButtonElement>) => {
+        actionProps.onClick?.(event);
+        if (!event.defaultPrevented) close();
+      },
+    });
+  }
+  return (
+    <button
+      type="button"
+      className={cx('md-list-item-swipe__action', `md-list-item-swipe__action--${side}`)}
+      onClick={close}
+    >
+      {action}
+    </button>
+  );
+}
+
+const ListItemSwipe = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemSwipeProps>>(
+  (
+    {
+      revealedSide: revealedSideProp,
+      defaultRevealedSide = null,
+      onRevealedSideChange,
+      startAction,
+      endAction,
+      children,
+      className,
+      onKeyDown,
+      ...props
+    },
+    ref,
+  ) => {
+    const controlled = revealedSideProp !== undefined;
+    const [internalSide, setInternalSide] = React.useState<ListItemSwipeSide>(defaultRevealedSide);
+    const [dragOffset, setDragOffset] = React.useState<number | null>(null);
+    const dragRef = React.useRef<{ pointerId: number; startX: number; initialOffset: number } | null>(null);
+    const revealedSide = controlled ? revealedSideProp : internalSide;
+    const restingOffset = revealedSide === 'start' ? SWIPE_REVEAL_PX : revealedSide === 'end' ? -SWIPE_REVEAL_PX : 0;
+    const currentOffset = dragOffset ?? restingOffset;
+
+    const updateSide = React.useCallback(
+      (next: ListItemSwipeSide) => {
+        if (!controlled) setInternalSide(next);
+        onRevealedSideChange?.(next);
+      },
+      [controlled, onRevealedSideChange],
+    );
+
+    const close = React.useCallback(() => updateSide(null), [updateSide]);
+
+    const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (event.button !== 0 || (event.target as Element).closest(INTERACTIVE_SELECTOR)) return;
+      dragRef.current = { pointerId: event.pointerId, startX: event.clientX, initialOffset: restingOffset };
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    };
+
+    const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+      const drag = dragRef.current;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const next = Math.max(
+        -SWIPE_REVEAL_PX,
+        Math.min(SWIPE_REVEAL_PX, drag.initialOffset + event.clientX - drag.startX),
+      );
+      setDragOffset(next);
+    };
+
+    const finishPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+      const drag = dragRef.current;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const finalOffset = dragOffset ?? drag.initialOffset;
+      dragRef.current = null;
+      setDragOffset(null);
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      if (finalOffset >= SWIPE_THRESHOLD_PX && startAction) updateSide('start');
+      else if (finalOffset <= -SWIPE_THRESHOLD_PX && endAction) updateSide('end');
+      else updateSide(null);
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLLIElement>) => {
+      onKeyDown?.(event);
+      if (!event.defaultPrevented && event.key === 'Escape' && revealedSide !== null) {
+        event.preventDefault();
+        close();
+      }
+    };
+
+    return (
+      <li
+        {...props}
+        ref={ref}
+        className={cx('md-list-item-swipe', className)}
+        data-revealed-side={revealedSide ?? undefined}
+        data-dragging={dragOffset !== null || undefined}
+        onKeyDown={handleKeyDown}
+        style={{ ...props.style, '--md-list-swipe-offset': `${currentOffset}px` } as React.CSSProperties}
+      >
+        <div className="md-list-item-swipe__actions md-list-item-swipe__actions--start">
+          {renderSwipeAction(startAction, 'start', close)}
+        </div>
+        <div className="md-list-item-swipe__actions md-list-item-swipe__actions--end">
+          {renderSwipeAction(endAction, 'end', close)}
+        </div>
+        <div
+          className="md-list-item-swipe__surface"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={finishPointer}
+          onPointerCancel={finishPointer}
+        >
+          {children}
+        </div>
+      </li>
+    );
+  },
+);
+ListItemSwipe.displayName = 'ListItemSwipe';
+
+export { List, ListDivider, ListItem, ListItemAccordion, ListItemSwipe };

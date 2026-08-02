@@ -1,11 +1,10 @@
 import './search.css';
 import { Search, X } from 'lucide-react';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 import { IconButton } from '../IconButton/icon-button';
-import { SearchView } from './search';
+import { SearchView, type SearchViewProps } from './search';
 
 // =============================================================================
 // SearchBar
@@ -32,6 +31,10 @@ export type SearchBarProps = Omit<React.ComponentProps<'div'>, 'onChange'> & {
   defaultOpen?: boolean;
   /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
+  /** Layout mode forwarded to the expanded SearchView. */
+  viewMode?: SearchViewProps['mode'];
+  /** Surface appearance forwarded to the expanded SearchView. */
+  viewAppearance?: SearchViewProps['appearance'];
   /** Content rendered in the expandable search view */
   children?: React.ReactNode;
 };
@@ -50,6 +53,8 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
       open,
       defaultOpen,
       onOpenChange,
+      viewMode = 'docked',
+      viewAppearance = 'baseline',
       children,
       ...props
     },
@@ -99,7 +104,7 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
     };
 
     return (
-      <search ref={containerRef} className="relative">
+      <search ref={containerRef} className="md-search">
         {/* -- Search Bar (collapsed) -- */}
         {hasView ? (
           <button
@@ -155,7 +160,7 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
         {hasView && isOpen && (
           <>
             {/* Backdrop -- desktop only (docked mode click-away) */}
-            <div className="md-search-view__backdrop" onClick={handleBack} aria-hidden="true" />
+            <div className="md-search-view__backdrop" data-mode={viewMode} onClick={handleBack} aria-hidden="true" />
 
             <SearchView
               role="dialog"
@@ -165,6 +170,8 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
               onSearch={onSearch}
               onBack={handleBack}
               placeholder={placeholder}
+              mode={viewMode}
+              appearance={viewAppearance}
               className="md-search-view--expanded"
             >
               {children}

@@ -1,7 +1,6 @@
 import './snackbar.css';
 import { X } from 'lucide-react';
-import type * as React from 'react';
-import { forwardRef } from 'react';
+import * as React from 'react';
 import { Toaster as SonnerToaster } from 'sonner';
 
 import { cx } from '../../lib/cx';
@@ -27,59 +26,34 @@ export type SnackbarProps = React.ComponentProps<'output'> & {
 
 // ─── Snackbar Component ──────────────────────────────────────────────────────
 
-const Snackbar = forwardRef<HTMLOutputElement, React.PropsWithoutRef<SnackbarProps>>(
+const Snackbar = React.forwardRef<HTMLOutputElement, React.PropsWithoutRef<SnackbarProps>>(
   ({ className, layout = 'singleLine', message, actionLabel, onAction, closable, onClose, ...props }, ref) => {
-    const isLongerAction = layout === 'longerAction';
+    const hasActions = Boolean(actionLabel || closable);
 
     return (
       <output ref={ref} aria-live="polite" className={cx('md-snackbar', className)} data-layout={layout} {...props}>
-        {isLongerAction ? (
-          <>
-            <span className="md-snackbar__message">{message}</span>
-            <div className="md-snackbar__actions">
-              {actionLabel && (
-                <Button variant="text" size="xs" shape="round" morph onClick={onAction} className="md-snackbar__action">
-                  {actionLabel}
-                </Button>
-              )}
-              {closable && (
-                <IconButton
-                  variant="standard"
-                  size="xs"
-                  shape="round"
-                  aria-label="Dismiss"
-                  onClick={onClose}
-                  className="md-snackbar__close"
-                >
-                  <X aria-hidden="true" />
-                </IconButton>
-              )}
-            </div>
-          </>
-        ) : (
-          <>
-            <span className="md-snackbar__message">{message}</span>
-            <div className="md-snackbar__actions">
-              {actionLabel && (
-                <Button variant="text" size="xs" shape="round" morph onClick={onAction} className="md-snackbar__action">
-                  {actionLabel}
-                </Button>
-              )}
-              {closable && (
-                <IconButton
-                  variant="standard"
-                  size="xs"
-                  shape="round"
-                  aria-label="Dismiss"
-                  onClick={onClose}
-                  className="md-snackbar__close"
-                >
-                  <X aria-hidden="true" />
-                </IconButton>
-              )}
-            </div>
-          </>
-        )}
+        <span className="md-snackbar__message">{message}</span>
+        {hasActions ? (
+          <div className="md-snackbar__actions">
+            {actionLabel ? (
+              <Button variant="text" size="sm" shape="round" morph onClick={onAction} className="md-snackbar__action">
+                {actionLabel}
+              </Button>
+            ) : null}
+            {closable ? (
+              <IconButton
+                variant="standard"
+                size="sm"
+                shape="round"
+                aria-label="Dismiss"
+                onClick={onClose}
+                className="md-snackbar__close"
+              >
+                <X aria-hidden="true" />
+              </IconButton>
+            ) : null}
+          </div>
+        ) : null}
       </output>
     );
   },
@@ -93,31 +67,32 @@ export type SnackbarHostProps = Omit<React.ComponentProps<typeof SonnerToaster>,
   position?: React.ComponentProps<typeof SonnerToaster>['position'];
 };
 
-const SnackbarHost = forwardRef<React.ComponentRef<typeof SonnerToaster>, React.PropsWithoutRef<SnackbarHostProps>>(
-  ({ position = 'bottom-center', ...props }, ref) => {
-    return (
-      <SonnerToaster
-        ref={ref}
-        position={position}
-        offset={16}
-        gap={8}
-        visibleToasts={1}
-        toastOptions={{
-          unstyled: true,
-          style: {
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            transitionProperty: 'opacity',
-            transitionDuration: '150ms',
-            transitionTimingFunction: 'ease-out',
-          },
-        }}
-        {...props}
-      />
-    );
-  },
-);
+const SnackbarHost = React.forwardRef<
+  React.ComponentRef<typeof SonnerToaster>,
+  React.PropsWithoutRef<SnackbarHostProps>
+>(({ position = 'bottom-center', ...props }, ref) => {
+  return (
+    <SonnerToaster
+      ref={ref}
+      position={position}
+      offset={16}
+      gap={8}
+      visibleToasts={1}
+      toastOptions={{
+        unstyled: true,
+        style: {
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          transitionProperty: 'opacity',
+          transitionDuration: 'var(--md-sys-motion-duration-short2)',
+          transitionTimingFunction: 'var(--md-sys-motion-easing-standard-decelerate)',
+        },
+      }}
+      {...props}
+    />
+  );
+});
 SnackbarHost.displayName = 'SnackbarHost';
 
 export { Snackbar, SnackbarHost };

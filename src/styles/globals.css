@@ -12,6 +12,19 @@
 /* External */
 @import "m3-ripple/ripple.css";
 
+/* Let light-dark() react to system preference and the nearest explicit mode. */
+:root {
+  color-scheme: light dark;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
 /* =============================================================================
    Mobile tap highlight — rely on m3 state layers + ripple instead of the
    native iOS/Android Chrome blue flash.
@@ -281,33 +294,5 @@
 }
 
 [data-slot="bottom-sheet-content"][data-swiping] {
-  transition: none;
-}
-
-/* =============================================================================
-   Side Sheet — CSS variable-based transforms for Base UI Drawer
-   ============================================================================= */
-
-[data-slot="side-sheet-content"][data-swipe-direction="right"] {
-  transform: translateX(var(--drawer-swipe-movement-x, 0px));
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
-}
-
-[data-slot="side-sheet-content"][data-swipe-direction="right"][data-starting-style],
-[data-slot="side-sheet-content"][data-swipe-direction="right"][data-ending-style] {
-  transform: translateX(100%);
-}
-
-[data-slot="side-sheet-content"][data-swipe-direction="left"] {
-  transform: translateX(var(--drawer-swipe-movement-x, 0px));
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
-}
-
-[data-slot="side-sheet-content"][data-swipe-direction="left"][data-starting-style],
-[data-slot="side-sheet-content"][data-swipe-direction="left"][data-ending-style] {
-  transform: translateX(-100%);
-}
-
-[data-slot="side-sheet-content"][data-swiping] {
   transition: none;
 }

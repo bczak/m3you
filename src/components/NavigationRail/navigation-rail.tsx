@@ -1,8 +1,8 @@
 import './navigation-rail.css';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-
+import { useContext } from 'react';
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 /* =============================================================================
    NavigationRail - Container component (sidebar)
@@ -42,7 +42,7 @@ interface NavigationRailContextValue {
 const NavigationRailContext = React.createContext<NavigationRailContextValue | null>(null);
 
 const useNavigationRail = () => {
-  const context = React.useContext(NavigationRailContext);
+  const context = useContext(NavigationRailContext);
   if (!context) {
     throw new Error('NavigationRailItem must be used within a NavigationRail');
   }
@@ -90,10 +90,10 @@ const NavigationRail = React.forwardRef<HTMLElement, React.PropsWithoutRef<Navig
         <nav
           ref={ref}
           aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
-          data-state={state}
+          data-state={resolvedState}
           data-modality={modality}
           data-position={position}
-          className={cx('md-navigation-rail', state === 'expanded' ? 'w-72' : 'w-20', position, className)}
+          className={cx('md-navigation-rail', className)}
           {...props}
         >
           {/* Header section: Menu button */}
@@ -182,12 +182,7 @@ const NavigationRailItem = React.forwardRef<HTMLButtonElement, React.PropsWithou
         disabled={disabled}
         data-active={isActive ? 'true' : undefined}
         data-state={state}
-        className={cx(
-          'md-navigation-rail-item focus-visible:ring-2 focus-visible:ring-ring',
-          isActive ? 'text-secondary' : 'text-on-surface-variant',
-          state === 'expanded' ? 'flex-row' : 'flex-col',
-          className,
-        )}
+        className={cx('md-navigation-rail-item', className)}
         onClick={selectRailItem}
         onKeyDown={onKeyDown}
         {...props}
@@ -199,9 +194,18 @@ const NavigationRailItem = React.forwardRef<HTMLButtonElement, React.PropsWithou
           <span className="md-navigation-rail-item__content">
             <span className="md-navigation-rail-item__icon">
               <NavigationRailItemIcon icon={icon} activeIcon={activeIcon} isActive={isActive} />
-              {badge && <span className="md-navigation-rail-item__badge">{badge}</span>}
+              {badge && state === 'collapsed' ? (
+                <span className="md-navigation-rail-item__badge" data-placement="overlay">
+                  {badge}
+                </span>
+              ) : null}
             </span>
             <span className="md-navigation-rail-item__label">{label}</span>
+            {badge && state === 'expanded' ? (
+              <span className="md-navigation-rail-item__badge" data-placement="inline">
+                {badge}
+              </span>
+            ) : null}
           </span>
         </span>
       </button>

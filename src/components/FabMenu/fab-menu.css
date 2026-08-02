@@ -19,7 +19,7 @@
   position: fixed;
   inset: 0;
   cursor: default;
-  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 40%, transparent);
+  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
 
   &[data-state="open"] {
     opacity: 1;
@@ -51,11 +51,12 @@
   transition:
     color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    border-radius var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial),
+    border-radius var(--md-sys-motion-duration-spring-default-spatial)
+    var(--md-sys-motion-easing-spring-default-spatial),
     box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial),
-    padding var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial),
-    gap var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial);
+    width var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial),
+    padding var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial),
+    gap var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial);
 }
 
 .md-button.md-extended-fab.md-fab-menu-trigger[data-menu-state="open"] {
@@ -67,10 +68,18 @@
 
 /* ── Content ── */
 .md-fab-menu__content {
+  position: absolute;
+  z-index: 10;
+  inset-inline-end: 0;
+  inset-block-end: calc(100% + 8px);
   display: flex;
   flex-direction: column-reverse;
   align-items: flex-end;
   gap: 4px;
+
+  &[data-state="closed"] {
+    pointer-events: none;
+  }
 }
 
 /* ── Menu Item enter/exit ──
@@ -88,7 +97,7 @@
       opacity var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-emphasized-decelerate),
       color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
       background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-      border-radius var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-fast-spatial),
+      border-radius var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-fast-spatial),
       box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
   }
 
@@ -102,4 +111,48 @@
       scale var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-emphasized-accelerate),
       opacity var(--md-sys-motion-duration-extra-short2) var(--md-sys-motion-easing-emphasized-accelerate);
   }
+}
+
+.md-button.md-fab-menu-item[data-fab-color="primary"] {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.md-button.md-fab-menu-item[data-fab-color="secondary"] {
+  background-color: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
+}
+
+.md-button.md-fab-menu-item[data-fab-color="tertiary"] {
+  background-color: var(--md-sys-color-tertiary);
+  color: var(--md-sys-color-on-tertiary);
+}
+
+.md-button.md-fab-menu-item[data-fab-color="primary-container"] {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.md-button.md-fab-menu-item[data-fab-color="secondary-container"] {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.md-button.md-fab-menu-item[data-fab-color="tertiary-container"] {
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+
+.md-button.md-fab-menu-item:disabled[data-fab-color] {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+    transparent
+  );
+  color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
+  box-shadow: none;
 }

@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
-import { Slider } from '../src/components/ui/slider';
+import { Slider } from '../src/components/Slider/slider';
 
 afterEach(() => {
   cleanup();
@@ -56,34 +56,34 @@ test('forwards ref correctly', async () => {
 });
 
 // Size variants — container heights sized to fit handle
-test('applies xs size class to container', async () => {
+test('applies xs size data to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="xs" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-12');
+  expect(wrapper).toHaveAttribute('data-size', 'xs');
 });
 
 test('applies sm size class to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="sm" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-12');
+  expect(wrapper).toHaveAttribute('data-size', 'sm');
 });
 
 test('applies md size class to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="md" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-14');
+  expect(wrapper).toHaveAttribute('data-size', 'md');
 });
 
 test('applies lg size class to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="lg" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-18');
+  expect(wrapper).toHaveAttribute('data-size', 'lg');
 });
 
 test('applies xl size class to container', async () => {
   const { container } = render(<Slider aria-label="Volume" size="xl" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-28');
+  expect(wrapper).toHaveAttribute('data-size', 'xl');
 });
 
 // Custom className
@@ -97,15 +97,15 @@ test('applies custom className', async () => {
 test('applies horizontal orientation by default', async () => {
   const { container } = render(<Slider aria-label="Volume" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('w-full');
-  expect(wrapper).toHaveClass('items-center');
+  expect(wrapper).toHaveClass('md-slider');
+  expect(wrapper).toHaveAttribute('data-orientation', 'horizontal');
 });
 
 test('applies vertical orientation classes', async () => {
   const { container } = render(<Slider aria-label="Volume" orientation="vertical" />);
   const wrapper = container.firstChild as HTMLElement;
-  expect(wrapper).toHaveClass('h-full');
-  expect(wrapper).toHaveClass('flex-col');
+  expect(wrapper).toHaveClass('md-slider');
+  expect(wrapper).toHaveAttribute('data-orientation', 'vertical');
 });
 
 test('sets aria-orientation for vertical slider', async () => {
@@ -166,41 +166,43 @@ test('controlled change fires onValueChange without mutating internal state', as
 test('pointer down/up toggles the dragging state', async () => {
   const { container } = render(<Slider aria-label="Volume" />);
   const wrapper = container.firstChild as HTMLElement;
+  const handle = container.querySelector('.md-slider__handle') as HTMLElement;
 
-  fireEvent.pointerDown(wrapper);
+  fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientX: 0, clientY: 0 });
   expect(wrapper).toHaveAttribute('data-dragging', 'true');
 
-  fireEvent.pointerUp(wrapper);
+  fireEvent.pointerUp(handle, { pointerId: 1, clientX: 0, clientY: 0 });
   expect(wrapper).not.toHaveAttribute('data-dragging');
 });
 
-test('pointer leave ends the dragging state', async () => {
+test('pointer cancel ends the dragging state', async () => {
   const { container } = render(<Slider aria-label="Volume" />);
   const wrapper = container.firstChild as HTMLElement;
+  const handle = container.querySelector('.md-slider__handle') as HTMLElement;
 
-  fireEvent.pointerDown(wrapper);
+  fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientX: 0, clientY: 0 });
   expect(wrapper).toHaveAttribute('data-dragging', 'true');
 
-  fireEvent.pointerLeave(wrapper);
+  fireEvent.pointerCancel(handle, { pointerId: 1, clientX: 0, clientY: 0 });
   expect(wrapper).not.toHaveAttribute('data-dragging');
 });
 
 // Tooltip — only while dragging
 test('shows the tooltip while dragging when showTooltip is enabled', async () => {
   const { container } = render(<Slider aria-label="Volume" showTooltip value={25} />);
-  const wrapper = container.firstChild as HTMLElement;
+  const handle = container.querySelector('.md-slider__handle') as HTMLElement;
 
   expect(container.querySelector('.md-slider__tooltip')).toBeNull();
-  fireEvent.pointerDown(wrapper);
+  fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientX: 0, clientY: 0 });
   expect(container.querySelector('.md-slider__tooltip')).not.toBeNull();
   expect(container.querySelector('.md-slider__tooltip')?.textContent).toBe('25');
 });
 
 test('formats the tooltip value with formatTooltip', async () => {
   const { container } = render(<Slider aria-label="Volume" showTooltip value={25} formatTooltip={(v) => `${v}%`} />);
-  const wrapper = container.firstChild as HTMLElement;
+  const handle = container.querySelector('.md-slider__handle') as HTMLElement;
 
-  fireEvent.pointerDown(wrapper);
+  fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientX: 0, clientY: 0 });
   expect(container.querySelector('.md-slider__tooltip')?.textContent).toBe('25%');
 });
 
@@ -239,5 +241,5 @@ test('vertical orientation applies vertical track and handle styling', async () 
   expect(track.style.width).not.toBe('');
 
   const handle = container.querySelector('.md-slider__handle') as HTMLElement;
-  expect(handle.style.bottom).toBe('40%');
+  expect(handle.style.bottom).toBe('50%');
 });

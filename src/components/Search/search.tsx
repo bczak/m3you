@@ -24,6 +24,8 @@ export type SearchViewProps = Omit<React.ComponentProps<'div'>, 'onChange'> & {
   onBack?: () => void;
   /** Display mode: fullScreen (mobile) or docked (desktop panel) */
   mode?: 'fullScreen' | 'docked';
+  /** Surface treatment. Expressive separates the query surface from results. */
+  appearance?: 'baseline' | 'expressive';
   /** Whether to auto-focus the input on mount */
   autoFocus?: boolean;
   /** Content rendered in the search view body (suggestions, results, etc.) */
@@ -41,6 +43,7 @@ const SearchView = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<Search
       onSearch,
       onBack,
       mode = 'docked',
+      appearance = 'baseline',
       autoFocus = true,
       children,
       role,
@@ -85,11 +88,12 @@ const SearchView = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<Search
         role={role ?? 'search'}
         aria-label="Search"
         data-mode={mode}
+        data-appearance={appearance}
         className={cx('md-search-view', className)}
         {...props}
       >
         {/* Header */}
-        <div className="md-search-view__header">
+        <div className="md-search-view__header" data-search-surface="query">
           <IconButton variant="standard" size="sm" onClick={onBack} aria-label="Close search">
             <ArrowLeft />
           </IconButton>
@@ -116,7 +120,9 @@ const SearchView = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<Search
         <hr className="md-search-view__divider" />
 
         {/* Content */}
-        <div className="md-search-view__content">{children}</div>
+        <div className="md-search-view__content" data-search-surface="results">
+          {children}
+        </div>
       </div>
     );
   },

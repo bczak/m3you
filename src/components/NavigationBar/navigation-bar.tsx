@@ -1,5 +1,6 @@
 import './navigation-bar.css';
 import * as React from 'react';
+import { useContext } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -25,7 +26,7 @@ interface NavigationBarContextValue {
 const NavigationBarContext = React.createContext<NavigationBarContextValue | null>(null);
 
 const useNavigationBar = () => {
-  const context = React.useContext(NavigationBarContext);
+  const context = useContext(NavigationBarContext);
   if (!context) {
     throw new Error('NavigationBarItem must be used within a NavigationBar');
   }
@@ -44,7 +45,7 @@ const NavigationBar = React.forwardRef<HTMLElement, React.PropsWithoutRef<Naviga
           ref={ref}
           aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
           data-orientation={orientation}
-          className={cx('md-navigation-bar fixed bottom-0 flex h-20', className)}
+          className={cx('md-navigation-bar', className)}
           {...props}
         >
           {children}
@@ -138,12 +139,7 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, React.PropsWithout
         disabled={disabled}
         data-active={isActive ? 'true' : undefined}
         data-orientation={orientation}
-        className={cx(
-          'md-navigation-bar-item flex items-center focus-visible:ring-2 focus-visible:ring-ring',
-          orientation === 'vertical' ? 'flex-col' : 'flex-row',
-          isActive && 'text-primary',
-          className,
-        )}
+        className={cx('md-navigation-bar-item', className)}
         onClick={selectNavigationItem}
         onKeyDown={onKeyDown}
         {...props}
@@ -165,10 +161,7 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, React.PropsWithout
               </span>
             </span>
             {/* Label */}
-            <span
-              className={cx('md-navigation-bar-item__label', showLabel ? 'opacity-100' : 'opacity-0')}
-              data-hidden={!showLabel ? 'true' : undefined}
-            >
+            <span className="md-navigation-bar-item__label" data-hidden={!showLabel ? 'true' : undefined}>
               {label}
             </span>
           </>
@@ -187,10 +180,7 @@ const NavigationBarItem = React.forwardRef<HTMLButtonElement, React.PropsWithout
               {badge && <span className="md-navigation-bar-item__badge--horizontal">{badge}</span>}
             </span>
             {/* Label */}
-            <span
-              className={cx('md-navigation-bar-item__label--horizontal', showLabel ? 'opacity-100' : 'opacity-0')}
-              data-hidden={!showLabel ? 'true' : undefined}
-            >
+            <span className="md-navigation-bar-item__label--horizontal" data-hidden={!showLabel ? 'true' : undefined}>
               {label}
             </span>
           </>

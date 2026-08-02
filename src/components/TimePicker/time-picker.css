@@ -27,15 +27,21 @@
 
 /* ── Time box (hour/minute selector button) ── */
 .md-time-picker__time-box {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   display: flex;
   min-width: 96px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  border-radius: var(--md-sys-shape-corner-large);
+  border-radius: var(--md-sys-shape-corner-medium);
   border: 2px solid transparent;
-  font-weight: 400;
-  font-size: 45px;
+  font-family: var(--md-sys-typescale-display-large-font);
+  font-weight: var(--md-sys-typescale-display-large-weight);
+  font-size: 57px;
+  line-height: 64px;
+  letter-spacing: var(--md-sys-typescale-display-large-tracking);
   transition:
     background-color 150ms,
     border-color 150ms,
@@ -50,7 +56,6 @@
   }
 
   &[data-selected="true"] {
-    border-color: var(--md-sys-color-primary);
     background-color: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-on-primary-container);
   }
@@ -58,11 +63,16 @@
   &[data-selected="false"] {
     border-color: transparent;
     background-color: var(--md-sys-color-surface-container-highest);
-    color: var(--md-sys-color-on-background);
+    color: var(--md-sys-color-on-surface);
 
     &:hover {
       background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
   }
 }
 
@@ -72,15 +82,31 @@
   text-align: center;
   caret-color: var(--md-sys-color-primary);
   outline: none;
+  border-width: 1px;
+  font-family: var(--md-sys-typescale-display-medium-font);
+  font-size: 45px;
+  line-height: 52px;
+  font-weight: var(--md-sys-typescale-display-medium-weight);
+  letter-spacing: var(--md-sys-typescale-display-medium-tracking);
   /* Inherits from .md-time-picker__time-box */
+
+  &[data-selected="true"] {
+    border: 3px solid var(--md-sys-color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
 }
 
 /* ── Time separator colon ── */
 .md-time-picker__colon {
-  font-weight: 400;
-  font-size: 45px;
-  line-height: 1;
-  color: var(--md-sys-color-on-background);
+  font-family: var(--md-sys-typescale-display-large-font);
+  font-weight: var(--md-sys-typescale-display-large-weight);
+  font-size: 57px;
+  line-height: 64px;
+  color: var(--md-sys-color-on-surface);
 }
 
 .md-time-picker__colon[data-offset="true"] {
@@ -89,10 +115,12 @@
 
 /* ── Input field label (below input) ── */
 .md-time-picker__field-label {
-  font-weight: 500;
+  font-family: var(--md-sys-typescale-body-small-font);
+  font-weight: var(--md-sys-typescale-body-small-weight);
   font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
   color: var(--md-sys-color-on-surface-variant);
-  letter-spacing: 0.1px;
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
 }
 
 .md-time-picker__field-group {
@@ -107,6 +135,7 @@
   overflow: hidden;
   border-radius: var(--md-sys-shape-corner-small);
   border: 1px solid var(--md-sys-color-outline);
+  box-sizing: border-box;
 }
 
 .md-time-picker__period[data-orientation="vertical"] {
@@ -151,10 +180,14 @@
   align-items: center;
   justify-content: center;
   border: none;
+  margin: 0;
+  padding: 0;
   background: transparent;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.1px;
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
   transition:
     background-color 150ms,
     color 150ms;
@@ -162,14 +195,27 @@
   &[data-selected="true"] {
     background-color: var(--md-sys-color-tertiary-container);
     color: var(--md-sys-color-on-tertiary-container);
+
+    &:hover {
+      background-color: color-mix(
+        in srgb,
+        var(--md-sys-color-tertiary-container),
+        var(--md-sys-color-on-tertiary-container) calc(var(--md-sys-state-hover-opacity) * 100%)
+      );
+    }
   }
 
   &[data-selected="false"] {
     color: var(--md-sys-color-on-surface-variant);
 
     &:hover {
-      background-color: color-mix(in srgb, var(--md-sys-color-on-background) 4%, transparent);
+      background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: -3px;
   }
 }
 
@@ -199,7 +245,11 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-weight: 400;
+  font-family: var(--md-sys-typescale-body-large-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
   transition:
     background-color 150ms,
     color 150ms;
@@ -210,7 +260,7 @@
   }
 
   &[data-selected="false"] {
-    color: var(--md-sys-color-on-background);
+    color: var(--md-sys-color-on-surface);
 
     &:hover {
       background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
@@ -218,11 +268,13 @@
   }
 
   &[data-inner="true"] {
-    font-size: 13px;
+    font-family: var(--md-sys-typescale-label-medium-font);
+    font-size: var(--md-sys-typescale-label-medium-size);
+    line-height: var(--md-sys-typescale-label-medium-line-height);
   }
 
   &[data-inner="false"] {
-    font-size: 15px;
+    font-size: var(--md-sys-typescale-body-large-size);
   }
 }
 
@@ -260,11 +312,13 @@
 
 /* ── Header text ── */
 .md-time-picker__header-text {
-  font-weight: 500;
+  font-family: var(--md-sys-typescale-body-small-font);
+  font-weight: var(--md-sys-typescale-body-small-weight);
   font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
   color: var(--md-sys-color-on-surface-variant);
   text-transform: uppercase;
-  letter-spacing: 0.1px;
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
 }
 
 /* ── Footer ── */
@@ -283,6 +337,8 @@
   align-items: center;
   justify-content: center;
   border: none;
+  margin: 0;
+  padding: 0;
   border-radius: 50%;
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
@@ -297,6 +353,11 @@
     width: 24px;
     height: 24px;
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
 }
 
 /* ── Footer action buttons ── */
@@ -308,6 +369,7 @@
 .md-time-picker__action-btn {
   position: relative;
   border: none;
+  margin: 0;
   border-radius: 16px;
   background: transparent;
   padding: 6px 12px;
@@ -320,20 +382,34 @@
   &:hover {
     background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
 }
 
 /* ── Root container ── */
 .md-time-picker {
   display: flex;
-  width: auto;
+  width: 328px;
+  min-height: 520px;
+  box-sizing: border-box;
   flex-direction: column;
   gap: 20px;
+  padding: 24px;
+  border-radius: 28px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  box-shadow: var(--md-sys-elevation-3);
 }
 
 .md-time-picker[data-layout="landscape"] {
-  min-width: 520px;
+  width: 572px;
+  height: 384px;
+  min-height: 384px;
 }
 
 .md-time-picker[data-layout="portrait"] {
-  min-width: 328px;
+  width: 328px;
 }
