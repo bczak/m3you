@@ -82,31 +82,57 @@ const results: Measurement[] = [];
 
 for (const [i, story] of stories.entries()) {
   const url = `${origin}/iframe.html?id=${encodeURIComponent(story.id)}&viewMode=story`;
-  try {
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 20_000 });
-    // Stories mount asynchronously; wait for any m3you root element.
-    await page.waitForSelector('[class*="md-"]', { timeout: 10_000 });
-  } catch {
+
+  // A story that misses the deadline once is usually just slow under the load of
+  // a full sweep, not broken — a second attempt separates the two, so a silently
+  // dropped story never reads as "component renders nothing".
+  let mounted = false;
+  for (let attempt = 0; attempt < 2 && !mounted; attempt++) {
+    try {
+      await page.goto(url, { waitUntil: 'networkidle', timeout: 20_000 });
+      // Stories mount asynchronously; wait for any m3you root element.
+      // `state: 'attached'` matters — the default waits for *visibility*, and a
+      // zero-size component is exactly what this audit needs to record, not skip.
+      // Divider's full-width variant and List's empty state both render a real
+      // element with no box; under the default they timed out and were reported
+      // as "nothing rendered" despite being in the DOM the whole time.
+      await page.waitForSelector('[class*="md-"]', { state: 'attached', timeout: 10_000 });
+      mounted = true;
+    } catch {
+      /* retry once, then report below */
+    }
+  }
+  if (!mounted) {
     console.log(`  ! ${story.id}: nothing rendered`);
     continue;
   }
 
   const elements = await page.evaluate(() => {
-    // The outermost m3you elements — nested parts (ripples, labels) add noise.
-    const roots = [...document.querySelectorAll<HTMLElement>('[class*="md-"]')].filter(
-      (element) => !element.parentElement?.closest('[class*="md-"]'),
+    // Every component root, not just the outermost one. Restricting to outermost
+    // hid every nested component from the audit — a Badge inside a BadgeAnchor,
+    // a Tab inside Tabs, a list item inside a List were all invisible.
+    // A root is an element carrying a bare `md-{component}` class; BEM sub-parts
+    // (`md-{component}__{part}`) are the noise we still want to skip.
+    const isRoot = (c: string) => /^md-[a-z0-9-]+$/.test(c) && !c.includes('__');
+    const roots = [...document.querySelectorAll<HTMLElement>('[class*="md-"]')].filter((element) =>
+      element.className.toString().split(/\s+/).some(isRoot),
     );
 
-    return roots.slice(0, 8).map((element) => {
+    // Stories repeat the same component many times over; the audit cares about
+    // the set of distinct geometries, so collapse exact duplicates and count them.
+    const seen = new Map<string, ReturnType<typeof measure>>();
+
+    function measure(element: HTMLElement) {
       const cs = getComputedStyle(element);
       const rect = element.getBoundingClientRect();
-      const cls = element.className.toString();
+      const classes = element.className.toString().split(/\s+/);
       return {
-        selector: cls.split(/\s+/).find((c) => c.startsWith('md-')) ?? cls.slice(0, 30),
+        selector: classes.find(isRoot) ?? classes[0],
         variant: element.dataset.variant,
         size: element.dataset.size,
         shape: element.dataset.shape,
         selected: element.dataset.selected,
+        count: 1,
         width: Math.round(rect.width * 100) / 100,
         height: Math.round(rect.height * 100) / 100,
         borderRadius: cs.borderRadius,
@@ -120,7 +146,18 @@ for (const [i, story] of stories.entries()) {
         color: cs.color,
         border: cs.border,
       };
-    });
+    }
+
+    for (const element of roots) {
+      const row = measure(element);
+      const { count: _count, ...identity } = row;
+      const key = JSON.stringify(identity);
+      const existing = seen.get(key);
+      if (existing) existing.count += 1;
+      else seen.set(key, row);
+    }
+
+    return [...seen.values()].slice(0, 60);
   });
 
   results.push({ story: story.id, title: story.title, name: story.name, elements });
