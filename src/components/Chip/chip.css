@@ -13,7 +13,7 @@
   align-items: center;
   border-radius: var(--md-sys-shape-corner-small);
   font-family: var(--md-sys-typescale-label-large-font);
-  font-size: 12px;
+  font-size: var(--md-sys-typescale-label-large-size);
   line-height: var(--md-sys-typescale-label-large-line-height);
   font-weight: var(--md-sys-typescale-label-large-weight);
   letter-spacing: var(--md-sys-typescale-label-large-tracking);

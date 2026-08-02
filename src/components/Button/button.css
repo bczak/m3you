@@ -67,6 +67,7 @@
     --_height: 32px;
     height: var(--_height);
     padding-inline: 12px;
+    gap: 4px;
     & svg {
       width: 20px;
       height: 20px;

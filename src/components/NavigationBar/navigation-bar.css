@@ -194,10 +194,11 @@
 /* ── Label ── */
 .md-navigation-bar-item__label {
   z-index: 10;
-  font-family: var(--md-sys-typescale-title-small-font);
-  font-size: var(--md-sys-typescale-title-small-size);
-  line-height: var(--md-sys-typescale-title-small-line-height);
-  font-weight: var(--md-sys-typescale-title-small-weight);
+  font-family: var(--md-sys-typescale-label-medium-font);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  line-height: var(--md-sys-typescale-label-medium-line-height);
+  font-weight: var(--md-sys-typescale-label-medium-weight);
+  letter-spacing: var(--md-sys-typescale-label-medium-tracking);
   transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
   &[data-hidden="true"] {
@@ -208,10 +209,11 @@
 
 .md-navigation-bar-item__label--horizontal {
   z-index: 10;
-  font-family: var(--md-sys-typescale-title-small-font);
-  font-size: var(--md-sys-typescale-title-small-size);
-  line-height: var(--md-sys-typescale-title-small-line-height);
-  font-weight: var(--md-sys-typescale-title-small-weight);
+  font-family: var(--md-sys-typescale-label-medium-font);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  line-height: var(--md-sys-typescale-label-medium-line-height);
+  font-weight: var(--md-sys-typescale-label-medium-weight);
+  letter-spacing: var(--md-sys-typescale-label-medium-tracking);
   transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
   &[data-hidden="true"] {

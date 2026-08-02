@@ -26,7 +26,7 @@
 .md-linear-progress[data-variant="flat"] {
   height: var(--_thickness);
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: calc(var(--_thickness) / 2);
   background-color: var(--_track-color);
 }
 
@@ -109,20 +109,20 @@
 .md-linear-progress__track {
   flex: 1 1 auto;
   height: var(--_thickness);
-  border-radius: 999px;
+  border-radius: calc(var(--_thickness) / 2);
   background-color: var(--_track-color);
 }
 
 .md-linear-progress__stop {
   flex: 0 0 var(--_thickness);
   height: var(--_thickness);
-  border-radius: 999px;
+  border-radius: calc(var(--_thickness) / 2);
   background-color: var(--_color);
 }
 
 .md-linear-progress__complete {
   height: var(--_thickness);
-  border-radius: 999px;
+  border-radius: calc(var(--_thickness) / 2);
   background-color: var(--_color);
   margin-block: calc(var(--_amplitude));
 }
