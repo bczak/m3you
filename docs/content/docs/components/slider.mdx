@@ -9,6 +9,9 @@ Sliders suit values where the exact number matters less than the relative
 position — volume, brightness, opacity. Setting `step` turns the slider discrete
 and draws stop indicators along the track.
 
+Use `mode="centered"` for values that diverge from an origin, or `RangeSlider`
+when the user needs to choose a lower and upper bound.
+
 <Playground
   name="Slider"
   controls={{
@@ -34,8 +37,13 @@ and draws stop indicators along the track.
   layout="stretch"
 />
 
+## Range
+
+<Example name="slider/range" title="Controlled price range" layout="stretch" />
+
 ## Props
 
 <PropsTable of="Slider" extends="<input type='range'>" />
+<PropsTable of="RangeSlider" extends="<div>" />
 
 <SpecLink slug="slider" source="src/components/Slider" />

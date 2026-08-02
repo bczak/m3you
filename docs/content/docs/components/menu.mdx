@@ -11,6 +11,9 @@ without any wiring.
 same convention as Dialog, Tooltip and the sheets. (`asChild` still works but is
 deprecated.)
 
+Use `MenuLabel` directly when a group needs a visible heading, or pass `label`
+to `MenuGroup` to have it rendered for you.
+
 <Example name="menu/basic" title="Icons, shortcuts and a divider" />
 
 ## Sub-menus
@@ -21,5 +24,6 @@ deprecated.)
 
 <PropsTable of="Menu" />
 <PropsTable of="MenuItem" extends="<div>" />
+<PropsTable of="MenuLabel" extends="<div>" />
 
 <SpecLink slug="menu" source="src/components/Menu" />
