@@ -181,6 +181,14 @@ export const COMPONENTS: ComponentEntry[] = [
 
   // ── Containment ──────────────────────────────────────────────────────────
   {
+    slug: 'avatar',
+    name: 'Avatar',
+    category: 'Containment',
+    summary: 'A profile image, monogram, or icon in a circular frame',
+    docgen: ['Avatar'],
+    exports: ['Avatar'],
+  },
+  {
     slug: 'card',
     name: 'Card',
     category: 'Containment',
@@ -250,8 +258,8 @@ export const COMPONENTS: ComponentEntry[] = [
     name: 'List',
     category: 'Containment',
     summary: 'Rows of related content, optionally selectable',
-    docgen: ['List', 'ListItem'],
-    exports: ['List', 'ListItem', 'ListDivider'],
+    docgen: ['List', 'ListItem', 'ListItemAccordion', 'ListItemSwipe'],
+    exports: ['List', 'ListItem', 'ListDivider', 'ListItemAccordion', 'ListItemSwipe'],
     spec: 'components/lists',
   },
   {
@@ -341,13 +349,14 @@ export const COMPONENTS: ComponentEntry[] = [
     name: 'Menu',
     category: 'Navigation',
     summary: 'Menus with groups, dividers and nested sub-menus',
-    docgen: ['Menu', 'MenuContent', 'MenuItem', 'MenuGroup'],
+    docgen: ['Menu', 'MenuContent', 'MenuItem', 'MenuGroup', 'MenuLabel'],
     exports: [
       'Menu',
       'MenuTrigger',
       'MenuContent',
       'MenuItem',
       'MenuGroup',
+      'MenuLabel',
       'MenuDivider',
       'MenuSub',
       'MenuSubTrigger',
@@ -380,8 +389,8 @@ export const COMPONENTS: ComponentEntry[] = [
     name: 'Chip',
     category: 'Selection',
     summary: 'Assist, filter, input and suggestion chips',
-    docgen: ['Chip'],
-    exports: ['Chip'],
+    docgen: ['Chip', 'ChipGroup'],
+    exports: ['Chip', 'ChipGroup'],
     spec: 'components/chips',
   },
   {
@@ -398,8 +407,8 @@ export const COMPONENTS: ComponentEntry[] = [
     name: 'Slider',
     category: 'Selection',
     summary: 'A value along a range, continuous or in steps',
-    docgen: ['Slider'],
-    exports: ['Slider'],
+    docgen: ['Slider', 'RangeSlider'],
+    exports: ['Slider', 'RangeSlider'],
     spec: 'components/sliders',
   },
   {

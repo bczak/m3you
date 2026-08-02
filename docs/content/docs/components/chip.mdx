@@ -10,6 +10,9 @@ to nearby content. **Filter** chips narrow a set and hold a selected state.
 **Input** chips represent a piece of information the user entered, and can be
 removed. **Suggestion** chips offer a next step.
 
+`ChipGroup` supplies either a horizontally scrolling row (the default) or a
+wrapping layout. Selection remains controlled by each child chip.
+
 <Playground
   name="Chip"
   controls={{
@@ -29,5 +32,6 @@ removed. **Suggestion** chips offer a next step.
 ## Props
 
 <PropsTable of="Chip" extends="<button>" />
+<PropsTable of="ChipGroup" extends="<div>" />
 
 <SpecLink slug="chip" source="src/components/Chip" />

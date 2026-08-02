@@ -1,6 +1,7 @@
-import { Bell, Check, Heart, Home, Inbox, Plus, Search, Settings, Share2, Star } from 'lucide-react';
+import { Bell, Check, Heart, Home, Inbox, Plus, Search, Settings, Share2, Star, User } from 'lucide-react';
 import {
   AppBar,
+  Avatar,
   Badge,
   BadgeAnchor,
   Button,
@@ -152,6 +153,12 @@ export const GALLERY_PREVIEWS: Record<string, ReactNode> = {
   snackbar: <Snackbar message="Message sent" actionLabel="Undo" />,
 
   // ── Containment ──
+  avatar: (
+    <div className="m3-gp-row">
+      <Avatar variant="monogram">M3</Avatar>
+      <Avatar variant="icon">{icon(User, 22)}</Avatar>
+    </div>
+  ),
   card: (
     <Card variant="elevated" className="m3-gp-card">
       <strong>Elevated</strong>
