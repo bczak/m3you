@@ -33,17 +33,22 @@ function BottomSheet({ modal = true, children, ...props }: BottomSheetProps) {
 // BottomSheetTrigger
 // =============================================================================
 
-function BottomSheetTrigger({ ...props }: DrawerPrimitive.Trigger.Props) {
-  return <DrawerPrimitive.Trigger data-slot="bottom-sheet-trigger" {...props} />;
-}
+// Base UI's Trigger.Props narrows its own ref to HTMLButtonElement, so take
+// that rather than the wider HTMLElement the exotic component advertises.
+const BottomSheetTrigger = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<DrawerPrimitive.Trigger.Props>>(
+  ({ ...props }, ref) => <DrawerPrimitive.Trigger data-slot="bottom-sheet-trigger" ref={ref} {...props} />,
+);
+BottomSheetTrigger.displayName = 'BottomSheetTrigger';
 
 // =============================================================================
 // BottomSheetClose
 // =============================================================================
 
-function BottomSheetClose({ ...props }: DrawerPrimitive.Close.Props) {
-  return <DrawerPrimitive.Close data-slot="bottom-sheet-close" {...props} />;
-}
+const BottomSheetClose = React.forwardRef<
+  React.ComponentRef<typeof DrawerPrimitive.Close>,
+  React.PropsWithoutRef<DrawerPrimitive.Close.Props>
+>(({ ...props }, ref) => <DrawerPrimitive.Close data-slot="bottom-sheet-close" ref={ref} {...props} />);
+BottomSheetClose.displayName = 'BottomSheetClose';
 
 // =============================================================================
 // BottomSheetContent (Portal + Backdrop + Viewport + Popup)
@@ -63,13 +68,10 @@ export interface BottomSheetContentProps extends DrawerPrimitive.Popup.Props {
   portalProps?: Omit<DrawerPrimitive.Portal.Props, 'children'>;
 }
 
-function BottomSheetContent({
-  className,
-  children,
-  showDragHandle = true,
-  portalProps,
-  ...props
-}: BottomSheetContentProps) {
+const BottomSheetContent = React.forwardRef<
+  React.ComponentRef<typeof DrawerPrimitive.Popup>,
+  React.PropsWithoutRef<BottomSheetContentProps>
+>(({ className, children, showDragHandle = true, portalProps, ...props }, ref) => {
   const { isModal } = React.useContext(BottomSheetContext);
 
   return (
@@ -78,6 +80,7 @@ function BottomSheetContent({
       <DrawerPrimitive.Viewport data-slot="bottom-sheet-viewport" className="md-bottom-sheet-viewport">
         <DrawerPrimitive.Popup
           data-slot="bottom-sheet-content"
+          ref={ref}
           className={cx('md-bottom-sheet-content', className)}
           {...props}
         >
@@ -91,14 +94,18 @@ function BottomSheetContent({
       </DrawerPrimitive.Viewport>
     </DrawerPrimitive.Portal>
   );
-}
+});
+BottomSheetContent.displayName = 'BottomSheetContent';
 
 // =============================================================================
 // BottomSheetBody
 // =============================================================================
 
-function BottomSheetBody({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot="bottom-sheet-body" className={cx('md-bottom-sheet-body', className)} {...props} />;
-}
+const BottomSheetBody = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<React.ComponentProps<'div'>>>(
+  ({ className, ...props }, ref) => (
+    <div data-slot="bottom-sheet-body" ref={ref} className={cx('md-bottom-sheet-body', className)} {...props} />
+  ),
+);
+BottomSheetBody.displayName = 'BottomSheetBody';
 
 export { BottomSheet, BottomSheetBody, BottomSheetClose, BottomSheetContent, BottomSheetTrigger };

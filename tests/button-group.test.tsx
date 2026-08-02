@@ -66,11 +66,11 @@ test('useButtonGroup returns null when rendered outside any provider', async () 
 
 test('useButtonGroup returns null when group context exists but item context does not', async () => {
   render(
-    <ButtonGroupContext
+    <ButtonGroupContext.Provider
       value={{ size: 'md', shape: 'square', morph: false, selectedIndices: new Set(), handleToggle: vi.fn() }}
     >
       <GroupItem label="orphan" />
-    </ButtonGroupContext>,
+    </ButtonGroupContext.Provider>,
   );
   const item = screen.getByTestId('orphan');
   expect(item).not.toHaveAttribute('data-incontext');

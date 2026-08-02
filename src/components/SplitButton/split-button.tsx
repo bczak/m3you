@@ -36,7 +36,7 @@ const SplitButton = forwardRef<HTMLDivElement, React.PropsWithoutRef<SplitButton
     );
 
     return (
-      <SplitButtonCtx value={contextValue}>
+      <SplitButtonCtx.Provider value={contextValue}>
         {/* biome-ignore lint/a11y/useSemanticElements: role="group" is correct per WAI-ARIA */}
         <div
           ref={ref}
@@ -52,7 +52,7 @@ const SplitButton = forwardRef<HTMLDivElement, React.PropsWithoutRef<SplitButton
         >
           {children}
         </div>
-      </SplitButtonCtx>
+      </SplitButtonCtx.Provider>
     );
   },
 );

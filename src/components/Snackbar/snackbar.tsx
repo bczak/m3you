@@ -93,28 +93,31 @@ export type SnackbarHostProps = Omit<React.ComponentProps<typeof SonnerToaster>,
   position?: React.ComponentProps<typeof SonnerToaster>['position'];
 };
 
-const SnackbarHost = ({ position = 'bottom-center', ...props }: SnackbarHostProps) => {
-  return (
-    <SonnerToaster
-      position={position}
-      offset={16}
-      gap={8}
-      visibleToasts={1}
-      toastOptions={{
-        unstyled: true,
-        style: {
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          transitionProperty: 'opacity',
-          transitionDuration: '150ms',
-          transitionTimingFunction: 'ease-out',
-        },
-      }}
-      {...props}
-    />
-  );
-};
+const SnackbarHost = forwardRef<React.ComponentRef<typeof SonnerToaster>, React.PropsWithoutRef<SnackbarHostProps>>(
+  ({ position = 'bottom-center', ...props }, ref) => {
+    return (
+      <SonnerToaster
+        ref={ref}
+        position={position}
+        offset={16}
+        gap={8}
+        visibleToasts={1}
+        toastOptions={{
+          unstyled: true,
+          style: {
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            transitionProperty: 'opacity',
+            transitionDuration: '150ms',
+            transitionTimingFunction: 'ease-out',
+          },
+        }}
+        {...props}
+      />
+    );
+  },
+);
 SnackbarHost.displayName = 'SnackbarHost';
 
 export { Snackbar, SnackbarHost };

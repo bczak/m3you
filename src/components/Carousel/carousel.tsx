@@ -420,47 +420,86 @@ const Carousel = React.forwardRef<HTMLElement, React.PropsWithoutRef<CarouselPro
 );
 Carousel.displayName = 'Carousel';
 
-const CarouselItem = (props: CarouselItemProps) => {
-  const context = React.useContext(CarouselItemContext);
-  const fallbackId = React.useId();
-  const index = context?.index ?? 0;
-  const count = context?.count ?? 1;
-  const layout = context?.layout ?? 'multi-browse';
-  const positionId = `${fallbackId}-position`;
-  const positionText = `Item ${index + 1} of ${count}`;
-  const itemStyle = { aspectRatio: props.aspectRatio } as React.CSSProperties;
+// The props are a discriminated union whose two branches render different
+// elements, so the ref is typed as the union of both and narrowed per branch.
+const CarouselItem = React.forwardRef<HTMLAnchorElement | HTMLButtonElement, React.PropsWithoutRef<CarouselItemProps>>(
+  (props, ref) => {
+    const context = React.useContext(CarouselItemContext);
+    const fallbackId = React.useId();
+    const index = context?.index ?? 0;
+    const count = context?.count ?? 1;
+    const layout = context?.layout ?? 'multi-browse';
+    const positionId = `${fallbackId}-position`;
+    const positionText = `Item ${index + 1} of ${count}`;
+    const itemStyle = { aspectRatio: props.aspectRatio } as React.CSSProperties;
 
-  const content = (
-    <>
-      <Ripple />
-      <span className="md-carousel-item__content">{props.children}</span>
-      <span id={positionId} className="md-sr-only">
-        {positionText}
-      </span>
-    </>
-  );
+    const content = (
+      <>
+        <Ripple />
+        <span className="md-carousel-item__content">{props.children}</span>
+        <span id={positionId} className="md-sr-only">
+          {positionText}
+        </span>
+      </>
+    );
 
-  if ('href' in props && props.href !== undefined) {
+    if ('href' in props && props.href !== undefined) {
+      const {
+        label: itemLabel,
+        children: _children,
+        aspectRatio: _aspectRatio,
+        disabled = false,
+        itemClassName,
+        href,
+        className,
+        onClick,
+        ...actionProps
+      } = props;
+      const describedBy = [actionProps['aria-describedby'], positionId].filter(Boolean).join(' ');
+      const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        if (disabled) {
+          event.preventDefault();
+          return;
+        }
+        onClick?.(event);
+      };
+      return (
+        <li
+          className={cx('md-carousel-item', itemClassName)}
+          data-md-carousel-item=""
+          data-layout={layout}
+          style={itemStyle}
+        >
+          <a
+            {...actionProps}
+            ref={ref as React.Ref<HTMLAnchorElement>}
+            className={cx('md-carousel-item__action', className)}
+            data-md-carousel-action=""
+            href={disabled ? undefined : href}
+            aria-label={itemLabel}
+            aria-describedby={describedBy}
+            aria-disabled={disabled || undefined}
+            tabIndex={disabled ? -1 : actionProps.tabIndex}
+            onClick={handleClick}
+          >
+            {content}
+          </a>
+        </li>
+      );
+    }
+
     const {
       label: itemLabel,
       children: _children,
       aspectRatio: _aspectRatio,
       disabled = false,
       itemClassName,
-      href,
       className,
       onClick,
-      ref,
+      type = 'button',
       ...actionProps
     } = props;
     const describedBy = [actionProps['aria-describedby'], positionId].filter(Boolean).join(' ');
-    const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-      if (disabled) {
-        event.preventDefault();
-        return;
-      }
-      onClick?.(event);
-    };
     return (
       <li
         className={cx('md-carousel-item', itemClassName)}
@@ -468,60 +507,23 @@ const CarouselItem = (props: CarouselItemProps) => {
         data-layout={layout}
         style={itemStyle}
       >
-        <a
+        <button
           {...actionProps}
-          ref={ref}
+          ref={ref as React.Ref<HTMLButtonElement>}
           className={cx('md-carousel-item__action', className)}
           data-md-carousel-action=""
-          href={disabled ? undefined : href}
+          type={type}
+          disabled={disabled}
           aria-label={itemLabel}
           aria-describedby={describedBy}
-          aria-disabled={disabled || undefined}
-          tabIndex={disabled ? -1 : actionProps.tabIndex}
-          onClick={handleClick}
+          onClick={onClick}
         >
           {content}
-        </a>
+        </button>
       </li>
     );
-  }
-
-  const {
-    label: itemLabel,
-    children: _children,
-    aspectRatio: _aspectRatio,
-    disabled = false,
-    itemClassName,
-    className,
-    onClick,
-    ref,
-    type = 'button',
-    ...actionProps
-  } = props;
-  const describedBy = [actionProps['aria-describedby'], positionId].filter(Boolean).join(' ');
-  return (
-    <li
-      className={cx('md-carousel-item', itemClassName)}
-      data-md-carousel-item=""
-      data-layout={layout}
-      style={itemStyle}
-    >
-      <button
-        {...actionProps}
-        ref={ref}
-        className={cx('md-carousel-item__action', className)}
-        data-md-carousel-action=""
-        type={type}
-        disabled={disabled}
-        aria-label={itemLabel}
-        aria-describedby={describedBy}
-        onClick={onClick}
-      >
-        {content}
-      </button>
-    </li>
-  );
-};
+  },
+);
 CarouselItem.displayName = 'CarouselItem';
 
 export { Carousel, CarouselItem };
