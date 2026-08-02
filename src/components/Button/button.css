@@ -7,6 +7,7 @@
    ============================================================================= */
 
 .md-button {
+  box-sizing: border-box;
   position: relative;
   display: inline-flex;
   cursor: pointer;
@@ -26,35 +27,40 @@
   transition:
     color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    border-radius var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-default-spatial),
+    border-radius var(--md-sys-motion-duration-spring-default-spatial)
+    var(--md-sys-motion-easing-spring-default-spatial),
     box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    padding-inline var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-default-spatial);
+    padding-inline var(--md-sys-motion-duration-spring-default-spatial)
+    var(--md-sys-motion-easing-spring-default-spatial);
   outline: none;
-  overflow: hidden;
+  overflow: visible;
+
+  /* The ripple owns hover/press paint and clips itself to the visible shape. */
+  & > .salty-ripple {
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  /* Dense visible buttons keep the platform minimum 48px pointer target. */
+  &[data-size="xs"]::after,
+  &[data-size="sm"]::after {
+    position: absolute;
+    z-index: 2;
+    inset: calc((var(--_height) - 48px) / 2) 0;
+    content: "";
+  }
 
   &:focus-visible {
     outline: 2px solid var(--md-sys-color-primary);
     outline-offset: 2px;
+    background-image: linear-gradient(
+      color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent),
+      color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent)
+    );
   }
 
-  &[data-disabled] {
+  &:is([data-disabled], :disabled) {
     pointer-events: none;
-  }
-
-  &[data-disabled][data-variant="filled"],
-  &[data-disabled][data-variant="elevated"],
-  &[data-disabled][data-variant="tonal"],
-  &[data-disabled][data-variant="text"] {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
-    color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
-    box-shadow: none;
-  }
-
-  &[data-disabled][data-variant="outlined"] {
-    background-color: transparent;
-    color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
-    border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
-    box-shadow: none;
   }
 
   & svg {
@@ -207,10 +213,6 @@
   &[data-variant="filled"] {
     background-color: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
-
-    &:hover {
-      box-shadow: var(--md-sys-elevation-1);
-    }
   }
 
   /* ── Variant: elevated ── */
@@ -218,10 +220,15 @@
     background-color: var(--md-sys-color-surface-container-low);
     color: var(--md-sys-color-primary);
     box-shadow: var(--md-sys-elevation-1);
+  }
 
-    &:hover {
-      box-shadow: var(--md-sys-elevation-2);
-    }
+  &[data-variant="elevated"][data-size="md"] {
+    box-shadow: var(--md-sys-elevation-2);
+  }
+
+  &[data-variant="elevated"][data-size="lg"],
+  &[data-variant="elevated"][data-size="xl"] {
+    box-shadow: var(--md-sys-elevation-3);
   }
 
   /* ── Variant: tonal ── */
@@ -234,14 +241,6 @@
   &[data-variant="outlined"] {
     background-color: transparent;
     color: var(--md-sys-color-on-surface-variant);
-
-    &:hover {
-      background-color: color-mix(
-        in srgb,
-        var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity),
-        transparent
-      );
-    }
   }
 
   &[data-variant="outlined"][data-size="xs"],
@@ -262,14 +261,6 @@
   &[data-variant="text"] {
     background-color: transparent;
     color: var(--md-sys-color-primary);
-
-    &:hover {
-      background-color: color-mix(
-        in srgb,
-        var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity),
-        transparent
-      );
-    }
   }
 
   /* ── Selected: false (unselected toggle) ── */
@@ -322,16 +313,12 @@
   &[data-selected="true"][data-variant="tonal"] {
     background-color: var(--md-sys-color-secondary);
     color: var(--md-sys-color-on-secondary);
-
-    &:hover {
-      box-shadow: var(--md-sys-elevation-1);
-    }
   }
 
   &[data-selected="true"][data-variant="outlined"] {
     background-color: var(--md-sys-color-inverse-surface);
     color: var(--md-sys-color-inverse-on-surface);
-    border-color: var(--md-sys-color-inverse-surface);
+    border-color: transparent;
   }
 
   &[data-selected="true"][data-variant="text"] {
@@ -373,19 +360,47 @@
   }
 
   /* ── Disabled overrides (must come after selected rules to win cascade) ── */
-  &[data-disabled][data-variant="filled"],
-  &[data-disabled][data-variant="elevated"],
-  &[data-disabled][data-variant="tonal"],
-  &[data-disabled][data-variant="text"] {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
-    color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+  &:is([data-disabled], :disabled)[data-variant="filled"],
+  &:is([data-disabled], :disabled)[data-variant="elevated"],
+  &:is([data-disabled], :disabled)[data-variant="tonal"] {
+    background-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+      transparent
+    );
     box-shadow: none;
+    background-image: none;
   }
 
-  &[data-disabled][data-variant="outlined"] {
+  &:is([data-disabled], :disabled)[data-variant="text"] {
     background-color: transparent;
-    color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
-    border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+      transparent
+    );
     box-shadow: none;
+    background-image: none;
+  }
+
+  &:is([data-disabled], :disabled)[data-variant="outlined"] {
+    background-color: transparent;
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+      transparent
+    );
+    border-color: var(--md-sys-color-outline-variant);
+    box-shadow: none;
+    background-image: none;
+  }
+
+  &:is([data-disabled], :disabled)[data-selected="true"][data-variant="outlined"] {
+    border-color: transparent;
   }
 }

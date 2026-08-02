@@ -6,6 +6,7 @@
    ============================================================================= */
 
 .md-icon-button {
+  box-sizing: border-box;
   position: relative;
   display: inline-flex;
   cursor: pointer;
@@ -17,19 +18,36 @@
   transition:
     color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    border-radius var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-default-spatial),
+    border-radius var(--md-sys-motion-duration-spring-default-spatial)
+    var(--md-sys-motion-easing-spring-default-spatial),
     box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
   outline: none;
-  overflow: hidden;
+  overflow: visible;
+
+  & > .salty-ripple {
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  &[data-size="xs"]::after,
+  &[data-size="sm"]::after {
+    position: absolute;
+    z-index: 2;
+    inset: calc((var(--_height) - 48px) / 2);
+    content: "";
+  }
 
   &:focus-visible {
     outline: 2px solid var(--md-sys-color-primary);
     outline-offset: 2px;
+    background-image: linear-gradient(
+      color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent),
+      color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent)
+    );
   }
 
   &:disabled {
     pointer-events: none;
-    opacity: var(--md-sys-state-disabled-opacity);
   }
 
   & svg {
@@ -66,16 +84,16 @@
     --_height: 96px;
     height: var(--_height);
     & svg {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
     }
   }
   &[data-size="xl"] {
     --_height: 136px;
     height: var(--_height);
     & svg {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
     }
   }
 
@@ -109,7 +127,7 @@
     width: 40px;
   }
   &[data-width="wide"][data-size="sm"] {
-    width: 48px;
+    width: 52px;
   }
   &[data-width="wide"][data-size="md"] {
     width: 72px;
@@ -192,32 +210,12 @@
   &[data-variant="standard"] {
     background-color: transparent;
     color: var(--md-sys-color-on-surface-variant);
-
-    &:hover {
-      background-color: color-mix(
-        in srgb,
-        var(--md-sys-color-on-surface-variant) var(--md-sys-state-hover-opacity),
-        transparent
-      );
-    }
-
-    &:active {
-      background-color: color-mix(
-        in srgb,
-        var(--md-sys-color-on-surface-variant) var(--md-sys-state-pressed-opacity),
-        transparent
-      );
-    }
   }
 
   /* ── Variant: filled ── */
   &[data-variant="filled"] {
     background-color: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
-
-    &:hover {
-      box-shadow: var(--md-sys-elevation-1);
-    }
   }
 
   /* ── Variant: elevated ── */
@@ -227,20 +225,25 @@
     box-shadow: var(--md-sys-elevation-1);
   }
 
+  &[data-variant="elevated"][data-size="md"] {
+    box-shadow: var(--md-sys-elevation-2);
+  }
+
+  &[data-variant="elevated"][data-size="lg"],
+  &[data-variant="elevated"][data-size="xl"] {
+    box-shadow: var(--md-sys-elevation-3);
+  }
+
   /* ── Variant: tonal ── */
   &[data-variant="tonal"] {
     background-color: var(--md-sys-color-secondary-container);
     color: var(--md-sys-color-on-secondary-container);
-
-    &:hover {
-      box-shadow: var(--md-sys-elevation-1);
-    }
   }
 
   /* ── Variant: outlined ── */
   &[data-variant="outlined"] {
     background-color: transparent;
-    color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-surface-variant);
   }
 
   &[data-variant="outlined"][data-size="xs"],
@@ -265,16 +268,8 @@
 
   /* ── Selected: true ── */
   &[data-selected="true"][data-variant="standard"] {
-    background-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
-
-    &:hover {
-      background-color: color-mix(in srgb, var(--md-sys-color-primary) 90%, transparent);
-    }
-
-    &:active {
-      background-color: color-mix(in srgb, var(--md-sys-color-primary) 80%, transparent);
-    }
+    background-color: transparent;
+    color: var(--md-sys-color-primary);
   }
 
   &[data-selected="true"][data-variant="elevated"] {
@@ -291,6 +286,7 @@
   &[data-selected="true"][data-variant="outlined"] {
     background-color: var(--md-sys-color-inverse-surface);
     color: var(--md-sys-color-inverse-on-surface);
+    border-color: transparent;
   }
 
   /* ── Selected: true + shape swap ── */
@@ -324,5 +320,40 @@
   }
   &[data-selected="true"][data-shape="square"][data-size="xl"] {
     border-radius: calc(var(--_height) / 2);
+  }
+
+  /* Disabled treatment is per slot so icons remain at the required 38%. */
+  &:disabled:is([data-variant="filled"], [data-variant="elevated"], [data-variant="tonal"]) {
+    background-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+      transparent
+    );
+    box-shadow: none;
+    background-image: none;
+  }
+
+  &:disabled:is([data-variant="standard"], [data-variant="outlined"]) {
+    background-color: transparent;
+    color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+      transparent
+    );
+    box-shadow: none;
+    background-image: none;
+  }
+
+  &:disabled[data-variant="outlined"] {
+    border-color: var(--md-sys-color-outline-variant);
+  }
+
+  &:disabled[data-selected="true"][data-variant="outlined"] {
+    border-color: transparent;
   }
 }

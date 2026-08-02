@@ -9,6 +9,7 @@
    ============================================================================= */
 
 .md-split-button {
+  position: relative;
   display: inline-flex;
   gap: 2px;
   align-items: stretch;
@@ -19,46 +20,67 @@
 .md-split-button[data-size="xs"] {
   --_split-height: 32px;
   --_split-inner: var(--md-sys-shape-corner-extra-small);
+  --_split-interactive-inner: var(--md-sys-shape-corner-small);
 }
 
 .md-split-button[data-size="sm"] {
   --_split-height: 40px;
-  --_split-inner: var(--md-sys-shape-corner-small);
+  --_split-inner: var(--md-sys-shape-corner-extra-small);
+  --_split-interactive-inner: var(--md-sys-shape-corner-medium);
 }
 
 .md-split-button[data-size="md"] {
   --_split-height: 56px;
-  --_split-inner: var(--md-sys-shape-corner-small);
+  --_split-inner: var(--md-sys-shape-corner-extra-small);
+  --_split-interactive-inner: var(--md-sys-shape-corner-medium);
 }
 
 .md-split-button[data-size="lg"] {
   --_split-height: 96px;
-  --_split-inner: var(--md-sys-shape-corner-large);
+  --_split-inner: var(--md-sys-shape-corner-small);
+  --_split-interactive-inner: var(--md-sys-shape-corner-large-increased);
 }
 
 .md-split-button[data-size="xl"] {
   --_split-height: 136px;
-  --_split-inner: var(--md-sys-shape-corner-large-increased);
+  --_split-inner: var(--md-sys-shape-corner-medium);
+  --_split-interactive-inner: var(--md-sys-shape-corner-large-increased);
+}
+
+.md-split-button[data-variant="elevated"] {
+  box-shadow: var(--md-sys-elevation-3);
+}
+
+.md-split-button[data-disabled] {
+  box-shadow: none;
+}
+
+.md-split-button > :is(.md-split-button__action, .md-split-button__trigger).md-button {
+  box-shadow: none;
 }
 
 /* ── Outer radius: round = pill, square = shape corner ── */
 
 .md-split-button[data-shape="round"] {
   --_split-outer: calc(var(--_split-height) / 2);
+  border-radius: var(--_split-outer);
 }
 
 .md-split-button[data-shape="square"][data-size="xs"],
 .md-split-button[data-shape="square"][data-size="sm"] {
   --_split-outer: var(--md-sys-shape-corner-medium);
+  border-radius: var(--_split-outer);
 }
 
 .md-split-button[data-shape="square"][data-size="md"] {
   --_split-outer: var(--md-sys-shape-corner-large);
+  border-radius: var(--_split-outer);
 }
 
 .md-split-button[data-shape="square"][data-size="lg"],
 .md-split-button[data-shape="square"][data-size="xl"] {
   --_split-outer: var(--md-sys-shape-corner-extra-large);
+  border-radius: var(--_split-outer);
 }
 
 /* ── Action: border-radius — outer-left, inner-right ── */
@@ -67,11 +89,19 @@
   border-radius: var(--_split-outer) var(--_split-inner) var(--_split-inner) var(--_split-outer);
 }
 
+.md-split-button > .md-split-button__action.md-button:is(:hover, :active) {
+  border-radius: var(--_split-outer) var(--_split-interactive-inner) var(--_split-interactive-inner) var(--_split-outer);
+}
+
 /* ── Action: xs-specific spacing (tighter gap + asymmetric padding) ── */
 
 .md-split-button[data-size="xs"] > .md-split-button__action.md-button {
   gap: 4px;
   padding-inline: 12px 10px;
+}
+
+.md-split-button[data-size="sm"] > .md-split-button__action.md-button {
+  padding-inline: 16px 12px;
 }
 
 /* ── Trigger: base overrides ── */
@@ -161,10 +191,18 @@
   border-radius: var(--_split-inner) var(--_split-outer) var(--_split-outer) var(--_split-inner);
 }
 
+.md-split-button > .md-split-button__trigger.md-button:is(:hover, :active) {
+  border-radius: var(--_split-interactive-inner) var(--_split-outer) var(--_split-outer) var(--_split-interactive-inner);
+}
+
 /* ── Open state: trigger becomes fully rounded ── */
 
 .md-split-button[data-open] > .md-split-button__trigger.md-button[data-shape][data-size] {
   border-radius: var(--_split-outer);
+  background-image: linear-gradient(
+    color-mix(in srgb, currentColor calc(var(--md-sys-state-pressed-opacity) * 100%), transparent),
+    color-mix(in srgb, currentColor calc(var(--md-sys-state-pressed-opacity) * 100%), transparent)
+  );
 }
 
 /* ── Chevron rotation ── */

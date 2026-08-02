@@ -1,8 +1,7 @@
 import './icon-button.css';
-import { Ripple } from 'm3-ripple';
 import type * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 import { useButtonGroup } from '../ButtonGroup/button-group-context';
 
 export type IconButtonProps = React.ComponentProps<'button'> & {

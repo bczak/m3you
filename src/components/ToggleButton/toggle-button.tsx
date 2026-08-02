@@ -16,6 +16,7 @@ const ToggleButton = ({
   selected: selectedProp,
   onSelectedChange,
   onClick,
+  morph = true,
   ref,
   ...props
 }: ToggleButtonProps & { ref?: Ref<HTMLButtonElement> }) => {
@@ -32,7 +33,7 @@ const ToggleButton = ({
     onClick?.(e);
   };
 
-  return <Button ref={ref} selected={selected} onClick={toggleSelected} {...props} />;
+  return <Button ref={ref} selected={selected} morph={morph} onClick={toggleSelected} {...props} />;
 };
 ToggleButton.displayName = 'ToggleButton';
 

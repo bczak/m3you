@@ -21,14 +21,17 @@ export interface SplitButtonProps extends React.ComponentProps<'div'> {
   morph?: boolean;
   /** Renders the selected state on both halves. */
   selected?: boolean;
+  /** Disables both the action and menu trigger. */
+  disabled?: boolean;
 }
 
 const SplitButton = ({
   variant = 'filled',
   size = 'sm',
   shape = 'round',
-  morph = false,
+  morph = true,
   selected,
+  disabled = false,
   className,
   children,
   ref,
@@ -37,8 +40,8 @@ const SplitButton = ({
   const [open, setOpen] = useState(false);
   const selectedValue = selected !== undefined ? String(selected) : undefined;
   const contextValue = useMemo(
-    () => ({ variant, size, shape, morph, selected, open, setOpen }),
-    [variant, size, shape, morph, selected, open],
+    () => ({ variant, size, shape, morph, selected, disabled, open, setOpen }),
+    [variant, size, shape, morph, selected, disabled, open],
   );
 
   return (
@@ -52,6 +55,7 @@ const SplitButton = ({
         data-shape={shape}
         data-morph={morph || undefined}
         data-selected={selectedValue}
+        data-disabled={disabled || undefined}
         data-open={open || undefined}
         role="group"
         {...props}

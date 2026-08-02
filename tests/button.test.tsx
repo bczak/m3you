@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { expect, test } from 'vitest';
+import { Button } from '../src/components/Button/button';
 import { ButtonGroupContext, ButtonGroupItemContext } from '../src/components/ButtonGroup/button-group-context';
-import { Button } from '../src/components/ui/button';
 
 // Variant tests
 test('renders with default variant (filled)', async () => {

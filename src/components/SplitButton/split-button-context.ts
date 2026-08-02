@@ -6,6 +6,7 @@ export interface SplitButtonContextValue {
   shape: 'round' | 'square';
   morph: boolean;
   selected?: boolean;
+  disabled: boolean;
   open: boolean;
   setOpen: (open: boolean) => void;
 }

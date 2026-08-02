@@ -19,7 +19,7 @@ test('renders root with default classes and data attributes', async () => {
   expect(root).toHaveAttribute('data-variant', 'filled');
   expect(root).toHaveAttribute('data-size', 'sm');
   expect(root).toHaveAttribute('data-shape', 'round');
-  expect(root).not.toHaveAttribute('data-morph');
+  expect(root).toHaveAttribute('data-morph', 'true');
   expect(root).not.toHaveAttribute('data-selected');
   expect(root).not.toHaveAttribute('data-open');
   expect(root).toHaveTextContent('content');
@@ -312,5 +312,5 @@ test('menu trigger without selected has no data-selected', async () => {
   );
   const trigger = container.querySelector('.md-split-button__trigger') as HTMLElement;
   expect(trigger).not.toHaveAttribute('data-selected');
-  expect(trigger).not.toHaveAttribute('data-morph');
+  expect(trigger).toHaveAttribute('data-morph', 'true');
 });

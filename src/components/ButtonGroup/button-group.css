@@ -56,55 +56,47 @@
 /* ── Standard: icon-button overrides — unlock padding-based animation ── */
 
 .md-button-group[data-standard-group] > .md-icon-button {
-  width: auto;
+  padding-inline: 0;
   transition:
     color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    border-radius var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-spring-default-spatial),
+    border-radius var(--md-sys-motion-duration-spring-default-spatial)
+    var(--md-sys-motion-easing-spring-default-spatial),
     box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    padding-inline var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-default-spatial);
+    width var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial);
 }
 
 .md-button-group[data-standard-group][data-size="xs"] > .md-icon-button {
-  --_base-padding: 10px;
-  padding-inline: var(--_base-padding);
+  width: 40px;
 }
 
 .md-button-group[data-standard-group][data-size="sm"] > .md-icon-button {
-  --_base-padding: 12px;
-  padding-inline: var(--_base-padding);
+  width: 52px;
 }
 
 .md-button-group[data-standard-group][data-size="md"] > .md-icon-button {
-  --_base-padding: 16px;
-  padding-inline: var(--_base-padding);
+  width: 72px;
 }
 
 .md-button-group[data-standard-group][data-size="lg"] > .md-icon-button {
-  --_base-padding: 30px;
-  padding-inline: var(--_base-padding);
+  width: 128px;
 }
 
 .md-button-group[data-standard-group][data-size="xl"] > .md-icon-button {
-  --_base-padding: 44px;
-  padding-inline: var(--_base-padding);
+  width: 184px;
 }
 
 /* ── Standard: press-to-select — expand pressed, squeeze neighbors ── */
 
-.md-button-group[data-standard-group][data-orientation="horizontal"]
-> :is(.md-button, .md-icon-button)[data-morph]:active {
+.md-button-group[data-standard-group][data-orientation="horizontal"] > .md-button[data-morph]:active {
   padding-inline: calc(var(--_base-padding) + var(--_press-expand));
 }
 
-.md-button-group[data-standard-group][data-orientation="horizontal"]
-  > :is(.md-button, .md-icon-button)[data-morph]:active
-  + :is(.md-button, .md-icon-button) {
+.md-button-group[data-standard-group][data-orientation="horizontal"] > .md-button[data-morph]:active + .md-button {
   padding-inline: calc(var(--_base-padding) - var(--_press-squeeze));
 }
 
-.md-button-group[data-standard-group][data-orientation="horizontal"]
-  > :is(.md-button, .md-icon-button):has(+ :is(.md-button, .md-icon-button)[data-morph]:active) {
+.md-button-group[data-standard-group][data-orientation="horizontal"] > .md-button:has(+ .md-button[data-morph]:active) {
   padding-inline: calc(var(--_base-padding) - var(--_press-squeeze));
 }
 
@@ -112,6 +104,9 @@
 
 .md-button-group[data-connected-group] {
   gap: 2px;
+}
+
+.md-button-group[data-connected-group]:is([data-size="xs"], [data-size="sm"]) {
   padding: 2px;
 }
 
@@ -145,12 +140,14 @@
 
 .md-button-group[data-connected-group][data-orientation="horizontal"]
 > :is(.md-button, .md-icon-button)[data-shape="square"]:first-child {
-  border-radius: var(--_connected-inner-radius);
+  border-radius: var(--_connected-outer-square) var(--_connected-inner-radius) var(--_connected-inner-radius)
+    var(--_connected-outer-square);
 }
 
 .md-button-group[data-connected-group][data-orientation="horizontal"]
   > :is(.md-button, .md-icon-button)[data-shape="square"]:last-child {
-  border-radius: var(--_connected-inner-radius);
+  border-radius: var(--_connected-inner-radius) var(--_connected-outer-square) var(--_connected-outer-square)
+    var(--_connected-inner-radius);
 }
 
 /* ── Connected vertical: round shape — outer = pill ── */
@@ -171,18 +168,21 @@
 
 .md-button-group[data-connected-group][data-orientation="vertical"]
 > :is(.md-button, .md-icon-button)[data-shape="square"]:first-child {
-  border-radius: var(--_connected-inner-radius);
+  border-radius: var(--_connected-outer-square) var(--_connected-outer-square) var(--_connected-inner-radius)
+    var(--_connected-inner-radius);
 }
 
 .md-button-group[data-connected-group][data-orientation="vertical"]
   > :is(.md-button, .md-icon-button)[data-shape="square"]:last-child {
-  border-radius: var(--_connected-inner-radius);
+  border-radius: var(--_connected-inner-radius) var(--_connected-inner-radius) var(--_connected-outer-square)
+    var(--_connected-outer-square);
 }
 
 /* ── Connected: inner + outer corner radius per size ── */
 
 .md-button-group[data-connected-group][data-size="xs"] {
   --_connected-inner-radius: var(--md-sys-shape-corner-extra-small); /* 4px */
+  --_connected-outer-square: var(--md-sys-shape-corner-medium);
 }
 
 .md-button-group[data-connected-group][data-size="xs"] > :is(.md-button, .md-icon-button),
@@ -192,18 +192,22 @@
 
 .md-button-group[data-connected-group][data-size="sm"] {
   --_connected-inner-radius: var(--md-sys-shape-corner-small); /* 8px */
+  --_connected-outer-square: var(--md-sys-shape-corner-medium);
 }
 
 .md-button-group[data-connected-group][data-size="md"] {
   --_connected-inner-radius: var(--md-sys-shape-corner-small); /* 8px */
+  --_connected-outer-square: var(--md-sys-shape-corner-large);
 }
 
 .md-button-group[data-connected-group][data-size="lg"] {
   --_connected-inner-radius: var(--md-sys-shape-corner-large); /* 16px */
+  --_connected-outer-square: var(--md-sys-shape-corner-extra-large);
 }
 
 .md-button-group[data-connected-group][data-size="xl"] {
   --_connected-inner-radius: var(--md-sys-shape-corner-large-increased); /* 20px */
+  --_connected-outer-square: var(--md-sys-shape-corner-extra-large);
 }
 
 /* ── Connected: selected buttons go fully round ── */

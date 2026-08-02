@@ -1,8 +1,8 @@
 import './extendable-fab.css';
-import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
+import type { FABColor, FABSize } from '../Fab/fab';
 
 export type ExtendableFABVariant = 'standard' | 'filled' | 'elevated' | 'tonal' | 'outlined' | 'text';
 
@@ -15,6 +15,10 @@ export type ExtendableFABProps = Omit<React.ComponentProps<'button'>, 'children'
   size?: ExtendableFABSize;
   /** Use the lowered elevation. */
   lowered?: boolean;
+  /** M3 FAB color role. Overrides the legacy `variant` color mapping. */
+  color?: FABColor;
+  /** Kit-backed 56/80/96px size. Overrides the legacy `size` scale. */
+  fabSize?: FABSize;
   /** Whether the label is showing. Commonly driven by scroll direction. */
   extended?: boolean;
   /** Icon shown in both the collapsed and extended states. */
@@ -32,6 +36,8 @@ const ExtendableFAB = ({
   variant = 'tonal',
   size = 'md',
   lowered = false,
+  color,
+  fabSize,
   extended = false,
   icon,
   label,
@@ -40,6 +46,7 @@ const ExtendableFAB = ({
   onTransitionEnd,
   ...props
 }: ExtendableFABProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  const resolvedSize = fabSize === 'small' ? 'sm' : fabSize === 'large' ? 'lg' : fabSize === 'medium' ? 'md' : size;
   const buttonRef = React.useRef<HTMLButtonElement | null>(null);
   const measureRef = React.useRef<HTMLSpanElement | null>(null);
   const [widths, setWidths] = React.useState<ExtendableFABWidths | null>(null);
@@ -108,14 +115,16 @@ const ExtendableFAB = ({
       resizeObserver?.disconnect();
       window.removeEventListener('resize', updateWidths);
     };
-  }, [icon, label, size, variant]);
+  }, [icon, label, resolvedSize, variant]);
 
   return (
     <button
       type="button"
       className={cx('md-extendable-fab', className)}
       data-variant={variant}
-      data-size={size}
+      data-size={resolvedSize}
+      data-fab-size={fabSize}
+      data-fab-color={color}
       data-extended={extended || undefined}
       data-lowered={lowered || undefined}
       ref={setButtonRef}

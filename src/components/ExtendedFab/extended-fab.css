@@ -4,7 +4,7 @@
    Source: m3.material.io/components/extended-fab/specs
    ============================================================================= */
 
-.md-extended-fab {
+.md-button.md-extended-fab {
   gap: 12px;
   box-shadow: var(--md-sys-elevation-3);
 
@@ -14,6 +14,57 @@
   &[data-size="md"] {
     border-radius: var(--md-sys-shape-corner-large);
     gap: 8px;
+  }
+
+  &[data-fab-size="small"] {
+    height: 56px;
+    padding-inline: 16px;
+    gap: 8px;
+    border-radius: var(--md-sys-shape-corner-large);
+    font-family: var(--md-sys-typescale-title-medium-font);
+    font-size: var(--md-sys-typescale-title-medium-size);
+    line-height: var(--md-sys-typescale-title-medium-line-height);
+    font-weight: var(--md-sys-typescale-title-medium-weight);
+    letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+
+    & svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &[data-fab-size="medium"] {
+    height: 80px;
+    padding-inline: 26px;
+    gap: 12px;
+    border-radius: var(--md-sys-shape-corner-large-increased);
+    font-family: var(--md-sys-typescale-title-large-font);
+    font-size: var(--md-sys-typescale-title-large-size);
+    line-height: var(--md-sys-typescale-title-large-line-height);
+    font-weight: var(--md-sys-typescale-title-large-weight);
+    letter-spacing: var(--md-sys-typescale-title-large-tracking);
+
+    & svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  &[data-fab-size="large"] {
+    height: 96px;
+    padding-inline: 28px;
+    gap: 16px;
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    font-family: var(--md-sys-typescale-headline-small-font);
+    font-size: var(--md-sys-typescale-headline-small-size);
+    line-height: var(--md-sys-typescale-headline-small-line-height);
+    font-weight: var(--md-sys-typescale-headline-small-weight);
+    letter-spacing: var(--md-sys-typescale-headline-small-tracking);
+
+    & svg {
+      width: 36px;
+      height: 36px;
+    }
   }
 
   &[data-size="lg"] {
@@ -32,4 +83,48 @@
       box-shadow: var(--md-sys-elevation-2);
     }
   }
+}
+
+.md-button.md-extended-fab[data-fab-color="primary"] {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.md-button.md-extended-fab[data-fab-color="secondary"] {
+  background-color: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
+}
+
+.md-button.md-extended-fab[data-fab-color="tertiary"] {
+  background-color: var(--md-sys-color-tertiary);
+  color: var(--md-sys-color-on-tertiary);
+}
+
+.md-button.md-extended-fab[data-fab-color="primary-container"] {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.md-button.md-extended-fab[data-fab-color="secondary-container"] {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.md-button.md-extended-fab[data-fab-color="tertiary-container"] {
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+
+.md-button.md-extended-fab:disabled[data-fab-color] {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+    transparent
+  );
+  color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
+  box-shadow: none;
 }
