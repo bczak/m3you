@@ -49,9 +49,11 @@ internals, not a consumer API):
   suffixes for `headline-small`, `title-medium`, `label-large`, `display-large`, …
 - Motion — `--md-sys-motion-*`; state opacities — `--md-sys-state-hover-opacity`
 
-**Gotcha worth knowing:** m3you defines typescale *tokens* but does not set a base
-`font-family` on `body`. Plain prose you add will fall back to the browser default (serif)
-unless you set it yourself:
+**Gotcha worth knowing:** the npm library defines typescale *tokens* but does not set a base
+`font-family` on `body`. This synced `styles.css` adds one safety-net rule
+(`body { font-family: var(--md-ref-typeface-plain) }`, matching the repo's own Storybook
+baseline), so plain prose renders in the design system's typeface by default. Still prefer
+setting type explicitly on your own containers with the typescale tokens:
 
 ```css
 .page { font-family: var(--md-sys-typescale-body-large-font); }

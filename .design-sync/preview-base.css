@@ -1,0 +1,12 @@
+/* Appended after dist/styles/globals.css by the design-sync buildCmd (see
+ * .design-sync/config.json) to form the synced stylesheet entry.
+ *
+ * Base typeface for prose. The npm library deliberately sets no body
+ * font-family (consumers opt in via tokens), but the repo's own Storybook
+ * showcase sets exactly this baseline in .storybook/preview-head.html — so the
+ * synced design system ships the same baseline: unstyled text renders in the
+ * library's plain typeface instead of the browser serif default, in preview
+ * cards and rendered designs alike. */
+body {
+  font-family: var(--md-ref-typeface-plain, "Roboto Flex", Roboto, system-ui, sans-serif);
+}

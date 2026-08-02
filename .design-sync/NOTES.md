@@ -15,6 +15,21 @@ remote `_ds_sync.json` anchor, config recovered and committed from this run onwa
   side-effectful, and `minify: false` were all tried first and did NOT fix it. The same bug exists
   in any `storybook-static/` built without the fix (chromatic deploys included) — if a future
   storybook/vite upgrade removes the need, drop the workaround.
+- [GENERAL] The `manualPureFunctions` fix above only helps builds made AFTER it landed, and a
+  stale `storybook-static/` is invisible to the obvious freshness check. On 2026-08-01 the fix
+  was committed at 20:34 while `storybook-static/` was built at 20:09 — `find src -newer
+  storybook-static/index.json` reported nothing, because the change was in `.storybook/`, not
+  `src/`. Result: a repo that looks fixed but whose static build still throws
+  `createSelectorCreator is not defined` on all 24 Toolbar/Date picker/Time picker/Tooltip
+  stories. **Check `.storybook/` as well as `src/` when deciding whether to rebuild**, or just
+  rebuild. Symptom to watch for: a story that renders in dev but is empty in the static build.
+- `InteractionPlayground`'s `run-interactions` story is NON-DETERMINISTIC: its menu measures
+  120px wide on some runs and 150px on others, from identical code (verified by loading the
+  same static build 4× in a row — it alternates). It plays an interaction sequence, so the
+  captured moment depends on timing. Harmless for sync (the story is `titleMap: null`), but it
+  WILL show up as a spurious diff in `measurements.json` before/after comparisons — ignore
+  `md-menu` / `md-menu-item` changes from this story. The real `containment-menu--showcase`
+  measurements are stable.
 - Story titles that are not components: `M3ComponentReplacements`, `InteractionPlayground`
   (showcase/demo stories) — excluded via `titleMap: null`.
 - `Search.stories.tsx` has title `Navigation/Search` but the exports are `SearchBar` /
@@ -49,6 +64,21 @@ remote `_ds_sync.json` anchor, config recovered and committed from this run onwa
   drift vs previews (both geometric sans; geometry verified unaffected). The old
   `[FONT_REMOTE] "Roboto Flex"` warn wrongly assumed the scraped Google-Sans @import served
   Roboto Flex — it doesn't.
+- [GENERAL] A `.storybook/preview.css` imported from `preview.ts` compiles into
+  `_vendor/preview-decorators.css` but NOTHING ever loads that sidecar (the emit templates
+  don't link it and preview-decorators.js injects no CSS) — decorator CSS is a dead end for
+  shipping styles to previews. The working carrier is the cssEntry: `buildCmd` concatenates
+  `dist/styles/globals.css` + `.design-sync/preview-base.css` into
+  `.design-sync/.cache/ds-css-entry.css` which `cssEntry` points at, so the body base-font
+  rule ships inside `_ds_bundle.css` (loaded by preview cards AND rendered designs). The
+  conventions header's font gotcha was updated to match. Scope (wave-2 finding): the missing
+  body font hit COMPONENT-INTERNAL text too, not just story prose — most m3you component CSS
+  sets no font-family (only Chip does); TimePicker's headline/dial digits and DatePicker's
+  weekday header inherit body. Form controls escaped via Chromium's sans control default.
+- Switch "All" story's last row sits below the 700px capture fold — framed with
+  `overrides.Switch.viewport: "900x1000"` (content was verified present in the DOM).
+- TimePicker Portrait/AutoOrientation: dial centers in the 900px preview panel vs storybook's
+  shrink-wrap element crop — framing only, story JSX is a bare `<TimePicker/>`; not a defect.
 - Sheet-scaling gotcha (recurring in wave 1): sb raw shots are tight element crops while ds
   shots are fixed 900x700 pages, so equal-width sheet columns scale them differently — an
   apparent 2x size difference on a sheet is usually framing. Always confirm from raw/ PNGs
@@ -68,6 +98,12 @@ remote `_ds_sync.json` anchor, config recovered and committed from this run onwa
   of problem.
 
 ## Re-sync risks
+
+- Accepted family-metric parity: the storybook oracle renders Google Sans (preview-head
+  override) while previews/designs render the library's Roboto Flex. Invisible at component
+  scale except where text hits a clamp — List/LongLocalizedContent is graded `close` for
+  exactly that (60ch truncation point shifts a few glyphs); this is expected on every future
+  sync until the repo unifies the two fonts.
 
 - The `manualPureFunctions` workaround in `.storybook/main.ts` assumes no story actually uses
   `createSelectorMemoized`'s return value chain from a dropped call site; if base-ui internals

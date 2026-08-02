@@ -5,9 +5,9 @@
   "readmeHeader": ".design-sync/conventions.md",
   "storybookStatic": ".design-sync/sb-reference",
   "storybookConfigDir": ".storybook",
-  "buildCmd": "bun run build",
+  "buildCmd": "bun run build && mkdir -p .design-sync/.cache && cat dist/styles/globals.css .design-sync/preview-base.css > .design-sync/.cache/ds-css-entry.css",
   "entry": "dist/index.js",
-  "cssEntry": "dist/styles/globals.css",
+  "cssEntry": ".design-sync/.cache/ds-css-entry.css",
   "extraFonts": [".design-sync/fonts/roboto-flex.css"],
   "runtimeFontPrefixes": ["https://fonts.gstatic.com"],
   "libOverrides": {
@@ -30,6 +30,7 @@
     "Toolbar": { "cardMode": "column" },
     "RadioButton": { "cardMode": "column" },
     "Slider": { "cardMode": "column" },
+    "Switch": { "viewport": "900x1000" },
     "Menu": { "cardMode": "single", "primaryStory": "Showcase", "viewport": "900x1000" },
     "Tooltip": { "cardMode": "single" }
   }
