@@ -98,7 +98,7 @@ const LinearProgress = ({
         <svg
           className="md-linear-progress__wave"
           width="100%"
-          height={indeterminatePath.height + 2}
+          height={indeterminatePath.height}
           viewBox={indeterminatePath.viewBox}
           preserveAspectRatio="none"
           aria-hidden="true"
@@ -156,7 +156,7 @@ const LinearProgress = ({
             <svg
               className="md-linear-progress__wave md-linear-progress__wave--sliding"
               width={PATH_RENDER_WIDTH}
-              height={determinatePath.height + 2}
+              height={determinatePath.height}
               viewBox={determinatePath.viewBox}
               preserveAspectRatio="xMinYMid meet"
               aria-hidden="true"

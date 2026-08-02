@@ -1,3 +1,4 @@
+import './fab.css';
 import type * as React from 'react';
 
 import { cx } from '../../lib/cx';

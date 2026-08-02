@@ -30,28 +30,35 @@ export const drawLinearWavyPath = ({
   strokeWidth,
   phase = 0,
 }: WavePathInput): WavePath => {
-  // Inflate amplitude by stroke/2 so peaks touch the outer edges without the
-  // round stroke caps clipping (same trick m3e uses).
-  const effectiveAmp = amplitude + strokeWidth / 2;
-  const y = effectiveAmp;
+  // Half-height of the *stroked* wave: the centre line swings by `amplitude`,
+  // and the stroke adds half its width beyond each peak. The drawing therefore
+  // occupies exactly `envelope * 2` units, which must equal the viewBox height
+  // — if the viewBox were taller, `preserveAspectRatio="… meet"` would scale
+  // the whole wave down and the horizontal period would no longer match
+  // `--_wavelength`, desyncing the slide animation a little more every cycle.
+  const envelope = amplitude + strokeWidth / 2;
+  const y = envelope;
   const step = wavelength / 2;
   const parts: string[] = [`M 0,${y}`];
+
+  // A quadratic Bezier only reaches half of its control-point offset at the
+  // apex, so the control point overshoots by 2x for the curve itself to peak
+  // at `amplitude`.
+  const controlAmplitude = amplitude * 2;
 
   let x = 0;
   while (x <= width) {
     const endX = x + step;
-    const endY = y + effectiveAmp * Math.sin((2 * Math.PI * endX) / wavelength + phase);
+    const endY = y + amplitude * Math.sin((2 * Math.PI * endX) / wavelength + phase);
     const cpX = x + step / 2;
-    const cpY = y + effectiveAmp * Math.sin((2 * Math.PI * (x + step / 2)) / wavelength + phase);
+    const cpY = y + controlAmplitude * Math.sin((2 * Math.PI * cpX) / wavelength + phase);
     parts.push(`Q ${cpX},${cpY} ${endX},${endY}`);
     x += step;
   }
 
-  // 1px vertical breathing room keeps round caps inside the viewBox.
-  const padding = 1;
   return {
     path: parts.join(' '),
-    viewBox: `0 ${-padding} ${width} ${effectiveAmp * 2 + padding * 2}`,
+    viewBox: `0 0 ${width} ${envelope * 2}`,
     height: strokeWidth + amplitude * 2,
     width,
   };
