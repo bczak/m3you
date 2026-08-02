@@ -40,7 +40,7 @@ const ConnectedButtonGroup = ({
   });
 
   return (
-    <ButtonGroupContext value={{ size, shape, morph: false, selectedIndices, handleToggle }}>
+    <ButtonGroupContext.Provider value={{ size, shape, morph: false, selectedIndices, handleToggle }}>
       <ButtonGroup
         ref={ref}
         orientation={orientation}
@@ -50,10 +50,10 @@ const ConnectedButtonGroup = ({
         {...props}
       >
         {React.Children.map(children, (child, index) => (
-          <ButtonGroupItemContext value={{ index }}>{child}</ButtonGroupItemContext>
+          <ButtonGroupItemContext.Provider value={{ index }}>{child}</ButtonGroupItemContext.Provider>
         ))}
       </ButtonGroup>
-    </ButtonGroupContext>
+    </ButtonGroupContext.Provider>
   );
 };
 ConnectedButtonGroup.displayName = 'ConnectedButtonGroup';

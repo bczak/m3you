@@ -43,7 +43,7 @@ const StandardButtonGroup = ({
   });
 
   return (
-    <ButtonGroupContext value={{ size, shape, morph, selectedIndices, handleToggle }}>
+    <ButtonGroupContext.Provider value={{ size, shape, morph, selectedIndices, handleToggle }}>
       <ButtonGroup
         ref={ref}
         orientation={orientation}
@@ -53,10 +53,10 @@ const StandardButtonGroup = ({
         {...props}
       >
         {React.Children.map(children, (child, index) => (
-          <ButtonGroupItemContext value={{ index }}>{child}</ButtonGroupItemContext>
+          <ButtonGroupItemContext.Provider value={{ index }}>{child}</ButtonGroupItemContext.Provider>
         ))}
       </ButtonGroup>
-    </ButtonGroupContext>
+    </ButtonGroupContext.Provider>
   );
 };
 StandardButtonGroup.displayName = 'StandardButtonGroup';

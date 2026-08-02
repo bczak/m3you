@@ -1,7 +1,6 @@
 import './navigation-rail.css';
 import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -43,7 +42,7 @@ interface NavigationRailContextValue {
 const NavigationRailContext = React.createContext<NavigationRailContextValue | null>(null);
 
 const useNavigationRail = () => {
-  const context = use(NavigationRailContext);
+  const context = React.useContext(NavigationRailContext);
   if (!context) {
     throw new Error('NavigationRailItem must be used within a NavigationRail');
   }

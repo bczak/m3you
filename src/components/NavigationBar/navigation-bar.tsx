@@ -1,6 +1,5 @@
 import './navigation-bar.css';
 import * as React from 'react';
-import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -26,7 +25,7 @@ interface NavigationBarContextValue {
 const NavigationBarContext = React.createContext<NavigationBarContextValue | null>(null);
 
 const useNavigationBar = () => {
-  const context = use(NavigationBarContext);
+  const context = React.useContext(NavigationBarContext);
   if (!context) {
     throw new Error('NavigationBarItem must be used within a NavigationBar');
   }

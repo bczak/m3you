@@ -346,7 +346,7 @@ const List = ({
   let itemIndex = 0;
 
   return (
-    <ListContext value={itemContext}>
+    <ListContext.Provider value={itemContext}>
       {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: selection mode dynamically supplies the valid listbox role. */}
       <ul
         {...listProps}
@@ -365,13 +365,13 @@ const List = ({
           const position = itemIndex;
           itemIndex += 1;
           return (
-            <ListItemPositionContext key={child.key} value={itemPositions[position]}>
+            <ListItemPositionContext.Provider key={child.key} value={itemPositions[position]}>
               {child}
-            </ListItemPositionContext>
+            </ListItemPositionContext.Provider>
           );
         })}
       </ul>
-    </ListContext>
+    </ListContext.Provider>
   );
 };
 List.displayName = 'List';

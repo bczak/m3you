@@ -1,7 +1,6 @@
 import './tabs.css';
 import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -30,7 +29,7 @@ interface TabsContextValue {
 const TabsContext = React.createContext<TabsContextValue | null>(null);
 
 const useTabs = () => {
-  const context = use(TabsContext);
+  const context = React.useContext(TabsContext);
   if (!context) {
     throw new Error('Tab must be used within a Tabs component');
   }

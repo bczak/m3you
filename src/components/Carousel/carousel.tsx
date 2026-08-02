@@ -406,9 +406,9 @@ const Carousel = ({
         onScroll={handleScroll}
       >
         {childrenArray.map((child, index) => (
-          <CarouselItemContext key={String(child.key)} value={itemContexts[index]}>
+          <CarouselItemContext.Provider key={String(child.key)} value={itemContexts[index]}>
             {child}
-          </CarouselItemContext>
+          </CarouselItemContext.Provider>
         ))}
       </ul>
     </section>

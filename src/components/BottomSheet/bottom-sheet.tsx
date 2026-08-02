@@ -1,7 +1,6 @@
 import './bottom-sheet.css';
 import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
 import * as React from 'react';
-import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -71,7 +70,7 @@ function BottomSheetContent({
   portalProps,
   ...props
 }: BottomSheetContentProps) {
-  const { isModal } = use(BottomSheetContext);
+  const { isModal } = React.useContext(BottomSheetContext);
 
   return (
     <DrawerPrimitive.Portal {...portalProps}>

@@ -1,4 +1,4 @@
-import { createContext, use } from 'react';
+import { createContext, useContext } from 'react';
 
 export interface SplitButtonContextValue {
   variant: 'filled' | 'tonal' | 'elevated' | 'outlined';
@@ -13,7 +13,7 @@ export interface SplitButtonContextValue {
 const SplitButtonCtx = createContext<SplitButtonContextValue | null>(null);
 
 export function useSplitButton() {
-  const ctx = use(SplitButtonCtx);
+  const ctx = useContext(SplitButtonCtx);
   if (!ctx) throw new Error('SplitButton sub-components must be used within <SplitButton>');
   return ctx;
 }

@@ -3,7 +3,6 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Check, ChevronRight } from 'lucide-react';
 import { Ripple } from 'm3-ripple';
 import * as React from 'react';
-import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -112,7 +111,7 @@ const MenuContent = ({
   ref,
   ...props
 }: MenuContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const color = use(MenuColorContext);
+  const color = React.useContext(MenuColorContext);
   const colorClass = color === 'vibrant' ? 'bg-tertiary-container' : 'bg-surface-container-low';
   return (
     <BaseMenu.Portal {...portalProps}>
@@ -223,7 +222,7 @@ const MenuItem = ({
   ref,
   ...props
 }: MenuItemProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const color = use(MenuColorContext);
+  const color = React.useContext(MenuColorContext);
   const selectedClass = selected ? (color === 'vibrant' ? 'bg-tertiary' : 'bg-tertiary-container') : undefined;
   return (
     <BaseMenu.Item
