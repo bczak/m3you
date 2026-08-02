@@ -30,93 +30,97 @@ export type SearchViewProps = Omit<React.ComponentProps<'div'>, 'onChange'> & {
   children?: React.ReactNode;
 };
 
-const SearchView = ({
-  className,
-  placeholder = 'Search',
-  value,
-  defaultValue,
-  onValueChange,
-  onSearch,
-  onBack,
-  mode = 'docked',
-  autoFocus = true,
-  children,
-  role,
-  ref,
-  ...props
-}: SearchViewProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const [internalValue, setInternalValue] = React.useState(defaultValue ?? '');
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
-  const isControlled = value !== undefined;
-  const currentValue = isControlled ? value : internalValue;
-
-  const updateValue = React.useCallback(
-    (next: string) => {
-      if (!isControlled) setInternalValue(next);
-      onValueChange?.(next);
+const SearchView = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchViewProps>>(
+  (
+    {
+      className,
+      placeholder = 'Search',
+      value,
+      defaultValue,
+      onValueChange,
+      onSearch,
+      onBack,
+      mode = 'docked',
+      autoFocus = true,
+      children,
+      role,
+      ...props
     },
-    [isControlled, onValueChange],
-  );
+    ref,
+  ) => {
+    const [internalValue, setInternalValue] = React.useState(defaultValue ?? '');
+    const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleClear = () => {
-    updateValue('');
-    inputRef.current?.focus();
-  };
+    const isControlled = value !== undefined;
+    const currentValue = isControlled ? value : internalValue;
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') onSearch?.(currentValue);
-    if (e.key === 'Escape') onBack?.();
-  };
+    const updateValue = React.useCallback(
+      (next: string) => {
+        if (!isControlled) setInternalValue(next);
+        onValueChange?.(next);
+      },
+      [isControlled, onValueChange],
+    );
 
-  React.useEffect(() => {
-    if (!autoFocus) return;
-    const id = requestAnimationFrame(() => inputRef.current?.focus());
-    return () => cancelAnimationFrame(id);
-  }, [autoFocus]);
+    const handleClear = () => {
+      updateValue('');
+      inputRef.current?.focus();
+    };
 
-  return (
-    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: role resolves to a labelled search landmark or caller-provided dialog.
-    <div
-      ref={ref}
-      role={role ?? 'search'}
-      aria-label="Search"
-      data-mode={mode}
-      className={cx('md-search-view', className)}
-      {...props}
-    >
-      {/* Header */}
-      <div className="md-search-view__header">
-        <IconButton variant="standard" size="sm" onClick={onBack} aria-label="Close search">
-          <ArrowLeft />
-        </IconButton>
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') onSearch?.(currentValue);
+      if (e.key === 'Escape') onBack?.();
+    };
 
-        <input
-          ref={inputRef}
-          type="text"
-          value={currentValue}
-          onChange={(e) => updateValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          className="md-search-view__input"
-          aria-label="Search input"
-        />
+    React.useEffect(() => {
+      if (!autoFocus) return;
+      const id = requestAnimationFrame(() => inputRef.current?.focus());
+      return () => cancelAnimationFrame(id);
+    }, [autoFocus]);
 
-        {currentValue && (
-          <IconButton variant="standard" size="sm" onClick={handleClear} aria-label="Clear search">
-            <X />
+    return (
+      // biome-ignore lint/a11y/useAriaPropsSupportedByRole: role resolves to a labelled search landmark or caller-provided dialog.
+      <div
+        ref={ref}
+        role={role ?? 'search'}
+        aria-label="Search"
+        data-mode={mode}
+        className={cx('md-search-view', className)}
+        {...props}
+      >
+        {/* Header */}
+        <div className="md-search-view__header">
+          <IconButton variant="standard" size="sm" onClick={onBack} aria-label="Close search">
+            <ArrowLeft />
           </IconButton>
-        )}
+
+          <input
+            ref={inputRef}
+            type="text"
+            value={currentValue}
+            onChange={(e) => updateValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            className="md-search-view__input"
+            aria-label="Search input"
+          />
+
+          {currentValue && (
+            <IconButton variant="standard" size="sm" onClick={handleClear} aria-label="Clear search">
+              <X />
+            </IconButton>
+          )}
+        </div>
+
+        {/* Divider */}
+        <hr className="md-search-view__divider" />
+
+        {/* Content */}
+        <div className="md-search-view__content">{children}</div>
       </div>
-
-      {/* Divider */}
-      <hr className="md-search-view__divider" />
-
-      {/* Content */}
-      <div className="md-search-view__content">{children}</div>
-    </div>
-  );
-};
+    );
+  },
+);
 SearchView.displayName = 'SearchView';
 
 export { SearchView };

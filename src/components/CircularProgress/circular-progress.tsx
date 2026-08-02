@@ -1,6 +1,6 @@
 import './circular-progress.css';
 import type * as React from 'react';
-import { useEffect, useId, useMemo, useRef } from 'react';
+import { forwardRef, useEffect, useId, useMemo, useRef } from 'react';
 
 import { cx } from '../../lib/cx';
 import { drawCircularArc, drawWavyArc, sizeToDegrees } from './wavy-arc';
@@ -58,61 +58,65 @@ const computeWavyIndeterminateSweep = (
   return maxSweep - (maxSweep - minSweep) * smoothStep((u - phase * 3) / phase);
 };
 
-const CircularProgress = ({
-  className,
-  size = 'md',
-  value = 0,
-  type = 'determinate',
-  indeterminate = false,
-  strokeWidth = 4,
-  variant = 'flat',
-  ref,
-  ...props
-}: CircularProgressProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const clampedValue = Math.min(100, Math.max(0, value));
-  const isWavy = variant === 'wavy';
-  const resolvedType = indeterminate ? 'indeterminate' : type;
-  const isIndeterminate = resolvedType === 'indeterminate';
-  const maskId = useId();
-
-  const rootProps = {
+const CircularProgress = forwardRef<HTMLDivElement, React.PropsWithoutRef<CircularProgressProps>>(
+  (
+    {
+      className,
+      size = 'md',
+      value = 0,
+      type = 'determinate',
+      indeterminate = false,
+      strokeWidth = 4,
+      variant = 'flat',
+      ...props
+    },
     ref,
-    role: 'progressbar' as const,
-    'aria-valuenow': isIndeterminate ? undefined : clampedValue,
-    'aria-valuemin': isIndeterminate ? undefined : 0,
-    'aria-valuemax': isIndeterminate ? undefined : 100,
-    'aria-label': isIndeterminate ? 'Loading' : `Progress: ${clampedValue}%`,
-    className: cx('md-circular-progress', className),
-    'data-size': size,
-    'data-variant': variant,
-    'data-indeterminate': isIndeterminate || undefined,
-    'data-type': resolvedType,
-    ...props,
-  };
+  ) => {
+    const clampedValue = Math.min(100, Math.max(0, value));
+    const isWavy = variant === 'wavy';
+    const resolvedType = indeterminate ? 'indeterminate' : type;
+    const isIndeterminate = resolvedType === 'indeterminate';
+    const maskId = useId();
 
-  if (!isWavy) {
+    const rootProps = {
+      ref,
+      role: 'progressbar' as const,
+      'aria-valuenow': isIndeterminate ? undefined : clampedValue,
+      'aria-valuemin': isIndeterminate ? undefined : 0,
+      'aria-valuemax': isIndeterminate ? undefined : 100,
+      'aria-label': isIndeterminate ? 'Loading' : `Progress: ${clampedValue}%`,
+      className: cx('md-circular-progress', className),
+      'data-size': size,
+      'data-variant': variant,
+      'data-indeterminate': isIndeterminate || undefined,
+      'data-type': resolvedType,
+      ...props,
+    };
+
+    if (!isWavy) {
+      return (
+        <FlatCircularProgress
+          rootProps={rootProps}
+          clampedValue={clampedValue}
+          indeterminate={isIndeterminate}
+          strokeWidth={strokeWidth}
+        />
+      );
+    }
+
+    const diameter = WAVY_DIAMETER[size];
     return (
-      <FlatCircularProgress
+      <WavyCircularProgress
         rootProps={rootProps}
         clampedValue={clampedValue}
         indeterminate={isIndeterminate}
+        diameter={diameter}
         strokeWidth={strokeWidth}
+        maskId={maskId}
       />
     );
-  }
-
-  const diameter = WAVY_DIAMETER[size];
-  return (
-    <WavyCircularProgress
-      rootProps={rootProps}
-      clampedValue={clampedValue}
-      indeterminate={isIndeterminate}
-      diameter={diameter}
-      strokeWidth={strokeWidth}
-      maskId={maskId}
-    />
-  );
-};
+  },
+);
 CircularProgress.displayName = 'CircularProgress';
 
 /* -------------------------------------------------------------------------- */

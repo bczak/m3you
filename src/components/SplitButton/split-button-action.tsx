@@ -2,6 +2,7 @@ import '../Button/button.css';
 import './split-button.css';
 import { Ripple } from 'm3-ripple';
 import type * as React from 'react';
+import { forwardRef } from 'react';
 
 import { cx } from '../../lib/cx';
 import { useSplitButton } from './split-button-context';
@@ -12,33 +13,30 @@ import { useSplitButton } from './split-button-context';
 
 export interface SplitButtonActionProps extends React.ComponentProps<'button'> {}
 
-const SplitButtonAction = ({
-  className,
-  children,
-  ref,
-  ...props
-}: SplitButtonActionProps & { ref?: React.Ref<HTMLButtonElement> }) => {
-  const { variant, size, shape, morph, selected } = useSplitButton();
-  const selectedValue = selected !== undefined ? String(selected) : undefined;
+const SplitButtonAction = forwardRef<HTMLButtonElement, React.PropsWithoutRef<SplitButtonActionProps>>(
+  ({ className, children, ...props }, ref) => {
+    const { variant, size, shape, morph, selected } = useSplitButton();
+    const selectedValue = selected !== undefined ? String(selected) : undefined;
 
-  return (
-    <button
-      ref={ref}
-      type="button"
-      className={cx('md-button', 'md-split-button__action', className)}
-      data-variant={variant}
-      data-size={size}
-      data-shape={shape}
-      data-morph={morph || undefined}
-      data-selected={selectedValue}
-      aria-pressed={selected !== undefined ? selected : undefined}
-      {...props}
-    >
-      <Ripple />
-      {children}
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        type="button"
+        className={cx('md-button', 'md-split-button__action', className)}
+        data-variant={variant}
+        data-size={size}
+        data-shape={shape}
+        data-morph={morph || undefined}
+        data-selected={selectedValue}
+        aria-pressed={selected !== undefined ? selected : undefined}
+        {...props}
+      >
+        <Ripple />
+        {children}
+      </button>
+    );
+  },
+);
 SplitButtonAction.displayName = 'SplitButtonAction';
 
 export { SplitButtonAction };

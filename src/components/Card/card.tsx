@@ -1,5 +1,6 @@
 import './card.css';
 import type * as React from 'react';
+import { forwardRef } from 'react';
 
 import { cx } from '../../lib/cx';
 import { CardRipple } from './card-ripple';
@@ -36,102 +37,129 @@ export type CardProps = React.ComponentProps<'div'> & {
   ripple?: boolean;
 };
 
-const Card = ({
-  className,
-  variant = 'filled',
-  disabled,
-  ripple,
-  onClick,
-  onKeyDown,
-  onPointerCancelCapture,
-  onPointerDownCapture,
-  onPointerOutCapture,
-  onPointerOverCapture,
-  onPointerUpCapture,
-  children,
-  ref,
-  ...props
-}: CardProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const isInteractive = Boolean(onClick);
-  const shouldRenderRipple = ripple ?? isInteractive;
+const Card = forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
+  (
+    {
+      className,
+      variant = 'filled',
+      disabled,
+      ripple,
+      onClick,
+      onKeyDown,
+      onPointerCancelCapture,
+      onPointerDownCapture,
+      onPointerOutCapture,
+      onPointerOverCapture,
+      onPointerUpCapture,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const isInteractive = Boolean(onClick);
+    const shouldRenderRipple = ripple ?? isInteractive;
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isFromInteractiveDescendant(e.target, e.currentTarget)) {
-      return;
-    }
+    const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (isFromInteractiveDescendant(e.target, e.currentTarget)) {
+        return;
+      }
 
-    onClick?.(e);
-  };
+      onClick?.(e);
+    };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isFromInteractiveDescendant(e.target, e.currentTarget)) {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (isFromInteractiveDescendant(e.target, e.currentTarget)) {
+        onKeyDown?.(e);
+        return;
+      }
+
+      if (isInteractive && !disabled && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
+      }
       onKeyDown?.(e);
-      return;
-    }
+    };
 
-    if (isInteractive && !disabled && (e.key === 'Enter' || e.key === ' ')) {
-      e.preventDefault();
-      onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
-    }
-    onKeyDown?.(e);
-  };
-
-  // Capture-phase pointer tracking lets the card know when the pointer is over
-  // a nested control so surface feedback can stay quiet for child interactions.
-  const handlePointerOverCapture = (e: React.PointerEvent<HTMLDivElement>) => {
-    syncNestedInteractiveState(e.currentTarget, e.target);
-    onPointerOverCapture?.(e);
-  };
-
-  const handlePointerOutCapture = (e: React.PointerEvent<HTMLDivElement>) => {
-    const nextTarget = e.relatedTarget;
-
-    if (nextTarget instanceof Node && e.currentTarget.contains(nextTarget)) {
-      syncNestedInteractiveState(e.currentTarget, nextTarget);
-    } else {
-      setNestedInteractiveState(e.currentTarget, false);
-    }
-
-    onPointerOutCapture?.(e);
-  };
-
-  const handlePointerDownCapture = (e: React.PointerEvent<HTMLDivElement>) => {
-    syncNestedInteractiveState(e.currentTarget, e.target);
-    onPointerDownCapture?.(e);
-  };
-
-  const handlePointerUpCapture = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType === 'touch') {
-      setNestedInteractiveState(e.currentTarget, false);
-    } else {
+    // Capture-phase pointer tracking lets the card know when the pointer is over
+    // a nested control so surface feedback can stay quiet for child interactions.
+    const handlePointerOverCapture = (e: React.PointerEvent<HTMLDivElement>) => {
       syncNestedInteractiveState(e.currentTarget, e.target);
+      onPointerOverCapture?.(e);
+    };
+
+    const handlePointerOutCapture = (e: React.PointerEvent<HTMLDivElement>) => {
+      const nextTarget = e.relatedTarget;
+
+      if (nextTarget instanceof Node && e.currentTarget.contains(nextTarget)) {
+        syncNestedInteractiveState(e.currentTarget, nextTarget);
+      } else {
+        setNestedInteractiveState(e.currentTarget, false);
+      }
+
+      onPointerOutCapture?.(e);
+    };
+
+    const handlePointerDownCapture = (e: React.PointerEvent<HTMLDivElement>) => {
+      syncNestedInteractiveState(e.currentTarget, e.target);
+      onPointerDownCapture?.(e);
+    };
+
+    const handlePointerUpCapture = (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.pointerType === 'touch') {
+        setNestedInteractiveState(e.currentTarget, false);
+      } else {
+        syncNestedInteractiveState(e.currentTarget, e.target);
+      }
+
+      onPointerUpCapture?.(e);
+    };
+
+    const handlePointerCancelCapture = (e: React.PointerEvent<HTMLDivElement>) => {
+      setNestedInteractiveState(e.currentTarget, false);
+      onPointerCancelCapture?.(e);
+    };
+
+    const content = (
+      <>
+        {shouldRenderRipple && !disabled && <CardRipple hoverOpacity={0} />}
+        {children}
+      </>
+    );
+
+    if (isInteractive) {
+      return (
+        // biome-ignore lint/a11y/useSemanticElements: Card preserves div semantics/styling while supporting button-like behavior.
+        <div
+          ref={ref}
+          role="button"
+          tabIndex={!disabled ? 0 : undefined}
+          aria-disabled={disabled ? true : undefined}
+          onClick={!disabled ? handleClick : undefined}
+          onKeyDown={handleKeyDown}
+          onPointerOverCapture={handlePointerOverCapture}
+          onPointerOutCapture={handlePointerOutCapture}
+          onPointerDownCapture={handlePointerDownCapture}
+          onPointerUpCapture={handlePointerUpCapture}
+          onPointerCancelCapture={handlePointerCancelCapture}
+          className={cx('md-card', className)}
+          data-variant={variant}
+          data-interactive=""
+          data-ripple={shouldRenderRipple && !disabled ? '' : undefined}
+          data-disabled={disabled || undefined}
+          {...props}
+        >
+          {content}
+        </div>
+      );
     }
 
-    onPointerUpCapture?.(e);
-  };
-
-  const handlePointerCancelCapture = (e: React.PointerEvent<HTMLDivElement>) => {
-    setNestedInteractiveState(e.currentTarget, false);
-    onPointerCancelCapture?.(e);
-  };
-
-  const content = (
-    <>
-      {shouldRenderRipple && !disabled && <CardRipple hoverOpacity={0} />}
-      {children}
-    </>
-  );
-
-  if (isInteractive) {
     return (
-      // biome-ignore lint/a11y/useSemanticElements: Card preserves div semantics/styling while supporting button-like behavior.
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+      // biome-ignore lint/a11y/noStaticElementInteractions: Card capture handlers forward props and track nested interactions for ripple state.
       <div
         ref={ref}
-        role="button"
-        tabIndex={!disabled ? 0 : undefined}
-        aria-disabled={disabled ? true : undefined}
-        onClick={!disabled ? handleClick : undefined}
-        onKeyDown={handleKeyDown}
+        role="presentation"
+        onKeyDown={onKeyDown}
         onPointerOverCapture={handlePointerOverCapture}
         onPointerOutCapture={handlePointerOutCapture}
         onPointerDownCapture={handlePointerDownCapture}
@@ -139,7 +167,6 @@ const Card = ({
         onPointerCancelCapture={handlePointerCancelCapture}
         className={cx('md-card', className)}
         data-variant={variant}
-        data-interactive=""
         data-ripple={shouldRenderRipple && !disabled ? '' : undefined}
         data-disabled={disabled || undefined}
         {...props}
@@ -147,30 +174,8 @@ const Card = ({
         {content}
       </div>
     );
-  }
-
-  return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-    // biome-ignore lint/a11y/noStaticElementInteractions: Card capture handlers forward props and track nested interactions for ripple state.
-    <div
-      ref={ref}
-      role="presentation"
-      onKeyDown={onKeyDown}
-      onPointerOverCapture={handlePointerOverCapture}
-      onPointerOutCapture={handlePointerOutCapture}
-      onPointerDownCapture={handlePointerDownCapture}
-      onPointerUpCapture={handlePointerUpCapture}
-      onPointerCancelCapture={handlePointerCancelCapture}
-      className={cx('md-card', className)}
-      data-variant={variant}
-      data-ripple={shouldRenderRipple && !disabled ? '' : undefined}
-      data-disabled={disabled || undefined}
-      {...props}
-    >
-      {content}
-    </div>
-  );
-};
+  },
+);
 Card.displayName = 'Card';
 
 export { Card };

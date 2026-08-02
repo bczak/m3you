@@ -192,330 +192,367 @@ function renderSelectionIndicator(indicator: ListSelectionIndicator, selected: b
 const EMPTY_SELECTION = new Set<string>();
 const EMPTY_MULTI_VALUE: string[] = [];
 
-const List = ({
-  appearance = 'segmented',
-  mode = 'static',
-  value: selectionValue,
-  defaultValue: defaultSelectionValue,
-  onValueChange,
-  required: requiredProp,
-  children,
-  className,
-  onKeyDown,
-  onFocusCapture,
-  ref,
-  ...rest
-}: ListProps & { ref?: React.Ref<HTMLUListElement> }) => {
-  const rootRef = React.useRef<HTMLUListElement | null>(null);
-  const items = React.useMemo(() => getItemMetadata(children), [children]);
-  const firstEnabledValue = items.find((item) => !item.disabled && item.value !== undefined)?.value;
-  const isSingle = mode === 'single-select';
-  const isMulti = mode === 'multi-select';
-  const selectionMode = isSingle || isMulti;
-  const required = selectionMode ? (requiredProp ?? isSingle) : false;
-  const controlled = selectionMode && selectionValue !== undefined;
-  const singleValueChange = isSingle ? (onValueChange as ListSingleSelectionProps['onValueChange']) : undefined;
-  const multiValueChange = isMulti ? (onValueChange as ListMultiSelectionProps['onValueChange']) : undefined;
+const List = React.forwardRef<HTMLUListElement, React.PropsWithoutRef<ListProps>>(
+  (
+    {
+      appearance = 'segmented',
+      mode = 'static',
+      value: selectionValue,
+      defaultValue: defaultSelectionValue,
+      onValueChange,
+      required: requiredProp,
+      children,
+      className,
+      onKeyDown,
+      onFocusCapture,
+      ...rest
+    },
+    ref,
+  ) => {
+    const rootRef = React.useRef<HTMLUListElement | null>(null);
+    const items = React.useMemo(() => getItemMetadata(children), [children]);
+    const firstEnabledValue = items.find((item) => !item.disabled && item.value !== undefined)?.value;
+    const isSingle = mode === 'single-select';
+    const isMulti = mode === 'multi-select';
+    const selectionMode = isSingle || isMulti;
+    const required = selectionMode ? (requiredProp ?? isSingle) : false;
+    const controlled = selectionMode && selectionValue !== undefined;
+    const singleValueChange = isSingle ? (onValueChange as ListSingleSelectionProps['onValueChange']) : undefined;
+    const multiValueChange = isMulti ? (onValueChange as ListMultiSelectionProps['onValueChange']) : undefined;
 
-  const [internalSingleValue, setInternalSingleValue] = React.useState<string | null>(() => {
-    if (typeof defaultSelectionValue === 'string') return defaultSelectionValue;
-    return required ? (firstEnabledValue ?? null) : null;
-  });
-  const [internalMultiValue, setInternalMultiValue] = React.useState<string[]>(() => {
-    const initialValues = Array.isArray(defaultSelectionValue) ? defaultSelectionValue : EMPTY_MULTI_VALUE;
-    if (initialValues.length > 0) return initialValues;
-    return required && firstEnabledValue !== undefined ? [firstEnabledValue] : [];
-  });
+    const [internalSingleValue, setInternalSingleValue] = React.useState<string | null>(() => {
+      if (typeof defaultSelectionValue === 'string') return defaultSelectionValue;
+      return required ? (firstEnabledValue ?? null) : null;
+    });
+    const [internalMultiValue, setInternalMultiValue] = React.useState<string[]>(() => {
+      const initialValues = Array.isArray(defaultSelectionValue) ? defaultSelectionValue : EMPTY_MULTI_VALUE;
+      if (initialValues.length > 0) return initialValues;
+      return required && firstEnabledValue !== undefined ? [firstEnabledValue] : [];
+    });
 
-  const actualSingleValue = controlled
-    ? typeof selectionValue === 'string'
-      ? selectionValue
-      : null
-    : internalSingleValue;
-  const actualMultiValue = controlled
-    ? Array.isArray(selectionValue)
-      ? selectionValue
-      : EMPTY_MULTI_VALUE
-    : internalMultiValue;
-  const selectedValues = React.useMemo(() => {
-    if (isSingle) return actualSingleValue === null ? EMPTY_SELECTION : new Set([actualSingleValue]);
-    if (isMulti) return new Set(actualMultiValue);
-    return EMPTY_SELECTION;
-  }, [actualMultiValue, actualSingleValue, isMulti, isSingle]);
+    const actualSingleValue = controlled
+      ? typeof selectionValue === 'string'
+        ? selectionValue
+        : null
+      : internalSingleValue;
+    const actualMultiValue = controlled
+      ? Array.isArray(selectionValue)
+        ? selectionValue
+        : EMPTY_MULTI_VALUE
+      : internalMultiValue;
+    const selectedValues = React.useMemo(() => {
+      if (isSingle) return actualSingleValue === null ? EMPTY_SELECTION : new Set([actualSingleValue]);
+      if (isMulti) return new Set(actualMultiValue);
+      return EMPTY_SELECTION;
+    }, [actualMultiValue, actualSingleValue, isMulti, isSingle]);
 
-  const selectValue = React.useCallback(
-    (itemValue: string) => {
-      if (isSingle) {
-        if (actualSingleValue === itemValue && required) return;
-        const nextValue = actualSingleValue === itemValue ? null : itemValue;
-        if (!controlled) setInternalSingleValue(nextValue);
-        singleValueChange?.(nextValue);
+    const selectValue = React.useCallback(
+      (itemValue: string) => {
+        if (isSingle) {
+          if (actualSingleValue === itemValue && required) return;
+          const nextValue = actualSingleValue === itemValue ? null : itemValue;
+          if (!controlled) setInternalSingleValue(nextValue);
+          singleValueChange?.(nextValue);
+          return;
+        }
+
+        const nextValues = new Set(actualMultiValue);
+        if (nextValues.has(itemValue)) {
+          if (required && nextValues.size === 1) return;
+          nextValues.delete(itemValue);
+        } else {
+          nextValues.add(itemValue);
+        }
+        const nextValue = Array.from(nextValues);
+        if (!controlled) setInternalMultiValue(nextValue);
+        multiValueChange?.(nextValue);
+      },
+      [actualMultiValue, actualSingleValue, controlled, isSingle, multiValueChange, required, singleValueChange],
+    );
+
+    const setRootRef = React.useCallback(
+      (node: HTMLUListElement | null) => {
+        rootRef.current = node;
+        if (typeof ref === 'function') ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref],
+    );
+
+    React.useLayoutEffect(() => {
+      const root = rootRef.current;
+      if (!root || mode === 'static') return;
+      const targets = getListTargets(root, mode);
+      if (targets.length === 0) return;
+      const activeElement = root.ownerDocument.activeElement;
+      const focused = activeElement instanceof HTMLElement && root.contains(activeElement) ? activeElement : null;
+      const selected = targets.find(
+        (target) => target.dataset.listValue && selectedValues.has(target.dataset.listValue),
+      );
+      const target = focused && targets.includes(focused) ? focused : (selected ?? targets[0]);
+      setRovingTarget(targets, target);
+    });
+
+    const handleFocusCapture = (event: React.FocusEvent<HTMLUListElement>) => {
+      onFocusCapture?.(event);
+      const targets = getListTargets(event.currentTarget, mode);
+      const focusedTarget = targets.find((target) => target === event.target || target.contains(event.target as Node));
+      if (focusedTarget) setRovingTarget(targets, focusedTarget);
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
+      onKeyDown?.(event);
+      if (event.defaultPrevented || mode === 'static') return;
+
+      const targets = getListTargets(event.currentTarget, mode);
+      const currentIndex = targets.findIndex(
+        (target) => target === event.target || target.contains(event.target as Node),
+      );
+      if (currentIndex < 0) return;
+
+      if (isSelectionMode(mode) && (event.key === 'Enter' || event.key === ' ')) {
+        event.preventDefault();
+        targets[currentIndex].click();
         return;
       }
 
-      const nextValues = new Set(actualMultiValue);
-      if (nextValues.has(itemValue)) {
-        if (required && nextValues.size === 1) return;
-        nextValues.delete(itemValue);
-      } else {
-        nextValues.add(itemValue);
-      }
-      const nextValue = Array.from(nextValues);
-      if (!controlled) setInternalMultiValue(nextValue);
-      multiValueChange?.(nextValue);
-    },
-    [actualMultiValue, actualSingleValue, controlled, isSingle, multiValueChange, required, singleValueChange],
-  );
+      const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+      let nextIndex: number | undefined;
+      if (event.key === 'ArrowDown') nextIndex = currentIndex + 1;
+      else if (event.key === 'ArrowUp') nextIndex = currentIndex - 1;
+      else if (event.key === 'ArrowRight') nextIndex = currentIndex + (rtl ? -1 : 1);
+      else if (event.key === 'ArrowLeft') nextIndex = currentIndex + (rtl ? 1 : -1);
+      else if (event.key === 'Home') nextIndex = 0;
+      else if (event.key === 'End') nextIndex = targets.length - 1;
+      else return;
 
-  const setRootRef = React.useCallback(
-    (node: HTMLUListElement | null) => {
-      rootRef.current = node;
-      if (typeof ref === 'function') ref(node);
-      else if (ref) ref.current = node;
-    },
-    [ref],
-  );
-
-  React.useLayoutEffect(() => {
-    const root = rootRef.current;
-    if (!root || mode === 'static') return;
-    const targets = getListTargets(root, mode);
-    if (targets.length === 0) return;
-    const activeElement = root.ownerDocument.activeElement;
-    const focused = activeElement instanceof HTMLElement && root.contains(activeElement) ? activeElement : null;
-    const selected = targets.find((target) => target.dataset.listValue && selectedValues.has(target.dataset.listValue));
-    const target = focused && targets.includes(focused) ? focused : (selected ?? targets[0]);
-    setRovingTarget(targets, target);
-  });
-
-  const handleFocusCapture = (event: React.FocusEvent<HTMLUListElement>) => {
-    onFocusCapture?.(event);
-    const targets = getListTargets(event.currentTarget, mode);
-    const focusedTarget = targets.find((target) => target === event.target || target.contains(event.target as Node));
-    if (focusedTarget) setRovingTarget(targets, focusedTarget);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
-    onKeyDown?.(event);
-    if (event.defaultPrevented || mode === 'static') return;
-
-    const targets = getListTargets(event.currentTarget, mode);
-    const currentIndex = targets.findIndex(
-      (target) => target === event.target || target.contains(event.target as Node),
-    );
-    if (currentIndex < 0) return;
-
-    if (isSelectionMode(mode) && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault();
-      targets[currentIndex].click();
-      return;
-    }
+      const wrappedIndex = ((nextIndex % targets.length) + targets.length) % targets.length;
+      const nextTarget = targets[wrappedIndex];
+      setRovingTarget(targets, nextTarget);
+      nextTarget.focus();
+    };
 
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
-    let nextIndex: number | undefined;
-    if (event.key === 'ArrowDown') nextIndex = currentIndex + 1;
-    else if (event.key === 'ArrowUp') nextIndex = currentIndex - 1;
-    else if (event.key === 'ArrowRight') nextIndex = currentIndex + (rtl ? -1 : 1);
-    else if (event.key === 'ArrowLeft') nextIndex = currentIndex + (rtl ? 1 : -1);
-    else if (event.key === 'Home') nextIndex = 0;
-    else if (event.key === 'End') nextIndex = targets.length - 1;
-    else return;
+    const itemContext = React.useMemo<ListContextValue>(
+      () => ({ mode, selectedValues, selectValue }),
+      [mode, selectValue, selectedValues],
+    );
+    const itemPositions = React.useMemo<ListItemPosition[]>(
+      () =>
+        items.map((item, index) => ({
+          index,
+          count: items.length,
+          itemKey: item.key,
+        })),
+      [items],
+    );
 
-    event.preventDefault();
-    const wrappedIndex = ((nextIndex % targets.length) + targets.length) % targets.length;
-    const nextTarget = targets[wrappedIndex];
-    setRovingTarget(targets, nextTarget);
-    nextTarget.focus();
-  };
+    const listProps = rest as Omit<React.ComponentProps<'ul'>, 'defaultValue' | 'onChange'>;
+    let itemIndex = 0;
 
-  const itemContext = React.useMemo<ListContextValue>(
-    () => ({ mode, selectedValues, selectValue }),
-    [mode, selectValue, selectedValues],
-  );
-  const itemPositions = React.useMemo<ListItemPosition[]>(
-    () =>
-      items.map((item, index) => ({
-        index,
-        count: items.length,
-        itemKey: item.key,
-      })),
-    [items],
-  );
-
-  const listProps = rest as Omit<React.ComponentProps<'ul'>, 'defaultValue' | 'onChange'>;
-  let itemIndex = 0;
-
-  return (
-    <ListContext.Provider value={itemContext}>
-      {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: selection mode dynamically supplies the valid listbox role. */}
-      <ul
-        {...listProps}
-        ref={setRootRef}
-        className={cx('md-list', className)}
-        data-appearance={appearance}
-        data-mode={mode}
-        role={selectionMode ? 'listbox' : listProps.role}
-        aria-multiselectable={isMulti || undefined}
-        aria-required={selectionMode ? required : undefined}
-        onFocusCapture={handleFocusCapture}
-        onKeyDown={handleKeyDown}
-      >
-        {React.Children.toArray(children).map((child) => {
-          if (!isListItemElement(child)) return child;
-          const position = itemIndex;
-          itemIndex += 1;
-          return (
-            <ListItemPositionContext.Provider key={child.key} value={itemPositions[position]}>
-              {child}
-            </ListItemPositionContext.Provider>
-          );
-        })}
-      </ul>
-    </ListContext.Provider>
-  );
-};
+    return (
+      <ListContext.Provider value={itemContext}>
+        {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: selection mode dynamically supplies the valid listbox role. */}
+        <ul
+          {...listProps}
+          ref={setRootRef}
+          className={cx('md-list', className)}
+          data-appearance={appearance}
+          data-mode={mode}
+          role={selectionMode ? 'listbox' : listProps.role}
+          aria-multiselectable={isMulti || undefined}
+          aria-required={selectionMode ? required : undefined}
+          onFocusCapture={handleFocusCapture}
+          onKeyDown={handleKeyDown}
+        >
+          {React.Children.toArray(children).map((child) => {
+            if (!isListItemElement(child)) return child;
+            const position = itemIndex;
+            itemIndex += 1;
+            return (
+              <ListItemPositionContext.Provider key={child.key} value={itemPositions[position]}>
+                {child}
+              </ListItemPositionContext.Provider>
+            );
+          })}
+        </ul>
+      </ListContext.Provider>
+    );
+  },
+);
 List.displayName = 'List';
 
-const ListItem = ({
-  value,
-  headline,
-  overline,
-  supportingText,
-  leading,
-  trailing,
-  lineCount: lineCountProp,
-  href,
-  target,
-  rel,
-  download,
-  type = 'button',
-  onClick,
-  disabled = false,
-  dragged = false,
-  selectionIndicator,
-  selectionIndicatorPosition = 'trailing',
-  className,
-  ref,
-  ...props
-}: ListItemProps & { ref?: React.Ref<HTMLLIElement> }) => {
-  const context = React.useContext(ListContext);
-  const position = React.useContext(ListItemPositionContext);
-  const headlineId = React.useId();
-  const supportingId = React.useId();
-  const mode = context?.mode ?? 'static';
-  const selectionMode = isSelectionMode(mode);
-  const actionMode = isActionMode(mode);
-  const selected = value !== undefined && context?.selectedValues.has(value) === true;
-  const lineCount = lineCountProp ?? (overline && supportingText ? 3 : overline || supportingText ? 2 : 1);
-  const indicator = selectionIndicator ?? (mode === 'single-select' ? 'radio' : 'checkbox');
-  const labelledBy = supportingText ? `${headlineId} ${supportingId}` : headlineId;
-  const itemKey = position?.itemKey ?? value ?? headlineId;
+const ListItem = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemProps>>(
+  (
+    {
+      value,
+      headline,
+      overline,
+      supportingText,
+      leading,
+      trailing,
+      lineCount: lineCountProp,
+      href,
+      target,
+      rel,
+      download,
+      type = 'button',
+      onClick,
+      disabled = false,
+      dragged = false,
+      selectionIndicator,
+      selectionIndicatorPosition = 'trailing',
+      className,
+      ...props
+    },
+    ref,
+  ) => {
+    const context = React.useContext(ListContext);
+    const position = React.useContext(ListItemPositionContext);
+    const headlineId = React.useId();
+    const supportingId = React.useId();
+    const mode = context?.mode ?? 'static';
+    const selectionMode = isSelectionMode(mode);
+    const actionMode = isActionMode(mode);
+    const selected = value !== undefined && context?.selectedValues.has(value) === true;
+    const lineCount = lineCountProp ?? (overline && supportingText ? 3 : overline || supportingText ? 2 : 1);
+    const indicator = selectionIndicator ?? (mode === 'single-select' ? 'radio' : 'checkbox');
+    const labelledBy = supportingText ? `${headlineId} ${supportingId}` : headlineId;
+    const itemKey = position?.itemKey ?? value ?? headlineId;
 
-  React.useEffect(() => {
-    /* v8 ignore else -- production-only warning guard */
-    if (import.meta.env.DEV) {
-      if (selectionMode && value === undefined) {
-        console.warn('[m3you] ListItem requires a stable `value` inside a selection List.');
-      }
-      if (selectionMode && (href !== undefined || onClick !== undefined)) {
-        console.warn('[m3you] Selection ListItem actions are ignored; selection is the item interaction.');
-      }
-      if (mode === 'static' && (href !== undefined || onClick !== undefined)) {
-        console.warn('[m3you] Static ListItem actions are ignored. Use an action List mode.');
-      }
-      if (actionMode && href === undefined && onClick === undefined) {
-        console.warn('[m3you] Action ListItem requires either `href` or `onClick`.');
-      }
-      if ((mode === 'single-action' || mode === 'single-select') && containsInteractiveNode(trailing)) {
-        console.warn('[m3you] Nested trailing controls require `mode="multi-action"`.');
-      }
-    }
-  }, [actionMode, href, mode, onClick, selectionMode, trailing, value]);
-
-  const selectionMark = selectionMode ? (
-    <span className="md-list-item__selection" aria-hidden="true">
-      {renderSelectionIndicator(indicator, selected)}
-    </span>
-  ) : null;
-
-  const content = (includeTrailing: boolean) => (
-    <>
-      {selectionIndicatorPosition === 'leading' ? selectionMark : null}
-      {leading ? <span className="md-list-item__leading">{leading}</span> : null}
-      <span className="md-list-item__content">
-        {overline ? <span className="md-list-item__overline">{overline}</span> : null}
-        <span id={headlineId} className="md-list-item__headline">
-          {headline}
-        </span>
-        {supportingText ? (
-          <span id={supportingId} className="md-list-item__supporting-text">
-            {supportingText}
-          </span>
-        ) : null}
-      </span>
-      {includeTrailing && trailing ? <span className="md-list-item__trailing">{trailing}</span> : null}
-      {selectionIndicatorPosition === 'trailing' ? selectionMark : null}
-    </>
-  );
-
-  const handleSelectionClick = (event: React.MouseEvent<HTMLLIElement>) => {
-    if (disabled || value === undefined) return;
-    const interactiveTarget = (event.target as Element).closest(INTERACTIVE_SELECTOR);
-    if (interactiveTarget && interactiveTarget !== event.currentTarget) return;
-    event.currentTarget.focus();
-    context?.selectValue(value);
-  };
-
-  const renderPrimaryAction = (includeTrailing: boolean) => {
-    if (href !== undefined) {
-      const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-        if (disabled) {
-          event.preventDefault();
-          return;
+    React.useEffect(() => {
+      /* v8 ignore else -- production-only warning guard */
+      if (import.meta.env.DEV) {
+        if (selectionMode && value === undefined) {
+          console.warn('[m3you] ListItem requires a stable `value` inside a selection List.');
         }
-        onClick?.(event);
-      };
+        if (selectionMode && (href !== undefined || onClick !== undefined)) {
+          console.warn('[m3you] Selection ListItem actions are ignored; selection is the item interaction.');
+        }
+        if (mode === 'static' && (href !== undefined || onClick !== undefined)) {
+          console.warn('[m3you] Static ListItem actions are ignored. Use an action List mode.');
+        }
+        if (actionMode && href === undefined && onClick === undefined) {
+          console.warn('[m3you] Action ListItem requires either `href` or `onClick`.');
+        }
+        if ((mode === 'single-action' || mode === 'single-select') && containsInteractiveNode(trailing)) {
+          console.warn('[m3you] Nested trailing controls require `mode="multi-action"`.');
+        }
+      }
+    }, [actionMode, href, mode, onClick, selectionMode, trailing, value]);
+
+    const selectionMark = selectionMode ? (
+      <span className="md-list-item__selection" aria-hidden="true">
+        {renderSelectionIndicator(indicator, selected)}
+      </span>
+    ) : null;
+
+    const content = (includeTrailing: boolean) => (
+      <>
+        {selectionIndicatorPosition === 'leading' ? selectionMark : null}
+        {leading ? <span className="md-list-item__leading">{leading}</span> : null}
+        <span className="md-list-item__content">
+          {overline ? <span className="md-list-item__overline">{overline}</span> : null}
+          <span id={headlineId} className="md-list-item__headline">
+            {headline}
+          </span>
+          {supportingText ? (
+            <span id={supportingId} className="md-list-item__supporting-text">
+              {supportingText}
+            </span>
+          ) : null}
+        </span>
+        {includeTrailing && trailing ? <span className="md-list-item__trailing">{trailing}</span> : null}
+        {selectionIndicatorPosition === 'trailing' ? selectionMark : null}
+      </>
+    );
+
+    const handleSelectionClick = (event: React.MouseEvent<HTMLLIElement>) => {
+      if (disabled || value === undefined) return;
+      const interactiveTarget = (event.target as Element).closest(INTERACTIVE_SELECTOR);
+      if (interactiveTarget && interactiveTarget !== event.currentTarget) return;
+      event.currentTarget.focus();
+      context?.selectValue(value);
+    };
+
+    const renderPrimaryAction = (includeTrailing: boolean) => {
+      if (href !== undefined) {
+        const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+          if (disabled) {
+            event.preventDefault();
+            return;
+          }
+          onClick?.(event);
+        };
+        return (
+          <a
+            className="md-list-item__action"
+            data-md-list-action=""
+            href={disabled ? undefined : href}
+            target={target}
+            rel={rel}
+            download={download}
+            aria-labelledby={labelledBy}
+            aria-disabled={disabled || undefined}
+            tabIndex={disabled ? -1 : 0}
+            onClick={handleLinkClick}
+          >
+            <Ripple />
+            {content(includeTrailing)}
+          </a>
+        );
+      }
+
+      if (onClick) {
+        return (
+          <button
+            className="md-list-item__action"
+            data-md-list-action=""
+            type={type}
+            disabled={disabled}
+            aria-labelledby={labelledBy}
+            onClick={onClick}
+          >
+            <Ripple />
+            {content(includeTrailing)}
+          </button>
+        );
+      }
+
+      return <div className="md-list-item__layout">{content(includeTrailing)}</div>;
+    };
+
+    if (selectionMode) {
       return (
-        <a
-          className="md-list-item__action"
-          data-md-list-action=""
-          href={disabled ? undefined : href}
-          target={target}
-          rel={rel}
-          download={download}
-          aria-labelledby={labelledBy}
+        // biome-ignore lint/a11y/useKeyWithClickEvents: keyboard activation is delegated to the parent listbox.
+        <li
+          {...props}
+          ref={ref}
+          className={cx('md-list-item', className)}
+          data-md-list-item=""
+          data-item-key={itemKey}
+          data-list-value={value}
+          data-lines={lineCount}
+          data-selected={selected || undefined}
+          data-disabled={disabled || undefined}
+          data-dragged={dragged || undefined}
+          // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: ARIA listboxes require option children, and li preserves list semantics.
+          role="option"
+          aria-selected={selected}
           aria-disabled={disabled || undefined}
-          tabIndex={disabled ? -1 : 0}
-          onClick={handleLinkClick}
-        >
-          <Ripple />
-          {content(includeTrailing)}
-        </a>
-      );
-    }
-
-    if (onClick) {
-      return (
-        <button
-          className="md-list-item__action"
-          data-md-list-action=""
-          type={type}
-          disabled={disabled}
           aria-labelledby={labelledBy}
-          onClick={onClick}
+          aria-posinset={(position?.index ?? 0) + 1}
+          aria-setsize={position?.count ?? 1}
+          tabIndex={disabled ? undefined : 0}
+          onClick={handleSelectionClick}
         >
           <Ripple />
-          {content(includeTrailing)}
-        </button>
+          <div className="md-list-item__layout">{content(true)}</div>
+        </li>
       );
     }
 
-    return <div className="md-list-item__layout">{content(includeTrailing)}</div>;
-  };
-
-  if (selectionMode) {
     return (
-      // biome-ignore lint/a11y/useKeyWithClickEvents: keyboard activation is delegated to the parent listbox.
       <li
         {...props}
         ref={ref}
@@ -524,73 +561,41 @@ const ListItem = ({
         data-item-key={itemKey}
         data-list-value={value}
         data-lines={lineCount}
-        data-selected={selected || undefined}
         data-disabled={disabled || undefined}
         data-dragged={dragged || undefined}
-        // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: ARIA listboxes require option children, and li preserves list semantics.
-        role="option"
-        aria-selected={selected}
         aria-disabled={disabled || undefined}
-        aria-labelledby={labelledBy}
-        aria-posinset={(position?.index ?? 0) + 1}
-        aria-setsize={position?.count ?? 1}
-        tabIndex={disabled ? undefined : 0}
-        onClick={handleSelectionClick}
       >
-        <Ripple />
-        <div className="md-list-item__layout">{content(true)}</div>
+        {actionMode ? (
+          mode === 'multi-action' ? (
+            <div className="md-list-item__multi-layout">
+              {renderPrimaryAction(false)}
+              {trailing ? <span className="md-list-item__trailing">{trailing}</span> : null}
+            </div>
+          ) : (
+            renderPrimaryAction(true)
+          )
+        ) : (
+          <div className="md-list-item__layout">{content(true)}</div>
+        )}
       </li>
     );
-  }
+  },
+);
+ListItem.displayName = 'ListItem';
 
-  return (
+const ListDivider = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListDividerProps>>(
+  ({ inset = false, className, ...props }, ref) => (
     <li
       {...props}
       ref={ref}
-      className={cx('md-list-item', className)}
-      data-md-list-item=""
-      data-item-key={itemKey}
-      data-list-value={value}
-      data-lines={lineCount}
-      data-disabled={disabled || undefined}
-      data-dragged={dragged || undefined}
-      aria-disabled={disabled || undefined}
+      className={cx('md-list-divider', className)}
+      data-inset={inset || undefined}
+      role="presentation"
+      aria-hidden="true"
     >
-      {actionMode ? (
-        mode === 'multi-action' ? (
-          <div className="md-list-item__multi-layout">
-            {renderPrimaryAction(false)}
-            {trailing ? <span className="md-list-item__trailing">{trailing}</span> : null}
-          </div>
-        ) : (
-          renderPrimaryAction(true)
-        )
-      ) : (
-        <div className="md-list-item__layout">{content(true)}</div>
-      )}
+      <span className="md-list-divider__line" />
     </li>
-  );
-};
-ListItem.displayName = 'ListItem';
-
-const ListDivider = ({
-  inset = false,
-  className,
-  ref,
-  ...props
-}: ListDividerProps & {
-  ref?: React.Ref<HTMLLIElement>;
-}) => (
-  <li
-    {...props}
-    ref={ref}
-    className={cx('md-list-divider', className)}
-    data-inset={inset || undefined}
-    role="presentation"
-    aria-hidden="true"
-  >
-    <span className="md-list-divider__line" />
-  </li>
+  ),
 );
 ListDivider.displayName = 'ListDivider';
 

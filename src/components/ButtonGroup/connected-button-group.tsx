@@ -17,45 +17,49 @@ export interface ConnectedButtonGroupProps
   shape?: 'round' | 'square';
 }
 
-const ConnectedButtonGroup = ({
-  className,
-  orientation = 'horizontal',
-  size = 'sm',
-  shape = 'round',
-  selectionMode = 'multiple',
-  required = false,
-  value,
-  defaultValue,
-  onValueChange,
-  children,
-  ref,
-  ...props
-}: ConnectedButtonGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const { selectedIndices, handleToggle } = useButtonGroupSelection({
-    selectionMode,
-    required,
-    value,
-    defaultValue,
-    onValueChange,
-  });
+const ConnectedButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<ConnectedButtonGroupProps>>(
+  (
+    {
+      className,
+      orientation = 'horizontal',
+      size = 'sm',
+      shape = 'round',
+      selectionMode = 'multiple',
+      required = false,
+      value,
+      defaultValue,
+      onValueChange,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const { selectedIndices, handleToggle } = useButtonGroupSelection({
+      selectionMode,
+      required,
+      value,
+      defaultValue,
+      onValueChange,
+    });
 
-  return (
-    <ButtonGroupContext.Provider value={{ size, shape, morph: false, selectedIndices, handleToggle }}>
-      <ButtonGroup
-        ref={ref}
-        orientation={orientation}
-        className={className}
-        data-connected-group
-        data-size={size}
-        {...props}
-      >
-        {React.Children.map(children, (child, index) => (
-          <ButtonGroupItemContext.Provider value={{ index }}>{child}</ButtonGroupItemContext.Provider>
-        ))}
-      </ButtonGroup>
-    </ButtonGroupContext.Provider>
-  );
-};
+    return (
+      <ButtonGroupContext.Provider value={{ size, shape, morph: false, selectedIndices, handleToggle }}>
+        <ButtonGroup
+          ref={ref}
+          orientation={orientation}
+          className={className}
+          data-connected-group
+          data-size={size}
+          {...props}
+        >
+          {React.Children.map(children, (child, index) => (
+            <ButtonGroupItemContext.Provider value={{ index }}>{child}</ButtonGroupItemContext.Provider>
+          ))}
+        </ButtonGroup>
+      </ButtonGroupContext.Provider>
+    );
+  },
+);
 ConnectedButtonGroup.displayName = 'ConnectedButtonGroup';
 
 export { ConnectedButtonGroup };

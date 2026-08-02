@@ -19,46 +19,50 @@ export interface StandardButtonGroupProps
   morph?: boolean;
 }
 
-const StandardButtonGroup = ({
-  className,
-  orientation = 'horizontal',
-  size = 'sm',
-  shape = 'round',
-  morph = true,
-  selectionMode = 'multiple',
-  required = false,
-  value,
-  defaultValue,
-  onValueChange,
-  children,
-  ref,
-  ...props
-}: StandardButtonGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const { selectedIndices, handleToggle } = useButtonGroupSelection({
-    selectionMode,
-    required,
-    value,
-    defaultValue,
-    onValueChange,
-  });
+const StandardButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<StandardButtonGroupProps>>(
+  (
+    {
+      className,
+      orientation = 'horizontal',
+      size = 'sm',
+      shape = 'round',
+      morph = true,
+      selectionMode = 'multiple',
+      required = false,
+      value,
+      defaultValue,
+      onValueChange,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const { selectedIndices, handleToggle } = useButtonGroupSelection({
+      selectionMode,
+      required,
+      value,
+      defaultValue,
+      onValueChange,
+    });
 
-  return (
-    <ButtonGroupContext.Provider value={{ size, shape, morph, selectedIndices, handleToggle }}>
-      <ButtonGroup
-        ref={ref}
-        orientation={orientation}
-        className={className}
-        data-standard-group
-        data-size={size}
-        {...props}
-      >
-        {React.Children.map(children, (child, index) => (
-          <ButtonGroupItemContext.Provider value={{ index }}>{child}</ButtonGroupItemContext.Provider>
-        ))}
-      </ButtonGroup>
-    </ButtonGroupContext.Provider>
-  );
-};
+    return (
+      <ButtonGroupContext.Provider value={{ size, shape, morph, selectedIndices, handleToggle }}>
+        <ButtonGroup
+          ref={ref}
+          orientation={orientation}
+          className={className}
+          data-standard-group
+          data-size={size}
+          {...props}
+        >
+          {React.Children.map(children, (child, index) => (
+            <ButtonGroupItemContext.Provider value={{ index }}>{child}</ButtonGroupItemContext.Provider>
+          ))}
+        </ButtonGroup>
+      </ButtonGroupContext.Provider>
+    );
+  },
+);
 StandardButtonGroup.displayName = 'StandardButtonGroup';
 
 export { StandardButtonGroup };

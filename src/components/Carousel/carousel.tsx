@@ -186,234 +186,238 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-const Carousel = ({
-  label,
-  layout = 'multi-browse',
-  alignment = 'start',
-  scrollMode = 'auto',
-  largeItemMaxWidth = 360,
-  itemHeight,
-  title,
-  showAllAction,
-  initialIndex = 0,
-  onActiveIndexChange,
-  className,
-  style,
-  onKeyDown,
-  ref,
-  children,
-  ...props
-}: CarouselProps & { ref?: React.Ref<HTMLElement> }) => {
-  const viewportRef = React.useRef<HTMLUListElement | null>(null);
-  const frameRef = React.useRef<number | null>(null);
-  const settleTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  const animationsRef = React.useRef<Set<Animation> | null>(null);
-  if (animationsRef.current === null) animationsRef.current = new Set<Animation>();
-  const animations = animationsRef.current;
-  const childrenArray = React.Children.toArray(children).filter(isCarouselItemElement);
-  const itemCount = childrenArray.length;
-  const actualAlignment = layout === 'centered-hero' ? 'center' : alignment;
-  const [initialConfiguration] = React.useState(() => ({
-    alignment: actualAlignment,
-    index: clampCarouselIndex(initialIndex, itemCount),
-    layout,
-  }));
-  const activeIndexRef = React.useRef(initialConfiguration.index);
-  const [reducedMotion, setReducedMotion] = React.useState(prefersReducedMotion);
-  const actualScrollMode = resolveCarouselScrollMode(layout, scrollMode);
-
-  const componentStyle = {
-    ...style,
-    '--md-carousel-large-item-max-width': toCssLength(largeItemMaxWidth),
-    ...(itemHeight === undefined ? null : { '--md-carousel-item-height': toCssLength(itemHeight) }),
-  } as React.CSSProperties;
-
-  const applyLayout = React.useCallback(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    activeIndexRef.current = clampCarouselIndex(activeIndexRef.current, childrenArray.length);
-    applyCarouselRoles(viewport, layout, activeIndexRef.current, reducedMotion, animations);
-    updateCarouselParallax(viewport, layout, reducedMotion);
-  }, [animations, childrenArray.length, layout, reducedMotion]);
-
-  const settle = React.useCallback(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    if (settleTimerRef.current !== null) {
-      clearTimeout(settleTimerRef.current);
-      settleTimerRef.current = null;
-    }
-    const items = getCarouselItems(viewport);
-    const vertical = layout === 'full-screen';
-    const rtl = getComputedStyle(viewport).direction === 'rtl';
-    const nearestIndex = getNearestCarouselItem(
-      viewport.getBoundingClientRect(),
-      items.map((item) => item.getBoundingClientRect()),
-      vertical ? 'vertical' : 'horizontal',
-      actualAlignment,
-      rtl,
-    );
-    const changed = nearestIndex !== activeIndexRef.current;
-    activeIndexRef.current = nearestIndex;
-    applyCarouselRoles(viewport, layout, nearestIndex, reducedMotion, animations);
-    if (changed) onActiveIndexChange?.(nearestIndex);
-  }, [actualAlignment, animations, layout, onActiveIndexChange, reducedMotion]);
-
-  React.useEffect(() => {
-    if (typeof window.matchMedia !== 'function') return;
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handleChange = (event: MediaQueryListEvent) => setReducedMotion(event.matches);
-    media.addEventListener('change', handleChange);
-    return () => media.removeEventListener('change', handleChange);
-  }, []);
-
-  React.useLayoutEffect(() => {
-    const viewport = viewportRef.current;
-    /* v8 ignore next -- React assigns the viewport ref before layout effects run */
-    if (!viewport) return;
-    const initialItem = getCarouselItems(viewport)[initialConfiguration.index];
-    const initialFrame = requestAnimationFrame(() => {
-      if (initialItem) {
-        scrollCarouselItem(initialItem, initialConfiguration.layout, initialConfiguration.alignment, true);
-      }
-    });
-
-    return () => cancelAnimationFrame(initialFrame);
-  }, [initialConfiguration]);
-
-  React.useLayoutEffect(() => {
-    const viewport = viewportRef.current;
-    /* v8 ignore next -- React assigns the viewport ref before layout effects run */
-    if (!viewport) return;
-    applyLayout();
-
-    let cancelled = false;
-    const fonts = document.fonts;
-    const handleFontsLoaded = () => applyLayout();
-    fonts?.ready.then(() => {
-      if (!cancelled) applyLayout();
-    });
-    fonts?.addEventListener?.('loadingdone', handleFontsLoaded);
-
-    let observer: ResizeObserver | null = null;
-    if (typeof ResizeObserver === 'function') {
-      observer = new ResizeObserver(applyLayout);
-      observer.observe(viewport);
-    } else {
-      window.addEventListener('resize', applyLayout);
-    }
-
-    return () => {
-      cancelled = true;
-      fonts?.removeEventListener?.('loadingdone', handleFontsLoaded);
-      if (observer) observer.disconnect();
-      else window.removeEventListener('resize', applyLayout);
-    };
-  }, [applyLayout]);
-
-  React.useEffect(() => {
-    const viewport = viewportRef.current;
-    /* v8 ignore next -- React assigns the viewport ref before passive effects run */
-    if (!viewport) return;
-    viewport.addEventListener('scrollend', settle);
-    return () => viewport.removeEventListener('scrollend', settle);
-  }, [settle]);
-
-  React.useEffect(
-    () => () => {
-      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
-      if (settleTimerRef.current !== null) clearTimeout(settleTimerRef.current);
-      for (const animation of animations) animation.cancel();
-      animations.clear();
+const Carousel = React.forwardRef<HTMLElement, React.PropsWithoutRef<CarouselProps>>(
+  (
+    {
+      label,
+      layout = 'multi-browse',
+      alignment = 'start',
+      scrollMode = 'auto',
+      largeItemMaxWidth = 360,
+      itemHeight,
+      title,
+      showAllAction,
+      initialIndex = 0,
+      onActiveIndexChange,
+      className,
+      style,
+      onKeyDown,
+      children,
+      ...props
     },
-    [animations],
-  );
+    ref,
+  ) => {
+    const viewportRef = React.useRef<HTMLUListElement | null>(null);
+    const frameRef = React.useRef<number | null>(null);
+    const settleTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const animationsRef = React.useRef<Set<Animation> | null>(null);
+    if (animationsRef.current === null) animationsRef.current = new Set<Animation>();
+    const animations = animationsRef.current;
+    const childrenArray = React.Children.toArray(children).filter(isCarouselItemElement);
+    const itemCount = childrenArray.length;
+    const actualAlignment = layout === 'centered-hero' ? 'center' : alignment;
+    const [initialConfiguration] = React.useState(() => ({
+      alignment: actualAlignment,
+      index: clampCarouselIndex(initialIndex, itemCount),
+      layout,
+    }));
+    const activeIndexRef = React.useRef(initialConfiguration.index);
+    const [reducedMotion, setReducedMotion] = React.useState(prefersReducedMotion);
+    const actualScrollMode = resolveCarouselScrollMode(layout, scrollMode);
 
-  const handleScroll = () => {
-    const viewport = viewportRef.current;
-    /* v8 ignore next -- this handler is installed directly on the viewport */
-    if (!viewport) return;
-    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
-    frameRef.current = requestAnimationFrame(() => {
-      frameRef.current = null;
+    const componentStyle = {
+      ...style,
+      '--md-carousel-large-item-max-width': toCssLength(largeItemMaxWidth),
+      ...(itemHeight === undefined ? null : { '--md-carousel-item-height': toCssLength(itemHeight) }),
+    } as React.CSSProperties;
+
+    const applyLayout = React.useCallback(() => {
+      const viewport = viewportRef.current;
+      if (!viewport) return;
+      activeIndexRef.current = clampCarouselIndex(activeIndexRef.current, childrenArray.length);
+      applyCarouselRoles(viewport, layout, activeIndexRef.current, reducedMotion, animations);
       updateCarouselParallax(viewport, layout, reducedMotion);
-    });
-    if (settleTimerRef.current !== null) clearTimeout(settleTimerRef.current);
-    settleTimerRef.current = setTimeout(settle, SETTLE_DELAY);
-  };
+    }, [animations, childrenArray.length, layout, reducedMotion]);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-    onKeyDown?.(event);
-    if (event.defaultPrevented) return;
-    const actions = getCarouselActions(event.currentTarget);
-    const currentIndex = actions.findIndex(
-      (action) => action === event.target || action.contains(event.target as Node),
+    const settle = React.useCallback(() => {
+      const viewport = viewportRef.current;
+      if (!viewport) return;
+      if (settleTimerRef.current !== null) {
+        clearTimeout(settleTimerRef.current);
+        settleTimerRef.current = null;
+      }
+      const items = getCarouselItems(viewport);
+      const vertical = layout === 'full-screen';
+      const rtl = getComputedStyle(viewport).direction === 'rtl';
+      const nearestIndex = getNearestCarouselItem(
+        viewport.getBoundingClientRect(),
+        items.map((item) => item.getBoundingClientRect()),
+        vertical ? 'vertical' : 'horizontal',
+        actualAlignment,
+        rtl,
+      );
+      const changed = nearestIndex !== activeIndexRef.current;
+      activeIndexRef.current = nearestIndex;
+      applyCarouselRoles(viewport, layout, nearestIndex, reducedMotion, animations);
+      if (changed) onActiveIndexChange?.(nearestIndex);
+    }, [actualAlignment, animations, layout, onActiveIndexChange, reducedMotion]);
+
+    React.useEffect(() => {
+      if (typeof window.matchMedia !== 'function') return;
+      const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const handleChange = (event: MediaQueryListEvent) => setReducedMotion(event.matches);
+      media.addEventListener('change', handleChange);
+      return () => media.removeEventListener('change', handleChange);
+    }, []);
+
+    React.useLayoutEffect(() => {
+      const viewport = viewportRef.current;
+      /* v8 ignore next -- React assigns the viewport ref before layout effects run */
+      if (!viewport) return;
+      const initialItem = getCarouselItems(viewport)[initialConfiguration.index];
+      const initialFrame = requestAnimationFrame(() => {
+        if (initialItem) {
+          scrollCarouselItem(initialItem, initialConfiguration.layout, initialConfiguration.alignment, true);
+        }
+      });
+
+      return () => cancelAnimationFrame(initialFrame);
+    }, [initialConfiguration]);
+
+    React.useLayoutEffect(() => {
+      const viewport = viewportRef.current;
+      /* v8 ignore next -- React assigns the viewport ref before layout effects run */
+      if (!viewport) return;
+      applyLayout();
+
+      let cancelled = false;
+      const fonts = document.fonts;
+      const handleFontsLoaded = () => applyLayout();
+      fonts?.ready.then(() => {
+        if (!cancelled) applyLayout();
+      });
+      fonts?.addEventListener?.('loadingdone', handleFontsLoaded);
+
+      let observer: ResizeObserver | null = null;
+      if (typeof ResizeObserver === 'function') {
+        observer = new ResizeObserver(applyLayout);
+        observer.observe(viewport);
+      } else {
+        window.addEventListener('resize', applyLayout);
+      }
+
+      return () => {
+        cancelled = true;
+        fonts?.removeEventListener?.('loadingdone', handleFontsLoaded);
+        if (observer) observer.disconnect();
+        else window.removeEventListener('resize', applyLayout);
+      };
+    }, [applyLayout]);
+
+    React.useEffect(() => {
+      const viewport = viewportRef.current;
+      /* v8 ignore next -- React assigns the viewport ref before passive effects run */
+      if (!viewport) return;
+      viewport.addEventListener('scrollend', settle);
+      return () => viewport.removeEventListener('scrollend', settle);
+    }, [settle]);
+
+    React.useEffect(
+      () => () => {
+        if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+        if (settleTimerRef.current !== null) clearTimeout(settleTimerRef.current);
+        for (const animation of animations) animation.cancel();
+        animations.clear();
+      },
+      [animations],
     );
-    if (currentIndex < 0) return;
 
-    const vertical = layout === 'full-screen';
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
-    let nextIndex: number | undefined;
-    if (event.key === 'Home') nextIndex = 0;
-    else if (event.key === 'End') nextIndex = actions.length - 1;
-    else if (vertical && event.key === 'ArrowDown') nextIndex = currentIndex + 1;
-    else if (vertical && event.key === 'ArrowUp') nextIndex = currentIndex - 1;
-    else if (!vertical && event.key === 'ArrowRight') nextIndex = currentIndex + (rtl ? -1 : 1);
-    else if (!vertical && event.key === 'ArrowLeft') nextIndex = currentIndex + (rtl ? 1 : -1);
-    else return;
+    const handleScroll = () => {
+      const viewport = viewportRef.current;
+      /* v8 ignore next -- this handler is installed directly on the viewport */
+      if (!viewport) return;
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      frameRef.current = requestAnimationFrame(() => {
+        frameRef.current = null;
+        updateCarouselParallax(viewport, layout, reducedMotion);
+      });
+      if (settleTimerRef.current !== null) clearTimeout(settleTimerRef.current);
+      settleTimerRef.current = setTimeout(settle, SETTLE_DELAY);
+    };
 
-    event.preventDefault();
-    const target = actions[clampCarouselIndex(nextIndex, actions.length)];
-    target.focus();
-    const item = target.closest<HTMLElement>('[data-md-carousel-item]');
-    if (item) scrollCarouselItem(item, layout, actualAlignment, reducedMotion);
-  };
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+      onKeyDown?.(event);
+      if (event.defaultPrevented) return;
+      const actions = getCarouselActions(event.currentTarget);
+      const currentIndex = actions.findIndex(
+        (action) => action === event.target || action.contains(event.target as Node),
+      );
+      if (currentIndex < 0) return;
 
-  const itemContexts = React.useMemo<CarouselItemContextValue[]>(
-    () =>
-      Array.from({ length: itemCount }, (_, index) => ({
-        count: itemCount,
-        index,
-        layout,
-      })),
-    [itemCount, layout],
-  );
+      const vertical = layout === 'full-screen';
+      const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+      let nextIndex: number | undefined;
+      if (event.key === 'Home') nextIndex = 0;
+      else if (event.key === 'End') nextIndex = actions.length - 1;
+      else if (vertical && event.key === 'ArrowDown') nextIndex = currentIndex + 1;
+      else if (vertical && event.key === 'ArrowUp') nextIndex = currentIndex - 1;
+      else if (!vertical && event.key === 'ArrowRight') nextIndex = currentIndex + (rtl ? -1 : 1);
+      else if (!vertical && event.key === 'ArrowLeft') nextIndex = currentIndex + (rtl ? 1 : -1);
+      else return;
 
-  return (
-    <section
-      {...props}
-      ref={ref}
-      className={cx('md-carousel', className)}
-      style={componentStyle}
-      aria-label={label}
-      aria-roledescription="carousel"
-      data-layout={layout}
-      data-reduced-motion={reducedMotion || undefined}
-      onKeyDown={handleKeyDown}
-    >
-      {title || showAllAction ? (
-        <div className="md-carousel__header">
-          {title ? <div className="md-carousel__title">{title}</div> : <span />}
-          {showAllAction ? <div className="md-carousel__show-all">{showAllAction}</div> : null}
-        </div>
-      ) : null}
-      <ul
-        ref={viewportRef}
-        className="md-carousel__viewport"
+      event.preventDefault();
+      const target = actions[clampCarouselIndex(nextIndex, actions.length)];
+      target.focus();
+      const item = target.closest<HTMLElement>('[data-md-carousel-item]');
+      if (item) scrollCarouselItem(item, layout, actualAlignment, reducedMotion);
+    };
+
+    const itemContexts = React.useMemo<CarouselItemContextValue[]>(
+      () =>
+        Array.from({ length: itemCount }, (_, index) => ({
+          count: itemCount,
+          index,
+          layout,
+        })),
+      [itemCount, layout],
+    );
+
+    return (
+      <section
+        {...props}
+        ref={ref}
+        className={cx('md-carousel', className)}
+        style={componentStyle}
+        aria-label={label}
+        aria-roledescription="carousel"
         data-layout={layout}
-        data-alignment={actualAlignment}
-        data-scroll-mode={actualScrollMode}
-        onScroll={handleScroll}
+        data-reduced-motion={reducedMotion || undefined}
+        onKeyDown={handleKeyDown}
       >
-        {childrenArray.map((child, index) => (
-          <CarouselItemContext.Provider key={String(child.key)} value={itemContexts[index]}>
-            {child}
-          </CarouselItemContext.Provider>
-        ))}
-      </ul>
-    </section>
-  );
-};
+        {title || showAllAction ? (
+          <div className="md-carousel__header">
+            {title ? <div className="md-carousel__title">{title}</div> : <span />}
+            {showAllAction ? <div className="md-carousel__show-all">{showAllAction}</div> : null}
+          </div>
+        ) : null}
+        <ul
+          ref={viewportRef}
+          className="md-carousel__viewport"
+          data-layout={layout}
+          data-alignment={actualAlignment}
+          data-scroll-mode={actualScrollMode}
+          onScroll={handleScroll}
+        >
+          {childrenArray.map((child, index) => (
+            <CarouselItemContext.Provider key={String(child.key)} value={itemContexts[index]}>
+              {child}
+            </CarouselItemContext.Provider>
+          ))}
+        </ul>
+      </section>
+    );
+  },
+);
 Carousel.displayName = 'Carousel';
 
 const CarouselItem = (props: CarouselItemProps) => {

@@ -302,303 +302,307 @@ export type TimePickerProps = {
   className?: string;
 };
 
-const TimePicker = ({
-  value: controlledValue,
-  defaultValue,
-  onChange,
-  open,
-  onOpenChange,
-  format = '12h',
-  headerLabel,
-  orientation = 'auto',
-  defaultMode = 'dial',
-  className,
-  ref,
-}: TimePickerProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const isControlled = controlledValue !== undefined;
-  const isDialog = open !== undefined;
-  const [internalValue, setInternalValue] = React.useState(defaultValue ?? DEFAULT_TIME);
-  const committedValue = (isControlled ? controlledValue : internalValue) ?? DEFAULT_TIME;
-  const [draftValue, setDraftValue] = React.useState<TimeValue>(committedValue);
-  const current = isDialog ? draftValue : committedValue;
+const TimePicker = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<TimePickerProps>>(
+  (
+    {
+      value: controlledValue,
+      defaultValue,
+      onChange,
+      open,
+      onOpenChange,
+      format = '12h',
+      headerLabel,
+      orientation = 'auto',
+      defaultMode = 'dial',
+      className,
+    },
+    ref,
+  ) => {
+    const isControlled = controlledValue !== undefined;
+    const isDialog = open !== undefined;
+    const [internalValue, setInternalValue] = React.useState(defaultValue ?? DEFAULT_TIME);
+    const committedValue = (isControlled ? controlledValue : internalValue) ?? DEFAULT_TIME;
+    const [draftValue, setDraftValue] = React.useState<TimeValue>(committedValue);
+    const current = isDialog ? draftValue : committedValue;
 
-  const [mode, setMode] = React.useState<TimePickerMode>(defaultMode);
-  const [selection, setSelection] = React.useState<Selection>('hours');
-  const [autoLandscape, setAutoLandscape] = React.useState(false);
-  const landscape = orientation === 'landscape' ? true : orientation === 'portrait' ? false : autoLandscape;
+    const [mode, setMode] = React.useState<TimePickerMode>(defaultMode);
+    const [selection, setSelection] = React.useState<Selection>('hours');
+    const [autoLandscape, setAutoLandscape] = React.useState(false);
+    const landscape = orientation === 'landscape' ? true : orientation === 'portrait' ? false : autoLandscape;
 
-  const hourInputRef = React.useRef<HTMLInputElement>(null);
-  const minuteInputRef = React.useRef<HTMLInputElement>(null);
+    const hourInputRef = React.useRef<HTMLInputElement>(null);
+    const minuteInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Reset the in-progress draft to the committed value when the dialog opens,
-  // computed during render instead of mirrored through an effect.
-  const [prevOpen, setPrevOpen] = React.useState(open);
-  if (open !== prevOpen) {
-    setPrevOpen(open);
-    if (open) {
+    // Reset the in-progress draft to the committed value when the dialog opens,
+    // computed during render instead of mirrored through an effect.
+    const [prevOpen, setPrevOpen] = React.useState(open);
+    if (open !== prevOpen) {
+      setPrevOpen(open);
+      if (open) {
+        setDraftValue(committedValue);
+      }
+    }
+
+    // Detect landscape (only used when orientation='auto')
+    React.useEffect(() => {
+      if (orientation !== 'auto') return;
+      const check = () => {
+        const isLand = window.innerWidth > window.innerHeight && window.innerHeight < 500;
+        setAutoLandscape(isLand);
+        if (window.innerHeight < 400) setMode('input');
+      };
+      check();
+      window.addEventListener('resize', check);
+      return () => window.removeEventListener('resize', check);
+    }, [orientation]);
+
+    const period: Period = current.hours >= 12 ? 'PM' : 'AM';
+
+    const emit = React.useCallback(
+      (next: TimeValue) => {
+        if (isDialog) {
+          setDraftValue(next);
+          return;
+        }
+
+        if (!isControlled) setInternalValue(next);
+        onChange?.(next);
+      },
+      [isControlled, isDialog, onChange],
+    );
+
+    const handleCancel = React.useCallback(() => {
       setDraftValue(committedValue);
-    }
-  }
+      onOpenChange?.(false);
+    }, [committedValue, onOpenChange]);
 
-  // Detect landscape (only used when orientation='auto')
-  React.useEffect(() => {
-    if (orientation !== 'auto') return;
-    const check = () => {
-      const isLand = window.innerWidth > window.innerHeight && window.innerHeight < 500;
-      setAutoLandscape(isLand);
-      if (window.innerHeight < 400) setMode('input');
-    };
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, [orientation]);
+    const handleConfirm = React.useCallback(() => {
+      if (!isControlled) setInternalValue(draftValue);
+      onChange?.(draftValue);
+      onOpenChange?.(false);
+    }, [draftValue, isControlled, onChange, onOpenChange]);
 
-  const period: Period = current.hours >= 12 ? 'PM' : 'AM';
-
-  const emit = React.useCallback(
-    (next: TimeValue) => {
-      if (isDialog) {
-        setDraftValue(next);
-        return;
-      }
-
-      if (!isControlled) setInternalValue(next);
-      onChange?.(next);
-    },
-    [isControlled, isDialog, onChange],
-  );
-
-  const handleCancel = React.useCallback(() => {
-    setDraftValue(committedValue);
-    onOpenChange?.(false);
-  }, [committedValue, onOpenChange]);
-
-  const handleConfirm = React.useCallback(() => {
-    if (!isControlled) setInternalValue(draftValue);
-    onChange?.(draftValue);
-    onOpenChange?.(false);
-  }, [draftValue, isControlled, onChange, onOpenChange]);
-
-  const setDialHour = React.useCallback(
-    (h: number) => {
-      let h24 = h;
-      if (format === '12h') {
-        if (period === 'PM' && h < 12) h24 = h + 12;
-        if (period === 'AM' && h === 12) h24 = 0;
-      }
-      emit({ hours: h24, minutes: current.minutes });
-    },
-    [format, period, current.minutes, emit],
-  );
-
-  const setDialMinute = React.useCallback(
-    (m: number) => emit({ hours: current.hours, minutes: m }),
-    [current.hours, emit],
-  );
-
-  const setPeriod = React.useCallback(
-    (next: Period) => {
-      let h24 = current.hours;
-      if (next === 'PM' && current.hours < 12) h24 = current.hours + 12;
-      if (next === 'AM' && current.hours >= 12) h24 = current.hours - 12;
-      emit({ hours: h24, minutes: current.minutes });
-    },
-    [current.hours, current.minutes, emit],
-  );
-
-  const displayHour = () => {
-    if (format === '24h') return current.hours.toString().padStart(2, '0');
-    const h = current.hours === 0 ? 12 : current.hours > 12 ? current.hours - 12 : current.hours;
-    return h.toString().padStart(2, '0');
-  };
-
-  const dialHours =
-    format === '12h'
-      ? current.hours === 0
-        ? 12
-        : current.hours > 12
-          ? current.hours - 12
-          : current.hours
-      : current.hours;
-
-  const handleHourInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Number.parseInt(e.target.value, 10);
-    if (Number.isNaN(val)) return;
-    if (format === '24h') {
-      if (val >= 0 && val <= 23) emit({ hours: val, minutes: current.minutes });
-    } else {
-      if (val >= 1 && val <= 12) {
-        let h24 = val;
-        if (period === 'PM' && val < 12) h24 = val + 12;
-        if (period === 'AM' && val === 12) h24 = 0;
+    const setDialHour = React.useCallback(
+      (h: number) => {
+        let h24 = h;
+        if (format === '12h') {
+          if (period === 'PM' && h < 12) h24 = h + 12;
+          if (period === 'AM' && h === 12) h24 = 0;
+        }
         emit({ hours: h24, minutes: current.minutes });
+      },
+      [format, period, current.minutes, emit],
+    );
+
+    const setDialMinute = React.useCallback(
+      (m: number) => emit({ hours: current.hours, minutes: m }),
+      [current.hours, emit],
+    );
+
+    const setPeriod = React.useCallback(
+      (next: Period) => {
+        let h24 = current.hours;
+        if (next === 'PM' && current.hours < 12) h24 = current.hours + 12;
+        if (next === 'AM' && current.hours >= 12) h24 = current.hours - 12;
+        emit({ hours: h24, minutes: current.minutes });
+      },
+      [current.hours, current.minutes, emit],
+    );
+
+    const displayHour = () => {
+      if (format === '24h') return current.hours.toString().padStart(2, '0');
+      const h = current.hours === 0 ? 12 : current.hours > 12 ? current.hours - 12 : current.hours;
+      return h.toString().padStart(2, '0');
+    };
+
+    const dialHours =
+      format === '12h'
+        ? current.hours === 0
+          ? 12
+          : current.hours > 12
+            ? current.hours - 12
+            : current.hours
+        : current.hours;
+
+    const handleHourInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = Number.parseInt(e.target.value, 10);
+      if (Number.isNaN(val)) return;
+      if (format === '24h') {
+        if (val >= 0 && val <= 23) emit({ hours: val, minutes: current.minutes });
+      } else {
+        if (val >= 1 && val <= 12) {
+          let h24 = val;
+          if (period === 'PM' && val < 12) h24 = val + 12;
+          if (period === 'AM' && val === 12) h24 = 0;
+          emit({ hours: h24, minutes: current.minutes });
+        }
       }
+    };
+
+    const handleMinuteInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = Number.parseInt(e.target.value, 10);
+      if (Number.isNaN(val)) return;
+      if (val >= 0 && val <= 59) emit({ hours: current.hours, minutes: val });
+    };
+
+    const headerText = headerLabel ?? (mode === 'dial' ? 'Select time' : 'Enter time');
+
+    const isInput = mode === 'input';
+
+    if (open === false) {
+      return null;
     }
-  };
+    const periodOrientation = landscape && !isInput ? 'horizontal' : 'vertical';
 
-  const handleMinuteInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Number.parseInt(e.target.value, 10);
-    if (Number.isNaN(val)) return;
-    if (val >= 0 && val <= 59) emit({ hours: current.hours, minutes: val });
-  };
-
-  const headerText = headerLabel ?? (mode === 'dial' ? 'Select time' : 'Enter time');
-
-  const isInput = mode === 'input';
-
-  if (open === false) {
-    return null;
-  }
-  const periodOrientation = landscape && !isInput ? 'horizontal' : 'vertical';
-
-  const renderTimeDisplay = () => (
-    <div className="md-time-picker__display" data-layout={landscape && !isInput ? 'column' : undefined}>
-      {!isInput ? (
-        <div className="md-time-picker__display-row">
-          <button
-            type="button"
-            className={cx('md-time-picker__time-box', selection === 'hours' && 'border-primary')}
-            data-selected={String(selection === 'hours')}
-            data-mode="dial"
-            onClick={() => setSelection('hours')}
-            aria-label="Hours"
-          >
-            {displayHour()}
-          </button>
-          <span className="md-time-picker__colon">:</span>
-          <button
-            type="button"
-            className={cx('md-time-picker__time-box', selection === 'minutes' && 'border-primary')}
-            data-selected={String(selection === 'minutes')}
-            data-mode="dial"
-            onClick={() => setSelection('minutes')}
-            aria-label="Minutes"
-          >
-            {current.minutes.toString().padStart(2, '0')}
-          </button>
-        </div>
-      ) : (
-        <>
-          <div className="md-time-picker__field-group">
-            <input
-              ref={hourInputRef}
-              className={cx(
-                'md-time-picker__time-box md-time-picker__time-input',
-                selection === 'hours' && 'border-primary',
-              )}
+    const renderTimeDisplay = () => (
+      <div className="md-time-picker__display" data-layout={landscape && !isInput ? 'column' : undefined}>
+        {!isInput ? (
+          <div className="md-time-picker__display-row">
+            <button
+              type="button"
+              className={cx('md-time-picker__time-box', selection === 'hours' && 'border-primary')}
               data-selected={String(selection === 'hours')}
-              data-mode="input"
-              value={displayHour()}
-              onChange={handleHourInput}
-              onFocus={() => setSelection('hours')}
-              placeholder="--"
-              inputMode="numeric"
-              maxLength={2}
+              data-mode="dial"
+              onClick={() => setSelection('hours')}
               aria-label="Hours"
-            />
-            <span className="md-time-picker__field-label">Hour</span>
-          </div>
-          <span className="md-time-picker__colon" data-offset="true">
-            :
-          </span>
-          <div className="md-time-picker__field-group">
-            <input
-              ref={minuteInputRef}
-              className={cx(
-                'md-time-picker__time-box md-time-picker__time-input',
-                selection === 'minutes' && 'border-primary',
-              )}
+            >
+              {displayHour()}
+            </button>
+            <span className="md-time-picker__colon">:</span>
+            <button
+              type="button"
+              className={cx('md-time-picker__time-box', selection === 'minutes' && 'border-primary')}
               data-selected={String(selection === 'minutes')}
-              data-mode="input"
-              value={current.minutes.toString().padStart(2, '0')}
-              onChange={handleMinuteInput}
-              onFocus={() => setSelection('minutes')}
-              placeholder="--"
-              inputMode="numeric"
-              maxLength={2}
+              data-mode="dial"
+              onClick={() => setSelection('minutes')}
               aria-label="Minutes"
-            />
-            <span className="md-time-picker__field-label">Minute</span>
+            >
+              {current.minutes.toString().padStart(2, '0')}
+            </button>
           </div>
-        </>
-      )}
-      {format === '12h' && (
-        <PeriodSelector period={period} onChange={setPeriod} orientation={periodOrientation} inputMode={isInput} />
-      )}
-    </div>
-  );
-
-  const renderDialBody = () =>
-    landscape ? (
-      <div className="md-time-picker__dial-body">
-        <div className="md-time-picker__dial-body-left">
-          <span className="md-time-picker__header-text">{headerText}</span>
-          {renderTimeDisplay()}
-        </div>
-        <ClockDial
-          selection={selection}
-          hours={dialHours}
-          minutes={current.minutes}
-          format={format}
-          onHourChange={setDialHour}
-          onMinuteChange={setDialMinute}
-          onSelectionChange={setSelection}
-        />
-      </div>
-    ) : (
-      <div className="md-time-picker__dial-center">
-        <ClockDial
-          selection={selection}
-          hours={dialHours}
-          minutes={current.minutes}
-          format={format}
-          onHourChange={setDialHour}
-          onMinuteChange={setDialMinute}
-          onSelectionChange={setSelection}
-        />
+        ) : (
+          <>
+            <div className="md-time-picker__field-group">
+              <input
+                ref={hourInputRef}
+                className={cx(
+                  'md-time-picker__time-box md-time-picker__time-input',
+                  selection === 'hours' && 'border-primary',
+                )}
+                data-selected={String(selection === 'hours')}
+                data-mode="input"
+                value={displayHour()}
+                onChange={handleHourInput}
+                onFocus={() => setSelection('hours')}
+                placeholder="--"
+                inputMode="numeric"
+                maxLength={2}
+                aria-label="Hours"
+              />
+              <span className="md-time-picker__field-label">Hour</span>
+            </div>
+            <span className="md-time-picker__colon" data-offset="true">
+              :
+            </span>
+            <div className="md-time-picker__field-group">
+              <input
+                ref={minuteInputRef}
+                className={cx(
+                  'md-time-picker__time-box md-time-picker__time-input',
+                  selection === 'minutes' && 'border-primary',
+                )}
+                data-selected={String(selection === 'minutes')}
+                data-mode="input"
+                value={current.minutes.toString().padStart(2, '0')}
+                onChange={handleMinuteInput}
+                onFocus={() => setSelection('minutes')}
+                placeholder="--"
+                inputMode="numeric"
+                maxLength={2}
+                aria-label="Minutes"
+              />
+              <span className="md-time-picker__field-label">Minute</span>
+            </div>
+          </>
+        )}
+        {format === '12h' && (
+          <PeriodSelector period={period} onChange={setPeriod} orientation={periodOrientation} inputMode={isInput} />
+        )}
       </div>
     );
 
-  return (
-    <div
-      ref={ref}
-      className={cx('md-time-picker', className)}
-      role={open !== undefined ? 'dialog' : undefined}
-      data-layout={landscape && !isInput ? 'landscape' : 'portrait'}
-    >
-      {(!landscape || isInput) && (
-        <>
-          <span className="md-time-picker__header-text">{headerText}</span>
-          {renderTimeDisplay()}
-        </>
-      )}
-
-      {!isInput && renderDialBody()}
-
-      <div className="md-time-picker__footer">
-        <button
-          type="button"
-          className="md-time-picker__mode-btn"
-          onClick={() => setMode((m) => (m === 'dial' ? 'input' : 'dial'))}
-          aria-label={isInput ? 'Switch to clock dial' : 'Switch to keyboard input'}
-        >
-          <Ripple />
-          {isInput ? <Clock /> : <Keyboard />}
-        </button>
-        {open !== undefined && (
-          <div className="md-time-picker__footer-actions">
-            <button type="button" className="md-time-picker__action-btn" onClick={handleCancel}>
-              Cancel
-            </button>
-            <button type="button" className="md-time-picker__action-btn" onClick={handleConfirm}>
-              OK
-            </button>
+    const renderDialBody = () =>
+      landscape ? (
+        <div className="md-time-picker__dial-body">
+          <div className="md-time-picker__dial-body-left">
+            <span className="md-time-picker__header-text">{headerText}</span>
+            {renderTimeDisplay()}
           </div>
+          <ClockDial
+            selection={selection}
+            hours={dialHours}
+            minutes={current.minutes}
+            format={format}
+            onHourChange={setDialHour}
+            onMinuteChange={setDialMinute}
+            onSelectionChange={setSelection}
+          />
+        </div>
+      ) : (
+        <div className="md-time-picker__dial-center">
+          <ClockDial
+            selection={selection}
+            hours={dialHours}
+            minutes={current.minutes}
+            format={format}
+            onHourChange={setDialHour}
+            onMinuteChange={setDialMinute}
+            onSelectionChange={setSelection}
+          />
+        </div>
+      );
+
+    return (
+      <div
+        ref={ref}
+        className={cx('md-time-picker', className)}
+        role={open !== undefined ? 'dialog' : undefined}
+        data-layout={landscape && !isInput ? 'landscape' : 'portrait'}
+      >
+        {(!landscape || isInput) && (
+          <>
+            <span className="md-time-picker__header-text">{headerText}</span>
+            {renderTimeDisplay()}
+          </>
         )}
+
+        {!isInput && renderDialBody()}
+
+        <div className="md-time-picker__footer">
+          <button
+            type="button"
+            className="md-time-picker__mode-btn"
+            onClick={() => setMode((m) => (m === 'dial' ? 'input' : 'dial'))}
+            aria-label={isInput ? 'Switch to clock dial' : 'Switch to keyboard input'}
+          >
+            <Ripple />
+            {isInput ? <Clock /> : <Keyboard />}
+          </button>
+          {open !== undefined && (
+            <div className="md-time-picker__footer-actions">
+              <button type="button" className="md-time-picker__action-btn" onClick={handleCancel}>
+                Cancel
+              </button>
+              <button type="button" className="md-time-picker__action-btn" onClick={handleConfirm}>
+                OK
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  },
+);
 TimePicker.displayName = 'TimePicker';
 
 export { TimePicker };

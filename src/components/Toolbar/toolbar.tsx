@@ -1,5 +1,6 @@
 import './toolbar.css';
 import type * as React from 'react';
+import { forwardRef } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -31,75 +32,81 @@ const resolveSpace = (value: number | string | undefined) => {
   return typeof value === 'number' ? `${value}px` : value;
 };
 
-const Toolbar = ({
-  className,
-  type = 'floating',
-  color = 'standard',
-  layout = 'horizontal',
-  align = 'center',
-  leading,
-  trailing,
-  gap,
-  padding,
-  paddingInline,
-  paddingBlock,
-  children,
-  style,
-  ref,
-  ...props
-}: ToolbarProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const hasLeading = leading !== undefined && leading !== null && leading !== false;
-  const hasMiddle = children !== undefined && children !== null && children !== false;
-  const hasTrailing = trailing !== undefined && trailing !== null && trailing !== false;
-  const hasSlots = hasLeading || hasTrailing;
+const Toolbar = forwardRef<HTMLDivElement, React.PropsWithoutRef<ToolbarProps>>(
+  (
+    {
+      className,
+      type = 'floating',
+      color = 'standard',
+      layout = 'horizontal',
+      align = 'center',
+      leading,
+      trailing,
+      gap,
+      padding,
+      paddingInline,
+      paddingBlock,
+      children,
+      style,
+      ...props
+    },
+    ref,
+  ) => {
+    const hasLeading = leading !== undefined && leading !== null && leading !== false;
+    const hasMiddle = children !== undefined && children !== null && children !== false;
+    const hasTrailing = trailing !== undefined && trailing !== null && trailing !== false;
+    const hasSlots = hasLeading || hasTrailing;
 
-  const resolvedStyle = {
-    ...style,
-    ...(resolveSpace(gap) !== undefined ? { '--md-toolbar-gap': resolveSpace(gap) } : null),
-    ...(resolveSpace(padding) !== undefined
-      ? {
-          '--md-toolbar-padding-inline': resolveSpace(padding),
-          '--md-toolbar-padding-block': resolveSpace(padding),
-        }
-      : null),
-    ...(resolveSpace(paddingInline) !== undefined
-      ? { '--md-toolbar-padding-inline': resolveSpace(paddingInline) }
-      : null),
-    ...(resolveSpace(paddingBlock) !== undefined ? { '--md-toolbar-padding-block': resolveSpace(paddingBlock) } : null),
-  } as React.CSSProperties;
+    const resolvedStyle = {
+      ...style,
+      ...(resolveSpace(gap) !== undefined ? { '--md-toolbar-gap': resolveSpace(gap) } : null),
+      ...(resolveSpace(padding) !== undefined
+        ? {
+            '--md-toolbar-padding-inline': resolveSpace(padding),
+            '--md-toolbar-padding-block': resolveSpace(padding),
+          }
+        : null),
+      ...(resolveSpace(paddingInline) !== undefined
+        ? { '--md-toolbar-padding-inline': resolveSpace(paddingInline) }
+        : null),
+      ...(resolveSpace(paddingBlock) !== undefined
+        ? { '--md-toolbar-padding-block': resolveSpace(paddingBlock) }
+        : null),
+    } as React.CSSProperties;
 
-  return (
-    <div
-      ref={ref}
-      role="toolbar"
-      aria-orientation={layout === 'vertical' ? 'vertical' : 'horizontal'}
-      className={cx('md-toolbar', className)}
-      data-type={type}
-      data-color={color}
-      data-layout={layout}
-      data-align={align}
-      data-has-slots={hasSlots || undefined}
-      style={resolvedStyle}
-      {...props}
-    >
-      {hasSlots ? (
-        <>
-          <div className="md-toolbar__section" data-slot="leading" data-empty={!hasLeading || undefined}>
-            {leading}
-          </div>
-          <div className="md-toolbar__section" data-slot="middle" data-empty={!hasMiddle || undefined}>
-            {children}
-          </div>
-          <div className="md-toolbar__section" data-slot="trailing" data-empty={!hasTrailing || undefined}>
-            {trailing}
-          </div>
-        </>
-      ) : (
-        children
-      )}
-    </div>
-  );
-};
+    return (
+      <div
+        ref={ref}
+        role="toolbar"
+        aria-orientation={layout === 'vertical' ? 'vertical' : 'horizontal'}
+        className={cx('md-toolbar', className)}
+        data-type={type}
+        data-color={color}
+        data-layout={layout}
+        data-align={align}
+        data-has-slots={hasSlots || undefined}
+        style={resolvedStyle}
+        {...props}
+      >
+        {hasSlots ? (
+          <>
+            <div className="md-toolbar__section" data-slot="leading" data-empty={!hasLeading || undefined}>
+              {leading}
+            </div>
+            <div className="md-toolbar__section" data-slot="middle" data-empty={!hasMiddle || undefined}>
+              {children}
+            </div>
+            <div className="md-toolbar__section" data-slot="trailing" data-empty={!hasTrailing || undefined}>
+              {trailing}
+            </div>
+          </>
+        ) : (
+          children
+        )}
+      </div>
+    );
+  },
+);
 Toolbar.displayName = 'Toolbar';
 
 export { Toolbar };

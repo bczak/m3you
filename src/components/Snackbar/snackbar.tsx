@@ -1,6 +1,7 @@
 import './snackbar.css';
 import { X } from 'lucide-react';
 import type * as React from 'react';
+import { forwardRef } from 'react';
 import { Toaster as SonnerToaster } from 'sonner';
 
 import { cx } from '../../lib/cx';
@@ -26,71 +27,63 @@ export type SnackbarProps = React.ComponentProps<'output'> & {
 
 // ─── Snackbar Component ──────────────────────────────────────────────────────
 
-const Snackbar = ({
-  className,
-  layout = 'singleLine',
-  message,
-  actionLabel,
-  onAction,
-  closable,
-  onClose,
-  ref,
-  ...props
-}: SnackbarProps & { ref?: React.Ref<HTMLOutputElement> }) => {
-  const isLongerAction = layout === 'longerAction';
+const Snackbar = forwardRef<HTMLOutputElement, React.PropsWithoutRef<SnackbarProps>>(
+  ({ className, layout = 'singleLine', message, actionLabel, onAction, closable, onClose, ...props }, ref) => {
+    const isLongerAction = layout === 'longerAction';
 
-  return (
-    <output ref={ref} aria-live="polite" className={cx('md-snackbar', className)} data-layout={layout} {...props}>
-      {isLongerAction ? (
-        <>
-          <span className="md-snackbar__message">{message}</span>
-          <div className="md-snackbar__actions">
-            {actionLabel && (
-              <Button variant="text" size="xs" shape="round" morph onClick={onAction} className="md-snackbar__action">
-                {actionLabel}
-              </Button>
-            )}
-            {closable && (
-              <IconButton
-                variant="standard"
-                size="xs"
-                shape="round"
-                aria-label="Dismiss"
-                onClick={onClose}
-                className="md-snackbar__close"
-              >
-                <X aria-hidden="true" />
-              </IconButton>
-            )}
-          </div>
-        </>
-      ) : (
-        <>
-          <span className="md-snackbar__message">{message}</span>
-          <div className="md-snackbar__actions">
-            {actionLabel && (
-              <Button variant="text" size="xs" shape="round" morph onClick={onAction} className="md-snackbar__action">
-                {actionLabel}
-              </Button>
-            )}
-            {closable && (
-              <IconButton
-                variant="standard"
-                size="xs"
-                shape="round"
-                aria-label="Dismiss"
-                onClick={onClose}
-                className="md-snackbar__close"
-              >
-                <X aria-hidden="true" />
-              </IconButton>
-            )}
-          </div>
-        </>
-      )}
-    </output>
-  );
-};
+    return (
+      <output ref={ref} aria-live="polite" className={cx('md-snackbar', className)} data-layout={layout} {...props}>
+        {isLongerAction ? (
+          <>
+            <span className="md-snackbar__message">{message}</span>
+            <div className="md-snackbar__actions">
+              {actionLabel && (
+                <Button variant="text" size="xs" shape="round" morph onClick={onAction} className="md-snackbar__action">
+                  {actionLabel}
+                </Button>
+              )}
+              {closable && (
+                <IconButton
+                  variant="standard"
+                  size="xs"
+                  shape="round"
+                  aria-label="Dismiss"
+                  onClick={onClose}
+                  className="md-snackbar__close"
+                >
+                  <X aria-hidden="true" />
+                </IconButton>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <span className="md-snackbar__message">{message}</span>
+            <div className="md-snackbar__actions">
+              {actionLabel && (
+                <Button variant="text" size="xs" shape="round" morph onClick={onAction} className="md-snackbar__action">
+                  {actionLabel}
+                </Button>
+              )}
+              {closable && (
+                <IconButton
+                  variant="standard"
+                  size="xs"
+                  shape="round"
+                  aria-label="Dismiss"
+                  onClick={onClose}
+                  className="md-snackbar__close"
+                >
+                  <X aria-hidden="true" />
+                </IconButton>
+              )}
+            </div>
+          </>
+        )}
+      </output>
+    );
+  },
+);
 Snackbar.displayName = 'Snackbar';
 
 // ─── Snackbar Host (Sonner Toaster) ──────────────────────────────────────────
