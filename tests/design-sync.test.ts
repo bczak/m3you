@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { expect, test } from 'vitest';
 
@@ -105,7 +105,8 @@ test('fixture roster matches every canonical component directory and excludes th
     .map((entry) => entry.name)
     .sort();
   expect([...fixture.componentCoverage].sort()).toEqual(canonicalDirectories);
-  expect(readdirSync(resolve(componentRoot, 'ui'))).toHaveLength(0);
+  const uiShimDirectory = resolve(componentRoot, 'ui');
+  expect(existsSync(uiShimDirectory) ? readdirSync(uiShimDirectory) : []).toHaveLength(0);
 });
 
 test('scalar state tokens implement the audited opacity table', () => {
