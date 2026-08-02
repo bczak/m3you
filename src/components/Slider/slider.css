@@ -1,24 +1,15 @@
 /* =============================================================================
-   Slider — M3 Expressive Spec
-   5 sizes (xs, sm, md, lg, xl), horizontal/vertical, discrete mode
-   Handle: capsule shape, corner-full. Track: corner-full outer, squared inner.
-   Tooltip: 44x48dp. State layer: 40-48dp.
-   Source: m3.material.io/components/sliders/specs
+   Slider — M3 Expressive
+   Five sizes, horizontal/vertical, centered origin, and two-thumb ranges.
    ============================================================================= */
 
-/* ── Root ── */
 .md-slider {
   position: relative;
   display: flex;
+  box-sizing: border-box;
   touch-action: none;
   user-select: none;
 
-  &[data-disabled] {
-    pointer-events: none;
-    opacity: var(--md-sys-state-disabled-opacity);
-  }
-
-  /* ── Orientation ── */
   &[data-orientation="horizontal"] {
     width: 100%;
     align-items: center;
@@ -30,103 +21,107 @@
     justify-content: center;
   }
 
-  /* ── Size × Orientation touch targets ── */
-  &[data-size="xs"][data-orientation="horizontal"] {
-    height: 48px;
-  }
-  &[data-size="sm"][data-orientation="horizontal"] {
-    height: 48px;
-  }
-  &[data-size="md"][data-orientation="horizontal"] {
-    height: 56px;
-  }
-  &[data-size="lg"][data-orientation="horizontal"] {
-    height: 72px;
-  }
-  &[data-size="xl"][data-orientation="horizontal"] {
-    height: 112px;
+  &[data-size="xs"],
+  &[data-size="sm"] {
+    &[data-orientation="horizontal"] {
+      height: 48px;
+    }
+
+    &[data-orientation="vertical"] {
+      width: 48px;
+    }
   }
 
-  &[data-size="xs"][data-orientation="vertical"] {
-    width: 48px;
+  &[data-size="md"] {
+    &[data-orientation="horizontal"] {
+      height: 56px;
+    }
+
+    &[data-orientation="vertical"] {
+      width: 56px;
+    }
   }
-  &[data-size="sm"][data-orientation="vertical"] {
-    width: 48px;
+
+  &[data-size="lg"] {
+    &[data-orientation="horizontal"] {
+      height: 72px;
+    }
+
+    &[data-orientation="vertical"] {
+      width: 72px;
+    }
   }
-  &[data-size="md"][data-orientation="vertical"] {
-    width: 56px;
-  }
-  &[data-size="lg"][data-orientation="vertical"] {
-    width: 72px;
-  }
-  &[data-size="xl"][data-orientation="vertical"] {
-    width: 112px;
+
+  &[data-size="xl"] {
+    &[data-orientation="horizontal"] {
+      height: 112px;
+    }
+
+    &[data-orientation="vertical"] {
+      width: 112px;
+    }
   }
 }
 
-/* ── Visual track container ── */
 .md-slider__track {
   position: relative;
+  flex: none;
 
   .md-slider[data-orientation="horizontal"] & {
-    width: 100%;
+    width: calc(100% - 12px);
+    margin-inline: 6px;
   }
 
   .md-slider[data-orientation="vertical"] & {
-    height: 100%;
+    height: calc(100% - 12px);
+    margin-block: 6px;
   }
 }
 
-/* ── Active track ── */
-.md-slider__track-active {
+.md-slider__track-active,
+.md-slider__track-inactive {
   position: absolute;
+  overflow: hidden;
+}
+
+.md-slider__track-active {
   background-color: var(--md-sys-color-primary);
 
   .md-slider[data-orientation="horizontal"] & {
-    top: 0;
-    bottom: 0;
-    left: 0;
+    inset-block: 0;
   }
 
   .md-slider[data-orientation="vertical"] & {
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset-inline: 0;
   }
 }
 
-/* ── Inactive track ── */
 .md-slider__track-inactive {
-  position: absolute;
   background-color: var(--md-sys-color-surface-container-highest);
 
   .md-slider[data-orientation="horizontal"] & {
-    top: 0;
-    bottom: 0;
-    right: 0;
+    inset-block: 0;
   }
 
   .md-slider[data-orientation="vertical"] & {
-    left: 0;
-    right: 0;
-    top: 0;
+    inset-inline: 0;
   }
 }
 
-/* ── Stop indicator (discrete ticks) ── */
 .md-slider__stop {
   position: absolute;
+  z-index: 1;
   width: 4px;
   height: 4px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
 
-  .md-slider[data-orientation="vertical"] & {
-    left: 50%;
-  }
-
   .md-slider[data-orientation="horizontal"] & {
     top: 50%;
+  }
+
+  .md-slider[data-orientation="vertical"] & {
+    left: 50%;
   }
 
   &[data-active="true"] {
@@ -138,9 +133,18 @@
   }
 }
 
-/* ── Handle wrapper (positioned) ── */
 .md-slider__handle {
   position: absolute;
+  z-index: 2;
+  display: flex;
+  width: 68px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  color: var(--md-sys-color-primary);
+  cursor: grab;
+  touch-action: none;
 
   .md-slider[data-orientation="horizontal"] & {
     top: 50%;
@@ -148,88 +152,74 @@
   }
 
   .md-slider[data-orientation="vertical"] & {
+    top: auto;
     left: 50%;
+    width: 48px;
+    height: 68px;
     transform: translate(-50%, 50%);
   }
-}
 
-/* ── Tooltip ── */
-.md-slider__tooltip {
-  pointer-events: none;
-  position: absolute;
-  left: 50%;
-  display: flex;
-  width: 48px;
-  height: 44px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 22px;
-  background-color: var(--md-sys-color-inverse-surface);
-  color: var(--md-sys-color-inverse-on-surface);
-  font-size: 14px;
-  font-weight: 500;
-  transform: translateX(-50%);
-
-  .md-slider[data-orientation="horizontal"] & {
-    top: -52px;
+  &[data-dragging] {
+    cursor: grabbing;
   }
 
-  .md-slider[data-orientation="vertical"] & {
-    left: -56px;
-    top: 50%;
-    transform: translateY(-50%);
+  &[data-disabled] {
+    cursor: default;
+    pointer-events: none;
   }
 }
 
-/* ── State layer ── */
-.md-slider__state-layer {
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  transform: translate(-50%, -50%);
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-
-  .md-slider__handle:hover & {
-    background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
-  }
-}
-
-/* State layer sizes */
-.md-slider[data-size="xs"] .md-slider__state-layer,
-.md-slider[data-size="sm"] .md-slider__state-layer,
-.md-slider[data-size="md"] .md-slider__state-layer {
-  width: 40px;
-  height: 40px;
-}
-
-.md-slider[data-size="lg"] .md-slider__state-layer {
-  width: 44px;
-  height: 44px;
-}
-
-.md-slider[data-size="xl"] .md-slider__state-layer {
-  width: 48px;
-  height: 48px;
-}
-
-/* ── Visual handle capsule ── */
 .md-slider__thumb {
   position: relative;
+  z-index: 1;
+  display: block;
+  flex: none;
   border-radius: 2px;
   background-color: var(--md-sys-color-primary);
-  box-shadow: var(--md-sys-elevation-2);
   transition:
     width var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-fast-spatial),
     height var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-fast-spatial);
 }
 
-/* ── Inset icon ── */
+.md-slider__tooltip {
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  display: flex;
+  box-sizing: border-box;
+  width: max-content;
+  min-width: 48px;
+  height: 44px;
+  padding-inline: 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 22px;
+  background-color: var(--md-sys-color-inverse-surface);
+  color: var(--md-sys-color-inverse-on-surface);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  white-space: nowrap;
+
+  .md-slider[data-orientation="horizontal"] & {
+    top: -48px;
+    transform: translateX(-50%);
+  }
+
+  .md-slider[data-orientation="vertical"] & {
+    top: 50%;
+    left: auto;
+    right: 52px;
+    transform: translateY(-50%);
+  }
+}
+
 .md-slider__icon {
   position: absolute;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -248,16 +238,44 @@
   }
 }
 
-/* ── Native range input (invisible overlay) ── */
 .md-slider__input {
   position: absolute;
-  inset: 0;
-  cursor: pointer;
-  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.md-slider__input[data-orientation="vertical"] {
-  writing-mode: vertical-lr;
-  direction: rtl;
-  -webkit-appearance: slider-vertical;
+.md-slider:has(.md-slider__input:focus-visible) .md-slider__handle {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+.md-slider[data-disabled] {
+  & .md-slider__track-active,
+  & .md-slider__thumb {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+  }
+
+  & .md-slider__track-inactive {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  }
+
+  & .md-slider__stop {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+  }
+}
+
+.md-range-slider .md-slider__handle:last-of-type {
+  z-index: 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-slider__thumb {
+    transition-duration: 0s;
+  }
 }

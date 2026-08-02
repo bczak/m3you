@@ -2,6 +2,8 @@
 
 export type { AppBarProps } from './components/AppBar/app-bar';
 export { AppBar } from './components/AppBar/app-bar';
+export type { AvatarContentProps, AvatarImageProps, AvatarProps } from './components/Avatar/avatar';
+export { Avatar } from './components/Avatar/avatar';
 export type { BadgeAnchorProps, BadgeProps } from './components/Badge/badge';
 export { Badge, BadgeAnchor } from './components/Badge/badge';
 export type { BottomSheetContentProps, BottomSheetProps } from './components/BottomSheet/bottom-sheet';
@@ -36,6 +38,8 @@ export type { CheckboxProps } from './components/Checkbox/checkbox';
 export { Checkbox } from './components/Checkbox/checkbox';
 export type { ChipProps } from './components/Chip/chip';
 export { Chip } from './components/Chip/chip';
+export type { ChipGroupProps } from './components/ChipGroup/chip-group';
+export { ChipGroup } from './components/ChipGroup/chip-group';
 export type {
   CircularProgressProps,
   CircularProgressVariant,
@@ -71,7 +75,7 @@ export type { ExtendableFABProps } from './components/ExtendableFab/extendable-f
 export { ExtendableFAB } from './components/ExtendableFab/extendable-fab';
 export type { ExtendedFABProps } from './components/ExtendedFab/extended-fab';
 export { ExtendedFAB } from './components/ExtendedFab/extended-fab';
-export type { FABProps } from './components/Fab/fab';
+export type { FABColor, FABProps, FABSize } from './components/Fab/fab';
 export { FAB } from './components/Fab/fab';
 export type { FABMenuItemOption, FABMenuProps } from './components/FabMenu/fab-menu';
 export { FABMenu } from './components/FabMenu/fab-menu';
@@ -85,7 +89,10 @@ export { LinearProgress } from './components/LinearProgress/linear-progress';
 export type {
   ListAppearance,
   ListDividerProps,
+  ListItemAccordionProps,
   ListItemProps,
+  ListItemSwipeProps,
+  ListItemSwipeSide,
   ListMode,
   ListMultiSelectionProps,
   ListNonSelectionProps,
@@ -93,7 +100,7 @@ export type {
   ListSelectionIndicator,
   ListSingleSelectionProps,
 } from './components/List/list';
-export { List, ListDivider, ListItem } from './components/List/list';
+export { List, ListDivider, ListItem, ListItemAccordion, ListItemSwipe } from './components/List/list';
 export type {
   LoadingIndicatorProps,
   LoadingIndicatorVariant,
@@ -105,6 +112,7 @@ export type {
   MenuDividerProps,
   MenuGroupProps,
   MenuItemProps,
+  MenuLabelProps,
   MenuProps,
   MenuSubContentProps,
   MenuSubProps,
@@ -117,6 +125,7 @@ export {
   MenuDivider,
   MenuGroup,
   MenuItem,
+  MenuLabel,
   MenuSub,
   MenuSubContent,
   MenuSubTrigger,
@@ -166,10 +175,11 @@ export {
   SideSheetHeader,
   SideSheetTrigger,
 } from './components/SideSheet/side-sheet';
-export type { SliderProps } from './components/Slider/slider';
-export { Slider } from './components/Slider/slider';
+export type { RangeSliderInputProps, RangeSliderProps, SliderProps } from './components/Slider/slider';
+export { RangeSlider, Slider } from './components/Slider/slider';
 export type { SnackbarHostProps, SnackbarProps } from './components/Snackbar/snackbar';
 export { Snackbar, SnackbarHost } from './components/Snackbar/snackbar';
+export type { SnackbarOptions } from './components/Snackbar/snackbar-api';
 export { snackbar } from './components/Snackbar/snackbar-api';
 export type { SplitButtonProps } from './components/SplitButton/split-button';
 export { SplitButton } from './components/SplitButton/split-button';

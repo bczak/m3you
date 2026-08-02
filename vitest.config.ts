@@ -13,7 +13,7 @@ export default defineConfig({
       provider: 'v8',
       all: true,
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/index.tsx', 'src/components/ui/**', 'src/**/*.d.ts', 'src/vite-env.d.ts'],
+      exclude: ['src/index.tsx', 'src/**/*.d.ts', 'src/vite-env.d.ts'],
       reporter: ['text-summary', 'text', 'html'],
       thresholds: { statements: 100, branches: 100, functions: 100, lines: 100 },
     },

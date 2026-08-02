@@ -1,0 +1,25 @@
+.md-chip-group {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  gap: 8px;
+
+  &[data-layout="scroll"] {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    & > * {
+      flex: none;
+    }
+  }
+
+  &[data-layout="wrap"] {
+    flex-wrap: wrap;
+  }
+}
