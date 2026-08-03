@@ -15,84 +15,88 @@ export type CheckboxProps = Omit<React.ComponentProps<'input'>, 'type'> & {
   onCheckedChange?: (checked: boolean) => void;
 };
 
-const Checkbox = ({
-  className,
-  checked: checkedProp,
-  defaultChecked = false,
-  indeterminate = false,
-  variant = 'primary',
-  disabled,
-  onCheckedChange,
-  onChange,
-  ref,
-  ...props
-}: CheckboxProps & { ref?: React.Ref<HTMLInputElement> }) => {
-  const isControlled = checkedProp !== undefined;
-  const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
-  const checked = isControlled ? checkedProp : internalChecked;
-  const inputRef = React.useRef<HTMLInputElement>(null);
+const Checkbox = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<CheckboxProps>>(
+  (
+    {
+      className,
+      checked: checkedProp,
+      defaultChecked = false,
+      indeterminate = false,
+      variant = 'primary',
+      disabled,
+      onCheckedChange,
+      onChange,
+      ...props
+    },
+    ref,
+  ) => {
+    const isControlled = checkedProp !== undefined;
+    const [internalChecked, setInternalChecked] = React.useState(defaultChecked);
+    const checked = isControlled ? checkedProp : internalChecked;
+    const inputRef = React.useRef<HTMLInputElement>(null);
 
-  // Merge refs
-  React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+    // Merge refs
+    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-  // Set indeterminate state via ref (not an HTML attribute)
-  React.useEffect(() => {
-    /* v8 ignore next -- inputRef is always mounted when this effect runs */
-    if (inputRef.current) {
-      inputRef.current.indeterminate = indeterminate;
-    }
-  }, [indeterminate]);
+    // Set indeterminate state via ref (not an HTML attribute)
+    React.useEffect(() => {
+      /* v8 ignore next -- inputRef is always mounted when this effect runs */
+      if (inputRef.current) {
+        inputRef.current.indeterminate = indeterminate;
+      }
+    }, [indeterminate]);
 
-  const reportCheckedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isControlled) {
-      setInternalChecked(e.target.checked);
-    }
-    onCheckedChange?.(e.target.checked);
-    onChange?.(e);
-  };
+    const reportCheckedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!isControlled) {
+        setInternalChecked(e.target.checked);
+      }
+      onCheckedChange?.(e.target.checked);
+      onChange?.(e);
+    };
 
-  // Determine visual state: indeterminate takes precedence over checked
-  const isVisuallyChecked = indeterminate || checked;
+    // Determine visual state: indeterminate takes precedence over checked
+    const isVisuallyChecked = indeterminate || checked;
 
-  return (
-    <label
-      className={cx('md-checkbox', className)}
-      data-variant={variant}
-      data-checked={String(isVisuallyChecked)}
-      data-disabled={disabled || undefined}
-    >
-      {/* State layer (40px circular) */}
-      <span className="md-checkbox__state-layer">
-        <Ripple disabled={disabled} pressedOpacity={0.12} />
-      </span>
-
-      {/* Visual checkbox (18px) */}
-      <span
-        aria-hidden="true"
-        className="md-checkbox__box"
-        data-checked={String(isVisuallyChecked)}
+    return (
+      <label
+        className={cx('md-checkbox', className)}
         data-variant={variant}
+        data-checked={String(isVisuallyChecked)}
+        data-disabled={disabled || undefined}
       >
-        {indeterminate ? (
-          <Minus className="md-checkbox__icon" />
-        ) : checked ? (
-          <Check className="md-checkbox__icon" />
-        ) : null}
-      </span>
+        {/* State layer (40px circular) */}
+        <span className="md-checkbox__state-layer">
+          <Ripple disabled={disabled} pressedOpacity={0.12} />
+        </span>
 
-      {/* Hidden native input for accessibility */}
-      <input
-        ref={inputRef}
-        type="checkbox"
-        checked={checked}
-        disabled={disabled}
-        onChange={reportCheckedChange}
-        className="md-checkbox__input"
-        {...props}
-      />
-    </label>
-  );
-};
+        {/* Visual checkbox (18px) */}
+        <span
+          aria-hidden="true"
+          className="md-checkbox__box"
+          data-checked={String(isVisuallyChecked)}
+          data-variant={variant}
+        >
+          {indeterminate ? (
+            <Minus className="md-checkbox__icon" />
+          ) : checked ? (
+            <Check className="md-checkbox__icon" />
+          ) : null}
+        </span>
+
+        {/* Hidden native input for accessibility */}
+        <input
+          ref={inputRef}
+          type="checkbox"
+          checked={checked}
+          disabled={disabled}
+          onChange={reportCheckedChange}
+          className="md-checkbox__input"
+          {...props}
+        />
+      </label>
+    );
+  },
+);
 Checkbox.displayName = 'Checkbox';
 
 export { Checkbox };

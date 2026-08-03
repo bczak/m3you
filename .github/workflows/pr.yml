@@ -40,6 +40,9 @@ jobs:
       - name: Lint and format
         run: bunx biome check
 
+      - name: Type-check library
+        run: bun run types:check
+
       - name: Install Playwright Chromium
         run: bunx playwright install --with-deps chromium
 
@@ -54,6 +57,53 @@ jobs:
 
       - name: Type-check docs
         run: bun run --cwd docs types:check
+
+  react-19:
+    name: React 19
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - run: bun install --frozen-lockfile
+
+      # Development happens on React 18 — the floor of the supported range — so
+      # a React-19-only construct cannot creep in unnoticed. This job covers the
+      # other end: an API React 19 dropped, or a behaviour it changed, would
+      # otherwise break consumers on the current React with nothing to catch it.
+      #
+      # --no-save leaves react@18 in package.json. It does rewrite bun.lock, so
+      # no later step may use --frozen-lockfile.
+      - name: Upgrade React to 19
+        run: bun add --no-save react@19.2.7 react-dom@19.2.7 @types/react@19.2.17 @types/react-dom@19.2.3
+
+      # Without this, a swap that silently no-ops would pass the job by
+      # re-testing React 18 — the exact failure this job exists to catch.
+      - name: Assert React 19 resolved
+        run: |
+          RUNTIME="$(bun --print 'require("react/package.json").version')"
+          TYPES="$(bun --print 'require("@types/react/package.json").version')"
+          echo "react@$RUNTIME  @types/react@$TYPES"
+          case "$RUNTIME" in 19.*) ;; *) echo "expected react 19, got $RUNTIME" >&2; exit 1 ;; esac
+          case "$TYPES"   in 19.*) ;; *) echo "expected @types/react 19, got $TYPES" >&2; exit 1 ;; esac
+
+      - name: Type-check against React 19 types
+        run: bun run types:check
+
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+
+      # Both projects. The `storybook` project is the only layer that renders in
+      # a real browser, so it is where a portal or Web Animations regression
+      # under React 19 would show up — exactly what this job exists to catch.
+      - name: Library tests
+        run: bun run test
+
+      # vite-plugin-dts runs a real tsc emit, so this proves the published .d.ts
+      # can still be generated against the 19 typings.
+      - name: Build
+        run: bun run build
 
   storybook-preview:
     name: Storybook preview

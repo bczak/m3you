@@ -1,5 +1,6 @@
 import './button-group.css';
 import type * as React from 'react';
+import { forwardRef } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -12,23 +13,20 @@ export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: 'horizontal' | 'vertical';
 }
 
-const ButtonGroup = ({
-  className,
-  orientation = 'horizontal',
-  ref,
-  ...props
-}: ButtonGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  return (
-    // biome-ignore lint/a11y/useSemanticElements: role="group" is correct per WAI-ARIA
-    <div
-      ref={ref}
-      role="group"
-      data-orientation={orientation}
-      className={cx('md-button-group', className)}
-      {...props}
-    />
-  );
-};
+const ButtonGroup = forwardRef<HTMLDivElement, React.PropsWithoutRef<ButtonGroupProps>>(
+  ({ className, orientation = 'horizontal', ...props }, ref) => {
+    return (
+      // biome-ignore lint/a11y/useSemanticElements: role="group" is correct per WAI-ARIA
+      <div
+        ref={ref}
+        role="group"
+        data-orientation={orientation}
+        className={cx('md-button-group', className)}
+        {...props}
+      />
+    );
+  },
+);
 ButtonGroup.displayName = 'ButtonGroup';
 
 export { ButtonGroup };

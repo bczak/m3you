@@ -39,145 +39,149 @@ export type SearchBarProps = Omit<React.ComponentProps<'div'>, 'onChange'> & {
   children?: React.ReactNode;
 };
 
-const SearchBar = ({
-  className,
-  placeholder = 'Search',
-  value,
-  defaultValue,
-  onValueChange,
-  onSearch,
-  leadingIcon,
-  trailingIcon,
-  open,
-  defaultOpen,
-  onOpenChange,
-  viewMode = 'docked',
-  viewAppearance = 'baseline',
-  children,
-  ref,
-  ...props
-}: SearchBarProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const [internalValue, setInternalValue] = React.useState(defaultValue ?? '');
-  const [internalOpen, setInternalOpen] = React.useState(defaultOpen ?? false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
-
-  const isControlledValue = value !== undefined;
-  const currentValue = isControlledValue ? value : internalValue;
-
-  const isControlledOpen = open !== undefined;
-  const isOpen = isControlledOpen ? open : internalOpen;
-
-  const hasView = React.Children.count(children) > 0;
-
-  const updateOpen = React.useCallback(
-    (next: boolean) => {
-      if (!isControlledOpen) setInternalOpen(next);
-      onOpenChange?.(next);
+const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchBarProps>>(
+  (
+    {
+      className,
+      placeholder = 'Search',
+      value,
+      defaultValue,
+      onValueChange,
+      onSearch,
+      leadingIcon,
+      trailingIcon,
+      open,
+      defaultOpen,
+      onOpenChange,
+      viewMode = 'docked',
+      viewAppearance = 'baseline',
+      children,
+      ...props
     },
-    [isControlledOpen, onOpenChange],
-  );
+    ref,
+  ) => {
+    const [internalValue, setInternalValue] = React.useState(defaultValue ?? '');
+    const [internalOpen, setInternalOpen] = React.useState(defaultOpen ?? false);
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const updateValue = React.useCallback(
-    (next: string) => {
-      if (!isControlledValue) setInternalValue(next);
-      onValueChange?.(next);
-    },
-    [isControlledValue, onValueChange],
-  );
+    React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
 
-  const handleBarClick = () => {
-    /* v8 ignore next -- this handler only binds to the button rendered when hasView is true */
-    if (hasView) updateOpen(true);
-  };
+    const isControlledValue = value !== undefined;
+    const currentValue = isControlledValue ? value : internalValue;
 
-  const handleBack = () => updateOpen(false);
+    const isControlledOpen = open !== undefined;
+    const isOpen = isControlledOpen ? open : internalOpen;
 
-  const handleClear = () => {
-    updateValue('');
-    inputRef.current?.focus();
-  };
+    const hasView = React.Children.count(children) > 0;
 
-  return (
-    <search ref={containerRef} className="md-search">
-      {/* -- Search Bar (collapsed) -- */}
-      {hasView ? (
-        <button
-          type="button"
-          aria-label={placeholder}
-          aria-expanded={isOpen}
-          onClick={handleBarClick}
-          className={cx('md-search-bar', className)}
-          {...(props as React.ComponentProps<'button'>)}
-        >
-          <Ripple />
-          <span className="md-search-bar__leading">{leadingIcon ?? <Search />}</span>
-          <span className="md-search-bar__text" data-empty={currentValue ? 'false' : 'true'}>
-            {currentValue || placeholder}
-          </span>
-          {trailingIcon && <span className="md-search-bar__trailing">{trailingIcon}</span>}
-        </button>
-      ) : (
-        <div className={cx('md-search-bar', className)} {...props}>
-          <span className="md-search-bar__leading">{leadingIcon ?? <Search />}</span>
-          <input
-            ref={inputRef}
-            type="text"
-            value={currentValue}
-            onChange={(e) => updateValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') onSearch?.(currentValue);
-            }}
-            placeholder={placeholder}
-            className="md-search-bar__input"
+    const updateOpen = React.useCallback(
+      (next: boolean) => {
+        if (!isControlledOpen) setInternalOpen(next);
+        onOpenChange?.(next);
+      },
+      [isControlledOpen, onOpenChange],
+    );
+
+    const updateValue = React.useCallback(
+      (next: string) => {
+        if (!isControlledValue) setInternalValue(next);
+        onValueChange?.(next);
+      },
+      [isControlledValue, onValueChange],
+    );
+
+    const handleBarClick = () => {
+      /* v8 ignore next -- this handler only binds to the button rendered when hasView is true */
+      if (hasView) updateOpen(true);
+    };
+
+    const handleBack = () => updateOpen(false);
+
+    const handleClear = () => {
+      updateValue('');
+      inputRef.current?.focus();
+    };
+
+    return (
+      <search ref={containerRef} className="md-search">
+        {/* -- Search Bar (collapsed) -- */}
+        {hasView ? (
+          <button
+            type="button"
             aria-label={placeholder}
-          />
-          {trailingIcon && !currentValue && (
-            <IconButton variant="standard" size="sm" className="md-search-bar__trailing">
-              {trailingIcon}
-            </IconButton>
-          )}
-          {currentValue && (
-            <IconButton
-              variant="standard"
-              size="sm"
-              className="md-search-bar__trailing"
-              onClick={handleClear}
-              aria-label="Clear search"
-            >
-              <X />
-            </IconButton>
-          )}
-        </div>
-      )}
-
-      {/* -- Search View (expanded) -- */}
-      {hasView && isOpen && (
-        <>
-          {/* Backdrop -- desktop only (docked mode click-away) */}
-          <div className="md-search-view__backdrop" data-mode={viewMode} onClick={handleBack} aria-hidden="true" />
-
-          <SearchView
-            role="dialog"
-            aria-modal="true"
-            value={currentValue}
-            onValueChange={updateValue}
-            onSearch={onSearch}
-            onBack={handleBack}
-            placeholder={placeholder}
-            mode={viewMode}
-            appearance={viewAppearance}
-            className="md-search-view--expanded"
+            aria-expanded={isOpen}
+            onClick={handleBarClick}
+            className={cx('md-search-bar', className)}
+            {...(props as React.ComponentProps<'button'>)}
           >
-            {children}
-          </SearchView>
-        </>
-      )}
-    </search>
-  );
-};
+            <Ripple />
+            <span className="md-search-bar__leading">{leadingIcon ?? <Search />}</span>
+            <span className="md-search-bar__text" data-empty={currentValue ? 'false' : 'true'}>
+              {currentValue || placeholder}
+            </span>
+            {trailingIcon && <span className="md-search-bar__trailing">{trailingIcon}</span>}
+          </button>
+        ) : (
+          <div className={cx('md-search-bar', className)} {...props}>
+            <span className="md-search-bar__leading">{leadingIcon ?? <Search />}</span>
+            <input
+              ref={inputRef}
+              type="text"
+              value={currentValue}
+              onChange={(e) => updateValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') onSearch?.(currentValue);
+              }}
+              placeholder={placeholder}
+              className="md-search-bar__input"
+              aria-label={placeholder}
+            />
+            {trailingIcon && !currentValue && (
+              <IconButton variant="standard" size="sm" className="md-search-bar__trailing">
+                {trailingIcon}
+              </IconButton>
+            )}
+            {currentValue && (
+              <IconButton
+                variant="standard"
+                size="sm"
+                className="md-search-bar__trailing"
+                onClick={handleClear}
+                aria-label="Clear search"
+              >
+                <X />
+              </IconButton>
+            )}
+          </div>
+        )}
+
+        {/* -- Search View (expanded) -- */}
+        {hasView && isOpen && (
+          <>
+            {/* Backdrop -- desktop only (docked mode click-away) */}
+            <div className="md-search-view__backdrop" data-mode={viewMode} onClick={handleBack} aria-hidden="true" />
+
+            <SearchView
+              role="dialog"
+              aria-modal="true"
+              value={currentValue}
+              onValueChange={updateValue}
+              onSearch={onSearch}
+              onBack={handleBack}
+              placeholder={placeholder}
+              mode={viewMode}
+              appearance={viewAppearance}
+              className="md-search-view--expanded"
+            >
+              {children}
+            </SearchView>
+          </>
+        )}
+      </search>
+    );
+  },
+);
 SearchBar.displayName = 'SearchBar';
 
 export { SearchBar };

@@ -358,139 +358,133 @@ export type DatePickerProps = {
   className?: string;
 };
 
-const DatePicker = ({
-  value: controlledValue,
-  defaultValue,
-  onChange,
-  minDate,
-  maxDate,
-  className,
-  ref,
-}: DatePickerProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const isControlled = controlledValue !== undefined;
-  const [internalValue, setInternalValue] = React.useState<Date | null>(defaultValue ?? null);
-  const selectedDate = isControlled ? controlledValue : internalValue;
+const DatePicker = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<DatePickerProps>>(
+  ({ value: controlledValue, defaultValue, onChange, minDate, maxDate, className }, ref) => {
+    const isControlled = controlledValue !== undefined;
+    const [internalValue, setInternalValue] = React.useState<Date | null>(defaultValue ?? null);
+    const selectedDate = isControlled ? controlledValue : internalValue;
 
-  const initial = selectedDate ?? new Date();
-  const [viewMonth, setViewMonth] = React.useState(() => initial.getMonth());
-  const [viewYear, setViewYear] = React.useState(() => initial.getFullYear());
-  const [showMonthDropdown, setShowMonthDropdown] = React.useState(false);
-  const [showYearDropdown, setShowYearDropdown] = React.useState(false);
-  const [slideDirection, setSlideDirection] = React.useState<SlideDirection>(null);
+    const initial = selectedDate ?? new Date();
+    const [viewMonth, setViewMonth] = React.useState(() => initial.getMonth());
+    const [viewYear, setViewYear] = React.useState(() => initial.getFullYear());
+    const [showMonthDropdown, setShowMonthDropdown] = React.useState(false);
+    const [showYearDropdown, setShowYearDropdown] = React.useState(false);
+    const [slideDirection, setSlideDirection] = React.useState<SlideDirection>(null);
 
-  const handleSelect = (date: Date) => {
-    if (!isControlled) setInternalValue(date);
-    onChange?.(date);
-  };
+    const handleSelect = (date: Date) => {
+      if (!isControlled) setInternalValue(date);
+      onChange?.(date);
+    };
 
-  const goPrevMonth = () => {
-    setSlideDirection('right');
-    if (viewMonth === 0) {
-      setViewMonth(11);
-      setViewYear((y) => y - 1);
-    } else {
-      setViewMonth((m) => m - 1);
-    }
-  };
+    const goPrevMonth = () => {
+      setSlideDirection('right');
+      if (viewMonth === 0) {
+        setViewMonth(11);
+        setViewYear((y) => y - 1);
+      } else {
+        setViewMonth((m) => m - 1);
+      }
+    };
 
-  const goNextMonth = () => {
-    setSlideDirection('left');
-    if (viewMonth === 11) {
-      setViewMonth(0);
-      setViewYear((y) => y + 1);
-    } else {
-      setViewMonth((m) => m + 1);
-    }
-  };
+    const goNextMonth = () => {
+      setSlideDirection('left');
+      if (viewMonth === 11) {
+        setViewMonth(0);
+        setViewYear((y) => y + 1);
+      } else {
+        setViewMonth((m) => m + 1);
+      }
+    };
 
-  return (
-    <div ref={ref} className={cx('md-date-picker', className)}>
-      <div className="md-date-picker__nav" data-list-open={showMonthDropdown || showYearDropdown || undefined}>
-        <button type="button" onClick={goPrevMonth} className="md-date-picker__nav-btn" aria-label="Previous month">
-          <Ripple />
-          <ChevronLeft />
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setShowYearDropdown(false);
-            setShowMonthDropdown(!showMonthDropdown);
-          }}
-          className="md-date-picker__selector-btn"
-          data-open={String(showMonthDropdown)}
-          aria-label="Select month"
-          aria-expanded={showMonthDropdown}
-          aria-haspopup="listbox"
-        >
-          <Ripple />
-          {MONTH_NAMES_SHORT[viewMonth]}
-          <ChevronDown />
-        </button>
-        <button type="button" onClick={goNextMonth} className="md-date-picker__nav-btn" aria-label="Next month">
-          <Ripple />
-          <ChevronRight />
-        </button>
+    return (
+      <div ref={ref} className={cx('md-date-picker', className)}>
+        <div className="md-date-picker__nav" data-list-open={showMonthDropdown || showYearDropdown || undefined}>
+          <button type="button" onClick={goPrevMonth} className="md-date-picker__nav-btn" aria-label="Previous month">
+            <Ripple />
+            <ChevronLeft />
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setShowYearDropdown(false);
+              setShowMonthDropdown(!showMonthDropdown);
+            }}
+            className="md-date-picker__selector-btn"
+            data-open={String(showMonthDropdown)}
+            aria-label="Select month"
+            aria-expanded={showMonthDropdown}
+            aria-haspopup="listbox"
+          >
+            <Ripple />
+            {MONTH_NAMES_SHORT[viewMonth]}
+            <ChevronDown />
+          </button>
+          <button type="button" onClick={goNextMonth} className="md-date-picker__nav-btn" aria-label="Next month">
+            <Ripple />
+            <ChevronRight />
+          </button>
 
-        <div className="md-date-picker__nav-spacer" />
+          <div className="md-date-picker__nav-spacer" />
 
-        <button
-          type="button"
-          onClick={() => setViewYear((y) => y - 1)}
-          className="md-date-picker__nav-btn"
-          aria-label="Previous year"
-        >
-          <Ripple />
-          <ChevronLeft />
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setShowMonthDropdown(false);
-            setShowYearDropdown(!showYearDropdown);
-          }}
-          className="md-date-picker__selector-btn"
-          data-open={String(showYearDropdown)}
-          aria-label="Select year"
-          aria-expanded={showYearDropdown}
-          aria-haspopup="listbox"
-        >
-          <Ripple />
-          {viewYear}
-          <ChevronDown />
-        </button>
-        <button
-          type="button"
-          onClick={() => setViewYear((y) => y + 1)}
-          className="md-date-picker__nav-btn"
-          aria-label="Next year"
-        >
-          <Ripple />
-          <ChevronRight />
-        </button>
+          <button
+            type="button"
+            onClick={() => setViewYear((y) => y - 1)}
+            className="md-date-picker__nav-btn"
+            aria-label="Previous year"
+          >
+            <Ripple />
+            <ChevronLeft />
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setShowMonthDropdown(false);
+              setShowYearDropdown(!showYearDropdown);
+            }}
+            className="md-date-picker__selector-btn"
+            data-open={String(showYearDropdown)}
+            aria-label="Select year"
+            aria-expanded={showYearDropdown}
+            aria-haspopup="listbox"
+          >
+            <Ripple />
+            {viewYear}
+            <ChevronDown />
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewYear((y) => y + 1)}
+            className="md-date-picker__nav-btn"
+            aria-label="Next year"
+          >
+            <Ripple />
+            <ChevronRight />
+          </button>
+        </div>
+
+        <div className="md-date-picker__body">
+          {showMonthDropdown ? (
+            <MonthDropdown month={viewMonth} onSelect={setViewMonth} onClose={() => setShowMonthDropdown(false)} />
+          ) : showYearDropdown ? (
+            <YearDropdown year={viewYear} onSelect={setViewYear} onClose={() => setShowYearDropdown(false)} />
+          ) : (
+            <CalendarGrid
+              viewMonth={viewMonth}
+              viewYear={viewYear}
+              value={selectedDate ?? null}
+              minDate={minDate}
+              maxDate={maxDate}
+              onSelect={handleSelect}
+              onPrevMonth={goPrevMonth}
+              onNextMonth={goNextMonth}
+              slideDirection={slideDirection}
+            />
+          )}
+        </div>
       </div>
-
-      <div className="md-date-picker__body">
-        {showMonthDropdown ? (
-          <MonthDropdown month={viewMonth} onSelect={setViewMonth} onClose={() => setShowMonthDropdown(false)} />
-        ) : showYearDropdown ? (
-          <YearDropdown year={viewYear} onSelect={setViewYear} onClose={() => setShowYearDropdown(false)} />
-        ) : (
-          <CalendarGrid
-            viewMonth={viewMonth}
-            viewYear={viewYear}
-            value={selectedDate ?? null}
-            minDate={minDate}
-            maxDate={maxDate}
-            onSelect={handleSelect}
-            onPrevMonth={goPrevMonth}
-            onNextMonth={goNextMonth}
-            slideDirection={slideDirection}
-          />
-        )}
-      </div>
-    </div>
-  );
-};
+    );
+  },
+);
 DatePicker.displayName = 'DatePicker';
 
 export { DatePicker };

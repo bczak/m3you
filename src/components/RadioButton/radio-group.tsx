@@ -20,53 +20,57 @@ export type RadioGroupProps = {
   className?: string;
 };
 
-const RadioGroup = ({
-  value: valueProp,
-  defaultValue = '',
-  name: nameProp,
-  variant = 'primary',
-  disabled = false,
-  onValueChange,
-  children,
-  className,
-  ref,
-  ...props
-}: RadioGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const isControlled = valueProp !== undefined;
-  const [internalValue, setInternalValue] = React.useState(defaultValue);
-  const value = isControlled ? valueProp : internalValue;
-  const generatedName = React.useId();
-  const name = nameProp ?? generatedName;
-
-  const handleValueChange = React.useCallback(
-    (newValue: string) => {
-      if (!isControlled) {
-        setInternalValue(newValue);
-      }
-      onValueChange?.(newValue);
+const RadioGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<RadioGroupProps>>(
+  (
+    {
+      value: valueProp,
+      defaultValue = '',
+      name: nameProp,
+      variant = 'primary',
+      disabled = false,
+      onValueChange,
+      children,
+      className,
+      ...props
     },
-    [isControlled, onValueChange],
-  );
+    ref,
+  ) => {
+    const isControlled = valueProp !== undefined;
+    const [internalValue, setInternalValue] = React.useState(defaultValue);
+    const value = isControlled ? valueProp : internalValue;
+    const generatedName = React.useId();
+    const name = nameProp ?? generatedName;
 
-  const contextValue = React.useMemo<RadioGroupContextValue>(
-    () => ({
-      value,
-      name,
-      variant,
-      disabled,
-      onValueChange: handleValueChange,
-    }),
-    [value, name, variant, disabled, handleValueChange],
-  );
+    const handleValueChange = React.useCallback(
+      (newValue: string) => {
+        if (!isControlled) {
+          setInternalValue(newValue);
+        }
+        onValueChange?.(newValue);
+      },
+      [isControlled, onValueChange],
+    );
 
-  return (
-    <RadioGroupContext.Provider value={contextValue}>
-      <div ref={ref} role="radiogroup" className={className} {...props}>
-        {children}
-      </div>
-    </RadioGroupContext.Provider>
-  );
-};
+    const contextValue = React.useMemo<RadioGroupContextValue>(
+      () => ({
+        value,
+        name,
+        variant,
+        disabled,
+        onValueChange: handleValueChange,
+      }),
+      [value, name, variant, disabled, handleValueChange],
+    );
+
+    return (
+      <RadioGroupContext.Provider value={contextValue}>
+        <div ref={ref} role="radiogroup" className={className} {...props}>
+          {children}
+        </div>
+      </RadioGroupContext.Provider>
+    );
+  },
+);
 RadioGroup.displayName = 'RadioGroup';
 
 export { RadioGroup };

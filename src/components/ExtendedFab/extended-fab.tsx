@@ -1,5 +1,5 @@
 import './extended-fab.css';
-import type * as React from 'react';
+import * as React from 'react';
 
 import { cx } from '../../lib/cx';
 import { Button, type ButtonProps } from '../Button/button';
@@ -18,39 +18,32 @@ export type ExtendedFABProps = Omit<ButtonProps, 'shape'> & {
   fabSize?: FABSize;
 };
 
-const ExtendedFAB = ({
-  className,
-  variant = 'tonal',
-  size = 'md',
-  lowered = false,
-  color,
-  fabSize,
-  icon,
-  label,
-  children,
-  ref,
-  ...props
-}: ExtendedFABProps & { ref?: React.Ref<HTMLButtonElement> }) => {
-  const resolvedSize = fabSize === 'large' ? 'lg' : fabSize ? 'md' : size;
+const ExtendedFAB = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ExtendedFABProps>>(
+  (
+    { className, variant = 'tonal', size = 'md', lowered = false, color, fabSize, icon, label, children, ...props },
+    ref,
+  ) => {
+    const resolvedSize = fabSize === 'large' ? 'lg' : fabSize ? 'md' : size;
 
-  return (
-    <Button
-      ref={ref}
-      variant={variant}
-      size={resolvedSize}
-      shape="square"
-      className={cx('md-extended-fab', className)}
-      data-lowered={lowered || undefined}
-      data-fab-color={color}
-      data-fab-size={fabSize}
-      {...props}
-    >
-      {icon}
-      {label}
-      {children}
-    </Button>
-  );
-};
+    return (
+      <Button
+        ref={ref}
+        variant={variant}
+        size={resolvedSize}
+        shape="square"
+        className={cx('md-extended-fab', className)}
+        data-lowered={lowered || undefined}
+        data-fab-color={color}
+        data-fab-size={fabSize}
+        {...props}
+      >
+        {icon}
+        {label}
+        {children}
+      </Button>
+    );
+  },
+);
 ExtendedFAB.displayName = 'ExtendedFAB';
 
 export { ExtendedFAB };
