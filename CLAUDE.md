@@ -43,8 +43,9 @@ All public components and types are re-exported from `src/index.tsx`.
 
 ### React 18 compatibility (peer range is `>=18.0.0`)
 
-Development happens on React 19, so React 19-only constructs type-check and test
-green here while breaking every React 18 consumer. Do not use:
+Development happens on **React 18** — the floor of the supported range — so a
+React 19-only construct fails here immediately rather than only for consumers.
+Do not reintroduce any of these:
 
 - **`ref` as a plain prop.** React 18 strips `ref` before it reaches the props
   object. Use `forwardRef` — including for thin wrappers that only spread
@@ -58,7 +59,11 @@ includes `string`, which the rest-spread then fails to pass to Base UI. Keep
 `React.MutableRefObject` where refs are written to — 18's `RefObject` has a
 `readonly current`.
 
-The `React 18` CI job in `.github/workflows/pr.yml` is what catches all of this.
+The other end of the range is covered by the `React 19` CI job in
+`.github/workflows/pr.yml`, which installs React 19 over the lockfile and reruns
+the type-check, tests and build. The `docs/` workspace is a second React 19
+signal: it pins its own `react@19` (fumadocs hard-requires `^19.2.0`) and
+consumes the library, so it exercises the published surface on 19 every build.
 
 ### Styling — Three-Tier Token Architecture
 

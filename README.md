@@ -189,7 +189,7 @@ props tables are generated from the TypeScript source — see
 
 ## Tech stack
 
-- **React 18+** with TypeScript (developed against React 19)
+- **React 18+** with TypeScript (developed against React 18, verified against 19)
 - **Plain CSS + CSS custom properties** (no runtime CSS-in-JS, no Tailwind in the shipped bundle)
 - **Vite** (library mode) + `vite-plugin-dts` for build
 - **Vitest** + `@testing-library/react` + `happy-dom` for tests
