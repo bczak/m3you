@@ -90,10 +90,14 @@ jobs:
       - name: Type-check against React 18 types
         run: bun run types:check
 
-      # Only the `unit` project: `storybook` needs a Playwright browser and tests
-      # stories, not React compatibility.
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+
+      # Both projects. The `storybook` project is the only layer that renders in
+      # a real browser, so it is where a portal or Web Animations regression
+      # under React 18 would show up — exactly what this job exists to catch.
       - name: Library tests
-        run: bunx vitest run --project unit
+        run: bun run test
 
       # vite-plugin-dts runs a real tsc emit, so this proves the published .d.ts
       # can still be generated against the 18 typings.
