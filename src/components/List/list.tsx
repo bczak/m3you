@@ -667,6 +667,7 @@ const ListItemAccordion = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<
     const lineCount = overline && supportingText ? 3 : overline || supportingText ? 2 : 1;
 
     const updateExpanded = () => {
+      /* v8 ignore next -- React never fires onClick on a disabled button */
       if (disabled) return;
       const next = !expanded;
       if (!controlled) setInternalExpanded(next);

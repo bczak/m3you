@@ -243,3 +243,70 @@ test('vertical orientation applies vertical track and handle styling', async () 
   const handle = container.querySelector('.md-slider__handle') as HTMLElement;
   expect(handle.style.bottom).toBe('50%');
 });
+
+test('a non-finite value falls back to the minimum', async () => {
+  render(<Slider aria-label="Volume" min={10} max={90} value={Number.NaN} />);
+
+  expect(screen.getByRole('slider')).toHaveValue('10');
+});
+
+test('disabled and non-primary pointer presses never start a drag', async () => {
+  const onValueChange = vi.fn();
+  const { container, rerender } = render(<Slider aria-label="Volume" disabled onValueChange={onValueChange} />);
+  const wrapper = container.firstChild as HTMLElement;
+  let handle = container.querySelector('.md-slider__handle') as HTMLElement;
+
+  fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientX: 10, clientY: 0 });
+  expect(wrapper).not.toHaveAttribute('data-dragging');
+
+  rerender(<Slider aria-label="Volume" onValueChange={onValueChange} />);
+  handle = container.querySelector('.md-slider__handle') as HTMLElement;
+  fireEvent.pointerDown(handle, { button: 2, pointerId: 1, clientX: 10, clientY: 0 });
+  expect(wrapper).not.toHaveAttribute('data-dragging');
+  expect(onValueChange).not.toHaveBeenCalled();
+});
+
+test('pointer move updates the value only for the pointer that started the drag', async () => {
+  const onValueChange = vi.fn();
+  const { container } = render(<Slider aria-label="Volume" min={0} max={100} onValueChange={onValueChange} />);
+  const handle = container.querySelector('.md-slider__handle') as HTMLElement;
+
+  fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientX: 0, clientY: 0 });
+  onValueChange.mockClear();
+
+  // A different pointer is ignored while pointer 1 owns the drag.
+  fireEvent.pointerMove(handle, { pointerId: 99, clientX: 1, clientY: 0 });
+  expect(onValueChange).not.toHaveBeenCalled();
+
+  fireEvent.pointerMove(handle, { pointerId: 1, clientX: 1, clientY: 0 });
+  expect(onValueChange).toHaveBeenCalled();
+
+  // Releasing a pointer that does not own the drag leaves it running.
+  fireEvent.pointerUp(handle, { pointerId: 99, clientX: 1, clientY: 0 });
+  expect(container.firstChild).toHaveAttribute('data-dragging', 'true');
+});
+
+test('vertical dragging reads the pointer position from the Y axis', async () => {
+  const onValueChange = vi.fn();
+  const { container } = render(
+    <Slider aria-label="Volume" orientation="vertical" min={0} max={100} onValueChange={onValueChange} />,
+  );
+  const handle = container.querySelector('.md-slider__handle') as HTMLElement;
+
+  fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientX: 0, clientY: 0 });
+  expect(onValueChange).toHaveBeenCalled();
+  // Zero-height track in happy-dom: clientY 0 maps to the top, i.e. the maximum.
+  expect(screen.getByRole('slider')).toHaveValue('100');
+});
+
+test('centered mode draws the active segment on both sides of the origin', async () => {
+  const { container, rerender } = render(
+    <Slider aria-label="Balance" mode="centered" origin={50} min={0} max={100} value={20} step={25} />,
+  );
+  const belowOrigin = container.querySelector('.md-slider__track-active') as HTMLElement;
+  expect(belowOrigin).not.toBeNull();
+  expect(container.querySelectorAll('.md-slider__stop').length).toBeGreaterThan(0);
+
+  rerender(<Slider aria-label="Balance" mode="centered" origin={50} min={0} max={100} value={80} step={25} />);
+  expect(container.querySelector('.md-slider__track-active')).not.toBeNull();
+});

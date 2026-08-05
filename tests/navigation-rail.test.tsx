@@ -714,3 +714,15 @@ test('NavigationRailMenuButton falls back to children when no icons are provided
   );
   expect(screen.getByRole('button', { name: 'Expand navigation' }).textContent).toContain('Toggle');
 });
+
+test('NavigationRail expanded renders the badge inline rather than overlaid', async () => {
+  const { container } = render(
+    <NavigationRail value="home" onValueChange={() => {}} state="expanded">
+      <NavigationRailItem value="home" icon={<MockIcon />} label="Home" badge="3" />
+    </NavigationRail>,
+  );
+
+  const badge = container.querySelector('.md-navigation-rail-item__badge');
+  expect(badge).toHaveAttribute('data-placement', 'inline');
+  expect(badge).toHaveTextContent('3');
+});

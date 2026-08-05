@@ -333,3 +333,23 @@ test('ExtendedFAB trigger that starts open does not measure', async () => {
   expect(trigger.style.getPropertyValue('--_natural-width')).toBe('');
   expect(container.querySelector('[role="menu"]')).toHaveAttribute('data-state', 'open');
 });
+
+// The menu owns the trigger's rendered colour: it always writes `data-fab-color`
+// from its own `color`. Setting `color` on the trigger only stops the menu from
+// also forwarding `color` down — it does not change what renders. `data-fab-color`
+// on the trigger is the escape hatch that does win.
+test('the menu colour wins over a trigger colour prop, but not over data-fab-color', () => {
+  const { container, rerender } = render(
+    <FABMenu items={makeItems()} color="tertiary">
+      <ExtendedFAB label="Add" icon={<span>+</span>} color="secondary" />
+    </FABMenu>,
+  );
+  expect(container.querySelector('.md-fab-menu-trigger')).toHaveAttribute('data-fab-color', 'tertiary');
+
+  rerender(
+    <FABMenu items={makeItems()} color="tertiary">
+      <ExtendedFAB label="Add" icon={<span>+</span>} data-fab-color="secondary" />
+    </FABMenu>,
+  );
+  expect(container.querySelector('.md-fab-menu-trigger')).toHaveAttribute('data-fab-color', 'secondary');
+});

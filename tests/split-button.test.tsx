@@ -314,3 +314,19 @@ test('menu trigger without selected has no data-selected', async () => {
   expect(trigger).not.toHaveAttribute('data-selected');
   expect(trigger).toHaveAttribute('data-morph', 'true');
 });
+
+// `morph` defaults to true; the attribute is omitted entirely when it is off.
+test('morph=false drops data-morph from the group, action and menu trigger', () => {
+  const { container } = render(
+    <SplitButton morph={false} data-testid="group">
+      <SplitButtonAction>Save</SplitButtonAction>
+      <SplitButtonMenu>
+        <div />
+      </SplitButtonMenu>
+    </SplitButton>,
+  );
+
+  expect(screen.getByTestId('group')).not.toHaveAttribute('data-morph');
+  expect(screen.getByRole('button', { name: 'Save' })).not.toHaveAttribute('data-morph');
+  expect(container.querySelector('.md-split-button__trigger')).not.toHaveAttribute('data-morph');
+});

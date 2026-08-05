@@ -252,6 +252,7 @@ const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderPr
     );
 
     const updateFromPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+      /* v8 ignore next -- trackRef is attached to the element the pointer events fire on */
       if (!trackRef.current) return;
       updateValue(pointerValue(event, trackRef.current, orientation, min, max, step));
     };
@@ -443,6 +444,7 @@ const RangeSlider = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<Range
     );
 
     const updateFromPointer = (thumb: 'lower' | 'upper', event: React.PointerEvent<HTMLDivElement>) => {
+      /* v8 ignore next -- trackRef is attached to the element the pointer events fire on */
       if (!trackRef.current) return;
       const next = pointerValue(event, trackRef.current, orientation, min, max, step);
       updateValue(thumb === 'lower' ? [Math.min(next, upper), upper] : [lower, Math.max(next, lower)]);

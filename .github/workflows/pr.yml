@@ -49,6 +49,12 @@ jobs:
       - name: Library tests
         run: bun run test
 
+      # vitest.config.ts sets 100% thresholds, but they only apply under
+      # --coverage. Without this step nothing enforced them and they silently
+      # drifted to 98%.
+      - name: Coverage thresholds
+        run: bun run coverage
+
       - name: Generate prop tables
         run: bun run --cwd docs docgen
 

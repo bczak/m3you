@@ -326,3 +326,16 @@ test('merges custom className on a closable chip wrapper', () => {
   const wrapper = container.querySelector('.md-chip--closable');
   expect(wrapper).toHaveClass('custom');
 });
+
+test('input chips render an avatar slot in place of the leading icon', () => {
+  const { container } = render(
+    <Chip type="input" avatar={<img alt="" src="/person.png" />} leadingIcon={<span>icon</span>}>
+      Ada
+    </Chip>,
+  );
+
+  expect(container.querySelector('.md-chip__avatar')).not.toBeNull();
+  expect(screen.getByRole('button')).toHaveAttribute('data-has-avatar', 'true');
+  // The avatar takes the leading slot, so the leading icon is not also rendered.
+  expect(container.querySelector('.md-chip__leading-icon')).toBeNull();
+});
