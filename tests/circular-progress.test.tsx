@@ -51,6 +51,28 @@ test('wavy determinate: renders active wavy path and inactive track arc', async 
   expect(track.getAttribute('d') ?? '').toContain(' A ');
 });
 
+// The mask id comes from useId(), whose output differs by React version:
+// React 18 emits `:r0:`, React 19 `«r0»`. Both are valid HTML ids and valid IRI
+// fragments, so `mask="url(#…)"` resolves either way — but nothing else in the
+// suite checks that the reference actually finds its <mask>, which is the one
+// place a useId format change could silently break rendering.
+test('wavy determinate: the mask reference resolves to the rendered <mask>', async () => {
+  const { container } = render(<CircularProgress variant="wavy" value={42} />);
+
+  const mask = container.querySelector('mask');
+  expect(mask).not.toBeNull();
+  const maskId = mask?.getAttribute('id') ?? '';
+  expect(maskId).not.toBe('');
+
+  const masked = container.querySelector('g[mask]');
+  expect(masked?.getAttribute('mask')).toBe(`url(#${maskId})`);
+
+  // getElementById, not querySelector('#…'): React 18's `:r0:` is a valid id but
+  // an invalid CSS selector, so a selector-based lookup would throw here while
+  // the browser still resolves the IRI fine.
+  expect(mask?.ownerDocument.getElementById(maskId)).toBe(mask);
+});
+
 test('wavy determinate at 100%: renders a flat (no-amplitude) full ring', async () => {
   const { container } = render(<CircularProgress variant="wavy" value={100} />);
   const active = container.querySelector('.md-circular-progress__wavy-active') as SVGPathElement;
