@@ -60,8 +60,8 @@
   transition:
     color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    border-radius var(--md-sys-motion-duration-spring-default-spatial)
-    var(--md-sys-motion-easing-spring-default-spatial),
+    border-radius var(--md-sys-motion-duration-spring-default-effects)
+    var(--md-sys-motion-easing-spring-default-effects),
     box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     width var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial);
 }
