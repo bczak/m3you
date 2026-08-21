@@ -31,119 +31,123 @@ type ExtendableFABWidths = {
   label: number;
 };
 
-const ExtendableFAB = ({
-  className,
-  variant = 'tonal',
-  size = 'md',
-  lowered = false,
-  color,
-  fabSize,
-  extended = false,
-  icon,
-  label,
-  ref,
-  style,
-  onTransitionEnd,
-  ...props
-}: ExtendableFABProps & { ref?: React.Ref<HTMLButtonElement> }) => {
-  const resolvedSize = fabSize === 'small' ? 'sm' : fabSize === 'large' ? 'lg' : fabSize === 'medium' ? 'md' : size;
-  const buttonRef = React.useRef<HTMLButtonElement | null>(null);
-  const measureRef = React.useRef<HTMLSpanElement | null>(null);
-  const [widths, setWidths] = React.useState<ExtendableFABWidths | null>(null);
-  const ariaLabel = props['aria-label'] ?? (!extended && typeof label === 'string' ? label : undefined);
-  const contentStyle = widths
-    ? ({
-        width: `${extended ? widths.label : 0}px`,
-      } as React.CSSProperties)
-    : undefined;
-  const resolvedStyle = {
-    ...style,
-    ['--_extendable-fab-visible-content-width' as string]: `${extended ? (widths?.label ?? 0) : 0}px`,
-    ['--_extendable-fab-visible-extra-width' as string]: extended ? 'var(--_extendable-fab-width-adjust)' : '0px',
-  } as React.CSSProperties;
-
-  const setButtonRef = React.useCallback(
-    (node: HTMLButtonElement | null) => {
-      buttonRef.current = node;
-
-      if (typeof ref === 'function') {
-        ref(node);
-        return;
-      }
-
-      if (ref) {
-        (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node;
-      }
+const ExtendableFAB = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ExtendableFABProps>>(
+  (
+    {
+      className,
+      variant = 'tonal',
+      size = 'md',
+      lowered = false,
+      color,
+      fabSize,
+      extended = false,
+      icon,
+      label,
+      style,
+      onTransitionEnd,
+      ...props
     },
-    [ref],
-  );
+    ref,
+  ) => {
+    const resolvedSize = fabSize === 'small' ? 'sm' : fabSize === 'large' ? 'lg' : fabSize === 'medium' ? 'md' : size;
+    const buttonRef = React.useRef<HTMLButtonElement | null>(null);
+    const measureRef = React.useRef<HTMLSpanElement | null>(null);
+    const [widths, setWidths] = React.useState<ExtendableFABWidths | null>(null);
+    const ariaLabel = props['aria-label'] ?? (!extended && typeof label === 'string' ? label : undefined);
+    const contentStyle = widths
+      ? ({
+          width: `${extended ? widths.label : 0}px`,
+        } as React.CSSProperties)
+      : undefined;
+    const resolvedStyle = {
+      ...style,
+      ['--_extendable-fab-visible-content-width' as string]: `${extended ? (widths?.label ?? 0) : 0}px`,
+      ['--_extendable-fab-visible-extra-width' as string]: extended ? 'var(--_extendable-fab-width-adjust)' : '0px',
+    } as React.CSSProperties;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: re-measure when content-affecting props change
-  React.useLayoutEffect(() => {
-    const measure = measureRef.current;
+    const setButtonRef = React.useCallback(
+      (node: HTMLButtonElement | null) => {
+        buttonRef.current = node;
 
-    /* v8 ignore next 4 -- measureRef is always set while mounted */
-    if (!measure) {
-      setWidths((current) => (current == null ? current : null));
-      return;
-    }
-
-    const updateWidths = () => {
-      const labelWidth = Math.ceil(measure.getBoundingClientRect().width);
-
-      if (labelWidth <= 0) {
-        return;
-      }
-
-      setWidths((current) => {
-        if (current?.label === labelWidth) {
-          return current;
+        if (typeof ref === 'function') {
+          ref(node);
+          return;
         }
 
-        return { label: labelWidth };
-      });
-    };
+        if (ref) {
+          (ref as React.MutableRefObject<HTMLButtonElement | null>).current = node;
+        }
+      },
+      [ref],
+    );
 
-    updateWidths();
+    // biome-ignore lint/correctness/useExhaustiveDependencies: re-measure when content-affecting props change
+    React.useLayoutEffect(() => {
+      const measure = measureRef.current;
 
-    const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(updateWidths);
+      /* v8 ignore next 4 -- measureRef is always set while mounted */
+      if (!measure) {
+        setWidths((current) => (current == null ? current : null));
+        return;
+      }
 
-    resizeObserver?.observe(measure);
-    window.addEventListener('resize', updateWidths);
+      const updateWidths = () => {
+        const labelWidth = Math.ceil(measure.getBoundingClientRect().width);
 
-    return () => {
-      resizeObserver?.disconnect();
-      window.removeEventListener('resize', updateWidths);
-    };
-  }, [icon, label, resolvedSize, variant]);
+        if (labelWidth <= 0) {
+          return;
+        }
 
-  return (
-    <button
-      type="button"
-      className={cx('md-extendable-fab', className)}
-      data-variant={variant}
-      data-size={resolvedSize}
-      data-fab-size={fabSize}
-      data-fab-color={color}
-      data-extended={extended || undefined}
-      data-lowered={lowered || undefined}
-      ref={setButtonRef}
-      aria-label={ariaLabel}
-      style={resolvedStyle}
-      onTransitionEnd={onTransitionEnd}
-      {...props}
-    >
-      <Ripple />
-      <span className="md-extendable-fab__icon">{icon}</span>
-      <span className="md-extendable-fab__content" aria-hidden={extended ? undefined : 'true'} style={contentStyle}>
-        <span className="md-extendable-fab__label">{label}</span>
-      </span>
-      <span ref={measureRef} className="md-extendable-fab__measure" aria-hidden="true">
-        <span className="md-extendable-fab__measure-label">{label}</span>
-      </span>
-    </button>
-  );
-};
+        setWidths((current) => {
+          if (current?.label === labelWidth) {
+            return current;
+          }
+
+          return { label: labelWidth };
+        });
+      };
+
+      updateWidths();
+
+      const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(updateWidths);
+
+      resizeObserver?.observe(measure);
+      window.addEventListener('resize', updateWidths);
+
+      return () => {
+        resizeObserver?.disconnect();
+        window.removeEventListener('resize', updateWidths);
+      };
+    }, [icon, label, resolvedSize, variant]);
+
+    return (
+      <button
+        type="button"
+        className={cx('md-extendable-fab', className)}
+        data-variant={variant}
+        data-size={resolvedSize}
+        data-fab-size={fabSize}
+        data-fab-color={color}
+        data-extended={extended || undefined}
+        data-lowered={lowered || undefined}
+        ref={setButtonRef}
+        aria-label={ariaLabel}
+        style={resolvedStyle}
+        onTransitionEnd={onTransitionEnd}
+        {...props}
+      >
+        <Ripple />
+        <span className="md-extendable-fab__icon">{icon}</span>
+        <span className="md-extendable-fab__content" aria-hidden={extended ? undefined : 'true'} style={contentStyle}>
+          <span className="md-extendable-fab__label">{label}</span>
+        </span>
+        <span ref={measureRef} className="md-extendable-fab__measure" aria-hidden="true">
+          <span className="md-extendable-fab__measure-label">{label}</span>
+        </span>
+      </button>
+    );
+  },
+);
 ExtendableFAB.displayName = 'ExtendableFAB';
 
 export { ExtendableFAB };

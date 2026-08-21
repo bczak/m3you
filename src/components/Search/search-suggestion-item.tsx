@@ -1,5 +1,5 @@
 import './search.css';
-import type * as React from 'react';
+import * as React from 'react';
 import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
@@ -14,20 +14,15 @@ export type SearchSuggestionItemProps = React.ComponentProps<'button'> & {
   trailingIcon?: React.ReactNode;
 };
 
-const SearchSuggestionItem = ({
-  className,
-  icon,
-  trailingIcon,
-  children,
-  ref,
-  ...props
-}: SearchSuggestionItemProps & { ref?: React.Ref<HTMLButtonElement> }) => (
-  <button ref={ref} type="button" className={cx('md-search-suggestion-item', className)} {...props}>
-    <Ripple />
-    {icon && <span className="md-search-suggestion-item__icon">{icon}</span>}
-    <span className="md-search-suggestion-item__text">{children}</span>
-    {trailingIcon && <span className="md-search-suggestion-item__trailing">{trailingIcon}</span>}
-  </button>
+const SearchSuggestionItem = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<SearchSuggestionItemProps>>(
+  ({ className, icon, trailingIcon, children, ...props }, ref) => (
+    <button ref={ref} type="button" className={cx('md-search-suggestion-item', className)} {...props}>
+      <Ripple />
+      {icon && <span className="md-search-suggestion-item__icon">{icon}</span>}
+      <span className="md-search-suggestion-item__text">{children}</span>
+      {trailingIcon && <span className="md-search-suggestion-item__trailing">{trailingIcon}</span>}
+    </button>
+  ),
 );
 SearchSuggestionItem.displayName = 'SearchSuggestionItem';
 

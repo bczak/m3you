@@ -2,7 +2,6 @@ import './side-sheet.css';
 import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
 import { ArrowLeft, X } from 'lucide-react';
 import * as React from 'react';
-import { use } from 'react';
 
 import { cx } from '../../lib/cx';
 import { IconButton } from '../IconButton/icon-button';
@@ -45,17 +44,22 @@ function SideSheet({ modal = true, side = 'right', children, ...props }: SideShe
 // SideSheetTrigger
 // =============================================================================
 
-function SideSheetTrigger({ ...props }: DrawerPrimitive.Trigger.Props) {
-  return <DrawerPrimitive.Trigger data-slot="side-sheet-trigger" {...props} />;
-}
+// Base UI's Trigger.Props narrows its own ref to HTMLButtonElement, so take
+// that rather than the wider HTMLElement the exotic component advertises.
+const SideSheetTrigger = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<DrawerPrimitive.Trigger.Props>>(
+  ({ ...props }, ref) => <DrawerPrimitive.Trigger data-slot="side-sheet-trigger" ref={ref} {...props} />,
+);
+SideSheetTrigger.displayName = 'SideSheetTrigger';
 
 // =============================================================================
 // SideSheetClose
 // =============================================================================
 
-function SideSheetClose({ ...props }: DrawerPrimitive.Close.Props) {
-  return <DrawerPrimitive.Close data-slot="side-sheet-close" {...props} />;
-}
+const SideSheetClose = React.forwardRef<
+  React.ComponentRef<typeof DrawerPrimitive.Close>,
+  React.PropsWithoutRef<DrawerPrimitive.Close.Props>
+>(({ ...props }, ref) => <DrawerPrimitive.Close data-slot="side-sheet-close" ref={ref} {...props} />);
+SideSheetClose.displayName = 'SideSheetClose';
 
 // =============================================================================
 // SideSheetContent (Portal + optional Backdrop + Popup)
@@ -70,8 +74,11 @@ export interface SideSheetContentProps extends DrawerPrimitive.Popup.Props {
   portalProps?: Omit<DrawerPrimitive.Portal.Props, 'children'>;
 }
 
-function SideSheetContent({ className, children, portalProps, ...props }: SideSheetContentProps) {
-  const { variant, side } = use(SideSheetContext);
+const SideSheetContent = React.forwardRef<
+  React.ComponentRef<typeof DrawerPrimitive.Popup>,
+  React.PropsWithoutRef<SideSheetContentProps>
+>(({ className, children, portalProps, ...props }, ref) => {
+  const { variant, side } = React.useContext(SideSheetContext);
   const isModal = variant === 'modal';
 
   return (
@@ -84,6 +91,7 @@ function SideSheetContent({ className, children, portalProps, ...props }: SideSh
       >
         <DrawerPrimitive.Popup
           data-slot="side-sheet-content"
+          ref={ref}
           data-variant={variant}
           data-side={side}
           className={cx('md-side-sheet-content', className)}
@@ -96,7 +104,8 @@ function SideSheetContent({ className, children, portalProps, ...props }: SideSh
       </DrawerPrimitive.Viewport>
     </DrawerPrimitive.Portal>
   );
-}
+});
+SideSheetContent.displayName = 'SideSheetContent';
 
 // =============================================================================
 // SideSheetHeader
@@ -109,61 +118,74 @@ export interface SideSheetHeaderProps extends React.ComponentProps<'div'> {
   showClose?: boolean;
 }
 
-function SideSheetHeader({ className, children, onBack, showClose = true, ...props }: SideSheetHeaderProps) {
-  const { variant } = use(SideSheetContext);
-  const hasBack = !!onBack;
+const SideSheetHeader = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SideSheetHeaderProps>>(
+  ({ className, children, onBack, showClose = true, ...props }, ref) => {
+    const { variant } = React.useContext(SideSheetContext);
+    const hasBack = !!onBack;
 
-  return (
-    <div
-      data-slot="side-sheet-header"
-      data-has-back={hasBack || undefined}
-      data-variant={variant}
-      className={cx('md-side-sheet-header', className)}
-      {...props}
-    >
-      {onBack && (
-        <IconButton variant="standard" size="sm" onClick={onBack} aria-label="Back">
-          <ArrowLeft />
-        </IconButton>
-      )}
-      <DrawerPrimitive.Title data-slot="side-sheet-title" className="md-side-sheet-title">
-        {children}
-      </DrawerPrimitive.Title>
-      {showClose && (
-        <DrawerPrimitive.Close
-          data-slot="side-sheet-close"
-          render={<IconButton variant="standard" size="sm" aria-label="Close" />}
-        >
-          <X />
-        </DrawerPrimitive.Close>
-      )}
-    </div>
-  );
-}
+    return (
+      <div
+        data-slot="side-sheet-header"
+        ref={ref}
+        data-has-back={hasBack || undefined}
+        data-variant={variant}
+        className={cx('md-side-sheet-header', className)}
+        {...props}
+      >
+        {onBack && (
+          <IconButton variant="standard" size="sm" onClick={onBack} aria-label="Back">
+            <ArrowLeft />
+          </IconButton>
+        )}
+        <DrawerPrimitive.Title data-slot="side-sheet-title" className="md-side-sheet-title">
+          {children}
+        </DrawerPrimitive.Title>
+        {showClose && (
+          <DrawerPrimitive.Close
+            data-slot="side-sheet-close"
+            render={<IconButton variant="standard" size="sm" aria-label="Close" />}
+          >
+            <X />
+          </DrawerPrimitive.Close>
+        )}
+      </div>
+    );
+  },
+);
+SideSheetHeader.displayName = 'SideSheetHeader';
 
 // =============================================================================
 // SideSheetBody
 // =============================================================================
 
-function SideSheetBody({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot="side-sheet-body" className={cx('md-side-sheet-body', className)} {...props} />;
-}
+const SideSheetBody = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<React.ComponentProps<'div'>>>(
+  ({ className, ...props }, ref) => (
+    <div data-slot="side-sheet-body" ref={ref} className={cx('md-side-sheet-body', className)} {...props} />
+  ),
+);
+SideSheetBody.displayName = 'SideSheetBody';
 
 // =============================================================================
 // SideSheetDivider
 // =============================================================================
 
-function SideSheetDivider({ className, ...props }: React.ComponentProps<'hr'>) {
-  return <hr data-slot="side-sheet-divider" className={cx('md-side-sheet-divider', className)} {...props} />;
-}
+const SideSheetDivider = React.forwardRef<HTMLHRElement, React.PropsWithoutRef<React.ComponentProps<'hr'>>>(
+  ({ className, ...props }, ref) => (
+    <hr data-slot="side-sheet-divider" ref={ref} className={cx('md-side-sheet-divider', className)} {...props} />
+  ),
+);
+SideSheetDivider.displayName = 'SideSheetDivider';
 
 // =============================================================================
 // SideSheetFooter (Actions)
 // =============================================================================
 
-function SideSheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot="side-sheet-footer" className={cx('md-side-sheet-footer', className)} {...props} />;
-}
+const SideSheetFooter = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<React.ComponentProps<'div'>>>(
+  ({ className, ...props }, ref) => (
+    <div data-slot="side-sheet-footer" ref={ref} className={cx('md-side-sheet-footer', className)} {...props} />
+  ),
+);
+SideSheetFooter.displayName = 'SideSheetFooter';
 
 export {
   SideSheet,

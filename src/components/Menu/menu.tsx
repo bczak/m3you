@@ -2,7 +2,7 @@ import './menu.css';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Check, ChevronRight } from 'lucide-react';
 import * as React from 'react';
-import { use } from 'react';
+import { useContext } from 'react';
 import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
@@ -59,27 +59,23 @@ export interface MenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonE
   asChild?: boolean;
 }
 
-const MenuTrigger = ({
-  render,
-  asChild,
-  children,
-  ref,
-  ...props
-}: MenuTriggerProps & { ref?: React.Ref<HTMLButtonElement> }) => {
-  // `asChild` took the element from `children`; `render` takes it as a prop.
-  // Resolve both to the single element Base UI expects.
-  const rendered = render ?? (asChild && React.isValidElement(children) ? children : undefined);
+const MenuTrigger = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<MenuTriggerProps>>(
+  ({ render, asChild, children, ...props }, ref) => {
+    // `asChild` took the element from `children`; `render` takes it as a prop.
+    // Resolve both to the single element Base UI expects.
+    const rendered = render ?? (asChild && React.isValidElement(children) ? children : undefined);
 
-  if (rendered) {
-    return <BaseMenu.Trigger ref={ref} render={rendered as React.ReactElement<Record<string, unknown>>} {...props} />;
-  }
+    if (rendered) {
+      return <BaseMenu.Trigger ref={ref} render={rendered as React.ReactElement<Record<string, unknown>>} {...props} />;
+    }
 
-  return (
-    <BaseMenu.Trigger ref={ref} {...props}>
-      {children}
-    </BaseMenu.Trigger>
-  );
-};
+    return (
+      <BaseMenu.Trigger ref={ref} {...props}>
+        {children}
+      </BaseMenu.Trigger>
+    );
+  },
+);
 MenuTrigger.displayName = 'MenuTrigger';
 
 // =============================================================================
@@ -101,33 +97,26 @@ export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   portalProps?: Omit<BaseMenu.Portal.Props, 'children'>;
 }
 
-const MenuContent = ({
-  className,
-  grouped,
-  side = 'bottom',
-  align = 'start',
-  children,
-  portalProps,
-  ref,
-  ...props
-}: MenuContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const color = use(MenuColorContext);
-  return (
-    <BaseMenu.Portal {...portalProps}>
-      <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
-        <BaseMenu.Popup
-          ref={ref}
-          className={cx('md-menu', className)}
-          data-color={color}
-          data-grouped={grouped || undefined}
-          {...props}
-        >
-          {children}
-        </BaseMenu.Popup>
-      </BaseMenu.Positioner>
-    </BaseMenu.Portal>
-  );
-};
+const MenuContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuContentProps>>(
+  ({ className, grouped, side = 'bottom', align = 'start', children, portalProps, ...props }, ref) => {
+    const color = useContext(MenuColorContext);
+    return (
+      <BaseMenu.Portal {...portalProps}>
+        <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
+          <BaseMenu.Popup
+            ref={ref}
+            className={cx('md-menu', className)}
+            data-color={color}
+            data-grouped={grouped || undefined}
+            {...props}
+          >
+            {children}
+          </BaseMenu.Popup>
+        </BaseMenu.Positioner>
+      </BaseMenu.Portal>
+    );
+  },
+);
 MenuContent.displayName = 'MenuContent';
 
 // =============================================================================
@@ -139,20 +128,16 @@ export interface MenuGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: React.ReactNode;
 }
 
-const MenuGroup = ({
-  className,
-  label,
-  children,
-  ref,
-  ...props
-}: MenuGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  return (
-    <BaseMenu.Group ref={ref} className={cx('md-menu-group', className)} {...props}>
-      {label ? <MenuLabel>{label}</MenuLabel> : null}
-      {children}
-    </BaseMenu.Group>
-  );
-};
+const MenuGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuGroupProps>>(
+  ({ className, label, children, ...props }, ref) => {
+    return (
+      <BaseMenu.Group ref={ref} className={cx('md-menu-group', className)} {...props}>
+        {label ? <MenuLabel>{label}</MenuLabel> : null}
+        {children}
+      </BaseMenu.Group>
+    );
+  },
+);
 MenuGroup.displayName = 'MenuGroup';
 
 // =============================================================================
@@ -161,8 +146,10 @@ MenuGroup.displayName = 'MenuGroup';
 
 export interface MenuLabelProps extends React.ComponentPropsWithoutRef<'div'> {}
 
-const MenuLabel = ({ className, ref, ...props }: MenuLabelProps & { ref?: React.Ref<HTMLDivElement> }) => (
-  <BaseMenu.GroupLabel ref={ref} className={cx('md-menu-label', className)} {...props} />
+const MenuLabel = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuLabelProps>>(
+  ({ className, ...props }, ref) => (
+    <BaseMenu.GroupLabel ref={ref} className={cx('md-menu-label', className)} {...props} />
+  ),
 );
 MenuLabel.displayName = 'MenuLabel';
 
@@ -205,42 +192,46 @@ export interface MenuItemProps extends React.ComponentPropsWithoutRef<'div'> {
   onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
-const MenuItem = ({
-  supportingText,
-  closeOnSelect,
-  selected,
-  leadingIcon,
-  trailingText,
-  disabled = false,
-  className,
-  children,
-  onClick,
-  onKeyUp,
-  ref,
-  ...props
-}: MenuItemProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const color = use(MenuColorContext);
-  return (
-    <BaseMenu.Item
-      ref={ref}
-      disabled={disabled}
-      onClick={onClick}
-      closeOnClick={closeOnSelect}
-      onKeyUp={onKeyUp}
-      data-disabled={disabled || undefined}
-      data-selected={selected || undefined}
-      data-color={color}
-      className={cx('md-menu-item', className)}
-      {...props}
-    >
-      <Ripple />
-      {selected && !leadingIcon ? <Check aria-hidden="true" /> : null}
-      {leadingIcon}
-      {supportingText ? <MenuItemContent supportingText={supportingText}>{children}</MenuItemContent> : children}
-      {trailingText ? <span className="md-menu-item__trailing">{trailingText}</span> : null}
-    </BaseMenu.Item>
-  );
-};
+const MenuItem = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuItemProps>>(
+  (
+    {
+      supportingText,
+      closeOnSelect,
+      selected,
+      leadingIcon,
+      trailingText,
+      disabled = false,
+      className,
+      children,
+      onClick,
+      onKeyUp,
+      ...props
+    },
+    ref,
+  ) => {
+    const color = useContext(MenuColorContext);
+    return (
+      <BaseMenu.Item
+        ref={ref}
+        disabled={disabled}
+        onClick={onClick}
+        closeOnClick={closeOnSelect}
+        onKeyUp={onKeyUp}
+        data-disabled={disabled || undefined}
+        data-selected={selected || undefined}
+        data-color={color}
+        className={cx('md-menu-item', className)}
+        {...props}
+      >
+        <Ripple />
+        {selected && !leadingIcon ? <Check aria-hidden="true" /> : null}
+        {leadingIcon}
+        {supportingText ? <MenuItemContent supportingText={supportingText}>{children}</MenuItemContent> : children}
+        {trailingText ? <span className="md-menu-item__trailing">{trailingText}</span> : null}
+      </BaseMenu.Item>
+    );
+  },
+);
 MenuItem.displayName = 'MenuItem';
 
 /** Renders icon outside the text column, text + supporting inside */
@@ -263,8 +254,10 @@ function MenuItemContent({ children, supportingText }: { children: React.ReactNo
 
 export type MenuDividerProps = React.ComponentProps<'div'>;
 
-const MenuDivider = ({ className, ref, ...props }: MenuDividerProps & { ref?: React.Ref<HTMLDivElement> }) => (
-  <BaseMenu.Separator ref={ref} className={cx('md-menu-divider', className)} {...props} />
+const MenuDivider = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuDividerProps>>(
+  ({ className, ...props }, ref) => (
+    <BaseMenu.Separator ref={ref} className={cx('md-menu-divider', className)} {...props} />
+  ),
 );
 MenuDivider.displayName = 'MenuDivider';
 
@@ -292,32 +285,27 @@ export interface MenuSubTriggerProps extends React.ComponentPropsWithoutRef<'div
   disabled?: boolean;
 }
 
-const MenuSubTrigger = ({
-  supportingText,
-  disabled = false,
-  className,
-  children,
-  ref,
-  ...props
-}: MenuSubTriggerProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const color = use(MenuColorContext);
-  return (
-    <BaseMenu.SubmenuTrigger
-      ref={ref}
-      disabled={disabled}
-      data-disabled={disabled || undefined}
-      data-color={color}
-      className={cx('md-menu-item', className)}
-      {...props}
-    >
-      <Ripple />
-      {supportingText ? <MenuItemContent supportingText={supportingText}>{children}</MenuItemContent> : children}
-      <span className="md-menu-item__chevron" aria-hidden="true">
-        <ChevronRight />
-      </span>
-    </BaseMenu.SubmenuTrigger>
-  );
-};
+const MenuSubTrigger = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuSubTriggerProps>>(
+  ({ supportingText, disabled = false, className, children, ...props }, ref) => {
+    const color = useContext(MenuColorContext);
+    return (
+      <BaseMenu.SubmenuTrigger
+        ref={ref}
+        disabled={disabled}
+        data-disabled={disabled || undefined}
+        data-color={color}
+        className={cx('md-menu-item', className)}
+        {...props}
+      >
+        <Ripple />
+        {supportingText ? <MenuItemContent supportingText={supportingText}>{children}</MenuItemContent> : children}
+        <span className="md-menu-item__chevron" aria-hidden="true">
+          <ChevronRight />
+        </span>
+      </BaseMenu.SubmenuTrigger>
+    );
+  },
+);
 MenuSubTrigger.displayName = 'MenuSubTrigger';
 
 // =============================================================================
@@ -333,23 +321,19 @@ export interface MenuSubContentProps extends React.HTMLAttributes<HTMLDivElement
   portalProps?: Omit<BaseMenu.Portal.Props, 'children'>;
 }
 
-const MenuSubContent = ({
-  className,
-  children,
-  portalProps,
-  ref,
-  ...props
-}: MenuSubContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  return (
-    <BaseMenu.Portal {...portalProps}>
-      <BaseMenu.Positioner sideOffset={4}>
-        <BaseMenu.Popup ref={ref} className={cx('md-menu', className)} {...props}>
-          {children}
-        </BaseMenu.Popup>
-      </BaseMenu.Positioner>
-    </BaseMenu.Portal>
-  );
-};
+const MenuSubContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuSubContentProps>>(
+  ({ className, children, portalProps, ...props }, ref) => {
+    return (
+      <BaseMenu.Portal {...portalProps}>
+        <BaseMenu.Positioner sideOffset={4}>
+          <BaseMenu.Popup ref={ref} className={cx('md-menu', className)} {...props}>
+            {children}
+          </BaseMenu.Popup>
+        </BaseMenu.Positioner>
+      </BaseMenu.Portal>
+    );
+  },
+);
 MenuSubContent.displayName = 'MenuSubContent';
 
 // =============================================================================

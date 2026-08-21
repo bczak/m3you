@@ -19,46 +19,58 @@ export interface StandardButtonGroupProps
   morph?: boolean;
 }
 
-const StandardButtonGroup = ({
-  className,
-  orientation = 'horizontal',
-  size = 'sm',
-  shape = 'round',
-  morph = true,
-  selectionMode = 'multiple',
-  required = false,
-  value,
-  defaultValue,
-  onValueChange,
-  children,
-  ref,
-  ...props
-}: StandardButtonGroupProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const { selectedIndices, handleToggle } = useButtonGroupSelection({
-    selectionMode,
-    required,
-    value,
-    defaultValue,
-    onValueChange,
-  });
+const StandardButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<StandardButtonGroupProps>>(
+  (
+    {
+      className,
+      orientation = 'horizontal',
+      size = 'sm',
+      shape = 'round',
+      morph = true,
+      selectionMode = 'multiple',
+      required = false,
+      value,
+      defaultValue,
+      onValueChange,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const { selectedIndices, handleToggle } = useButtonGroupSelection({
+      selectionMode,
+      required,
+      value,
+      defaultValue,
+      onValueChange,
+    });
 
-  return (
-    <ButtonGroupContext value={{ size, shape, morph, selectedIndices, handleToggle }}>
-      <ButtonGroup
-        ref={ref}
-        orientation={orientation}
-        className={className}
-        data-standard-group
-        data-size={size}
-        {...props}
-      >
-        {React.Children.map(children, (child, index) => (
-          <ButtonGroupItemContext value={{ index }}>{child}</ButtonGroupItemContext>
-        ))}
-      </ButtonGroup>
-    </ButtonGroupContext>
-  );
-};
+    // Memoised so every button in the group does not redraw on each render.
+    const groupValue = React.useMemo(
+      () => ({ size, shape, morph, selectedIndices, handleToggle }),
+      [size, shape, morph, selectedIndices, handleToggle],
+    );
+    const itemCount = React.Children.count(children);
+    const itemContexts = React.useMemo(() => Array.from({ length: itemCount }, (_, index) => ({ index })), [itemCount]);
+
+    return (
+      <ButtonGroupContext.Provider value={groupValue}>
+        <ButtonGroup
+          ref={ref}
+          orientation={orientation}
+          className={className}
+          data-standard-group
+          data-size={size}
+          {...props}
+        >
+          {React.Children.map(children, (child, index) => (
+            <ButtonGroupItemContext.Provider value={itemContexts[index]}>{child}</ButtonGroupItemContext.Provider>
+          ))}
+        </ButtonGroup>
+      </ButtonGroupContext.Provider>
+    );
+  },
+);
 StandardButtonGroup.displayName = 'StandardButtonGroup';
 
 export { StandardButtonGroup };

@@ -35,11 +35,35 @@ src/components/Button/
 
 1. **CSS** co-located as `{name}.css` in the component directory, imported as a side-effect in the `.tsx` file
 2. **Variants** via data attributes (`data-variant`, `data-size`, `data-shape`, etc.) — styled in CSS
-3. **Component** implemented with React ref forwarding
+3. **Component** implemented with `React.forwardRef<TElement, React.PropsWithoutRef<XProps>>(…)`
 4. **Class names**: `md-{component}` for root, `md-{component}__{part}` for sub-elements
 5. **Utility**: `cx()` from `src/lib/cx.ts` — minimal class name joiner (filters falsy, joins with space)
 
 All public components and types are re-exported from `src/index.tsx`.
+
+### React 18 compatibility (peer range is `>=18.0.0`)
+
+Development happens on **React 18** — the floor of the supported range — so a
+React 19-only construct fails here immediately rather than only for consumers.
+Do not reintroduce any of these:
+
+- **`ref` as a plain prop.** React 18 strips `ref` before it reaches the props
+  object. Use `forwardRef` — including for thin wrappers that only spread
+  `{...props}` into a Base UI primitive, since `ref` rides along in that spread.
+- **`use(SomeContext)`** — use `useContext`.
+- **`<SomeContext value={…}>`** — use `<SomeContext.Provider value={…}>`.
+
+The `React.PropsWithoutRef<XProps>` in the type argument is load-bearing: under
+`@types/react` 18 the render function receives the raw props, whose `LegacyRef`
+includes `string`, which the rest-spread then fails to pass to Base UI. Keep
+`React.MutableRefObject` where refs are written to — 18's `RefObject` has a
+`readonly current`.
+
+The other end of the range is covered by the `React 19` CI job in
+`.github/workflows/pr.yml`, which installs React 19 over the lockfile and reruns
+the type-check, tests and build. The `docs/` workspace is a second React 19
+signal: it pins its own `react@19` (fumadocs hard-requires `^19.2.0`) and
+consumes the library, so it exercises the published surface on 19 every build.
 
 ### Styling — Three-Tier Token Architecture
 

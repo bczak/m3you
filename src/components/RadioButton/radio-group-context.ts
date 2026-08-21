@@ -1,4 +1,4 @@
-import { createContext, use } from 'react';
+import { createContext, useContext } from 'react';
 
 export type RadioGroupContextValue = {
   value: string;
@@ -11,7 +11,7 @@ export type RadioGroupContextValue = {
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
 
 export function useRadioGroup() {
-  return use(RadioGroupContext);
+  return useContext(RadioGroupContext);
 }
 
 export { RadioGroupContext };

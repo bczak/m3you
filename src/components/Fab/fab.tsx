@@ -1,5 +1,5 @@
 import './fab.css';
-import type * as React from 'react';
+import * as React from 'react';
 
 import { cx } from '../../lib/cx';
 import { IconButton, type IconButtonProps } from '../IconButton/icon-button';
@@ -23,33 +23,26 @@ export type FABProps = Omit<IconButtonProps, 'shape' | 'width'> & {
   fabSize?: FABSize;
 };
 
-const FAB = ({
-  className,
-  variant = 'tonal',
-  size = 'md',
-  lowered = false,
-  color,
-  fabSize,
-  ref,
-  ...props
-}: FABProps & { ref?: React.Ref<HTMLButtonElement> }) => {
-  const resolvedSize = fabSize === 'large' ? 'lg' : fabSize ? 'md' : size;
+const FAB = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<FABProps>>(
+  ({ className, variant = 'tonal', size = 'md', lowered = false, color, fabSize, ...props }, ref) => {
+    const resolvedSize = fabSize === 'large' ? 'lg' : fabSize ? 'md' : size;
 
-  return (
-    <IconButton
-      ref={ref}
-      variant={variant}
-      size={resolvedSize}
-      shape="square"
-      width="default"
-      className={cx('md-fab', className)}
-      data-lowered={lowered || undefined}
-      data-fab-color={color}
-      data-fab-size={fabSize}
-      {...props}
-    />
-  );
-};
+    return (
+      <IconButton
+        ref={ref}
+        variant={variant}
+        size={resolvedSize}
+        shape="square"
+        width="default"
+        className={cx('md-fab', className)}
+        data-lowered={lowered || undefined}
+        data-fab-color={color}
+        data-fab-size={fabSize}
+        {...props}
+      />
+    );
+  },
+);
 FAB.displayName = 'FAB';
 
 export { FAB };

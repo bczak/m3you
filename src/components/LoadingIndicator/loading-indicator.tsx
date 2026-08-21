@@ -1,4 +1,5 @@
 import './loading-indicator.css';
+import { forwardRef, type PropsWithoutRef } from 'react';
 
 import { cx } from '../../lib/cx';
 import { SHAPE_NAMES, SHAPE_POLYGONS } from './shapes';
@@ -38,40 +39,34 @@ const ensurePolygonStyles = (): void => {
 // phase, before any <LoadingIndicator> element mounts.
 ensurePolygonStyles();
 
-const LoadingIndicator = ({
-  className,
-  size = 'md',
-  color,
-  variant,
-  container,
-  ref,
-  ...props
-}: LoadingIndicatorProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const resolvedVariant: LoadingIndicatorVariant = variant ?? (container ? 'contained' : 'uncontained');
+const LoadingIndicator = forwardRef<HTMLDivElement, PropsWithoutRef<LoadingIndicatorProps>>(
+  ({ className, size = 'md', color, variant, container, ...props }, ref) => {
+    const resolvedVariant: LoadingIndicatorVariant = variant ?? (container ? 'contained' : 'uncontained');
 
-  // Re-inject on render too — covers hot-module-reload and cases where the
-  // parent document replaces <head> (Storybook docs frames, test teardown).
-  ensurePolygonStyles();
+    // Re-inject on render too — covers hot-module-reload and cases where the
+    // parent document replaces <head> (Storybook docs frames, test teardown).
+    ensurePolygonStyles();
 
-  return (
-    <div
-      ref={ref}
-      role="progressbar"
-      aria-label="Loading"
-      aria-valuemin={0}
-      aria-valuemax={100}
-      className={cx('md-loading-indicator', className)}
-      data-size={size}
-      data-variant={resolvedVariant}
-      style={color ? ({ '--md-loading-indicator-color': color } as React.CSSProperties) : undefined}
-      {...props}
-    >
-      <div className="md-loading-indicator__container" aria-hidden="true">
-        <div className="md-loading-indicator__indicator" />
+    return (
+      <div
+        ref={ref}
+        role="progressbar"
+        aria-label="Loading"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        className={cx('md-loading-indicator', className)}
+        data-size={size}
+        data-variant={resolvedVariant}
+        style={color ? ({ '--md-loading-indicator-color': color } as React.CSSProperties) : undefined}
+        {...props}
+      >
+        <div className="md-loading-indicator__container" aria-hidden="true">
+          <div className="md-loading-indicator__indicator" />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  },
+);
 LoadingIndicator.displayName = 'LoadingIndicator';
 
 export { LoadingIndicator };

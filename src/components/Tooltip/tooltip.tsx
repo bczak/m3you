@@ -1,6 +1,7 @@
 import './tooltip.css';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import type * as React from 'react';
+import { forwardRef } from 'react';
 
 import { cx } from '../../lib/cx';
 
@@ -28,12 +29,12 @@ function Tooltip(props: React.ComponentProps<typeof BaseTooltip.Root>) {
 // TooltipTrigger
 // =============================================================================
 
-const TooltipTrigger = ({
-  ref,
-  ...props
-}: React.ComponentProps<typeof BaseTooltip.Trigger> & { ref?: React.Ref<HTMLButtonElement> }) => {
+const TooltipTrigger = forwardRef<
+  HTMLButtonElement,
+  React.PropsWithoutRef<React.ComponentProps<typeof BaseTooltip.Trigger>>
+>(({ ...props }, ref) => {
   return <BaseTooltip.Trigger ref={ref} {...props} />;
-};
+});
 TooltipTrigger.displayName = 'TooltipTrigger';
 
 // =============================================================================
@@ -53,22 +54,17 @@ export interface TooltipContentProps extends React.ComponentPropsWithoutRef<type
   portalProps?: Omit<BaseTooltip.Portal.Props, 'children'>;
 }
 
-const TooltipContent = ({
-  side = 'top',
-  sideOffset = 4,
-  className,
-  portalProps,
-  ref,
-  ...props
-}: TooltipContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  return (
-    <BaseTooltip.Portal {...portalProps}>
-      <BaseTooltip.Positioner side={side} sideOffset={sideOffset}>
-        <BaseTooltip.Popup ref={ref} className={cx('md-tooltip', className)} {...props} />
-      </BaseTooltip.Positioner>
-    </BaseTooltip.Portal>
-  );
-};
+const TooltipContent = forwardRef<HTMLDivElement, React.PropsWithoutRef<TooltipContentProps>>(
+  ({ side = 'top', sideOffset = 4, className, portalProps, ...props }, ref) => {
+    return (
+      <BaseTooltip.Portal {...portalProps}>
+        <BaseTooltip.Positioner side={side} sideOffset={sideOffset}>
+          <BaseTooltip.Popup ref={ref} className={cx('md-tooltip', className)} {...props} />
+        </BaseTooltip.Positioner>
+      </BaseTooltip.Portal>
+    );
+  },
+);
 TooltipContent.displayName = 'TooltipContent';
 
 // =============================================================================
@@ -83,12 +79,12 @@ function RichTooltip(props: React.ComponentProps<typeof BaseTooltip.Root>) {
 // RichTooltipTrigger
 // =============================================================================
 
-const RichTooltipTrigger = ({
-  ref,
-  ...props
-}: React.ComponentProps<typeof BaseTooltip.Trigger> & { ref?: React.Ref<HTMLButtonElement> }) => {
+const RichTooltipTrigger = forwardRef<
+  HTMLButtonElement,
+  React.PropsWithoutRef<React.ComponentProps<typeof BaseTooltip.Trigger>>
+>(({ ...props }, ref) => {
   return <BaseTooltip.Trigger ref={ref} {...props} />;
-};
+});
 RichTooltipTrigger.displayName = 'RichTooltipTrigger';
 
 // =============================================================================
@@ -112,31 +108,23 @@ export interface RichTooltipContentProps extends React.ComponentPropsWithoutRef<
   portalProps?: Omit<BaseTooltip.Portal.Props, 'children'>;
 }
 
-const RichTooltipContent = ({
-  headline,
-  actions,
-  side = 'bottom',
-  sideOffset = 4,
-  className,
-  children,
-  portalProps,
-  ref,
-  ...props
-}: RichTooltipContentProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  return (
-    <BaseTooltip.Portal {...portalProps}>
-      <BaseTooltip.Positioner side={side} sideOffset={sideOffset}>
-        <BaseTooltip.Popup ref={ref} className={cx('md-rich-tooltip', className)} {...props}>
-          {headline && <div className="md-rich-tooltip__headline">{headline}</div>}
-          <div className="md-rich-tooltip__body" data-has-headline={headline ? '' : undefined}>
-            {children}
-          </div>
-          {actions && <div className="md-rich-tooltip__actions">{actions}</div>}
-        </BaseTooltip.Popup>
-      </BaseTooltip.Positioner>
-    </BaseTooltip.Portal>
-  );
-};
+const RichTooltipContent = forwardRef<HTMLDivElement, React.PropsWithoutRef<RichTooltipContentProps>>(
+  ({ headline, actions, side = 'bottom', sideOffset = 4, className, children, portalProps, ...props }, ref) => {
+    return (
+      <BaseTooltip.Portal {...portalProps}>
+        <BaseTooltip.Positioner side={side} sideOffset={sideOffset}>
+          <BaseTooltip.Popup ref={ref} className={cx('md-rich-tooltip', className)} {...props}>
+            {headline && <div className="md-rich-tooltip__headline">{headline}</div>}
+            <div className="md-rich-tooltip__body" data-has-headline={headline ? '' : undefined}>
+              {children}
+            </div>
+            {actions && <div className="md-rich-tooltip__actions">{actions}</div>}
+          </BaseTooltip.Popup>
+        </BaseTooltip.Positioner>
+      </BaseTooltip.Portal>
+    );
+  },
+);
 RichTooltipContent.displayName = 'RichTooltipContent';
 
 export {

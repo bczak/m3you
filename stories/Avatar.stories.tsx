@@ -6,6 +6,7 @@ import { Avatar } from '../src/components/Avatar/avatar';
 const meta = {
   title: 'Containment/Avatar',
   component: Avatar,
+  args: { variant: 'monogram' },
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta<typeof Avatar>;

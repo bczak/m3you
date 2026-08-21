@@ -1,6 +1,6 @@
 import './navigation-rail.css';
 import * as React from 'react';
-import { use } from 'react';
+import { useContext } from 'react';
 import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
@@ -42,73 +42,77 @@ interface NavigationRailContextValue {
 const NavigationRailContext = React.createContext<NavigationRailContextValue | null>(null);
 
 const useNavigationRail = () => {
-  const context = use(NavigationRailContext);
+  const context = useContext(NavigationRailContext);
   if (!context) {
     throw new Error('NavigationRailItem must be used within a NavigationRail');
   }
   return context;
 };
 
-const NavigationRail = ({
-  className,
-  state = 'collapsed',
-  modality = 'standard',
-  position = 'fixed',
-  itemsAlignment = 'start',
-  value,
-  onValueChange,
-  onStateChange,
-  menu,
-  fab,
-  footer,
-  children,
-  ref,
-  ...props
-}: NavigationRailProps & { ref?: React.Ref<HTMLElement> }) => {
-  const resolvedState = state ?? 'collapsed';
-  const contextValue = React.useMemo(
-    () => ({ value, onValueChange, state: resolvedState, onStateChange }),
-    [value, onValueChange, resolvedState, onStateChange],
-  );
+const NavigationRail = React.forwardRef<HTMLElement, React.PropsWithoutRef<NavigationRailProps>>(
+  (
+    {
+      className,
+      state = 'collapsed',
+      modality = 'standard',
+      position = 'fixed',
+      itemsAlignment = 'start',
+      value,
+      onValueChange,
+      onStateChange,
+      menu,
+      fab,
+      footer,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const resolvedState = state ?? 'collapsed';
+    const contextValue = React.useMemo(
+      () => ({ value, onValueChange, state: resolvedState, onStateChange }),
+      [value, onValueChange, resolvedState, onStateChange],
+    );
 
-  return (
-    <NavigationRailContext.Provider value={contextValue}>
-      {/* Modal backdrop */}
-      {state === 'expanded' && modality === 'modal' && (
-        <button
-          type="button"
-          className="md-navigation-rail-backdrop"
-          onClick={() => onStateChange?.('collapsed')}
-          onKeyDown={(e) => e.key === 'Escape' && onStateChange?.('collapsed')}
-          tabIndex={-1}
-          aria-label="Close navigation"
-        />
-      )}
-      <nav
-        ref={ref}
-        aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
-        data-state={resolvedState}
-        data-modality={modality}
-        data-position={position}
-        className={cx('md-navigation-rail', className)}
-        {...props}
-      >
-        {/* Header section: Menu button */}
-        {menu && <div className="md-navigation-rail__menu">{menu}</div>}
+    return (
+      <NavigationRailContext.Provider value={contextValue}>
+        {/* Modal backdrop */}
+        {state === 'expanded' && modality === 'modal' && (
+          <button
+            type="button"
+            className="md-navigation-rail-backdrop"
+            onClick={() => onStateChange?.('collapsed')}
+            onKeyDown={(e) => e.key === 'Escape' && onStateChange?.('collapsed')}
+            tabIndex={-1}
+            aria-label="Close navigation"
+          />
+        )}
+        <nav
+          ref={ref}
+          aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Main navigation')}
+          data-state={resolvedState}
+          data-modality={modality}
+          data-position={position}
+          className={cx('md-navigation-rail', className)}
+          {...props}
+        >
+          {/* Header section: Menu button */}
+          {menu && <div className="md-navigation-rail__menu">{menu}</div>}
 
-        {/* FAB section */}
-        {fab && <div className="md-navigation-rail__fab">{fab}</div>}
+          {/* FAB section */}
+          {fab && <div className="md-navigation-rail__fab">{fab}</div>}
 
-        {/* Navigation items */}
-        <div className="md-navigation-rail__items" data-items-alignment={itemsAlignment}>
-          {children}
-        </div>
+          {/* Navigation items */}
+          <div className="md-navigation-rail__items" data-items-alignment={itemsAlignment}>
+            {children}
+          </div>
 
-        {footer && <div className="md-navigation-rail__footer">{footer}</div>}
-      </nav>
-    </NavigationRailContext.Provider>
-  );
-};
+          {footer && <div className="md-navigation-rail__footer">{footer}</div>}
+        </nav>
+      </NavigationRailContext.Provider>
+    );
+  },
+);
 NavigationRail.displayName = 'NavigationRail';
 
 /* =============================================================================
@@ -156,68 +160,58 @@ const NavigationRailItemIcon = ({ icon, activeIcon, isActive }: NavigationRailIt
   );
 };
 
-const NavigationRailItem = ({
-  className,
-  value,
-  icon,
-  activeIcon,
-  label,
-  badge,
-  disabled,
-  onClick,
-  onKeyDown,
-  ref,
-  ...props
-}: NavigationRailItemProps & { ref?: React.Ref<HTMLButtonElement> }) => {
-  const { value: selectedValue, onValueChange, state } = useNavigationRail();
-  const isActive = selectedValue === value;
+const NavigationRailItem = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<NavigationRailItemProps>>(
+  ({ className, value, icon, activeIcon, label, badge, disabled, onClick, onKeyDown, ...props }, ref) => {
+    const { value: selectedValue, onValueChange, state } = useNavigationRail();
+    const isActive = selectedValue === value;
 
-  const selectRailItem = (e: React.MouseEvent<HTMLButtonElement>) => {
-    /* v8 ignore next -- React never fires onClick on a disabled button */
-    if (!disabled) {
-      onValueChange?.(value);
-    }
-    onClick?.(e);
-  };
+    const selectRailItem = (e: React.MouseEvent<HTMLButtonElement>) => {
+      /* v8 ignore next -- React never fires onClick on a disabled button */
+      if (!disabled) {
+        onValueChange?.(value);
+      }
+      onClick?.(e);
+    };
 
-  return (
-    <button
-      ref={ref}
-      type="button"
-      aria-current={isActive ? 'page' : undefined}
-      aria-label={label}
-      disabled={disabled}
-      data-active={isActive ? 'true' : undefined}
-      data-state={state}
-      className={cx('md-navigation-rail-item', className)}
-      onClick={selectRailItem}
-      onKeyDown={onKeyDown}
-      {...props}
-    >
-      <span className="md-navigation-rail-item__surface">
-        <span className="md-navigation-rail-item__indicator" data-active={isActive ? 'true' : undefined} />
-        <span className="md-navigation-rail-item__state-layer" />
-        <Ripple />
-        <span className="md-navigation-rail-item__content">
-          <span className="md-navigation-rail-item__icon">
-            <NavigationRailItemIcon icon={icon} activeIcon={activeIcon} isActive={isActive} />
-            {badge && state === 'collapsed' ? (
-              <span className="md-navigation-rail-item__badge" data-placement="overlay">
+    return (
+      <button
+        ref={ref}
+        type="button"
+        aria-current={isActive ? 'page' : undefined}
+        aria-label={label}
+        disabled={disabled}
+        data-active={isActive ? 'true' : undefined}
+        data-state={state}
+        className={cx('md-navigation-rail-item', className)}
+        onClick={selectRailItem}
+        onKeyDown={onKeyDown}
+        {...props}
+      >
+        <span className="md-navigation-rail-item__surface">
+          <span className="md-navigation-rail-item__indicator" data-active={isActive ? 'true' : undefined} />
+          <span className="md-navigation-rail-item__state-layer" />
+          <Ripple />
+          <span className="md-navigation-rail-item__content">
+            <span className="md-navigation-rail-item__icon">
+              <NavigationRailItemIcon icon={icon} activeIcon={activeIcon} isActive={isActive} />
+              {badge && state === 'collapsed' ? (
+                <span className="md-navigation-rail-item__badge" data-placement="overlay">
+                  {badge}
+                </span>
+              ) : null}
+            </span>
+            <span className="md-navigation-rail-item__label">{label}</span>
+            {badge && state === 'expanded' ? (
+              <span className="md-navigation-rail-item__badge" data-placement="inline">
                 {badge}
               </span>
             ) : null}
           </span>
-          <span className="md-navigation-rail-item__label">{label}</span>
-          {badge && state === 'expanded' ? (
-            <span className="md-navigation-rail-item__badge" data-placement="inline">
-              {badge}
-            </span>
-          ) : null}
         </span>
-      </span>
-    </button>
-  );
-};
+      </button>
+    );
+  },
+);
 NavigationRailItem.displayName = 'NavigationRailItem';
 
 /* =============================================================================
@@ -229,21 +223,17 @@ export type NavigationRailSectionProps = React.ComponentProps<'div'> & {
   title?: string;
 };
 
-const NavigationRailSection = ({
-  className,
-  title,
-  children,
-  ref,
-  ...props
-}: NavigationRailSectionProps & { ref?: React.Ref<HTMLDivElement> }) => {
-  const { state } = useNavigationRail();
-  return (
-    <div ref={ref} className={cx('md-navigation-rail-section', className)} {...props}>
-      {title && state === 'expanded' ? <span className="md-navigation-rail-section__title">{title}</span> : null}
-      {children}
-    </div>
-  );
-};
+const NavigationRailSection = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<NavigationRailSectionProps>>(
+  ({ className, title, children, ...props }, ref) => {
+    const { state } = useNavigationRail();
+    return (
+      <div ref={ref} className={cx('md-navigation-rail-section', className)} {...props}>
+        {title && state === 'expanded' ? <span className="md-navigation-rail-section__title">{title}</span> : null}
+        {children}
+      </div>
+    );
+  },
+);
 NavigationRailSection.displayName = 'NavigationRailSection';
 
 /* =============================================================================
@@ -257,15 +247,10 @@ export type NavigationRailMenuButtonProps = React.ComponentProps<'button'> & {
   expandedIcon?: React.ReactNode;
 };
 
-const NavigationRailMenuButton = ({
-  className,
-  collapsedIcon,
-  expandedIcon,
-  children,
-  onClick,
-  ref,
-  ...props
-}: NavigationRailMenuButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+const NavigationRailMenuButton = React.forwardRef<
+  HTMLButtonElement,
+  React.PropsWithoutRef<NavigationRailMenuButtonProps>
+>(({ className, collapsedIcon, expandedIcon, children, onClick, ...props }, ref) => {
   const { state, onStateChange } = useNavigationRail();
 
   const toggleRailState = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -302,7 +287,7 @@ const NavigationRailMenuButton = ({
       )}
     </button>
   );
-};
+});
 NavigationRailMenuButton.displayName = 'NavigationRailMenuButton';
 
 export { NavigationRail, NavigationRailItem, NavigationRailMenuButton, NavigationRailSection, useNavigationRail };

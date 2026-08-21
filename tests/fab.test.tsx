@@ -92,3 +92,42 @@ test('forwards refs through ExtendableFAB', async () => {
 
   expect(ref.current).toBeInstanceOf(HTMLButtonElement);
 });
+
+// `fabSize` is the M3-facing alias ('small' | 'medium' | 'large'); it maps onto
+// the internal 'sm' | 'md' | 'lg' scale and, when absent, `size` passes through.
+test.each([
+  ['large', 'lg'],
+  ['medium', 'md'],
+  ['small', 'md'],
+] as const)('FAB fabSize=%s resolves to size=%s', async (fabSize, expected) => {
+  render(<FAB aria-label="Create" fabSize={fabSize} />);
+
+  expect(screen.getByRole('button', { name: 'Create' })).toHaveAttribute('data-size', expected);
+});
+
+test('FAB falls back to size when fabSize is absent', async () => {
+  render(<FAB aria-label="Create" size="lg" />);
+
+  expect(screen.getByRole('button', { name: 'Create' })).toHaveAttribute('data-size', 'lg');
+});
+
+test.each([
+  ['large', 'lg'],
+  ['medium', 'md'],
+] as const)('ExtendedFAB fabSize=%s resolves to size=%s', async (fabSize, expected) => {
+  render(<ExtendedFAB fabSize={fabSize} label="Compose" />);
+
+  expect(screen.getByRole('button', { name: 'Compose' })).toHaveAttribute('data-size', expected);
+});
+
+// ExtendableFAB maps all three names explicitly rather than collapsing the
+// non-large cases, so each arm needs its own case.
+test.each([
+  ['small', 'sm'],
+  ['medium', 'md'],
+  ['large', 'lg'],
+] as const)('ExtendableFAB fabSize=%s resolves to size=%s', async (fabSize, expected) => {
+  render(<ExtendableFAB fabSize={fabSize} icon={<span aria-hidden="true">+</span>} label="Compose" />);
+
+  expect(screen.getByRole('button', { name: 'Compose' })).toHaveAttribute('data-size', expected);
+});

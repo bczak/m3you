@@ -183,3 +183,13 @@ test('snackbar.dismiss(id) dismisses a specific toast', async () => {
   snackbar.dismiss('abc');
   expect(dismiss).toHaveBeenCalledWith('abc');
 });
+
+test('a closable snackbar with no actionLabel renders only the dismiss control', () => {
+  const onClose = vi.fn();
+  const { container } = render(<Snackbar message="Saved" closable onClose={onClose} />);
+
+  expect(container.querySelector('.md-snackbar__actions')).not.toBeNull();
+  expect(container.querySelector('.md-snackbar__action')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+  expect(onClose).toHaveBeenCalledOnce();
+});
