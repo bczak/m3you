@@ -2,11 +2,11 @@
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
-/* The library itself. Imported before the bridge so the `--md-sys-*` tokens
-   exist by the time the Fumadocs variables are re-pointed at them. */
+/* The library itself. Supplies the `--md-sys-*` tokens the demos, the component
+   gallery and the showcase render against. The Fumadocs chrome does not consume
+   them — it paints from its own `--color-fd-*` neutral preset above. */
 @import "../../../src/styles/globals.css";
 
-@import "./m3-bridge.css";
 @import "./site.css";
 @import "./preview.css";
 @import "./device.css";

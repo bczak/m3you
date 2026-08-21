@@ -1,17 +1,11 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { Logo } from '@/components/logo';
 import { SeedPicker } from '@/components/seed-picker';
 import { appName, gitConfig } from './shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: (
-        <span className="m3-brand">
-          <Logo size={22} />
-          <span className="m3-brand__name">{appName}</span>
-        </span>
-      ),
+      title: appName,
     },
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
     links: [
