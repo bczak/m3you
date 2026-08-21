@@ -5,7 +5,7 @@
   "readmeHeader": ".design-sync/conventions.md",
   "storybookStatic": ".design-sync/sb-reference",
   "storybookConfigDir": ".storybook",
-  "buildCmd": "bun run build && mkdir -p .design-sync/.cache && cat dist/styles/globals.css .design-sync/preview-base.css > .design-sync/.cache/ds-css-entry.css",
+  "buildCmd": "bun run build && mkdir -p .design-sync/.cache && cat dist/styles/globals.css .design-sync/preview-base.css stories/_helpers/storybook-showcase.css > .design-sync/.cache/ds-css-entry.css",
   "entry": "dist/index.js",
   "cssEntry": ".design-sync/.cache/ds-css-entry.css",
   "extraFonts": [".design-sync/fonts/roboto-flex.css"],
@@ -17,21 +17,105 @@
     "FAB": "FAB",
     "Search": "SearchBar",
     "M3ComponentReplacements": null,
-    "InteractionPlayground": null
+    "InteractionPlayground": null,
+    "WebParityInteractions": null
   },
   "overrides": {
-    "LinearProgress": { "cardMode": "column" },
-    "Snackbar": { "cardMode": "column" },
-    "Card": { "cardMode": "column" },
-    "Dialog": { "cardMode": "column" },
-    "List": { "cardMode": "column" },
-    "TextField": { "cardMode": "column" },
-    "Tabs": { "cardMode": "column" },
-    "Toolbar": { "cardMode": "column" },
-    "RadioButton": { "cardMode": "column" },
-    "Slider": { "cardMode": "column" },
-    "Switch": { "viewport": "900x1000" },
-    "Menu": { "cardMode": "single", "primaryStory": "Showcase", "viewport": "900x1000" },
-    "Tooltip": { "cardMode": "single" }
+    "LinearProgress": {
+      "cardMode": "column"
+    },
+    "Snackbar": {
+      "cardMode": "column"
+    },
+    "Card": {
+      "cardMode": "column"
+    },
+    "Dialog": {
+      "cardMode": "column"
+    },
+    "List": {
+      "cardMode": "column"
+    },
+    "TextField": {
+      "cardMode": "column"
+    },
+    "Tabs": {
+      "cardMode": "column"
+    },
+    "Toolbar": {
+      "cardMode": "column"
+    },
+    "RadioButton": {
+      "cardMode": "column"
+    },
+    "Slider": {
+      "cardMode": "column"
+    },
+    "Switch": {
+      "viewport": "900x1000"
+    },
+    "Menu": {
+      "cardMode": "single",
+      "primaryStory": "Showcase",
+      "viewport": "900x1000"
+    },
+    "Tooltip": {
+      "cardMode": "single"
+    },
+    "Button": {
+      "cardMode": "column"
+    },
+    "ConnectedButtonGroup": {
+      "cardMode": "column"
+    },
+    "ExtendableFAB": {
+      "cardMode": "column"
+    },
+    "ExtendedFAB": {
+      "cardMode": "column"
+    },
+    "IconButton": {
+      "cardMode": "column"
+    },
+    "SplitButton": {
+      "cardMode": "column"
+    },
+    "StandardButtonGroup": {
+      "cardMode": "column"
+    },
+    "ToggleButton": {
+      "cardMode": "column"
+    },
+    "ToggleIconButton": {
+      "cardMode": "column"
+    },
+    "LoadingIndicator": {
+      "cardMode": "column"
+    },
+    "NavigationBar": {
+      "cardMode": "column"
+    },
+    "DatePicker": {
+      "cardMode": "column"
+    },
+    "TimePicker": {
+      "cardMode": "column"
+    },
+    "FABMenu": {
+      "cardMode": "single",
+      "primaryStory": "WithExtendedFAB"
+    },
+    "NavigationRail": {
+      "cardMode": "single",
+      "primaryStory": "Expanded"
+    },
+    "SearchBar": {
+      "cardMode": "single",
+      "primaryStory": "Default"
+    }
+  },
+  "docsDir": "docs/content/docs/components",
+  "docsMap": {
+    "SearchBar": "docs/content/docs/components/search.mdx"
   }
 }
