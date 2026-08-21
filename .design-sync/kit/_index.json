@@ -1,0 +1,1736 @@
+[
+ {
+  "page": "App bars",
+  "set": ".Building Blocks/App bar/Content/Avatar",
+  "variants": 2,
+  "axes": [
+   "size"
+  ],
+  "file": "App-bars__Building-Blocks-App-bar-Content-Avatar.json",
+  "bytes": 691
+ },
+ {
+  "page": "App bars",
+  "set": ".Building Blocks/App bar/Content/Text Large",
+  "variants": 2,
+  "axes": [
+   "Size",
+   "Alignment"
+  ],
+  "file": "App-bars__Building-Blocks-App-bar-Content-Text-Large.json",
+  "bytes": 1318
+ },
+ {
+  "page": "App bars",
+  "set": ".Building Blocks/App bar/Content/Text Medium",
+  "variants": 2,
+  "axes": [
+   "Size",
+   "Alignment"
+  ],
+  "file": "App-bars__Building-Blocks-App-bar-Content-Text-Medium.json",
+  "bytes": 1322
+ },
+ {
+  "page": "App bars",
+  "set": ".Building Blocks/App bar/Content/Text Small",
+  "variants": 2,
+  "axes": [
+   "Size",
+   "Alignment"
+  ],
+  "file": "App-bars__Building-Blocks-App-bar-Content-Text-Small.json",
+  "bytes": 1322
+ },
+ {
+  "page": "App bars",
+  "set": ".Building Blocks/Flat/Search bar - Modified",
+  "variants": 2,
+  "axes": [
+   "Alignment"
+  ],
+  "file": "App-bars__Building-Blocks-Flat-Search-bar-Modified.json",
+  "bytes": 837
+ },
+ {
+  "page": "App bars",
+  "set": ".Building Blocks/On-scroll/Search bar - Modified",
+  "variants": 2,
+  "axes": [
+   "Alignment"
+  ],
+  "file": "App-bars__Building-Blocks-On-scroll-Search-bar-Modified.json",
+  "bytes": 842
+ },
+ {
+  "page": "App bars",
+  "set": "App bar",
+  "variants": 12,
+  "axes": [
+   "Configuration",
+   "Elevation"
+  ],
+  "file": "App-bars__App-bar.json",
+  "bytes": 10921
+ },
+ {
+  "page": "App bars",
+  "set": "Bottom app bar",
+  "variants": 4,
+  "axes": [
+   "Icons"
+  ],
+  "file": "App-bars__Bottom-app-bar.json",
+  "bytes": 4372
+ },
+ {
+  "page": "Avatars",
+  "set": "Generic avatar",
+  "variants": 3,
+  "axes": [
+   "Style"
+  ],
+  "file": "Avatars__Generic-avatar.json",
+  "bytes": 1108
+ },
+ {
+  "page": "Badges",
+  "set": "Badges",
+  "variants": 2,
+  "axes": [
+   "Size"
+  ],
+  "file": "Badges__Badges.json",
+  "bytes": 799
+ },
+ {
+  "page": "Buttons",
+  "set": ".Building Blocks/FAB Menu/Primary/FAB",
+  "variants": 4,
+  "axes": [
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-FAB-Menu-Primary-FAB.json",
+  "bytes": 4142
+ },
+ {
+  "page": "Buttons",
+  "set": ".Building Blocks/FAB Menu/Primary/Segment",
+  "variants": 4,
+  "axes": [
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-FAB-Menu-Primary-Segment.json",
+  "bytes": 4558
+ },
+ {
+  "page": "Buttons",
+  "set": ".Building Blocks/FAB Menu/Secondary/FAB",
+  "variants": 4,
+  "axes": [
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-FAB-Menu-Secondary-FAB.json",
+  "bytes": 4160
+ },
+ {
+  "page": "Buttons",
+  "set": ".Building Blocks/FAB Menu/Secondary/Segment",
+  "variants": 4,
+  "axes": [
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-FAB-Menu-Secondary-Segment.json",
+  "bytes": 4584
+ },
+ {
+  "page": "Buttons",
+  "set": ".Building Blocks/FAB Menu/Tertiary/FAB",
+  "variants": 4,
+  "axes": [
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-FAB-Menu-Tertiary-FAB.json",
+  "bytes": 4131
+ },
+ {
+  "page": "Buttons",
+  "set": ".Building Blocks/FAB Menu/Tertiary/Segment",
+  "variants": 4,
+  "axes": [
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-FAB-Menu-Tertiary-Segment.json",
+  "bytes": 4571
+ },
+ {
+  "page": "Buttons",
+  "set": "Building Blocks/Button group/Connected segments/Large",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-Button-group-Connected-segments-Large.json",
+  "bytes": 8687
+ },
+ {
+  "page": "Buttons",
+  "set": "Building Blocks/Button group/Connected segments/Medium",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-Button-group-Connected-segments-Medium.json",
+  "bytes": 8714
+ },
+ {
+  "page": "Buttons",
+  "set": "Building Blocks/Button group/Connected segments/Small",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-Button-group-Connected-segments-Small.json",
+  "bytes": 8753
+ },
+ {
+  "page": "Buttons",
+  "set": "Building Blocks/Button group/Connected segments/Xlarge",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-Button-group-Connected-segments-Xlarge.json",
+  "bytes": 8800
+ },
+ {
+  "page": "Buttons",
+  "set": "Building Blocks/Button group/Connected segments/XSmall",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Buttons__Building-Blocks-Button-group-Connected-segments-XSmall.json",
+  "bytes": 8739
+ },
+ {
+  "page": "Buttons",
+  "set": "Building Blocks/Segmented button/Button segment (end)",
+  "variants": 27,
+  "axes": [
+   "Configuration",
+   "State",
+   "Selected"
+  ],
+  "file": "Buttons__Building-Blocks-Segmented-button-Button-segment-end.json",
+  "bytes": 22033
+ },
+ {
+  "page": "Buttons",
+  "set": "Building Blocks/Segmented button/Button segment (middle)",
+  "variants": 27,
+  "axes": [
+   "Configuration",
+   "State",
+   "Selected"
+  ],
+  "file": "Buttons__Building-Blocks-Segmented-button-Button-segment-middle.json",
+  "bytes": 22066
+ },
+ {
+  "page": "Buttons",
+  "set": "Building Blocks/Segmented button/Button segment (start)",
+  "variants": 27,
+  "axes": [
+   "Configuration",
+   "State",
+   "Selected"
+  ],
+  "file": "Buttons__Building-Blocks-Segmented-button-Button-segment-start.json",
+  "bytes": 22011
+ },
+ {
+  "page": "Buttons",
+  "set": "Button",
+  "variants": 50,
+  "axes": [
+   "Type",
+   "Size",
+   "State"
+  ],
+  "file": "Buttons__Button.json",
+  "bytes": 43553
+ },
+ {
+  "page": "Buttons",
+  "set": "Button - elevated",
+  "variants": 50,
+  "axes": [
+   "Type",
+   "Size",
+   "State"
+  ],
+  "file": "Buttons__Button-elevated.json",
+  "bytes": 49368
+ },
+ {
+  "page": "Buttons",
+  "set": "Button - outline",
+  "variants": 50,
+  "axes": [
+   "Type",
+   "Size",
+   "State"
+  ],
+  "file": "Buttons__Button-outline.json",
+  "bytes": 48377
+ },
+ {
+  "page": "Buttons",
+  "set": "Button - text",
+  "variants": 50,
+  "axes": [
+   "Type",
+   "Size",
+   "State"
+  ],
+  "file": "Buttons__Button-text.json",
+  "bytes": 40654
+ },
+ {
+  "page": "Buttons",
+  "set": "Button - tonal",
+  "variants": 50,
+  "axes": [
+   "Type",
+   "Size",
+   "State"
+  ],
+  "file": "Buttons__Button-tonal.json",
+  "bytes": 44976
+ },
+ {
+  "page": "Buttons",
+  "set": "Connected button group",
+  "variants": 10,
+  "axes": [
+   "Type",
+   "Size"
+  ],
+  "file": "Buttons__Connected-button-group.json",
+  "bytes": 12407
+ },
+ {
+  "page": "Buttons",
+  "set": "Extended FAB",
+  "variants": 72,
+  "axes": [
+   "Size",
+   "Color",
+   "State"
+  ],
+  "file": "Buttons__Extended-FAB.json",
+  "bytes": 103648
+ },
+ {
+  "page": "Buttons",
+  "set": "FAB",
+  "variants": 72,
+  "axes": [
+   "Size",
+   "Color",
+   "State"
+  ],
+  "file": "Buttons__FAB.json",
+  "bytes": 88887
+ },
+ {
+  "page": "Buttons",
+  "set": "FAB menu",
+  "variants": 3,
+  "axes": [
+   "Color",
+   "Segments"
+  ],
+  "file": "Buttons__FAB-menu.json",
+  "bytes": 10374
+ },
+ {
+  "page": "Buttons",
+  "set": "Icon button",
+  "variants": 150,
+  "axes": [
+   "Type",
+   "Size",
+   "Width",
+   "State"
+  ],
+  "file": "Buttons__Icon-button.json",
+  "bytes": 100599
+ },
+ {
+  "page": "Buttons",
+  "set": "Icon button - outline",
+  "variants": 150,
+  "axes": [
+   "Type",
+   "Size",
+   "Width",
+   "State"
+  ],
+  "file": "Buttons__Icon-button-outline.json",
+  "bytes": 111978
+ },
+ {
+  "page": "Buttons",
+  "set": "Icon button - standard",
+  "variants": 150,
+  "axes": [
+   "Type",
+   "Size",
+   "Width",
+   "State"
+  ],
+  "file": "Buttons__Icon-button-standard.json",
+  "bytes": 90668
+ },
+ {
+  "page": "Buttons",
+  "set": "Icon button - tonal",
+  "variants": 150,
+  "axes": [
+   "Type",
+   "Size",
+   "Width",
+   "State"
+  ],
+  "file": "Buttons__Icon-button-tonal.json",
+  "bytes": 104047
+ },
+ {
+  "page": "Buttons",
+  "set": "Icon button togglable",
+  "variants": 300,
+  "axes": [
+   "Type",
+   "Size",
+   "Width",
+   "Selected",
+   "State"
+  ],
+  "file": "Buttons__Icon-button-togglable.json",
+  "bytes": 226073
+ },
+ {
+  "page": "Buttons",
+  "set": "Icon button togglable - outline",
+  "variants": 300,
+  "axes": [
+   "Type",
+   "Size",
+   "Width",
+   "Selected",
+   "State"
+  ],
+  "file": "Buttons__Icon-button-togglable-outline.json",
+  "bytes": 237057
+ },
+ {
+  "page": "Buttons",
+  "set": "Icon button togglable - standard",
+  "variants": 300,
+  "axes": [
+   "Type",
+   "Size",
+   "Width",
+   "Selected",
+   "State"
+  ],
+  "file": "Buttons__Icon-button-togglable-standard.json",
+  "bytes": 202744
+ },
+ {
+  "page": "Buttons",
+  "set": "Icon button togglable - tonal",
+  "variants": 300,
+  "axes": [
+   "Type",
+   "Size",
+   "Width",
+   "Selected",
+   "State"
+  ],
+  "file": "Buttons__Icon-button-togglable-tonal.json",
+  "bytes": 228455
+ },
+ {
+  "page": "Buttons",
+  "set": "Segmented button",
+  "variants": 16,
+  "axes": [
+   "Segments",
+   "Density"
+  ],
+  "file": "Buttons__Segmented-button.json",
+  "bytes": 9222
+ },
+ {
+  "page": "Buttons",
+  "set": "Split button",
+  "variants": 180,
+  "axes": [
+   "Size",
+   "Color",
+   "Leading state",
+   "Trailing state"
+  ],
+  "file": "Buttons__Split-button.json",
+  "bytes": 265738
+ },
+ {
+  "page": "Buttons",
+  "set": "Standard button group",
+  "variants": 60,
+  "axes": [
+   "Type",
+   "Size",
+   "Color",
+   "Button type"
+  ],
+  "file": "Buttons__Standard-button-group.json",
+  "bytes": 58464
+ },
+ {
+  "page": "Buttons",
+  "set": "Toggle button",
+  "variants": 100,
+  "axes": [
+   "Type",
+   "Size",
+   "State",
+   "Selected"
+  ],
+  "file": "Buttons__Toggle-button.json",
+  "bytes": 89890
+ },
+ {
+  "page": "Buttons",
+  "set": "Toggle button - elevated",
+  "variants": 100,
+  "axes": [
+   "Type",
+   "Size",
+   "State",
+   "Selected"
+  ],
+  "file": "Buttons__Toggle-button-elevated.json",
+  "bytes": 100250
+ },
+ {
+  "page": "Buttons",
+  "set": "Toggle button - outline",
+  "variants": 100,
+  "axes": [
+   "Type",
+   "Size",
+   "State",
+   "Selected"
+  ],
+  "file": "Buttons__Toggle-button-outline.json",
+  "bytes": 94633
+ },
+ {
+  "page": "Buttons",
+  "set": "Toggle button - tonal",
+  "variants": 100,
+  "axes": [
+   "Type",
+   "Size",
+   "State",
+   "Selected"
+  ],
+  "file": "Buttons__Toggle-button-tonal.json",
+  "bytes": 90586
+ },
+ {
+  "page": "Cards",
+  "set": ".Building Blocks/Card states/Elevated",
+  "variants": 5,
+  "axes": [
+   "State"
+  ],
+  "file": "Cards__Building-Blocks-Card-states-Elevated.json",
+  "bytes": 2710
+ },
+ {
+  "page": "Cards",
+  "set": ".Building Blocks/Card states/Filled",
+  "variants": 5,
+  "axes": [
+   "State"
+  ],
+  "file": "Cards__Building-Blocks-Card-states-Filled.json",
+  "bytes": 2460
+ },
+ {
+  "page": "Cards",
+  "set": ".Building Blocks/Card states/Outlined",
+  "variants": 5,
+  "axes": [
+   "State"
+  ],
+  "file": "Cards__Building-Blocks-Card-states-Outlined.json",
+  "bytes": 2493
+ },
+ {
+  "page": "Cards",
+  "set": "Horizontal card",
+  "variants": 6,
+  "axes": [
+   "Style",
+   "Layout"
+  ],
+  "file": "Cards__Horizontal-card.json",
+  "bytes": 7458
+ },
+ {
+  "page": "Cards",
+  "set": "Stacked card",
+  "variants": 6,
+  "axes": [
+   "Style",
+   "Layout"
+  ],
+  "file": "Cards__Stacked-card.json",
+  "bytes": 11541
+ },
+ {
+  "page": "Carousel",
+  "set": "Carousel",
+  "variants": 10,
+  "axes": [
+   "Context",
+   "Layout"
+  ],
+  "file": "Carousel__Carousel.json",
+  "bytes": 16243
+ },
+ {
+  "page": "Carousel",
+  "set": "Carousel - Full screen",
+  "variants": 1,
+  "axes": [
+   "Context",
+   "Layout"
+  ],
+  "file": "Carousel__Carousel-Full-screen.json",
+  "bytes": 717
+ },
+ {
+  "page": "Checkboxes",
+  "set": "Checkboxes",
+  "variants": 30,
+  "axes": [
+   "Type",
+   "State"
+  ],
+  "file": "Checkboxes__Checkboxes.json",
+  "bytes": 18088
+ },
+ {
+  "page": "Chips",
+  "set": "Assistive chip",
+  "variants": 48,
+  "axes": [
+   "Style",
+   "Configuration",
+   "State"
+  ],
+  "file": "Chips__Assistive-chip.json",
+  "bytes": 39010
+ },
+ {
+  "page": "Chips",
+  "set": "Chip groups",
+  "variants": 8,
+  "axes": [
+   "Type",
+   "Layout"
+  ],
+  "file": "Chips__Chip-groups.json",
+  "bytes": 18416
+ },
+ {
+  "page": "Chips",
+  "set": "Filter chip",
+  "variants": 96,
+  "axes": [
+   "Style",
+   "Configuration",
+   "State",
+   "Selected",
+   "Show trailing icon"
+  ],
+  "file": "Chips__Filter-chip.json",
+  "bytes": 83801
+ },
+ {
+  "page": "Chips",
+  "set": "Input chip",
+  "variants": 48,
+  "axes": [
+   "Configuration",
+   "State",
+   "Selected",
+   "Show closing icon"
+  ],
+  "file": "Chips__Input-chip.json",
+  "bytes": 42834
+ },
+ {
+  "page": "Chips",
+  "set": "Suggestion chip",
+  "variants": 48,
+  "axes": [
+   "Style",
+   "State",
+   "Selected",
+   "Show icon"
+  ],
+  "file": "Chips__Suggestion-chip.json",
+  "bytes": 38215
+ },
+ {
+  "page": "Date & time pickers",
+  "set": ".Building Blocks/Direct Input (keyboard) input",
+  "variants": 2,
+  "axes": [
+   "Selected"
+  ],
+  "file": "Date-time-pickers__Building-Blocks-Direct-Input-keyboard-input.json",
+  "bytes": 2345
+ },
+ {
+  "page": "Date & time pickers",
+  "set": ".Building Blocks/Hour",
+  "variants": 6,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Date-time-pickers__Building-Blocks-Hour.json",
+  "bytes": 4369
+ },
+ {
+  "page": "Date & time pickers",
+  "set": ".Building Blocks/hour-line",
+  "variants": 24,
+  "axes": [
+   "Line-angle"
+  ],
+  "file": "Date-time-pickers__Building-Blocks-hour-line.json",
+  "bytes": 7413
+ },
+ {
+  "page": "Date & time pickers",
+  "set": ".Building Blocks/Input",
+  "variants": 2,
+  "axes": [
+   "Selected"
+  ],
+  "file": "Date-time-pickers__Building-Blocks-Input.json",
+  "bytes": 1659
+ },
+ {
+  "page": "Date & time pickers",
+  "set": ".Building Blocks/Local M3 calendar cell",
+  "variants": 22,
+  "axes": [
+   "Type",
+   "State"
+  ],
+  "file": "Date-time-pickers__Building-Blocks-Local-M3-calendar-cell.json",
+  "bytes": 19685
+ },
+ {
+  "page": "Date & time pickers",
+  "set": ".Building Blocks/Menu button",
+  "variants": 5,
+  "axes": [
+   "State"
+  ],
+  "file": "Date-time-pickers__Building-Blocks-Menu-button.json",
+  "bytes": 3202
+ },
+ {
+  "page": "Date & time pickers",
+  "set": ".Building Blocks/Period Selector",
+  "variants": 6,
+  "axes": [
+   "AM/PM",
+   "State"
+  ],
+  "file": "Date-time-pickers__Building-Blocks-Period-Selector.json",
+  "bytes": 10462
+ },
+ {
+  "page": "Date & time pickers",
+  "set": ".Building Blocks/Period Selector - Horizontal",
+  "variants": 6,
+  "axes": [
+   "AM/PM",
+   "State"
+  ],
+  "file": "Date-time-pickers__Building-Blocks-Period-Selector-Horizontal.json",
+  "bytes": 9706
+ },
+ {
+  "page": "Date & time pickers",
+  "set": ".Building Blocks/Year",
+  "variants": 9,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Date-time-pickers__Building-Blocks-Year.json",
+  "bytes": 6619
+ },
+ {
+  "page": "Date & time pickers",
+  "set": "Dial picker",
+  "variants": 4,
+  "axes": [
+   "Format",
+   "Orientation"
+  ],
+  "file": "Date-time-pickers__Dial-picker.json",
+  "bytes": 9094
+ },
+ {
+  "page": "Date & time pickers",
+  "set": "Docked input date picker [desktop]",
+  "variants": 3,
+  "axes": [
+   "Type"
+  ],
+  "file": "Date-time-pickers__Docked-input-date-picker-desktop.json",
+  "bytes": 14026
+ },
+ {
+  "page": "Date & time pickers",
+  "set": "Input date picker",
+  "variants": 2,
+  "axes": [
+   "Type"
+  ],
+  "file": "Date-time-pickers__Input-date-picker.json",
+  "bytes": 4319
+ },
+ {
+  "page": "Date & time pickers",
+  "set": "Keyboard picker",
+  "variants": 2,
+  "axes": [
+   "Format"
+  ],
+  "file": "Date-time-pickers__Keyboard-picker.json",
+  "bytes": 4206
+ },
+ {
+  "page": "Date & time pickers",
+  "set": "Modal date picker",
+  "variants": 3,
+  "axes": [
+   "Type"
+  ],
+  "file": "Date-time-pickers__Modal-date-picker.json",
+  "bytes": 47916
+ },
+ {
+  "page": "Dialogs",
+  "set": "Basic dialog",
+  "variants": 2,
+  "axes": [
+   "Icon"
+  ],
+  "file": "Dialogs__Basic-dialog.json",
+  "bytes": 3328
+ },
+ {
+  "page": "Dialogs",
+  "set": "List dialog",
+  "variants": 2,
+  "axes": [
+   "Icon"
+  ],
+  "file": "Dialogs__List-dialog.json",
+  "bytes": 3128
+ },
+ {
+  "page": "Dialogs",
+  "set": "Scrollable list dialog",
+  "variants": 2,
+  "axes": [
+   "Icon"
+  ],
+  "file": "Dialogs__Scrollable-list-dialog.json",
+  "bytes": 3213
+ },
+ {
+  "page": "Examples",
+  "set": "Examples/Layout grid",
+  "variants": 11,
+  "axes": [
+   "Window size class",
+   "Layout regions"
+  ],
+  "file": "Examples__Examples-Layout-grid.json",
+  "bytes": 2846
+ },
+ {
+  "page": "Lists",
+  "set": "Building blocks/Content",
+  "variants": 2,
+  "axes": [
+   "Type"
+  ],
+  "file": "Lists__Building-blocks-Content.json",
+  "bytes": 1483
+ },
+ {
+  "page": "Lists",
+  "set": "Building blocks/Leading element",
+  "variants": 10,
+  "axes": [
+   "Type"
+  ],
+  "file": "Lists__Building-blocks-Leading-element.json",
+  "bytes": 3395
+ },
+ {
+  "page": "Lists",
+  "set": "Building blocks/List item/Accordion buttton",
+  "variants": 8,
+  "axes": [
+   "Type",
+   "State"
+  ],
+  "file": "Lists__Building-blocks-List-item-Accordion-buttton.json",
+  "bytes": 5037
+ },
+ {
+  "page": "Lists",
+  "set": "Building blocks/Reveal element",
+  "variants": 9,
+  "axes": [
+   "Actions",
+   "Type"
+  ],
+  "file": "Lists__Building-blocks-Reveal-element.json",
+  "bytes": 4306
+ },
+ {
+  "page": "Lists",
+  "set": "Building blocks/Trailing element",
+  "variants": 8,
+  "axes": [
+   "Type"
+  ],
+  "file": "Lists__Building-blocks-Trailing-element.json",
+  "bytes": 3683
+ },
+ {
+  "page": "Lists",
+  "set": "List",
+  "variants": 12,
+  "axes": [
+   "Type",
+   "Multi-line"
+  ],
+  "file": "Lists__List.json",
+  "bytes": 39439
+ },
+ {
+  "page": "Lists",
+  "set": "List item",
+  "variants": 24,
+  "axes": [
+   "Alignment",
+   "State",
+   "Selected"
+  ],
+  "file": "Lists__List-item.json",
+  "bytes": 35086
+ },
+ {
+  "page": "Lists",
+  "set": "List item - Accordion ",
+  "variants": 2,
+  "axes": [
+   "Accordion"
+  ],
+  "file": "Lists__List-item-Accordion.json",
+  "bytes": 1131
+ },
+ {
+  "page": "Lists",
+  "set": "List Item - Swipe",
+  "variants": 4,
+  "axes": [
+   "Swipe state"
+  ],
+  "file": "Lists__List-Item-Swipe.json",
+  "bytes": 2765
+ },
+ {
+  "page": "Lists",
+  "set": "List item/List Item: -2 Density (baseline)",
+  "variants": 217,
+  "axes": [
+   "Condition",
+   "Leading",
+   "Trailing",
+   "Show overline",
+   "Show supporting text"
+  ],
+  "file": "Lists__List-item-List-Item-2-Density-baseline.json",
+  "bytes": 456882
+ },
+ {
+  "page": "Lists",
+  "set": "List item/List Item: -4 Density (baseline)",
+  "variants": 197,
+  "axes": [
+   "Condition",
+   "Leading",
+   "Trailing",
+   "Show overline",
+   "Show supporting text"
+  ],
+  "file": "Lists__List-item-List-Item-4-Density-baseline.json",
+  "bytes": 413054
+ },
+ {
+  "page": "Lists",
+  "set": "List item/List Item: 0 Density (baseline)",
+  "variants": 238,
+  "axes": [
+   "Condition",
+   "Leading",
+   "Trailing",
+   "Show overline",
+   "Show supporting text"
+  ],
+  "file": "Lists__List-item-List-Item-0-Density-baseline.json",
+  "bytes": 500290
+ },
+ {
+  "page": "Loading & progress",
+  "set": ".Building Blocks/Progress indicator/Width 4/Segment - wave",
+  "variants": 2,
+  "axes": [
+   "Wave height",
+   "Thickness",
+   "Wavelength"
+  ],
+  "file": "Loading-progress__Building-Blocks-Progress-indicator-Width-4-Segment-wave.json",
+  "bytes": 944
+ },
+ {
+  "page": "Loading & progress",
+  "set": ".Building Blocks/Progress indicator/Width 8/Segment - wave",
+  "variants": 2,
+  "axes": [
+   "Wave height",
+   "Thickness",
+   "Wavelength"
+  ],
+  "file": "Loading-progress__Building-Blocks-Progress-indicator-Width-8-Segment-wave.json",
+  "bytes": 944
+ },
+ {
+  "page": "Loading & progress",
+  "set": "Circular-determinate progress indicator",
+  "variants": 24,
+  "axes": [
+   "Type",
+   "Thickness",
+   "Progress"
+  ],
+  "file": "Loading-progress__Circular-determinate-progress-indicator.json",
+  "bytes": 8056
+ },
+ {
+  "page": "Loading & progress",
+  "set": "Circular-indeterminate progress indicator",
+  "variants": 8,
+  "axes": [
+   "Type",
+   "Thickness",
+   "Step"
+  ],
+  "file": "Loading-progress__Circular-indeterminate-progress-indicator.json",
+  "bytes": 3047
+ },
+ {
+  "page": "Loading & progress",
+  "set": "Linear-determinate progress indicator",
+  "variants": 24,
+  "axes": [
+   "Type",
+   "Thickness",
+   "Progress"
+  ],
+  "file": "Loading-progress__Linear-determinate-progress-indicator.json",
+  "bytes": 22729
+ },
+ {
+  "page": "Loading & progress",
+  "set": "Linear-indeterminate progress indicator",
+  "variants": 12,
+  "axes": [
+   "Type",
+   "Thickness",
+   "Step"
+  ],
+  "file": "Loading-progress__Linear-indeterminate-progress-indicator.json",
+  "bytes": 13462
+ },
+ {
+  "page": "Loading & progress",
+  "set": "Loading indicator",
+  "variants": 14,
+  "axes": [
+   "Steps",
+   "Show container"
+  ],
+  "file": "Loading-progress__Loading-indicator.json",
+  "bytes": 5130
+ },
+ {
+  "page": "Menu",
+  "set": ".Building Blocks/Content",
+  "variants": 2,
+  "axes": [
+   "Type"
+  ],
+  "file": "Menu__Building-Blocks-Content.json",
+  "bytes": 1248
+ },
+ {
+  "page": "Menu",
+  "set": ".Building Blocks/Leading element",
+  "variants": 3,
+  "axes": [
+   "Type"
+  ],
+  "file": "Menu__Building-Blocks-Leading-element.json",
+  "bytes": 975
+ },
+ {
+  "page": "Menu",
+  "set": ".Building Blocks/Trailing element",
+  "variants": 4,
+  "axes": [
+   "Type"
+  ],
+  "file": "Menu__Building-Blocks-Trailing-element.json",
+  "bytes": 2204
+ },
+ {
+  "page": "Menu",
+  "set": "Building Blocks/Leading element",
+  "variants": 3,
+  "axes": [
+   "Type"
+  ],
+  "file": "Menu__Building-Blocks-Leading-element.json",
+  "bytes": 535
+ },
+ {
+  "page": "Menu",
+  "set": "Building Blocks/Menu list item",
+  "variants": 5,
+  "axes": [
+   "State"
+  ],
+  "file": "Menu__Building-Blocks-Menu-list-item.json",
+  "bytes": 5853
+ },
+ {
+  "page": "Menu",
+  "set": "Building Blocks/Menu list item: -2 density",
+  "variants": 5,
+  "axes": [
+   "State"
+  ],
+  "file": "Menu__Building-Blocks-Menu-list-item-2-density.json",
+  "bytes": 5864
+ },
+ {
+  "page": "Menu",
+  "set": "Building Blocks/Menu list item: -4 density",
+  "variants": 5,
+  "axes": [
+   "State"
+  ],
+  "file": "Menu__Building-Blocks-Menu-list-item-4-density.json",
+  "bytes": 5865
+ },
+ {
+  "page": "Menu",
+  "set": "Building Blocks/Trailing element",
+  "variants": 3,
+  "axes": [
+   "Type"
+  ],
+  "file": "Menu__Building-Blocks-Trailing-element.json",
+  "bytes": 763
+ },
+ {
+  "page": "Menu",
+  "set": "Building Blocks/Trailing element-selected",
+  "variants": 3,
+  "axes": [
+   "Type"
+  ],
+  "file": "Menu__Building-Blocks-Trailing-element-selected.json",
+  "bytes": 767
+ },
+ {
+  "page": "Menu",
+  "set": "Menu",
+  "variants": 6,
+  "axes": [
+   "Theme",
+   "Groups"
+  ],
+  "file": "Menu__Menu.json",
+  "bytes": 30634
+ },
+ {
+  "page": "Menu",
+  "set": "Menu (baseline)",
+  "variants": 3,
+  "axes": [
+   "Density"
+  ],
+  "file": "Menu__Menu-baseline.json",
+  "bytes": 6413
+ },
+ {
+  "page": "Menu",
+  "set": "Menu item/Standard",
+  "variants": 11,
+  "axes": [
+   "State",
+   "Selected"
+  ],
+  "file": "Menu__Menu-item-Standard.json",
+  "bytes": 19379
+ },
+ {
+  "page": "Menu",
+  "set": "Menu item/Vibrant",
+  "variants": 11,
+  "axes": [
+   "State",
+   "Selected"
+  ],
+  "file": "Menu__Menu-item-Vibrant.json",
+  "bytes": 19651
+ },
+ {
+  "page": "Navigation",
+  "set": "Building Blocks / Nav item",
+  "variants": 16,
+  "axes": [
+   "Selected",
+   "State",
+   "Show icon"
+  ],
+  "file": "Navigation__Building-Blocks-Nav-item.json",
+  "bytes": 13360
+ },
+ {
+  "page": "Navigation",
+  "set": "Building Blocks/Navigation bars/Horizontal nav item",
+  "variants": 24,
+  "axes": [
+   "State",
+   "Badge",
+   "Selected"
+  ],
+  "file": "Navigation__Building-Blocks-Navigation-bars-Horizontal-nav-item.json",
+  "bytes": 25451
+ },
+ {
+  "page": "Navigation",
+  "set": "Building Blocks/Navigation bars/Vertical nav item",
+  "variants": 24,
+  "axes": [
+   "State",
+   "Badge",
+   "Selected"
+  ],
+  "file": "Navigation__Building-Blocks-Navigation-bars-Vertical-nav-item.json",
+  "bytes": 25211
+ },
+ {
+  "page": "Navigation",
+  "set": "Building Blocks/Navigation rail/Horizontal nav item",
+  "variants": 24,
+  "axes": [
+   "State",
+   "Badge",
+   "Selected"
+  ],
+  "file": "Navigation__Building-Blocks-Navigation-rail-Horizontal-nav-item.json",
+  "bytes": 22565
+ },
+ {
+  "page": "Navigation",
+  "set": "Building Blocks/Navigation rail/Vertical nav item",
+  "variants": 48,
+  "axes": [
+   "State",
+   "Badge",
+   "Selected",
+   "Show label"
+  ],
+  "file": "Navigation__Building-Blocks-Navigation-rail-Vertical-nav-item.json",
+  "bytes": 45869
+ },
+ {
+  "page": "Navigation",
+  "set": "Navigation Bar: Horizontal items",
+  "variants": 4,
+  "axes": [
+   "Nav items"
+  ],
+  "file": "Navigation__Navigation-Bar-Horizontal-items.json",
+  "bytes": 2978
+ },
+ {
+  "page": "Navigation",
+  "set": "Navigation Bar: Vertical items",
+  "variants": 3,
+  "axes": [
+   "Nav items"
+  ],
+  "file": "Navigation__Navigation-Bar-Vertical-items.json",
+  "bytes": 2063
+ },
+ {
+  "page": "Navigation",
+  "set": "Navigation Rail",
+  "variants": 8,
+  "axes": [
+   "Alignment",
+   "Nav items"
+  ],
+  "file": "Navigation__Navigation-Rail.json",
+  "bytes": 11242
+ },
+ {
+  "page": "Navigation",
+  "set": "Navigation Rail: Expanded",
+  "variants": 16,
+  "axes": [
+   "Type",
+   "Alignment",
+   "Nav items"
+  ],
+  "file": "Navigation__Navigation-Rail-Expanded.json",
+  "bytes": 35620
+ },
+ {
+  "page": "Radio button",
+  "set": "Radio buttons",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Radio-button__Radio-buttons.json",
+  "bytes": 5057
+ },
+ {
+  "page": "Search",
+  "set": "Search bar",
+  "variants": 6,
+  "axes": [
+   "State",
+   "Show avatar"
+  ],
+  "file": "Search__Search-bar.json",
+  "bytes": 8007
+ },
+ {
+  "page": "Search",
+  "set": "Search docked layout",
+  "variants": 2,
+  "axes": [
+   "Configuration"
+  ],
+  "file": "Search__Search-docked-layout.json",
+  "bytes": 7275
+ },
+ {
+  "page": "Search",
+  "set": "Search docked layout (baseline)",
+  "variants": 2,
+  "axes": [
+   "Configuration"
+  ],
+  "file": "Search__Search-docked-layout-baseline.json",
+  "bytes": 4255
+ },
+ {
+  "page": "Search",
+  "set": "Search full-screen layout",
+  "variants": 2,
+  "axes": [
+   "Configuration"
+  ],
+  "file": "Search__Search-full-screen-layout.json",
+  "bytes": 6837
+ },
+ {
+  "page": "Search",
+  "set": "Search full-screen layout (baseline)",
+  "variants": 2,
+  "axes": [
+   "Configuration"
+  ],
+  "file": "Search__Search-full-screen-layout-baseline.json",
+  "bytes": 4219
+ },
+ {
+  "page": "Shape",
+  "set": "Shape Set",
+  "variants": 35,
+  "axes": [
+   "Shape"
+  ],
+  "file": "Shape__Shape-Set.json",
+  "bytes": 7493
+ },
+ {
+  "page": "Sheets",
+  "set": "Bottom sheet",
+  "variants": 2,
+  "axes": [
+   "Modal"
+  ],
+  "file": "Sheets__Bottom-sheet.json",
+  "bytes": 1974
+ },
+ {
+  "page": "Sheets",
+  "set": "Building Blocks/Bottom sheets/Content",
+  "variants": 2,
+  "axes": [
+   "Layout"
+  ],
+  "file": "Sheets__Building-Blocks-Bottom-sheets-Content.json",
+  "bytes": 668
+ },
+ {
+  "page": "Sheets",
+  "set": "Building Blocks/Side sheets/Content",
+  "variants": 2,
+  "axes": [
+   "Layout"
+  ],
+  "file": "Sheets__Building-Blocks-Side-sheets-Content.json",
+  "bytes": 626
+ },
+ {
+  "page": "Sheets",
+  "set": "Side Sheet",
+  "variants": 4,
+  "axes": [
+   "Type",
+   "Show back"
+  ],
+  "file": "Sheets__Side-Sheet.json",
+  "bytes": 6867
+ },
+ {
+  "page": "Sliders",
+  "set": "Centered slider",
+  "variants": 120,
+  "axes": [
+   "Orientation",
+   "Size",
+   "State",
+   "Value"
+  ],
+  "file": "Sliders__Centered-slider.json",
+  "bytes": 102691
+ },
+ {
+  "page": "Sliders",
+  "set": "Range slider",
+  "variants": 60,
+  "axes": [
+   "Orientation",
+   "Size",
+   "State",
+   "Value"
+  ],
+  "file": "Sliders__Range-slider.json",
+  "bytes": 70254
+ },
+ {
+  "page": "Sliders",
+  "set": "Standard slider",
+  "variants": 120,
+  "axes": [
+   "Orientation",
+   "Size",
+   "State",
+   "Value"
+  ],
+  "file": "Sliders__Standard-slider.json",
+  "bytes": 80611
+ },
+ {
+  "page": "Snackbar",
+  "set": ".Building Blocks/Snackbar-action",
+  "variants": 4,
+  "axes": [
+   "State"
+  ],
+  "file": "Snackbar__Building-Blocks-Snackbar-action.json",
+  "bytes": 2416
+ },
+ {
+  "page": "Snackbar",
+  "set": ".Building Blocks/Snackbar-close-affordance",
+  "variants": 4,
+  "axes": [
+   "State"
+  ],
+  "file": "Snackbar__Building-Blocks-Snackbar-close-affordance.json",
+  "bytes": 2309
+ },
+ {
+  "page": "Snackbar",
+  "set": "Snackbar",
+  "variants": 10,
+  "axes": [
+   "Configuration",
+   "# of lines",
+   "Show close affordance"
+  ],
+  "file": "Snackbar__Snackbar.json",
+  "bytes": 8699
+ },
+ {
+  "page": "Styles",
+  "set": ".Shape",
+  "variants": 9,
+  "axes": [
+   "Shape"
+  ],
+  "file": "Styles__Shape.json",
+  "bytes": 2178
+ },
+ {
+  "page": "Switch",
+  "set": "Switch",
+  "variants": 20,
+  "axes": [
+   "Selected",
+   "State",
+   "Icon"
+  ],
+  "file": "Switch__Switch.json",
+  "bytes": 20186
+ },
+ {
+  "page": "Tabs",
+  "set": "Primary tabs/Icon and label",
+  "variants": 8,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Tabs__Primary-tabs-Icon-and-label.json",
+  "bytes": 9659
+ },
+ {
+  "page": "Tabs",
+  "set": "Primary tabs/Icon only",
+  "variants": 8,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Tabs__Primary-tabs-Icon-only.json",
+  "bytes": 8132
+ },
+ {
+  "page": "Tabs",
+  "set": "Primary tabs/Label only",
+  "variants": 8,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Tabs__Primary-tabs-Label-only.json",
+  "bytes": 8739
+ },
+ {
+  "page": "Tabs",
+  "set": "Secondary tabs/Icon and label",
+  "variants": 8,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Tabs__Secondary-tabs-Icon-and-label.json",
+  "bytes": 9749
+ },
+ {
+  "page": "Tabs",
+  "set": "Secondary tabs/Label only",
+  "variants": 8,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Tabs__Secondary-tabs-Label-only.json",
+  "bytes": 8369
+ },
+ {
+  "page": "Tabs",
+  "set": "Tabs",
+  "variants": 10,
+  "axes": [
+   "Configuration",
+   "Style",
+   "Layout"
+  ],
+  "file": "Tabs__Tabs.json",
+  "bytes": 19803
+ },
+ {
+  "page": "Text fields",
+  "set": "Text field",
+  "variants": 120,
+  "axes": [
+   "Style",
+   "State",
+   "Text configurations",
+   "Leading icon",
+   "Trailing icon"
+  ],
+  "file": "Text-fields__Text-field.json",
+  "bytes": 240902
+ },
+ {
+  "page": "Toolbars",
+  "set": "Building Blocks/Standard/Button toggleable",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Toolbars__Building-Blocks-Standard-Button-toggleable.json",
+  "bytes": 9879
+ },
+ {
+  "page": "Toolbars",
+  "set": "Building Blocks/Standard/Icon button",
+  "variants": 5,
+  "axes": [
+   "State"
+  ],
+  "file": "Toolbars__Building-Blocks-Standard-Icon-button.json",
+  "bytes": 3006
+ },
+ {
+  "page": "Toolbars",
+  "set": "Building Blocks/Standard/Icon button toggleable",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Toolbars__Building-Blocks-Standard-Icon-button-toggleable.json",
+  "bytes": 7172
+ },
+ {
+  "page": "Toolbars",
+  "set": "Building Blocks/Vibrant/Button toggleable",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Toolbars__Building-Blocks-Vibrant-Button-toggleable.json",
+  "bytes": 9865
+ },
+ {
+  "page": "Toolbars",
+  "set": "Building Blocks/Vibrant/Icon button",
+  "variants": 5,
+  "axes": [
+   "State"
+  ],
+  "file": "Toolbars__Building-Blocks-Vibrant-Icon-button.json",
+  "bytes": 3171
+ },
+ {
+  "page": "Toolbars",
+  "set": "Building Blocks/Vibrant/Icon button toggleable",
+  "variants": 10,
+  "axes": [
+   "Selected",
+   "State"
+  ],
+  "file": "Toolbars__Building-Blocks-Vibrant-Icon-button-toggleable.json",
+  "bytes": 7204
+ },
+ {
+  "page": "Toolbars",
+  "set": "Toolbar",
+  "variants": 6,
+  "axes": [
+   "Configuration",
+   "Orientation",
+   "Color"
+  ],
+  "file": "Toolbars__Toolbar.json",
+  "bytes": 7653
+ },
+ {
+  "page": "Tooltips",
+  "set": "Plain Tooltip",
+  "variants": 2,
+  "axes": [
+   "Type"
+  ],
+  "file": "Tooltips__Plain-Tooltip.json",
+  "bytes": 1067
+ },
+ {
+  "page": "Utilities",
+  "set": "Keyboard",
+  "variants": 12,
+  "axes": [
+   "Configuration",
+   "Style"
+  ],
+  "file": "Utilities__Keyboard.json",
+  "bytes": 153823
+ }
+]

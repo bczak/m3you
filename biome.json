@@ -43,6 +43,7 @@
       "!docs/.source",
       "!.design-sync/overrides",
       "!.design-sync/measurements.json",
+      "!.design-sync/kit",
       "!.claude"
     ]
   },

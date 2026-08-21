@@ -1,0 +1,3816 @@
+{
+ "M3": {
+  "Schemes/Primary": {
+   "type": "COLOR",
+   "light": {
+    "color": "#6750a4"
+   },
+   "dark": {
+    "color": "#d0bcff"
+   },
+   "baseline": {
+    "color": "#6750a4"
+   }
+  },
+  "Schemes/Surface Tint": {
+   "type": "COLOR",
+   "light": {
+    "color": "#6750a4"
+   },
+   "dark": {
+    "color": "#d0bcff"
+   },
+   "baseline": {
+    "color": "#6750a4"
+   }
+  },
+  "Schemes/On Primary": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff"
+   },
+   "dark": {
+    "color": "#381e72"
+   },
+   "baseline": {
+    "color": "#ffffff"
+   }
+  },
+  "Schemes/Primary Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#eaddff"
+   },
+   "dark": {
+    "color": "#4f378b"
+   },
+   "baseline": {
+    "color": "#eaddff"
+   }
+  },
+  "Schemes/On Primary Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4f378a"
+   },
+   "dark": {
+    "color": "#eaddff"
+   },
+   "baseline": {
+    "color": "#4f378a"
+   }
+  },
+  "Schemes/Secondary": {
+   "type": "COLOR",
+   "light": {
+    "color": "#625b71"
+   },
+   "dark": {
+    "color": "#ccc2dc"
+   },
+   "baseline": {
+    "color": "#625b71"
+   }
+  },
+  "Schemes/On Secondary": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff"
+   },
+   "dark": {
+    "color": "#332d41"
+   },
+   "baseline": {
+    "color": "#ffffff"
+   }
+  },
+  "Schemes/Secondary Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e8def8"
+   },
+   "dark": {
+    "color": "#4a4458"
+   },
+   "baseline": {
+    "color": "#e8def8"
+   }
+  },
+  "Schemes/On Secondary Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4a4459"
+   },
+   "dark": {
+    "color": "#e8def8"
+   },
+   "baseline": {
+    "color": "#4a4459"
+   }
+  },
+  "Schemes/Tertiary": {
+   "type": "COLOR",
+   "light": {
+    "color": "#7d5260"
+   },
+   "dark": {
+    "color": "#efb8c8"
+   },
+   "baseline": {
+    "color": "#7d5260"
+   }
+  },
+  "Schemes/On Tertiary": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff"
+   },
+   "dark": {
+    "color": "#492532"
+   },
+   "baseline": {
+    "color": "#ffffff"
+   }
+  },
+  "Schemes/Tertiary Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffd8e4"
+   },
+   "dark": {
+    "color": "#633b48"
+   },
+   "baseline": {
+    "color": "#ffd8e4"
+   }
+  },
+  "Schemes/On Tertiary Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#633b48"
+   },
+   "dark": {
+    "color": "#ffd8e4"
+   },
+   "baseline": {
+    "color": "#633b48"
+   }
+  },
+  "Schemes/Error": {
+   "type": "COLOR",
+   "light": {
+    "color": "#b3261e"
+   },
+   "dark": {
+    "color": "#f2b8b5"
+   },
+   "baseline": {
+    "color": "#b3261e"
+   }
+  },
+  "Schemes/On Error": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff"
+   },
+   "dark": {
+    "color": "#601410"
+   },
+   "baseline": {
+    "color": "#ffffff"
+   }
+  },
+  "Schemes/Error Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f9dedc"
+   },
+   "dark": {
+    "color": "#8c1d18"
+   },
+   "baseline": {
+    "color": "#f9dedc"
+   }
+  },
+  "Schemes/On Error Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#852221"
+   },
+   "dark": {
+    "color": "#f9dedc"
+   },
+   "baseline": {
+    "color": "#852221"
+   }
+  },
+  "Schemes/Background": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff"
+   },
+   "dark": {
+    "color": "#141218"
+   },
+   "baseline": {
+    "color": "#fef7ff"
+   }
+  },
+  "Schemes/On Background": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d1b20"
+   },
+   "dark": {
+    "color": "#e6e0e9"
+   },
+   "baseline": {
+    "color": "#1d1b20"
+   }
+  },
+  "Schemes/Surface": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff"
+   },
+   "dark": {
+    "color": "#141218"
+   },
+   "baseline": {
+    "color": "#fef7ff"
+   }
+  },
+  "Schemes/On Surface": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d1b20"
+   },
+   "dark": {
+    "color": "#e6e0e9"
+   },
+   "baseline": {
+    "color": "#1d1b20"
+   }
+  },
+  "Schemes/Surface Variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e7e0ec"
+   },
+   "dark": {
+    "color": "#49454f"
+   },
+   "baseline": {
+    "color": "#e7e0ec"
+   }
+  },
+  "Schemes/On Surface Variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#49454f"
+   },
+   "dark": {
+    "color": "#cac4d0"
+   },
+   "baseline": {
+    "color": "#49454f"
+   }
+  },
+  "Schemes/Outline": {
+   "type": "COLOR",
+   "light": {
+    "color": "#79747e"
+   },
+   "dark": {
+    "color": "#938f99"
+   },
+   "baseline": {
+    "color": "#79747e"
+   }
+  },
+  "Schemes/Outline Variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#cac4d0"
+   },
+   "dark": {
+    "color": "#49454f"
+   },
+   "baseline": {
+    "color": "#cac4d0"
+   }
+  },
+  "Schemes/Shadow": {
+   "type": "COLOR",
+   "light": {
+    "color": "#000000"
+   },
+   "dark": {
+    "color": "#000000"
+   },
+   "baseline": {
+    "color": "#000000"
+   }
+  },
+  "Schemes/Scrim": {
+   "type": "COLOR",
+   "light": {
+    "color": "#000000"
+   },
+   "dark": {
+    "color": "#000000"
+   },
+   "baseline": {
+    "color": "#000000"
+   }
+  },
+  "Schemes/Inverse Surface": {
+   "type": "COLOR",
+   "light": {
+    "color": "#322f35"
+   },
+   "dark": {
+    "color": "#e6e0e9"
+   },
+   "baseline": {
+    "color": "#322f35"
+   }
+  },
+  "Schemes/Inverse On Surface": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f5eff7"
+   },
+   "dark": {
+    "color": "#322f35"
+   },
+   "baseline": {
+    "color": "#f5eff7"
+   }
+  },
+  "Schemes/Inverse Primary": {
+   "type": "COLOR",
+   "light": {
+    "color": "#d0bcff"
+   },
+   "dark": {
+    "color": "#6750a4"
+   },
+   "baseline": {
+    "color": "#d0bcff"
+   }
+  },
+  "Schemes/Primary Fixed": {
+   "type": "COLOR",
+   "light": {
+    "color": "#eaddff"
+   },
+   "dark": {
+    "color": "#eaddff"
+   },
+   "baseline": {
+    "color": "#eaddff"
+   }
+  },
+  "Schemes/On Primary Fixed": {
+   "type": "COLOR",
+   "light": {
+    "color": "#21005d"
+   },
+   "dark": {
+    "color": "#21005d"
+   },
+   "baseline": {
+    "color": "#21005d"
+   }
+  },
+  "Schemes/Primary Fixed Dim": {
+   "type": "COLOR",
+   "light": {
+    "color": "#d0bcff"
+   },
+   "dark": {
+    "color": "#d0bcff"
+   },
+   "baseline": {
+    "color": "#d0bcff"
+   }
+  },
+  "Schemes/On Primary Fixed Variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4f378b"
+   },
+   "dark": {
+    "color": "#4f378b"
+   },
+   "baseline": {
+    "color": "#4f378b"
+   }
+  },
+  "Schemes/Secondary Fixed": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e8def8"
+   },
+   "dark": {
+    "color": "#e8def8"
+   },
+   "baseline": {
+    "color": "#e8def8"
+   }
+  },
+  "Schemes/On Secondary Fixed": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d192b"
+   },
+   "dark": {
+    "color": "#1d192b"
+   },
+   "baseline": {
+    "color": "#1d192b"
+   }
+  },
+  "Schemes/Secondary Fixed Dim": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ccc2dc"
+   },
+   "dark": {
+    "color": "#ccc2dc"
+   },
+   "baseline": {
+    "color": "#ccc2dc"
+   }
+  },
+  "Schemes/On Secondary Fixed Variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4a4458"
+   },
+   "dark": {
+    "color": "#4a4458"
+   },
+   "baseline": {
+    "color": "#4a4458"
+   }
+  },
+  "Schemes/Tertiary Fixed": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffd8e4"
+   },
+   "dark": {
+    "color": "#ffd8e4"
+   },
+   "baseline": {
+    "color": "#ffd8e4"
+   }
+  },
+  "Schemes/On Tertiary Fixed": {
+   "type": "COLOR",
+   "light": {
+    "color": "#31111d"
+   },
+   "dark": {
+    "color": "#31111d"
+   },
+   "baseline": {
+    "color": "#31111d"
+   }
+  },
+  "Schemes/Tertiary Fixed Dim": {
+   "type": "COLOR",
+   "light": {
+    "color": "#efb8c8"
+   },
+   "dark": {
+    "color": "#efb8c8"
+   },
+   "baseline": {
+    "color": "#efb8c8"
+   }
+  },
+  "Schemes/On Tertiary Fixed Variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#633b48"
+   },
+   "dark": {
+    "color": "#633b48"
+   },
+   "baseline": {
+    "color": "#633b48"
+   }
+  },
+  "Schemes/Surface Dim": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ded8e1"
+   },
+   "dark": {
+    "color": "#141218"
+   },
+   "baseline": {
+    "color": "#ded8e1"
+   }
+  },
+  "Schemes/Surface Bright": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff"
+   },
+   "dark": {
+    "color": "#3b383e"
+   },
+   "baseline": {
+    "color": "#fef7ff"
+   }
+  },
+  "Schemes/Surface Container Lowest": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff"
+   },
+   "dark": {
+    "color": "#0f0d13"
+   },
+   "baseline": {
+    "color": "#ffffff"
+   }
+  },
+  "Schemes/Surface Container Low": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f7f2fa"
+   },
+   "dark": {
+    "color": "#1d1b20"
+   },
+   "baseline": {
+    "color": "#f7f2fa"
+   }
+  },
+  "Schemes/Surface Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f3edf7"
+   },
+   "dark": {
+    "color": "#211f26"
+   },
+   "baseline": {
+    "color": "#f3edf7"
+   }
+  },
+  "Schemes/Surface Container High": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ece6f0"
+   },
+   "dark": {
+    "color": "#2b2930"
+   },
+   "baseline": {
+    "color": "#ece6f0"
+   }
+  },
+  "Schemes/Surface Container Highest": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e6e0e9"
+   },
+   "dark": {
+    "color": "#36343b"
+   },
+   "baseline": {
+    "color": "#e6e0e9"
+   }
+  },
+  "State Layers/Primary/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#6750a414"
+   },
+   "dark": {
+    "color": "#d0bcff14"
+   },
+   "baseline": {
+    "color": "#6750a414"
+   }
+  },
+  "State Layers/Primary/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#6750a41a"
+   },
+   "dark": {
+    "color": "#d0bcff1a"
+   },
+   "baseline": {
+    "color": "#6750a41a"
+   }
+  },
+  "State Layers/Primary/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#6750a429"
+   },
+   "dark": {
+    "color": "#d0bcff29"
+   },
+   "baseline": {
+    "color": "#6750a429"
+   }
+  },
+  "State Layers/On Primary/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff14"
+   },
+   "dark": {
+    "color": "#381e7214"
+   },
+   "baseline": {
+    "color": "#ffffff14"
+   }
+  },
+  "State Layers/On Primary/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff1a"
+   },
+   "dark": {
+    "color": "#381e721a"
+   },
+   "baseline": {
+    "color": "#ffffff1a"
+   }
+  },
+  "State Layers/On Primary/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff29"
+   },
+   "dark": {
+    "color": "#381e7229"
+   },
+   "baseline": {
+    "color": "#ffffff29"
+   }
+  },
+  "State Layers/Primary Container/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#eaddff14"
+   },
+   "dark": {
+    "color": "#4f378b14"
+   },
+   "baseline": {
+    "color": "#eaddff14"
+   }
+  },
+  "State Layers/Primary Container/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#eaddff1a"
+   },
+   "dark": {
+    "color": "#4f378b1a"
+   },
+   "baseline": {
+    "color": "#eaddff1a"
+   }
+  },
+  "State Layers/Primary Container/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#eaddff29"
+   },
+   "dark": {
+    "color": "#4f378b29"
+   },
+   "baseline": {
+    "color": "#eaddff29"
+   }
+  },
+  "State Layers/On Primary Container/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4f378a14"
+   },
+   "dark": {
+    "color": "#eaddff14"
+   },
+   "baseline": {
+    "color": "#4f378a14"
+   }
+  },
+  "State Layers/On Primary Container/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4f378a1a"
+   },
+   "dark": {
+    "color": "#eaddff1a"
+   },
+   "baseline": {
+    "color": "#4f378a1a"
+   }
+  },
+  "State Layers/On Primary Container/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4f378a29"
+   },
+   "dark": {
+    "color": "#eaddff29"
+   },
+   "baseline": {
+    "color": "#4f378a29"
+   }
+  },
+  "State Layers/Primary Fixed/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#eaddff14"
+   },
+   "dark": {
+    "color": "#eaddff14"
+   },
+   "baseline": {
+    "color": "#eaddff14"
+   }
+  },
+  "State Layers/Primary Fixed/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#eaddff1a"
+   },
+   "dark": {
+    "color": "#eaddff1a"
+   },
+   "baseline": {
+    "color": "#eaddff1a"
+   }
+  },
+  "State Layers/Primary Fixed/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#eaddff29"
+   },
+   "dark": {
+    "color": "#eaddff29"
+   },
+   "baseline": {
+    "color": "#eaddff29"
+   }
+  },
+  "State Layers/On Primary Fixed/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#21005d14"
+   },
+   "dark": {
+    "color": "#21005d14"
+   },
+   "baseline": {
+    "color": "#21005d14"
+   }
+  },
+  "State Layers/On Primary Fixed/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#21005d1a"
+   },
+   "dark": {
+    "color": "#21005d1a"
+   },
+   "baseline": {
+    "color": "#21005d1a"
+   }
+  },
+  "State Layers/On Primary Fixed/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#21005d29"
+   },
+   "dark": {
+    "color": "#21005d29"
+   },
+   "baseline": {
+    "color": "#21005d29"
+   }
+  },
+  "State Layers/Primary Fixed Dim/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#d0bcff14"
+   },
+   "dark": {
+    "color": "#d0bcff14"
+   },
+   "baseline": {
+    "color": "#d0bcff14"
+   }
+  },
+  "State Layers/Primary Fixed Dim/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#d0bcff1a"
+   },
+   "dark": {
+    "color": "#d0bcff1a"
+   },
+   "baseline": {
+    "color": "#d0bcff1a"
+   }
+  },
+  "State Layers/Primary Fixed Dim/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#d0bcff29"
+   },
+   "dark": {
+    "color": "#d0bcff29"
+   },
+   "baseline": {
+    "color": "#d0bcff29"
+   }
+  },
+  "State Layers/On Primary Fixed Variant/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4f378b14"
+   },
+   "dark": {
+    "color": "#4f378b14"
+   },
+   "baseline": {
+    "color": "#4f378b14"
+   }
+  },
+  "State Layers/On Primary Fixed Variant/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4f378b1a"
+   },
+   "dark": {
+    "color": "#4f378b1a"
+   },
+   "baseline": {
+    "color": "#4f378b1a"
+   }
+  },
+  "State Layers/On Primary Fixed Variant/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4f378b29"
+   },
+   "dark": {
+    "color": "#4f378b29"
+   },
+   "baseline": {
+    "color": "#4f378b29"
+   }
+  },
+  "State Layers/Secondary/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#625b7114"
+   },
+   "dark": {
+    "color": "#ccc2dc14"
+   },
+   "baseline": {
+    "color": "#625b7114"
+   }
+  },
+  "State Layers/Secondary/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#625b711a"
+   },
+   "dark": {
+    "color": "#ccc2dc1a"
+   },
+   "baseline": {
+    "color": "#625b711a"
+   }
+  },
+  "State Layers/Secondary/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#625b7129"
+   },
+   "dark": {
+    "color": "#ccc2dc29"
+   },
+   "baseline": {
+    "color": "#625b7129"
+   }
+  },
+  "State Layers/On Secondary/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff14"
+   },
+   "dark": {
+    "color": "#332d4114"
+   },
+   "baseline": {
+    "color": "#ffffff14"
+   }
+  },
+  "State Layers/On Secondary/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff1a"
+   },
+   "dark": {
+    "color": "#332d411a"
+   },
+   "baseline": {
+    "color": "#ffffff1a"
+   }
+  },
+  "State Layers/On Secondary/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff29"
+   },
+   "dark": {
+    "color": "#332d4129"
+   },
+   "baseline": {
+    "color": "#ffffff29"
+   }
+  },
+  "State Layers/Secondary Container/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e8def814"
+   },
+   "dark": {
+    "color": "#4a445814"
+   },
+   "baseline": {
+    "color": "#e8def814"
+   }
+  },
+  "State Layers/Secondary Container/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e8def81a"
+   },
+   "dark": {
+    "color": "#4a44581a"
+   },
+   "baseline": {
+    "color": "#e8def81a"
+   }
+  },
+  "State Layers/Secondary Container/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e8def829"
+   },
+   "dark": {
+    "color": "#4a445829"
+   },
+   "baseline": {
+    "color": "#e8def829"
+   }
+  },
+  "State Layers/On Secondary Container/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4a445914"
+   },
+   "dark": {
+    "color": "#e8def814"
+   },
+   "baseline": {
+    "color": "#4a445914"
+   }
+  },
+  "State Layers/On Secondary Container/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4a44591a"
+   },
+   "dark": {
+    "color": "#e8def81a"
+   },
+   "baseline": {
+    "color": "#4a44591a"
+   }
+  },
+  "State Layers/On Secondary Container/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4a445929"
+   },
+   "dark": {
+    "color": "#e8def829"
+   },
+   "baseline": {
+    "color": "#4a445929"
+   }
+  },
+  "State Layers/Secondary Fixed/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e8def814"
+   },
+   "dark": {
+    "color": "#e8def814"
+   },
+   "baseline": {
+    "color": "#e8def814"
+   }
+  },
+  "State Layers/Secondary Fixed/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e8def81a"
+   },
+   "dark": {
+    "color": "#e8def81a"
+   },
+   "baseline": {
+    "color": "#e8def81a"
+   }
+  },
+  "State Layers/Secondary Fixed/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e8def829"
+   },
+   "dark": {
+    "color": "#e8def829"
+   },
+   "baseline": {
+    "color": "#e8def829"
+   }
+  },
+  "State Layers/On Secondary Fixed/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d192b14"
+   },
+   "dark": {
+    "color": "#1d192b14"
+   },
+   "baseline": {
+    "color": "#1d192b14"
+   }
+  },
+  "State Layers/On Secondary Fixed/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d192b1a"
+   },
+   "dark": {
+    "color": "#1d192b1a"
+   },
+   "baseline": {
+    "color": "#1d192b1a"
+   }
+  },
+  "State Layers/On Secondary Fixed/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d192b29"
+   },
+   "dark": {
+    "color": "#1d192b29"
+   },
+   "baseline": {
+    "color": "#1d192b29"
+   }
+  },
+  "State Layers/Secondary Fixed Dim/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ccc2dc14"
+   },
+   "dark": {
+    "color": "#ccc2dc14"
+   },
+   "baseline": {
+    "color": "#ccc2dc14"
+   }
+  },
+  "State Layers/Secondary Fixed Dim/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ccc2dc1a"
+   },
+   "dark": {
+    "color": "#ccc2dc1a"
+   },
+   "baseline": {
+    "color": "#ccc2dc1a"
+   }
+  },
+  "State Layers/Secondary Fixed Dim/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ccc2dc29"
+   },
+   "dark": {
+    "color": "#ccc2dc29"
+   },
+   "baseline": {
+    "color": "#ccc2dc29"
+   }
+  },
+  "State Layers/On Secondary Fixed Variant/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4a445814"
+   },
+   "dark": {
+    "color": "#4a445814"
+   },
+   "baseline": {
+    "color": "#4a445814"
+   }
+  },
+  "State Layers/On Secondary Fixed Variant/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4a44581a"
+   },
+   "dark": {
+    "color": "#4a44581a"
+   },
+   "baseline": {
+    "color": "#4a44581a"
+   }
+  },
+  "State Layers/On Secondary Fixed Variant/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#4a445829"
+   },
+   "dark": {
+    "color": "#4a445829"
+   },
+   "baseline": {
+    "color": "#4a445829"
+   }
+  },
+  "State Layers/Tertiary/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#7d526014"
+   },
+   "dark": {
+    "color": "#efb8c814"
+   },
+   "baseline": {
+    "color": "#7d526014"
+   }
+  },
+  "State Layers/Tertiary/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#7d52601a"
+   },
+   "dark": {
+    "color": "#efb8c81a"
+   },
+   "baseline": {
+    "color": "#7d52601a"
+   }
+  },
+  "State Layers/Tertiary/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#7d526029"
+   },
+   "dark": {
+    "color": "#efb8c829"
+   },
+   "baseline": {
+    "color": "#7d526029"
+   }
+  },
+  "State Layers/On Tertiary/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff14"
+   },
+   "dark": {
+    "color": "#49253214"
+   },
+   "baseline": {
+    "color": "#ffffff14"
+   }
+  },
+  "State Layers/On Tertiary/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff1a"
+   },
+   "dark": {
+    "color": "#4925321a"
+   },
+   "baseline": {
+    "color": "#ffffff1a"
+   }
+  },
+  "State Layers/On Tertiary/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff29"
+   },
+   "dark": {
+    "color": "#49253229"
+   },
+   "baseline": {
+    "color": "#ffffff29"
+   }
+  },
+  "State Layers/Tertiary Container/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffd8e414"
+   },
+   "dark": {
+    "color": "#633b4814"
+   },
+   "baseline": {
+    "color": "#ffd8e414"
+   }
+  },
+  "State Layers/Tertiary Container/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffd8e41a"
+   },
+   "dark": {
+    "color": "#633b481a"
+   },
+   "baseline": {
+    "color": "#ffd8e41a"
+   }
+  },
+  "State Layers/Tertiary Container/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffd8e429"
+   },
+   "dark": {
+    "color": "#633b4829"
+   },
+   "baseline": {
+    "color": "#ffd8e429"
+   }
+  },
+  "State Layers/On Tertiary Container/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#633b4814"
+   },
+   "dark": {
+    "color": "#ffd8e414"
+   },
+   "baseline": {
+    "color": "#633b4814"
+   }
+  },
+  "State Layers/On Tertiary Container/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#633b481a"
+   },
+   "dark": {
+    "color": "#ffd8e41a"
+   },
+   "baseline": {
+    "color": "#633b481a"
+   }
+  },
+  "State Layers/On Tertiary Container/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#633b4829"
+   },
+   "dark": {
+    "color": "#ffd8e429"
+   },
+   "baseline": {
+    "color": "#633b4829"
+   }
+  },
+  "State Layers/Tertiary Fixed/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffd8e414"
+   },
+   "dark": {
+    "color": "#ffd8e414"
+   },
+   "baseline": {
+    "color": "#ffd8e414"
+   }
+  },
+  "State Layers/Tertiary Fixed/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffd8e41a"
+   },
+   "dark": {
+    "color": "#ffd8e41a"
+   },
+   "baseline": {
+    "color": "#ffd8e41a"
+   }
+  },
+  "State Layers/Tertiary Fixed/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffd8e429"
+   },
+   "dark": {
+    "color": "#ffd8e429"
+   },
+   "baseline": {
+    "color": "#ffd8e429"
+   }
+  },
+  "State Layers/On Tertiary Fixed/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#31111d14"
+   },
+   "dark": {
+    "color": "#31111d14"
+   },
+   "baseline": {
+    "color": "#31111d14"
+   }
+  },
+  "State Layers/On Tertiary Fixed/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#31111d1a"
+   },
+   "dark": {
+    "color": "#31111d1a"
+   },
+   "baseline": {
+    "color": "#31111d1a"
+   }
+  },
+  "State Layers/On Tertiary Fixed/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#31111d29"
+   },
+   "dark": {
+    "color": "#31111d29"
+   },
+   "baseline": {
+    "color": "#31111d29"
+   }
+  },
+  "State Layers/Tertiary Fixed Dim/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#efb8c814"
+   },
+   "dark": {
+    "color": "#efb8c814"
+   },
+   "baseline": {
+    "color": "#efb8c814"
+   }
+  },
+  "State Layers/Tertiary Fixed Dim/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#efb8c81a"
+   },
+   "dark": {
+    "color": "#efb8c81a"
+   },
+   "baseline": {
+    "color": "#efb8c81a"
+   }
+  },
+  "State Layers/Tertiary Fixed Dim/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#efb8c829"
+   },
+   "dark": {
+    "color": "#efb8c829"
+   },
+   "baseline": {
+    "color": "#efb8c829"
+   }
+  },
+  "State Layers/On Tertiary Fixed Variant/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#633b4814"
+   },
+   "dark": {
+    "color": "#633b4814"
+   },
+   "baseline": {
+    "color": "#633b4814"
+   }
+  },
+  "State Layers/On Tertiary Fixed Variant/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#633b481a"
+   },
+   "dark": {
+    "color": "#633b481a"
+   },
+   "baseline": {
+    "color": "#633b481a"
+   }
+  },
+  "State Layers/On Tertiary Fixed Variant/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#633b4829"
+   },
+   "dark": {
+    "color": "#633b4829"
+   },
+   "baseline": {
+    "color": "#633b4829"
+   }
+  },
+  "State Layers/Error/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#b3261e14"
+   },
+   "dark": {
+    "color": "#f2b8b514"
+   },
+   "baseline": {
+    "color": "#b3261e14"
+   }
+  },
+  "State Layers/Error/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#b3261e1a"
+   },
+   "dark": {
+    "color": "#f2b8b51a"
+   },
+   "baseline": {
+    "color": "#b3261e1a"
+   }
+  },
+  "State Layers/Error/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#b3261e29"
+   },
+   "dark": {
+    "color": "#f2b8b529"
+   },
+   "baseline": {
+    "color": "#b3261e29"
+   }
+  },
+  "State Layers/On Error/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff14"
+   },
+   "dark": {
+    "color": "#60141014"
+   },
+   "baseline": {
+    "color": "#ffffff14"
+   }
+  },
+  "State Layers/On Error/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff1a"
+   },
+   "dark": {
+    "color": "#6014101a"
+   },
+   "baseline": {
+    "color": "#ffffff1a"
+   }
+  },
+  "State Layers/On Error/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff29"
+   },
+   "dark": {
+    "color": "#60141029"
+   },
+   "baseline": {
+    "color": "#ffffff29"
+   }
+  },
+  "State Layers/Error Container/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f9dedc14"
+   },
+   "dark": {
+    "color": "#8c1d1814"
+   },
+   "baseline": {
+    "color": "#f9dedc14"
+   }
+  },
+  "State Layers/Error Container/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f9dedc1a"
+   },
+   "dark": {
+    "color": "#8c1d181a"
+   },
+   "baseline": {
+    "color": "#f9dedc1a"
+   }
+  },
+  "State Layers/Error Container/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f9dedc29"
+   },
+   "dark": {
+    "color": "#8c1d1829"
+   },
+   "baseline": {
+    "color": "#f9dedc29"
+   }
+  },
+  "State Layers/On Error Container/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#85222114"
+   },
+   "dark": {
+    "color": "#f9dedc14"
+   },
+   "baseline": {
+    "color": "#85222114"
+   }
+  },
+  "State Layers/On Error Container/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#8522211a"
+   },
+   "dark": {
+    "color": "#f9dedc1a"
+   },
+   "baseline": {
+    "color": "#8522211a"
+   }
+  },
+  "State Layers/On Error Container/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#85222129"
+   },
+   "dark": {
+    "color": "#f9dedc29"
+   },
+   "baseline": {
+    "color": "#85222129"
+   }
+  },
+  "State Layers/Outline/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#79747e14"
+   },
+   "dark": {
+    "color": "#938f9914"
+   },
+   "baseline": {
+    "color": "#79747e14"
+   }
+  },
+  "State Layers/Outline/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#79747e1a"
+   },
+   "dark": {
+    "color": "#938f991a"
+   },
+   "baseline": {
+    "color": "#79747e1a"
+   }
+  },
+  "State Layers/Outline/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#79747e29"
+   },
+   "dark": {
+    "color": "#938f9929"
+   },
+   "baseline": {
+    "color": "#79747e29"
+   }
+  },
+  "State Layers/Background/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff14"
+   },
+   "dark": {
+    "color": "#14121814"
+   },
+   "baseline": {
+    "color": "#fef7ff14"
+   }
+  },
+  "State Layers/Background/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff1a"
+   },
+   "dark": {
+    "color": "#1412181a"
+   },
+   "baseline": {
+    "color": "#fef7ff1a"
+   }
+  },
+  "State Layers/Background/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff29"
+   },
+   "dark": {
+    "color": "#14121829"
+   },
+   "baseline": {
+    "color": "#fef7ff29"
+   }
+  },
+  "State Layers/On Background/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d1b2014"
+   },
+   "dark": {
+    "color": "#e6e0e914"
+   },
+   "baseline": {
+    "color": "#1d1b2014"
+   }
+  },
+  "State Layers/On Background/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d1b201a"
+   },
+   "dark": {
+    "color": "#e6e0e91a"
+   },
+   "baseline": {
+    "color": "#1d1b201a"
+   }
+  },
+  "State Layers/On Background/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d1b2029"
+   },
+   "dark": {
+    "color": "#e6e0e929"
+   },
+   "baseline": {
+    "color": "#1d1b2029"
+   }
+  },
+  "State Layers/Surface/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff14"
+   },
+   "dark": {
+    "color": "#14121814"
+   },
+   "baseline": {
+    "color": "#fef7ff14"
+   }
+  },
+  "State Layers/Surface/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff1a"
+   },
+   "dark": {
+    "color": "#1412181a"
+   },
+   "baseline": {
+    "color": "#fef7ff1a"
+   }
+  },
+  "State Layers/Surface/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff29"
+   },
+   "dark": {
+    "color": "#14121829"
+   },
+   "baseline": {
+    "color": "#fef7ff29"
+   }
+  },
+  "State Layers/On Surface/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d1b2014"
+   },
+   "dark": {
+    "color": "#e6e0e914"
+   },
+   "baseline": {
+    "color": "#1d1b2014"
+   }
+  },
+  "State Layers/On Surface/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d1b201a"
+   },
+   "dark": {
+    "color": "#e6e0e91a"
+   },
+   "baseline": {
+    "color": "#1d1b201a"
+   }
+  },
+  "State Layers/On Surface/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d1b2029"
+   },
+   "dark": {
+    "color": "#e6e0e929"
+   },
+   "baseline": {
+    "color": "#1d1b2029"
+   }
+  },
+  "State Layers/Surface Variant/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e7e0ec14"
+   },
+   "dark": {
+    "color": "#49454f14"
+   },
+   "baseline": {
+    "color": "#e7e0ec14"
+   }
+  },
+  "State Layers/Surface Variant/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e7e0ec1a"
+   },
+   "dark": {
+    "color": "#49454f1a"
+   },
+   "baseline": {
+    "color": "#e7e0ec1a"
+   }
+  },
+  "State Layers/Surface Variant/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e7e0ec29"
+   },
+   "dark": {
+    "color": "#49454f29"
+   },
+   "baseline": {
+    "color": "#e7e0ec29"
+   }
+  },
+  "State Layers/On Surface Variant/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#49454f14"
+   },
+   "dark": {
+    "color": "#cac4d014"
+   },
+   "baseline": {
+    "color": "#49454f14"
+   }
+  },
+  "State Layers/On Surface Variant/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#49454f1a"
+   },
+   "dark": {
+    "color": "#cac4d01a"
+   },
+   "baseline": {
+    "color": "#49454f1a"
+   }
+  },
+  "State Layers/On Surface Variant/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#49454f29"
+   },
+   "dark": {
+    "color": "#cac4d029"
+   },
+   "baseline": {
+    "color": "#49454f29"
+   }
+  },
+  "State Layers/Inverse Surface/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#322f3514"
+   },
+   "dark": {
+    "color": "#e6e0e914"
+   },
+   "baseline": {
+    "color": "#322f3514"
+   }
+  },
+  "State Layers/Inverse Surface/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#322f351a"
+   },
+   "dark": {
+    "color": "#e6e0e91a"
+   },
+   "baseline": {
+    "color": "#322f351a"
+   }
+  },
+  "State Layers/Inverse Surface/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#322f3529"
+   },
+   "dark": {
+    "color": "#e6e0e929"
+   },
+   "baseline": {
+    "color": "#322f3529"
+   }
+  },
+  "State Layers/Inverse On Surface/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f5eff714"
+   },
+   "dark": {
+    "color": "#322f3514"
+   },
+   "baseline": {
+    "color": "#f5eff714"
+   }
+  },
+  "State Layers/Inverse On Surface/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f5eff71a"
+   },
+   "dark": {
+    "color": "#322f351a"
+   },
+   "baseline": {
+    "color": "#f5eff71a"
+   }
+  },
+  "State Layers/Inverse On Surface/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f5eff729"
+   },
+   "dark": {
+    "color": "#322f3529"
+   },
+   "baseline": {
+    "color": "#f5eff729"
+   }
+  },
+  "State Layers/Inverse Primary/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#d0bcff14"
+   },
+   "dark": {
+    "color": "#6750a414"
+   },
+   "baseline": {
+    "color": "#d0bcff14"
+   }
+  },
+  "State Layers/Inverse Primary/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#d0bcff1a"
+   },
+   "dark": {
+    "color": "#6750a41a"
+   },
+   "baseline": {
+    "color": "#d0bcff1a"
+   }
+  },
+  "State Layers/Inverse Primary/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#d0bcff29"
+   },
+   "dark": {
+    "color": "#6750a429"
+   },
+   "baseline": {
+    "color": "#d0bcff29"
+   }
+  },
+  "State Layers/Shadow/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#00000014"
+   },
+   "dark": {
+    "color": "#00000014"
+   },
+   "baseline": {
+    "color": "#00000014"
+   }
+  },
+  "State Layers/Shadow/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#0000001a"
+   },
+   "dark": {
+    "color": "#0000001a"
+   },
+   "baseline": {
+    "color": "#0000001a"
+   }
+  },
+  "State Layers/Shadow/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#00000029"
+   },
+   "dark": {
+    "color": "#00000029"
+   },
+   "baseline": {
+    "color": "#00000029"
+   }
+  },
+  "State Layers/Surface Tint/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#6750a414"
+   },
+   "dark": {
+    "color": "#d0bcff14"
+   },
+   "baseline": {
+    "color": "#6750a414"
+   }
+  },
+  "State Layers/Surface Tint/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#6750a41a"
+   },
+   "dark": {
+    "color": "#d0bcff1a"
+   },
+   "baseline": {
+    "color": "#6750a41a"
+   }
+  },
+  "State Layers/Surface Tint/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#6750a429"
+   },
+   "dark": {
+    "color": "#d0bcff29"
+   },
+   "baseline": {
+    "color": "#6750a429"
+   }
+  },
+  "State Layers/Outline Variant/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#cac4d014"
+   },
+   "dark": {
+    "color": "#49454f14"
+   },
+   "baseline": {
+    "color": "#cac4d014"
+   }
+  },
+  "State Layers/Outline Variant/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#cac4d01a"
+   },
+   "dark": {
+    "color": "#49454f1a"
+   },
+   "baseline": {
+    "color": "#cac4d01a"
+   }
+  },
+  "State Layers/Outline Variant/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#cac4d029"
+   },
+   "dark": {
+    "color": "#49454f29"
+   },
+   "baseline": {
+    "color": "#cac4d029"
+   }
+  },
+  "State Layers/Scrim/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#00000014"
+   },
+   "dark": {
+    "color": "#00000014"
+   },
+   "baseline": {
+    "color": "#00000014"
+   }
+  },
+  "State Layers/Scrim/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#0000001a"
+   },
+   "dark": {
+    "color": "#0000001a"
+   },
+   "baseline": {
+    "color": "#0000001a"
+   }
+  },
+  "State Layers/Scrim/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#00000029"
+   },
+   "dark": {
+    "color": "#00000029"
+   },
+   "baseline": {
+    "color": "#00000029"
+   }
+  },
+  "State Layers/Surface Container Highest/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e6e0e914"
+   },
+   "dark": {
+    "color": "#36343b14"
+   },
+   "baseline": {
+    "color": "#e6e0e914"
+   }
+  },
+  "State Layers/Surface Container Highest/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e6e0e91a"
+   },
+   "dark": {
+    "color": "#36343b1a"
+   },
+   "baseline": {
+    "color": "#e6e0e91a"
+   }
+  },
+  "State Layers/Surface Container Highest/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#e6e0e929"
+   },
+   "dark": {
+    "color": "#36343b29"
+   },
+   "baseline": {
+    "color": "#e6e0e929"
+   }
+  },
+  "State Layers/Surface Container High/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ece6f014"
+   },
+   "dark": {
+    "color": "#2b293014"
+   },
+   "baseline": {
+    "color": "#ece6f014"
+   }
+  },
+  "State Layers/Surface Container High/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ece6f01a"
+   },
+   "dark": {
+    "color": "#2b29301a"
+   },
+   "baseline": {
+    "color": "#ece6f01a"
+   }
+  },
+  "State Layers/Surface Container High/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ece6f029"
+   },
+   "dark": {
+    "color": "#2b293029"
+   },
+   "baseline": {
+    "color": "#ece6f029"
+   }
+  },
+  "State Layers/Surface Container/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f3edf714"
+   },
+   "dark": {
+    "color": "#211f2614"
+   },
+   "baseline": {
+    "color": "#f3edf714"
+   }
+  },
+  "State Layers/Surface Container/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f3edf71a"
+   },
+   "dark": {
+    "color": "#211f261a"
+   },
+   "baseline": {
+    "color": "#f3edf71a"
+   }
+  },
+  "State Layers/Surface Container/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f3edf729"
+   },
+   "dark": {
+    "color": "#211f2629"
+   },
+   "baseline": {
+    "color": "#f3edf729"
+   }
+  },
+  "State Layers/Surface Container Low/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f7f2fa14"
+   },
+   "dark": {
+    "color": "#1d1b2014"
+   },
+   "baseline": {
+    "color": "#f7f2fa14"
+   }
+  },
+  "State Layers/Surface Container Low/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f7f2fa1a"
+   },
+   "dark": {
+    "color": "#1d1b201a"
+   },
+   "baseline": {
+    "color": "#f7f2fa1a"
+   }
+  },
+  "State Layers/Surface Container Low/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f7f2fa29"
+   },
+   "dark": {
+    "color": "#1d1b2029"
+   },
+   "baseline": {
+    "color": "#f7f2fa29"
+   }
+  },
+  "State Layers/Surface Container Lowest/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff14"
+   },
+   "dark": {
+    "color": "#0f0d1314"
+   },
+   "baseline": {
+    "color": "#ffffff14"
+   }
+  },
+  "State Layers/Surface Container Lowest/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff1a"
+   },
+   "dark": {
+    "color": "#0f0d131a"
+   },
+   "baseline": {
+    "color": "#ffffff1a"
+   }
+  },
+  "State Layers/Surface Container Lowest/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ffffff29"
+   },
+   "dark": {
+    "color": "#0f0d1329"
+   },
+   "baseline": {
+    "color": "#ffffff29"
+   }
+  },
+  "State Layers/Surface Bright/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff14"
+   },
+   "dark": {
+    "color": "#3b383e14"
+   },
+   "baseline": {
+    "color": "#fef7ff14"
+   }
+  },
+  "State Layers/Surface Bright/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff1a"
+   },
+   "dark": {
+    "color": "#3b383e1a"
+   },
+   "baseline": {
+    "color": "#fef7ff1a"
+   }
+  },
+  "State Layers/Surface Bright/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#fef7ff29"
+   },
+   "dark": {
+    "color": "#3b383e29"
+   },
+   "baseline": {
+    "color": "#fef7ff29"
+   }
+  },
+  "State Layers/Surface Dim/Opacity-08": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ded8e114"
+   },
+   "dark": {
+    "color": "#14121814"
+   },
+   "baseline": {
+    "color": "#ded8e114"
+   }
+  },
+  "State Layers/Surface Dim/Opacity-10": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ded8e11a"
+   },
+   "dark": {
+    "color": "#1412181a"
+   },
+   "baseline": {
+    "color": "#ded8e11a"
+   }
+  },
+  "State Layers/Surface Dim/Opacity-16": {
+   "type": "COLOR",
+   "light": {
+    "color": "#ded8e129"
+   },
+   "dark": {
+    "color": "#14121829"
+   },
+   "baseline": {
+    "color": "#ded8e129"
+   }
+  },
+  "Add-ons/Section background": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f5f5f5"
+   },
+   "dark": {
+    "color": "#000000"
+   },
+   "baseline": {
+    "color": "#f5f5f5"
+   }
+  }
+ },
+ "Font theme": {
+  "Static/Font/Brand": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Font/Plain": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Weight/Regular": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Weight/Medium": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Weight/Bold": {
+   "type": "STRING",
+   "light": {
+    "text": "SemiBold"
+   },
+   "dark": {
+    "text": "SemiBold"
+   },
+   "baseline": {
+    "text": "SemiBold"
+   }
+  },
+  "Tracking/Small": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0.1
+   },
+   "dark": {
+    "num": 0.1
+   },
+   "baseline": {
+    "num": 0.1
+   }
+  },
+  "Tracking/None": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0
+   },
+   "dark": {
+    "num": 0
+   },
+   "baseline": {
+    "num": 0
+   }
+  }
+ },
+ "Typescale": {
+  "Static/Display Large/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 57
+   },
+   "dark": {
+    "num": 57
+   },
+   "baseline": {
+    "num": 57
+   }
+  },
+  "Static/Display Large/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": -0.25
+   },
+   "dark": {
+    "num": -0.25
+   },
+   "baseline": {
+    "num": -0.25
+   }
+  },
+  "Static/Display Large/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 64
+   },
+   "dark": {
+    "num": 64
+   },
+   "baseline": {
+    "num": 64
+   }
+  },
+  "Static/Display Medium/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 45
+   },
+   "dark": {
+    "num": 45
+   },
+   "baseline": {
+    "num": 45
+   }
+  },
+  "Static/Display Medium/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 52
+   },
+   "dark": {
+    "num": 52
+   },
+   "baseline": {
+    "num": 52
+   }
+  },
+  "Static/Display Medium/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0
+   },
+   "dark": {
+    "num": 0
+   },
+   "baseline": {
+    "num": 0
+   }
+  },
+  "Static/Display Small/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 36
+   },
+   "dark": {
+    "num": 36
+   },
+   "baseline": {
+    "num": 36
+   }
+  },
+  "Static/Display Small/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0
+   },
+   "dark": {
+    "num": 0
+   },
+   "baseline": {
+    "num": 0
+   }
+  },
+  "Static/Display Small/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 44
+   },
+   "dark": {
+    "num": 44
+   },
+   "baseline": {
+    "num": 44
+   }
+  },
+  "Static/Headline Large/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 32
+   },
+   "dark": {
+    "num": 32
+   },
+   "baseline": {
+    "num": 32
+   }
+  },
+  "Static/Headline Large/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0
+   },
+   "dark": {
+    "num": 0
+   },
+   "baseline": {
+    "num": 0
+   }
+  },
+  "Static/Headline Large/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 40
+   },
+   "dark": {
+    "num": 40
+   },
+   "baseline": {
+    "num": 40
+   }
+  },
+  "Static/Headline Medium/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 28
+   },
+   "dark": {
+    "num": 28
+   },
+   "baseline": {
+    "num": 28
+   }
+  },
+  "Static/Headline Small/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 24
+   },
+   "dark": {
+    "num": 24
+   },
+   "baseline": {
+    "num": 24
+   }
+  },
+  "Static/Headline Medium/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0
+   },
+   "dark": {
+    "num": 0
+   },
+   "baseline": {
+    "num": 0
+   }
+  },
+  "Static/Headline Small/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0
+   },
+   "dark": {
+    "num": 0
+   },
+   "baseline": {
+    "num": 0
+   }
+  },
+  "Static/Headline Medium/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 36
+   },
+   "dark": {
+    "num": 36
+   },
+   "baseline": {
+    "num": 36
+   }
+  },
+  "Static/Headline Small/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 32
+   },
+   "dark": {
+    "num": 32
+   },
+   "baseline": {
+    "num": 32
+   }
+  },
+  "Static/Title Large/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 22
+   },
+   "dark": {
+    "num": 22
+   },
+   "baseline": {
+    "num": 22
+   }
+  },
+  "Static/Title Large/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0
+   },
+   "dark": {
+    "num": 0
+   },
+   "baseline": {
+    "num": 0
+   }
+  },
+  "Static/Title Large/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 28
+   },
+   "dark": {
+    "num": 28
+   },
+   "baseline": {
+    "num": 28
+   }
+  },
+  "Static/Title Large/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Title Large/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Title Medium/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Title Medium/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Title Medium/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 16
+   },
+   "dark": {
+    "num": 16
+   },
+   "baseline": {
+    "num": 16
+   }
+  },
+  "Static/Title Medium/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0.15
+   },
+   "dark": {
+    "num": 0.15
+   },
+   "baseline": {
+    "num": 0.15
+   }
+  },
+  "Static/Title Medium/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 24
+   },
+   "dark": {
+    "num": 24
+   },
+   "baseline": {
+    "num": 24
+   }
+  },
+  "Static/Title Small/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Title Small/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Title Small/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 14
+   },
+   "dark": {
+    "num": 14
+   },
+   "baseline": {
+    "num": 14
+   }
+  },
+  "Static/Title Small/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0.1
+   },
+   "dark": {
+    "num": 0.1
+   },
+   "baseline": {
+    "num": 0.1
+   }
+  },
+  "Static/Title Small/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 20
+   },
+   "dark": {
+    "num": 20
+   },
+   "baseline": {
+    "num": 20
+   }
+  },
+  "Static/Label Large/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Label Large/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Label Large/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 14
+   },
+   "dark": {
+    "num": 14
+   },
+   "baseline": {
+    "num": 14
+   }
+  },
+  "Static/Label Large/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0.1
+   },
+   "dark": {
+    "num": 0.1
+   },
+   "baseline": {
+    "num": 0.1
+   }
+  },
+  "Static/Label Large/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 20
+   },
+   "dark": {
+    "num": 20
+   },
+   "baseline": {
+    "num": 20
+   }
+  },
+  "Static/Label Medium/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Label Medium/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Label Medium/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 12
+   },
+   "dark": {
+    "num": 12
+   },
+   "baseline": {
+    "num": 12
+   }
+  },
+  "Static/Label Medium/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0.5
+   },
+   "dark": {
+    "num": 0.5
+   },
+   "baseline": {
+    "num": 0.5
+   }
+  },
+  "Static/Label Medium/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 16
+   },
+   "dark": {
+    "num": 16
+   },
+   "baseline": {
+    "num": 16
+   }
+  },
+  "Static/Label Small/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Label Small/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Label Small/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 11
+   },
+   "dark": {
+    "num": 11
+   },
+   "baseline": {
+    "num": 11
+   }
+  },
+  "Static/Label Small/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0.5
+   },
+   "dark": {
+    "num": 0.5
+   },
+   "baseline": {
+    "num": 0.5
+   }
+  },
+  "Static/Label Small/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 16
+   },
+   "dark": {
+    "num": 16
+   },
+   "baseline": {
+    "num": 16
+   }
+  },
+  "Static/Headline Small/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Headline Small/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Headline Medium/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Headline Medium/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Headline Large/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Headline Large/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Display Small/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Display Small/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Display Medium/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Display Medium/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Display Large/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Display Large/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Body Large/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Body Large/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Body Large/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 16
+   },
+   "dark": {
+    "num": 16
+   },
+   "baseline": {
+    "num": 16
+   }
+  },
+  "Static/Body Large/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0.5
+   },
+   "dark": {
+    "num": 0.5
+   },
+   "baseline": {
+    "num": 0.5
+   }
+  },
+  "Static/Body Large/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 24
+   },
+   "dark": {
+    "num": 24
+   },
+   "baseline": {
+    "num": 24
+   }
+  },
+  "Static/Body Medium/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Body Medium/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Body Medium/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 14
+   },
+   "dark": {
+    "num": 14
+   },
+   "baseline": {
+    "num": 14
+   }
+  },
+  "Static/Body Medium/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0.25
+   },
+   "dark": {
+    "num": 0.25
+   },
+   "baseline": {
+    "num": 0.25
+   }
+  },
+  "Static/Body Medium/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 20
+   },
+   "dark": {
+    "num": 20
+   },
+   "baseline": {
+    "num": 20
+   }
+  },
+  "Static/Body Small/Font": {
+   "type": "STRING",
+   "light": {
+    "text": "Roboto"
+   },
+   "dark": {
+    "text": "Roboto"
+   },
+   "baseline": {
+    "text": "Roboto"
+   }
+  },
+  "Static/Body Small/Weight": {
+   "type": "STRING",
+   "light": {
+    "text": "Regular"
+   },
+   "dark": {
+    "text": "Regular"
+   },
+   "baseline": {
+    "text": "Regular"
+   }
+  },
+  "Static/Body Small/Size": {
+   "type": "FLOAT",
+   "light": {
+    "num": 12
+   },
+   "dark": {
+    "num": 12
+   },
+   "baseline": {
+    "num": 12
+   }
+  },
+  "Static/Body Small/Tracking": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0.4
+   },
+   "dark": {
+    "num": 0.4
+   },
+   "baseline": {
+    "num": 0.4
+   }
+  },
+  "Static/Body Small/Line Height": {
+   "type": "FLOAT",
+   "light": {
+    "num": 16
+   },
+   "dark": {
+    "num": 16
+   },
+   "baseline": {
+    "num": 16
+   }
+  },
+  "Static/Label Large/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "SemiBold"
+   },
+   "dark": {
+    "text": "SemiBold"
+   },
+   "baseline": {
+    "text": "SemiBold"
+   }
+  },
+  "Static/Label Medium/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "SemiBold"
+   },
+   "dark": {
+    "text": "SemiBold"
+   },
+   "baseline": {
+    "text": "SemiBold"
+   }
+  },
+  "Static/Display Large/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Display Medium/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Display Small/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Headline Large/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Headline Medium/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Headline Small/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Title Large/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Title Medium/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "SemiBold"
+   },
+   "dark": {
+    "text": "SemiBold"
+   },
+   "baseline": {
+    "text": "SemiBold"
+   }
+  },
+  "Static/Title Small/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "SemiBold"
+   },
+   "dark": {
+    "text": "SemiBold"
+   },
+   "baseline": {
+    "text": "SemiBold"
+   }
+  },
+  "Static/Label Small/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "SemiBold"
+   },
+   "dark": {
+    "text": "SemiBold"
+   },
+   "baseline": {
+    "text": "SemiBold"
+   }
+  },
+  "Static/Body Large/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Body Medium/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  },
+  "Static/Body Small/Weight-emphasized": {
+   "type": "STRING",
+   "light": {
+    "text": "Medium"
+   },
+   "dark": {
+    "text": "Medium"
+   },
+   "baseline": {
+    "text": "Medium"
+   }
+  }
+ },
+ "Shape": {
+  "Corner/None": {
+   "type": "FLOAT",
+   "light": {
+    "num": 0
+   },
+   "dark": {
+    "num": 0
+   },
+   "baseline": {
+    "num": 0
+   }
+  },
+  "Corner/Extra-small": {
+   "type": "FLOAT",
+   "light": {
+    "num": 4
+   },
+   "dark": {
+    "num": 4
+   },
+   "baseline": {
+    "num": 4
+   }
+  },
+  "Corner/Small": {
+   "type": "FLOAT",
+   "light": {
+    "num": 8
+   },
+   "dark": {
+    "num": 8
+   },
+   "baseline": {
+    "num": 8
+   }
+  },
+  "Corner/Medium": {
+   "type": "FLOAT",
+   "light": {
+    "num": 12
+   },
+   "dark": {
+    "num": 12
+   },
+   "baseline": {
+    "num": 12
+   }
+  },
+  "Corner/Large": {
+   "type": "FLOAT",
+   "light": {
+    "num": 16
+   },
+   "dark": {
+    "num": 16
+   },
+   "baseline": {
+    "num": 16
+   }
+  },
+  "Corner/Extra-large": {
+   "type": "FLOAT",
+   "light": {
+    "num": 28
+   },
+   "dark": {
+    "num": 28
+   },
+   "baseline": {
+    "num": 28
+   }
+  },
+  "Corner/Full": {
+   "type": "FLOAT",
+   "light": {
+    "num": 1000
+   },
+   "dark": {
+    "num": 1000
+   },
+   "baseline": {
+    "num": 1000
+   }
+  },
+  "Corner/Large-increased": {
+   "type": "FLOAT",
+   "light": {
+    "num": 20
+   },
+   "dark": {
+    "num": 20
+   },
+   "baseline": {
+    "num": 20
+   }
+  },
+  "Corner/Extra-large-increased": {
+   "type": "FLOAT",
+   "light": {
+    "num": 32
+   },
+   "dark": {
+    "num": 32
+   },
+   "baseline": {
+    "num": 32
+   }
+  },
+  "Corner/Extra-extra-large": {
+   "type": "FLOAT",
+   "light": {
+    "num": 48
+   },
+   "dark": {
+    "num": 48
+   },
+   "baseline": {
+    "num": 48
+   }
+  }
+ },
+ "?": {
+  "Corner/Full": {
+   "type": "FLOAT",
+   "light": {
+    "num": 1000
+   },
+   "dark": {
+    "num": 1000
+   },
+   "baseline": {
+    "num": 1000
+   }
+  },
+  "Corner/Medium": {
+   "type": "FLOAT",
+   "light": {
+    "num": 12
+   },
+   "dark": {
+    "num": 12
+   },
+   "baseline": {
+    "num": 12
+   }
+  },
+  "Corner/Large": {
+   "type": "FLOAT",
+   "light": {
+    "num": 16
+   },
+   "dark": {
+    "num": 16
+   },
+   "baseline": {
+    "num": 16
+   }
+  },
+  "Corner/Small": {
+   "type": "FLOAT",
+   "light": {
+    "num": 8
+   },
+   "dark": {
+    "num": 8
+   },
+   "baseline": {
+    "num": 8
+   }
+  },
+  "Baseline/Surface colors/theme=light/Audience - On surface variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#444746"
+   },
+   "dark": {
+    "color": "#444746"
+   },
+   "baseline": {
+    "color": "#444746"
+   }
+  },
+  "Baseline/Surface colors/theme=dark/Audience - On surface variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#c4c7c5"
+   },
+   "dark": {
+    "color": "#c4c7c5"
+   },
+   "baseline": {
+    "color": "#c4c7c5"
+   }
+  },
+  "Baseline/Surface colors/Theme - On surface variant": {
+   "type": "COLOR",
+   "light": {
+    "err": "missing"
+   },
+   "dark": {
+    "err": "missing"
+   },
+   "baseline": {
+    "err": "missing"
+   }
+  },
+  "Baseline/Surface colors/On surface variant": {
+   "type": "COLOR",
+   "light": {
+    "err": "missing"
+   },
+   "dark": {
+    "err": "missing"
+   },
+   "baseline": {
+    "err": "missing"
+   }
+  },
+  "Schemes/On Surface Variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#49454f"
+   },
+   "dark": {
+    "color": "#49454f"
+   },
+   "baseline": {
+    "color": "#49454f"
+   }
+  },
+  "Schemes/Surface Container": {
+   "type": "COLOR",
+   "light": {
+    "color": "#f3edf7"
+   },
+   "dark": {
+    "color": "#f3edf7"
+   },
+   "baseline": {
+    "color": "#f3edf7"
+   }
+  },
+  "Schemes/Outline Variant": {
+   "type": "COLOR",
+   "light": {
+    "color": "#cac4d0"
+   },
+   "dark": {
+    "color": "#cac4d0"
+   },
+   "baseline": {
+    "color": "#cac4d0"
+   }
+  },
+  "Schemes/On Surface": {
+   "type": "COLOR",
+   "light": {
+    "color": "#1d1b20"
+   },
+   "dark": {
+    "color": "#1d1b20"
+   },
+   "baseline": {
+    "color": "#1d1b20"
+   }
+  },
+  "Palettes/Static palette/Static – Black white/Black": {
+   "type": "COLOR",
+   "light": {
+    "color": "#000000"
+   },
+   "dark": {
+    "color": "#000000"
+   },
+   "baseline": {
+    "color": "#000000"
+   }
+  }
+ }
+}

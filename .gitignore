@@ -31,3 +31,6 @@ docs/src/lib/docgen.json
 
 # Playwright MCP scratch output
 .playwright-mcp/
+
+# Local git worktrees created by Claude Code
+.claude/worktrees/
