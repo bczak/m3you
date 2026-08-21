@@ -40,6 +40,14 @@ export default defineConfig({
     // please see https://tanstack.com/start/latest/docs/framework/react/guide/hosting#nitro for guides on hosting
     nitro(),
   ],
+  ssr: {
+    // `@material/material-color-utilities` is `"type": "module"` but ships
+    // extensionless relative imports (`./dynamic_color`). Node's ESM resolver
+    // rejects those, so leaving it external makes every SSR render throw
+    // ERR_MODULE_NOT_FOUND. Vite's resolver handles the missing extensions, so
+    // bundle it instead. The production build already bundles it and is unaffected.
+    noExternal: ['@material/material-color-utilities'],
+  },
   resolve: {
     tsconfigPaths: true,
     // The library is imported from `../src`, which resolves React from the repo root
