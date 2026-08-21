@@ -49,9 +49,14 @@ if (typeof document !== 'undefined') {
 const buildThemeStyle = (seed: string, isDark: boolean): React.CSSProperties => {
   const { light, dark } = generateM3Theme(seed);
   const tokens = isDark ? dark : light;
+  // No backgroundColor here on purpose. Under `layout: 'centered'` this wrapper
+  // is shrink-to-fit, so painting the surface on it draws a tinted box around
+  // the component rather than a page behind it — most visible on docs pages,
+  // where useCanvasSurface leaves the canvas alone and the box sits on top of
+  // whatever the canvas is showing. Story view still gets its surface from
+  // useCanvasSurface, which paints <body> edge to edge.
   const style: Record<string, string> = {
     colorScheme: isDark ? 'dark' : 'light',
-    backgroundColor: 'var(--md-sys-color-surface)',
     color: 'var(--md-sys-color-on-surface)',
     minHeight: '100%',
   };
