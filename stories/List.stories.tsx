@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ArchiveIcon, InboxIcon, MoreVerticalIcon, StarIcon, UserIcon } from 'lucide-react';
 import { useState } from 'react';
+import { expect } from 'storybook/test';
 
 import { IconButton } from '../src/components/IconButton/icon-button';
 import { List, ListDivider, ListItem, ListItemAccordion, ListItemSwipe } from '../src/components/List/list';
@@ -322,4 +323,106 @@ export const TwoHundredPercentZoom: Story = {
 
 export const Empty: Story = {
   render: () => <List aria-label="No results" />,
+};
+
+// =============================================================================
+// Segmented geometry — measured in the browser
+// =============================================================================
+
+export const SegmentedGeometry: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A segmented group is one filled shape: its rows sit on the `surface-container` role rather than the page background, and the corners on the outside of the group — the first row's top, the last row's bottom — take the 16dp outer corner while the corners inside the group keep the 4dp inner one. The play function measures both, checks the rows actually stand out from the page, and confirms the standard appearance is untouched.",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <List appearance="segmented" aria-label="Segmented geometry">
+        <ListItem headline="Inbox" />
+        <ListItem headline="Starred" />
+        <ListItem headline="Archive" />
+      </List>
+      <List appearance="standard" aria-label="Standard geometry">
+        <ListItem headline="Inbox" />
+        <ListItem headline="Starred" />
+        <ListItem headline="Archive" />
+      </List>
+      <List
+        appearance="segmented"
+        aria-label="Overridden container colour"
+        style={{ '--md-list-item-container-color': 'rgb(250, 240, 230)' } as React.CSSProperties}
+      >
+        <ListItem headline="Custom" />
+      </List>
+    </div>
+  ),
+  play: async ({ canvas, step }) => {
+    const rows = (label: string) =>
+      Array.from(canvas.getByRole('list', { name: label }).querySelectorAll<HTMLElement>('.md-list-item'));
+    const [first, middle, last] = rows('Segmented geometry');
+
+    /** A colour token as the browser computes it, so it can be compared to a used value. */
+    const resolve = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    };
+    const contrast = (a: string, b: string) => {
+      const luminance = (color: string) => {
+        const [r, g, b2] = (color.match(/\d+/g) ?? []).slice(0, 3).map((channel) => {
+          const value = Number(channel) / 255;
+          return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+        });
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b2;
+      };
+      const [high, low] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+      return (high + 0.05) / (low + 0.05);
+    };
+
+    await step('segmented rows are filled containers, not the page background', async () => {
+      const surface = resolve('--md-sys-color-surface');
+      const surfaceContainer = resolve('--md-sys-color-surface-container');
+      const row = getComputedStyle(first).backgroundColor;
+      // The bug this story guards: rows painted `surface`, the same colour as
+      // the page, so a segmented group measured 1.00:1 and read as loose text.
+      await expect(row).toBe(surfaceContainer);
+      await expect(row).not.toBe(surface);
+      await expect(contrast(row, surface)).toBeGreaterThan(1.05);
+      await expect(getComputedStyle(middle).backgroundColor).toBe(row);
+      await expect(getComputedStyle(last).backgroundColor).toBe(row);
+    });
+
+    await step('the group takes the 16dp outer corner, its rows the 4dp inner one', async () => {
+      const top = getComputedStyle(first);
+      await expect(top.borderTopLeftRadius).toBe('16px');
+      await expect(top.borderTopRightRadius).toBe('16px');
+      await expect(top.borderBottomLeftRadius).toBe('4px');
+      await expect(top.borderBottomRightRadius).toBe('4px');
+
+      await expect(getComputedStyle(middle).borderRadius).toBe('4px');
+
+      const bottom = getComputedStyle(last);
+      await expect(bottom.borderTopLeftRadius).toBe('4px');
+      await expect(bottom.borderTopRightRadius).toBe('4px');
+      await expect(bottom.borderBottomLeftRadius).toBe('16px');
+      await expect(bottom.borderBottomRightRadius).toBe('16px');
+    });
+
+    await step('the standard appearance keeps square, page-coloured rows', async () => {
+      const [standardFirst] = rows('Standard geometry');
+      await expect(getComputedStyle(standardFirst).borderRadius).toBe('0px');
+      await expect(getComputedStyle(standardFirst).backgroundColor).toBe(resolve('--md-sys-color-surface'));
+    });
+
+    await step('the container colour stays overridable', async () => {
+      const [custom] = rows('Overridden container colour');
+      await expect(getComputedStyle(custom).backgroundColor).toBe('rgb(250, 240, 230)');
+    });
+  },
 };

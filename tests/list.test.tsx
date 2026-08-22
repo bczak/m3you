@@ -556,3 +556,43 @@ test('list CSS contains the expressive geometry, targets, responsive behavior, a
   expect(listCss).toContain('@media (prefers-reduced-motion: reduce)');
   expect(listCss).not.toContain('!important');
 });
+
+// =============================================================================
+// Segmented appearance — filled containers on a 16dp outer corner
+// =============================================================================
+
+test('segmented lists default their rows to the surface-container role', () => {
+  // `surface` is the page background, so segmented rows painted with it were
+  // invisible (1.00:1). The standard appearance is edge to edge and keeps it.
+  expect(listCss).toMatch(
+    /&\[data-appearance="segmented"\][^}]*--md-list-item-container-color:\s*var\(--md-sys-color-surface-container\)/s,
+  );
+  expect(listCss).toContain('--md-list-item-container-color: var(--md-sys-color-surface);');
+});
+
+test('segmented lists round the outside of the group to 16dp and the inside to 4dp', () => {
+  expect(listCss).toContain('--md-list-item-shape: var(--md-sys-shape-corner-extra-small)');
+  expect(listCss).toContain('--md-list-item-outer-shape: var(--md-sys-shape-corner-large)');
+  expect(listCss).toMatch(
+    /\.md-list\[data-appearance="segmented"\] > :first-child[^{]*\{\s*border-start-start-radius: var\(--md-list-item-outer-shape\);\s*border-start-end-radius: var\(--md-list-item-outer-shape\);/,
+  );
+  expect(listCss).toMatch(
+    /\.md-list\[data-appearance="segmented"\] > :last-child[^{]*\{\s*border-end-start-radius: var\(--md-list-item-outer-shape\);\s*border-end-end-radius: var\(--md-list-item-outer-shape\);/,
+  );
+});
+
+test('the item container colour stays overridable on the list', () => {
+  render(
+    <List
+      data-testid="list"
+      appearance="segmented"
+      aria-label="Custom"
+      style={{ '--md-list-item-container-color': 'rgb(250, 240, 230)' } as React.CSSProperties}
+    >
+      <ListItem headline="Custom" />
+    </List>,
+  );
+  expect(screen.getByTestId('list').style.getPropertyValue('--md-list-item-container-color')).toBe(
+    'rgb(250, 240, 230)',
+  );
+});

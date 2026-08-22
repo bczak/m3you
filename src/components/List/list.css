@@ -12,6 +12,7 @@
   --md-list-item-color: var(--md-sys-color-on-surface);
   --md-list-item-supporting-color: var(--md-sys-color-on-surface-variant);
   --md-list-item-shape: var(--md-sys-shape-corner-extra-small);
+  --md-list-item-outer-shape: var(--md-sys-shape-corner-large);
   --md-list-item-gap: 2px;
   --md-list-max-width: 60ch;
 
@@ -28,6 +29,13 @@
 
   &[data-appearance="segmented"] {
     gap: var(--md-list-item-gap);
+
+    /* A segmented group is a set of filled containers, so its rows sit on a
+       `surface-container` role. The default `surface` is the page background,
+       which leaves the rows invisible (1.00:1) and the group reading as loose
+       text. Still overridable — set `--md-list-item-container-color` on the
+       list. */
+    --md-list-item-container-color: var(--md-sys-color-surface-container);
   }
 }
 
@@ -102,6 +110,20 @@
 
 .md-list[data-appearance="segmented"] .md-list-item {
   border-radius: var(--md-list-item-shape);
+}
+
+/* The group is one shape: rows keep the 4dp inner corner, and the corners on
+   the outside of the group — the first row's top, the last row's bottom —
+   take the 16dp outer corner. Scoped to the list's own children so a row that
+   wraps its content (a swipeable row) is not mistaken for the group's first. */
+.md-list[data-appearance="segmented"] > :first-child:is(.md-list-item, .md-list-item-swipe) {
+  border-start-start-radius: var(--md-list-item-outer-shape);
+  border-start-end-radius: var(--md-list-item-outer-shape);
+}
+
+.md-list[data-appearance="segmented"] > :last-child:is(.md-list-item, .md-list-item-swipe) {
+  border-end-start-radius: var(--md-list-item-outer-shape);
+  border-end-end-radius: var(--md-list-item-outer-shape);
 }
 
 .md-list[data-appearance="segmented"]
