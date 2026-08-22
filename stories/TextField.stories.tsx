@@ -272,8 +272,10 @@ export const LeadingIconStates: Story = {
       const container = input.closest('.md-text-field__container') as HTMLElement;
       const notch = container.querySelector('.md-text-field__outline-notch') as HTMLElement;
       const label = container.querySelector('.md-text-field__label') as HTMLElement;
-      await expect(getComputedStyle(notch).borderTopColor).toBe('rgba(0, 0, 0, 0)');
-      await expect(getComputedStyle(label).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+      // Transparent colors may retain different hidden RGB channels across
+      // Chromium environments; only the alpha channel affects rendering.
+      await expect(getComputedStyle(notch).borderTopColor).toMatch(/,\s*0\)$/);
+      await expect(getComputedStyle(label).backgroundColor).toMatch(/,\s*0\)$/);
       await userEvent.tab();
     });
 
