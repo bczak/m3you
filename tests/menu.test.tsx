@@ -299,7 +299,7 @@ test('MenuItem renders trailing text', async () => {
 // Color Variants
 // =============================================================================
 
-test('standard color uses surface-container-low background', async () => {
+test('standard color uses the deployed surface-container background', async () => {
   render(
     <Menu defaultOpen color="standard">
       <MenuTrigger>Open</MenuTrigger>
@@ -309,7 +309,7 @@ test('standard color uses surface-container-low background', async () => {
     </Menu>,
   );
   expect(screen.getByTestId('content')).toHaveAttribute('data-color', 'standard');
-  expect(menuCss).toContain('background-color: var(--md-sys-color-surface-container-low)');
+  expect(menuCss).toContain('background-color: var(--md-sys-color-surface-container)');
 });
 
 test('vibrant color uses tertiary-container background', async () => {
@@ -865,7 +865,7 @@ test('menu items use canonical painted-surface geometry', async () => {
   expect(menuCss).toContain('--_inner-radius: var(--md-sys-shape-corner-extra-small)');
 });
 
-test('menu items have a 48dp semantic row', async () => {
+test('menu items have the deployed 48dp height', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -878,7 +878,7 @@ test('menu items have a 48dp semantic row', async () => {
   expect(menuCss).toContain('height: 48px');
 });
 
-test('menu content has the kit list padding and adjacent rows', async () => {
+test('menu items use the deployed list inset and spacing', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -888,15 +888,13 @@ test('menu content has the kit list padding and adjacent rows', async () => {
     </Menu>,
   );
   expect(screen.getByTestId('content')).toHaveClass('md-menu');
-  // Kit "Menu / Menu": list padded 2dp block, 0 inline, rows 48dp with no gap.
-  // The rows' own 2dp/4dp inset puts every painted surface 4dp inside the
-  // container and 4dp from its neighbours.
-  expect(menuCss).toMatch(/\.md-menu \{[^}]*?gap: 0;[^}]*?padding: 2px 0;/s);
-  expect(menuCss).toMatch(/\.md-menu-group \{[^}]*?gap: 0;[^}]*?padding: 2px 0;/s);
-  expect(menuCss).toContain('inset: 2px 4px');
+  expect(menuCss).toMatch(/\.md-menu \{[^}]*?gap: 2px;[^}]*?padding: 4px;/s);
+  expect(menuCss).toMatch(/\.md-menu-group \{[^}]*?gap: 2px;[^}]*?padding: 4px;/s);
+  expect(menuCss).toContain('gap: 8px');
+  expect(menuCss).toContain('padding-inline: 12px');
 });
 
-test('menu item focus ring wraps the painted surface', async () => {
+test('menu items have an explicit hover state layer', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -906,13 +904,20 @@ test('menu item focus ring wraps the painted surface', async () => {
     </Menu>,
   );
   expect(screen.getByTestId('item')).toHaveClass('md-menu-item');
-  // Kit "Focus indicator": a 2dp stroke directly outside the 44dp surface, so
-  // the ring's corner is the surface corner plus the stroke (6dp / 14dp).
-  expect(menuCss).toMatch(
-    /&:focus-visible::before \{[^}]*?outline: 2px solid var\(--md-sys-color-primary\);[^}]*?outline-offset: 0;/s,
+  expect(menuCss).toMatch(/&:hover \{[^}]*?background-color: color-mix/s);
+});
+
+test('menu item uses the deployed focus state layer', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuItem data-testid="item">Item 1</MenuItem>
+      </MenuContent>
+    </Menu>,
   );
-  // The row itself no longer carries a ring.
-  expect(menuCss).not.toMatch(/&:focus-visible \{[^}]*?outline:/s);
+  expect(screen.getByTestId('item')).toHaveClass('md-menu-item');
+  expect(menuCss).toMatch(/&:focus-visible \{[^}]*?background-color: color-mix/s);
 });
 
 test('menu item keeps the hover layer while its submenu is open', async () => {
@@ -955,7 +960,7 @@ test('disabled menu item dims its icon and trailing text with the label', async 
   expect(menuCss).toMatch(/&\[data-disabled\] > svg,[^{]*\.md-menu-item__trailing,[^{]*\{\s*color: inherit;/s);
 });
 
-test('menu divider keeps the kit rhythm', async () => {
+test('menu divider uses the deployed inset', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -967,11 +972,10 @@ test('menu divider keeps the kit rhythm', async () => {
     </Menu>,
   );
   expect(screen.getByTestId('divider')).toHaveClass('md-menu-divider');
-  // 4dp plus the rows' 2dp inset = 6dp from each surface; 12dp from the edge.
-  expect(menuCss).toMatch(/\.md-menu-divider \{[^}]*?margin-block: 4px;[^}]*?margin-inline: 12px;/s);
+  expect(menuCss).toMatch(/\.md-menu-divider \{[^}]*?margin-block: 0;[^}]*?margin-inline: 8px;/s);
 });
 
-test('menu content uses level-3 elevation', async () => {
+test('menu content uses the deployed level-2 elevation', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -981,5 +985,5 @@ test('menu content uses level-3 elevation', async () => {
     </Menu>,
   );
   expect(screen.getByTestId('content')).toHaveClass('md-menu');
-  expect(menuCss).toContain('box-shadow: var(--md-sys-elevation-3)');
+  expect(menuCss).toContain('box-shadow: var(--md-sys-elevation-2)');
 });

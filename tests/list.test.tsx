@@ -255,7 +255,7 @@ test('single selection defaults to required and selects the first enabled stable
   expect(inbox).toHaveAttribute('aria-posinset', '2');
   expect(inbox).toHaveAttribute('aria-setsize', '3');
   expect(inbox).toHaveAttribute('tabindex', '0');
-  expect(inbox.querySelector('[data-kind="radio"]')).toBeInTheDocument();
+  expect(inbox.querySelector('.md-radio')).toBeInTheDocument();
   fireEvent.click(inbox);
   expect(onValueChange).not.toHaveBeenCalled();
   fireEvent.click(archive);
@@ -489,9 +489,7 @@ test('selection indicators support checkbox, check, custom element, string, and 
       <ListItem value="number" headline="Number" selectionIndicator={7} />
     </List>,
   );
-  expect(
-    screen.getByRole('option', { name: 'Checkbox' }).querySelector('[data-kind="checkbox"] svg'),
-  ).toBeInTheDocument();
+  expect(screen.getByRole('option', { name: 'Checkbox' }).querySelector('.md-checkbox')).toBeInTheDocument();
   expect(screen.getByRole('option', { name: 'Check' }).querySelector('[data-kind="check"] svg')).toBeNull();
   expect(screen.getByTestId('custom-mark')).toBeInTheDocument();
   expect(screen.getByText('★')).toBeInTheDocument();

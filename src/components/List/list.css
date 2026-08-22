@@ -297,32 +297,6 @@
   box-sizing: border-box;
   color: var(--md-sys-color-on-secondary-container);
 
-  &[data-kind="radio"] {
-    border: 2px solid currentColor;
-    border-radius: 50%;
-
-    &[data-selected]::after {
-      content: "";
-      inline-size: 12px;
-      block-size: 12px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-  }
-
-  &[data-kind="checkbox"] {
-    inline-size: 18px;
-    block-size: 18px;
-    border: 2px solid currentColor;
-    border-radius: var(--md-sys-shape-corner-extra-small);
-
-    &[data-selected] {
-      background: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
-      border-color: var(--md-sys-color-primary);
-    }
-  }
-
   &[data-kind="check"] {
     border: 0;
   }

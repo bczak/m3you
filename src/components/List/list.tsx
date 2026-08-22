@@ -4,6 +4,8 @@ import { ChevronDown } from 'lucide-react';
 import * as React from 'react';
 import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
+import { Checkbox } from '../Checkbox/checkbox';
+import { RadioButton } from '../RadioButton/radio-button';
 
 export type ListAppearance = 'standard' | 'segmented';
 
@@ -218,9 +220,17 @@ function renderSelectionIndicator(indicator: ListSelectionIndicator, selected: b
     return indicator;
   }
 
+  if (indicator === 'radio') {
+    return <RadioButton checked={selected} readOnly tabIndex={-1} aria-hidden="true" />;
+  }
+
+  if (indicator === 'checkbox') {
+    return <Checkbox checked={selected} readOnly tabIndex={-1} aria-hidden="true" />;
+  }
+
   return (
     <span className="md-list-item__selection-mark" data-kind={indicator} data-selected={selected || undefined}>
-      {indicator !== 'radio' && selected ? (
+      {selected ? (
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="m9.55 17.6-5.15-5.15 1.4-1.4 3.75 3.75 8.65-8.65 1.4 1.4Z" />
         </svg>
