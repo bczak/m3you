@@ -29,11 +29,17 @@
     overflow: hidden;
   }
 
+  /* Touch target — M3 asks for at least 48dp even when the visual is 40dp
+     (sm) or 32dp (xs). This transparent box is centred on the button and
+     grows only the hit area, never the visual. Keying it off the height alone
+     left the narrow widths (32dp and 28dp) short on the inline axis, so each
+     axis is expanded on its own: `max()` resolves per axis, and collapses the
+     inset to 0 on an axis that already clears 48dp. */
   &[data-size="xs"]::after,
   &[data-size="sm"]::after {
     position: absolute;
     z-index: 2;
-    inset: calc((var(--_height) - 48px) / 2);
+    inset: calc((100% - max(100%, 48px)) / 2);
     content: "";
   }
 

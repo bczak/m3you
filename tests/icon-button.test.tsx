@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
@@ -172,4 +173,20 @@ test('explicit props win over the button group context', () => {
   expect(button).toHaveAttribute('data-shape', 'round');
   expect(button).not.toHaveAttribute('data-morph');
   expect(button).toHaveAttribute('aria-pressed', 'false');
+});
+
+// =============================================================================
+// Touch target
+// =============================================================================
+
+test('sizes below 48dp expand their hit area on both axes without growing the visual', () => {
+  const css = readFileSync('src/components/IconButton/icon-button.css', 'utf8');
+  // Only xs (32dp) and sm (40dp) fall short of the 48dp minimum; md, lg and xl
+  // already clear it.
+  expect(css).toMatch(/&\[data-size="xs"\]::after,\s*&\[data-size="sm"\]::after\s*\{/);
+  // Per-axis, so the 28dp and 32dp narrow widths are covered too.
+  expect(css).toContain('inset: calc((100% - max(100%, 48px)) / 2);');
+  expect(css).not.toContain('inset: calc((var(--_height) - 48px) / 2);');
+  // Nothing may block the expanded area from receiving the pointer.
+  expect(css).not.toMatch(/::after\s*\{[^}]*pointer-events:\s*none/);
 });
