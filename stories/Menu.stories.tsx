@@ -749,7 +749,10 @@ export const KitGeometry: Story = {
       await userEvent.hover(duplicate);
       await waitFor(() => expect(duplicate.querySelector('.salty-ripple-surface')).toHaveClass('--hover'));
       await waitFor(async () => {
-        await expect(alphaOf(getComputedStyle(duplicate).backgroundColor)).toBeCloseTo(0.08, 2);
+        // Base UI may move roving focus to a hovered menu item. In that case
+        // the later 12% focus rule correctly wins over the 8% hover rule.
+        const expectedAlpha = duplicate.matches(':focus-visible') ? 0.12 : 0.08;
+        await expect(alphaOf(getComputedStyle(duplicate).backgroundColor)).toBeCloseTo(expectedAlpha, 2);
       });
       await userEvent.unhover(duplicate);
     });

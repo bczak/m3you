@@ -220,12 +220,15 @@ function renderSelectionIndicator(indicator: ListSelectionIndicator, selected: b
     return indicator;
   }
 
+  // Decorative: the row is the interactive control and already carries the
+  // selected state, so the indicator borrows the control's visuals without
+  // nesting a real input inside it (axe `nested-interactive`).
   if (indicator === 'radio') {
-    return <RadioButton checked={selected} readOnly tabIndex={-1} aria-hidden="true" />;
+    return <RadioButton checked={selected} decorative />;
   }
 
   if (indicator === 'checkbox') {
-    return <Checkbox checked={selected} readOnly tabIndex={-1} aria-hidden="true" />;
+    return <Checkbox checked={selected} decorative />;
   }
 
   return (

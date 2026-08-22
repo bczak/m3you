@@ -13,6 +13,22 @@ export type CheckboxProps = Omit<React.ComponentProps<'input'>, 'type'> & {
   variant?: 'primary' | 'error';
   /** Called with the new checked state. */
   onCheckedChange?: (checked: boolean) => void;
+  /**
+   * Render the checkbox's visuals without the native `<input>` — a plain
+   * `<span>` shell carrying the same `md-checkbox*` classes and the same
+   * `data-checked` / `data-indeterminate` / `data-disabled` state, with no
+   * role, no name and nothing focusable.
+   *
+   * Use it where the checked state is already owned and announced by an
+   * enclosing control — a selectable `List` row, for instance, where a real
+   * input would nest one interactive control inside another (axe
+   * `nested-interactive`). A decorative checkbox takes only `checked`,
+   * `indeterminate`, `variant`, `disabled`, `className`, `id` and `style`;
+   * the input-only props are ignored and the forwarded ref stays `null`.
+   *
+   * @default false
+   */
+  decorative?: boolean;
 };
 
 const Checkbox = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<CheckboxProps>>(
@@ -24,6 +40,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Checkb
       indeterminate = false,
       variant = 'primary',
       disabled,
+      decorative = false,
       onCheckedChange,
       onChange,
       ...props
@@ -56,6 +73,40 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Checkb
 
     // Determine visual state: indeterminate takes precedence over checked
     const isVisuallyChecked = indeterminate || checked;
+    const mark = indeterminate ? (
+      <Minus className="md-checkbox__icon" />
+    ) : checked ? (
+      <Check className="md-checkbox__icon" />
+    ) : null;
+
+    if (decorative) {
+      const { id, style } = props;
+      return (
+        <span
+          id={id}
+          style={style}
+          className={cx('md-checkbox', className)}
+          data-decorative=""
+          data-variant={variant}
+          data-checked={String(isVisuallyChecked)}
+          data-indeterminate={indeterminate ? '' : undefined}
+          data-disabled={disabled || undefined}
+        >
+          {/* State layer (40px circular) — painted by the enclosing control */}
+          <span className="md-checkbox__state-layer" />
+
+          {/* Visual checkbox (18px) */}
+          <span
+            aria-hidden="true"
+            className="md-checkbox__box"
+            data-checked={String(isVisuallyChecked)}
+            data-variant={variant}
+          >
+            {mark}
+          </span>
+        </span>
+      );
+    }
 
     return (
       <label
@@ -76,11 +127,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Checkb
           data-checked={String(isVisuallyChecked)}
           data-variant={variant}
         >
-          {indeterminate ? (
-            <Minus className="md-checkbox__icon" />
-          ) : checked ? (
-            <Check className="md-checkbox__icon" />
-          ) : null}
+          {mark}
         </span>
 
         {/* Hidden native input for accessibility */}

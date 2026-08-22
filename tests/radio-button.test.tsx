@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
-import { afterEach, beforeAll, expect, test } from 'vitest';
+import { afterEach, beforeAll, expect, test, vi } from 'vitest';
 import { RadioButton } from '../src/components/RadioButton/radio-button';
 import { RadioGroup } from '../src/components/RadioButton/radio-group';
 import { RadioGroupItem } from '../src/components/RadioButton/radio-group-item';
@@ -527,4 +527,74 @@ test('inner dot has a tokenized transform transition', async () => {
   expect(radioCss).toContain(
     'transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard)',
   );
+});
+
+// =============================================================================
+// RadioButton — Decorative rendering
+// =============================================================================
+
+test('decorative renders the radio visuals with no input and no role', () => {
+  const { container } = render(<RadioButton decorative />);
+  expect(container.querySelector('input')).toBeNull();
+  expect(screen.queryByRole('radio')).toBeNull();
+  expect(container.querySelector('label')).toBeNull();
+
+  const shell = container.querySelector('span.md-radio');
+  expect(shell).toBeInTheDocument();
+  expect(shell).toHaveAttribute('data-decorative', '');
+  expect(shell).toHaveAttribute('data-variant', 'primary');
+  expect(shell).not.toHaveAttribute('role');
+  expect(shell).not.toHaveAttribute('tabindex');
+  // The same visual parts as the interactive form.
+  expect(shell?.querySelector('.md-radio__state-layer')).toBeInTheDocument();
+  expect(shell?.querySelector('[data-outer]')).toBeInTheDocument();
+  expect(shell?.querySelector('[data-inner]')).toBeInTheDocument();
+});
+
+test('decorative reflects checked, disabled and variant', () => {
+  const { container, rerender } = render(<RadioButton decorative />);
+  const shell = () => container.querySelector('span.md-radio') as HTMLElement;
+  expect(shell()).toHaveAttribute('data-selected', 'false');
+  expect(shell()?.querySelector('[data-inner]')).toHaveAttribute('data-selected', 'false');
+  expect(shell()).not.toHaveAttribute('data-disabled');
+
+  rerender(<RadioButton decorative checked variant="error" disabled />);
+  expect(shell()).toHaveAttribute('data-selected', 'true');
+  expect(shell()?.querySelector('[data-outer]')).toHaveAttribute('data-selected', 'true');
+  expect(shell()?.querySelector('[data-inner]')).toHaveAttribute('data-selected', 'true');
+  expect(shell()).toHaveAttribute('data-disabled');
+  expect(shell()).toHaveAttribute('data-variant', 'error');
+});
+
+test('decorative forwards className, id and style but drops the input-only props', () => {
+  const { container } = render(
+    <RadioButton decorative className="custom" id="pick" style={{ opacity: 0.5 }} name="tier" value="pro" />,
+  );
+  const shell = container.querySelector('span.md-radio') as HTMLElement;
+  expect(shell).toHaveClass('custom');
+  expect(shell).toHaveAttribute('id', 'pick');
+  expect(shell).toHaveStyle({ opacity: '0.5' });
+  expect(shell).not.toHaveAttribute('name');
+  expect(shell).not.toHaveAttribute('value');
+});
+
+test('decorative leaves the forwarded ref empty; the interactive form still fills it', () => {
+  const decorativeRef = createRef<HTMLInputElement>();
+  render(<RadioButton decorative ref={decorativeRef} />);
+  expect(decorativeRef.current).toBeNull();
+  cleanup();
+
+  const interactiveRef = createRef<HTMLInputElement>();
+  render(<RadioButton ref={interactiveRef} />);
+  expect(interactiveRef.current).toBeInstanceOf(HTMLInputElement);
+});
+
+test('the interactive form is unaffected: it still selects and reports', () => {
+  const onValueChange = vi.fn();
+  render(<RadioButton value="pro" name="tier" onValueChange={onValueChange} />);
+  const input = screen.getByRole('radio');
+  expect(input).toHaveAttribute('name', 'tier');
+  fireEvent.click(input);
+  expect(onValueChange).toHaveBeenCalledWith('pro');
+  expect(input).toBeChecked();
 });

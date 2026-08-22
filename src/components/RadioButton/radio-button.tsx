@@ -19,6 +19,22 @@ export type RadioButtonProps = Omit<React.ComponentProps<'input'>, 'type'> & {
   variant?: 'primary' | 'error';
   /** Called with this button's value when it is selected. */
   onValueChange?: (value: string) => void;
+  /**
+   * Render the radio button's visuals without the native `<input>` — a plain
+   * `<span>` shell carrying the same `md-radio*` classes and the same
+   * `data-selected` / `data-disabled` state, with no role, no name and
+   * nothing focusable.
+   *
+   * Use it where the selected state is already owned and announced by an
+   * enclosing control — a single-select `List` row, for instance, where a real
+   * input would nest one interactive control inside another (axe
+   * `nested-interactive`). A decorative radio button takes only `checked`,
+   * `variant`, `disabled`, `className`, `id` and `style`; the input-only props
+   * are ignored and the forwarded ref stays `null`.
+   *
+   * @default false
+   */
+  decorative?: boolean;
 };
 
 const RadioButton = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<RadioButtonProps>>(
@@ -27,6 +43,7 @@ const RadioButton = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Rad
       className,
       variant = 'primary',
       disabled,
+      decorative = false,
       checked: checkedProp,
       defaultChecked = false,
       onValueChange,
@@ -53,6 +70,36 @@ const RadioButton = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Rad
       }
       onChange?.(e);
     };
+
+    if (decorative) {
+      const { id, style } = props;
+      return (
+        <span
+          id={id}
+          style={style}
+          className={cx('md-radio', className)}
+          data-decorative=""
+          data-variant={variant}
+          data-selected={String(checked)}
+          data-disabled={disabled || undefined}
+        >
+          {/* State layer (40dp circular) — painted by the enclosing control */}
+          <span className="md-radio__state-layer" />
+
+          {/* Visual radio button (20dp outer circle) */}
+          <span
+            aria-hidden="true"
+            className="md-radio__outer"
+            data-outer=""
+            data-variant={variant}
+            data-selected={String(checked)}
+          >
+            {/* Inner dot (10dp when selected) */}
+            <span className="md-radio__inner" data-inner="" data-variant={variant} data-selected={String(checked)} />
+          </span>
+        </span>
+      );
+    }
 
     return (
       <label
