@@ -12,7 +12,12 @@ export type TextFieldProps = Omit<React.ComponentProps<'input'>, 'type'> & {
   label?: string;
   /** Guidance shown under the field. */
   supportingText?: string;
-  /** Message shown in place of `supportingText` while `error` is set. */
+  /**
+   * Message shown in place of `supportingText` while `error` is set.
+   * Supplying it does not by itself put the field into the error state — pass
+   * `error` for that, so a form can declare its message up front without
+   * rendering red or claiming `aria-invalid`.
+   */
   errorText?: string;
   /** Render the error state. Replaces `supportingText` with `errorText`. */
   error?: boolean;
@@ -67,8 +72,12 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
     const currentValue = isControlled ? value : internalValue;
     const populated = String(currentValue).length > 0;
     const floating = focused || populated;
-    const hasError = error || !!errorText;
-    const displaySupportingText = hasError ? errorText : supportingText;
+    // The error state comes from `error` alone. `errorText` only supplies the
+    // message shown while `error` is set — a form that pre-declares its
+    // message must not render red, and must not claim `aria-invalid`, before
+    // the value is actually invalid.
+    const hasError = error;
+    const displaySupportingText = hasError ? (errorText ?? supportingText) : supportingText;
     const charCount = String(currentValue).length;
 
     const updateTextValue = (e: React.ChangeEvent<HTMLInputElement>) => {

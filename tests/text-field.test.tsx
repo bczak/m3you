@@ -59,11 +59,12 @@ test('label floats when the field is populated', async () => {
   expect(screen.getByText('Email')).toHaveAttribute('data-floating', 'true');
 });
 
-test('shows error text in place of supporting text', async () => {
+test('shows error text in place of supporting text while error is set', async () => {
   render(
     <TextField
       label="Workspace slug"
       supportingText="Public URL path"
+      error
       errorText="Use lowercase letters, numbers, and hyphens only."
     />,
   );
@@ -72,6 +73,38 @@ test('shows error text in place of supporting text', async () => {
   expect(input).toHaveAttribute('aria-invalid', 'true');
   expect(screen.getByText('Use lowercase letters, numbers, and hyphens only.')).toBeInTheDocument();
   expect(screen.queryByText('Public URL path')).toBeNull();
+});
+
+// The error state comes from `error` alone: a form may declare its message up
+// front, and the field must not render red or lie to assistive technology
+// until the value is actually invalid.
+test('errorText alone leaves the field in its resting state', async () => {
+  const { container } = render(
+    <TextField
+      label="Workspace slug"
+      supportingText="Public URL path"
+      errorText="Use lowercase letters, numbers, and hyphens only."
+    />,
+  );
+
+  const input = screen.getByRole('textbox');
+  expect(input).not.toHaveAttribute('aria-invalid');
+  expect(container.querySelectorAll('[data-error="true"]')).toHaveLength(0);
+  expect(container.querySelector('.md-text-field__container')).not.toHaveAttribute('data-error');
+  // The supporting text is untouched and the error message is not shown.
+  expect(screen.getByText('Public URL path')).toBeInTheDocument();
+  expect(screen.queryByText('Use lowercase letters, numbers, and hyphens only.')).toBeNull();
+});
+
+test('error alone renders the error state and marks the input invalid', async () => {
+  const { container } = render(<TextField label="Workspace slug" supportingText="Public URL path" error />);
+
+  const input = screen.getByRole('textbox');
+  expect(input).toHaveAttribute('aria-invalid', 'true');
+  expect(container.querySelector('.md-text-field__container')).toHaveAttribute('data-error');
+  expect(container.querySelector('.md-text-field__label')).toHaveAttribute('data-error', 'true');
+  // With no message of its own, the field keeps showing its guidance.
+  expect(screen.getByText('Public URL path')).toBeInTheDocument();
 });
 
 test('links supporting text and character counter through aria-describedby', async () => {

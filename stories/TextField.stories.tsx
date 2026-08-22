@@ -57,7 +57,8 @@ const meta = {
     },
     errorText: {
       control: 'text',
-      description: 'Error message — replaces supporting text and forces the error state when set.',
+      description:
+        'Error message — replaces the supporting text while `error` is set. Does not itself set the error state.',
       table: { category: 'Content' },
     },
     prefixText: {
@@ -115,7 +116,7 @@ export const Filled: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 280 }}>
       <TextField variant="filled" label="Empty" supportingText="Supporting text" />
       <TextField variant="filled" label="Populated" defaultValue="Hello world" supportingText="Supporting text" />
-      <TextField variant="filled" label="Error" errorText="This field is required" />
+      <TextField variant="filled" label="Error" error errorText="This field is required" />
       <TextField variant="filled" label="Disabled" defaultValue="Disabled value" disabled />
     </div>
   ),
@@ -126,7 +127,7 @@ export const Outlined: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 280 }}>
       <TextField variant="outlined" label="Empty" supportingText="Supporting text" />
       <TextField variant="outlined" label="Populated" defaultValue="Hello world" supportingText="Supporting text" />
-      <TextField variant="outlined" label="Error" errorText="This field is required" />
+      <TextField variant="outlined" label="Error" error errorText="This field is required" />
       <TextField variant="outlined" label="Disabled" defaultValue="Disabled value" disabled />
     </div>
   ),
@@ -359,7 +360,7 @@ export const AllVariants: Story = {
             <TextField variant={variant} label="Populated" defaultValue="Value" />
             <TextField variant={variant} label="With icon" leadingIcon={<SearchIcon aria-hidden="true" />} />
             <TextField variant={variant} label="Supporting" supportingText="Supporting text" />
-            <TextField variant={variant} label="Error" errorText="Error message" />
+            <TextField variant={variant} label="Error" error errorText="Error message" />
             <TextField variant={variant} label="Disabled" defaultValue="Value" disabled />
             <TextField variant={variant} label="Counter" defaultValue="Hi" maxCharCount={20} />
           </div>
