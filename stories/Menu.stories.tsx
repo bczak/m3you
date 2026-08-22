@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Ripple } from 'm3-ripple';
 import { useState } from 'react';
+import { expect, waitFor } from 'storybook/test';
 import { Button } from '../src/components/Button/button';
 import { IconButton } from '../src/components/IconButton/icon-button';
 import {
@@ -609,6 +610,125 @@ export const Vibrant: Story = {
       </MenuContent>
     </Menu>
   ),
+};
+
+// =============================================================================
+// Kit geometry — measured in the browser
+// =============================================================================
+
+export const KitGeometry: Story = {
+  parameters: {
+    a11y: {
+      // Base UI's focus sentinels are aria-hidden and focusable by design.
+      config: { rules: [{ id: 'aria-hidden-focus', enabled: false }] },
+    },
+    docs: {
+      description: {
+        story:
+          'Opens the menu and measures it against the M3 Expressive Design Kit: 48dp rows sit edge to edge 2dp below the container top; each row insets a 44dp painted surface by 2dp/4dp, so hover, selection and focus all land 4dp inside the container; unselected surfaces use the extra-small corner, the selected one the medium corner, and the focus ring is a 2dp stroke directly outside the surface.',
+      },
+    },
+  },
+  render: () => (
+    <Menu modal={false}>
+      <MenuTrigger
+        render={
+          <Button variant="outlined" size="sm" shape="round">
+            Open menu
+          </Button>
+        }
+      />
+      <MenuContent>
+        <MenuItem>
+          <EditIcon /> Edit
+        </MenuItem>
+        <MenuItem selected leadingIcon={<StarIcon />}>
+          Favorite
+        </MenuItem>
+        <MenuDivider />
+        <MenuItem>
+          <Trash2Icon /> Delete
+        </MenuItem>
+      </MenuContent>
+    </Menu>
+  ),
+  play: async ({ canvas, userEvent, step }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Open menu' }));
+    const menu = await waitFor(() => {
+      const popup = document.querySelector<HTMLElement>('.md-menu');
+      if (!popup) throw new Error('menu did not open');
+      return popup;
+    });
+    // The popup scales in; measure the settled layout.
+    await Promise.all(menu.getAnimations({ subtree: true }).map((animation) => animation.finished));
+    const items = Array.from(menu.querySelectorAll<HTMLElement>('.md-menu-item'));
+    const [edit, favorite, remove] = items;
+    const surface = (item: HTMLElement) => item.querySelector<HTMLElement>(':scope > .salty-ripple') as HTMLElement;
+
+    await step('rows are 48dp, flush with the container inline edges and adjacent', async () => {
+      const m = menu.getBoundingClientRect();
+      const a = edit.getBoundingClientRect();
+      const b = favorite.getBoundingClientRect();
+      await expect(a.top - m.top).toBeCloseTo(2, 0);
+      await expect(a.left - m.left).toBeCloseTo(0, 0);
+      await expect(m.right - a.right).toBeCloseTo(0, 0);
+      await expect(a.height).toBeCloseTo(48, 0);
+      await expect(b.top - a.top).toBeCloseTo(48, 0);
+    });
+
+    await step('the 44dp painted surface sits 4dp inside the container on every side', async () => {
+      const m = menu.getBoundingClientRect();
+      const r = surface(edit).getBoundingClientRect();
+      await expect(r.top - m.top).toBeCloseTo(4, 0);
+      await expect(r.left - m.left).toBeCloseTo(4, 0);
+      await expect(m.right - r.right).toBeCloseTo(4, 0);
+      await expect(r.height).toBeCloseTo(44, 0);
+      const painted = getComputedStyle(edit, '::before');
+      await expect(painted.top).toBe('2px');
+      await expect(painted.left).toBe('4px');
+      await expect(surface(favorite).getBoundingClientRect().top - r.bottom).toBeCloseTo(4, 0);
+    });
+
+    await step('unselected surfaces use the extra-small corner, the selected one the medium corner', async () => {
+      await expect(getComputedStyle(edit, '::before').borderRadius).toBe('4px');
+      await expect(getComputedStyle(surface(edit)).borderRadius).toBe('4px');
+      await expect(getComputedStyle(favorite, '::before').borderRadius).toBe('12px');
+      await expect(getComputedStyle(surface(favorite)).borderRadius).toBe('12px');
+    });
+
+    await step('hover paints the 8% layer on the surface, not the row', async () => {
+      await userEvent.hover(edit);
+      await waitFor(() => expect(edit.querySelector('.salty-ripple-surface')).toHaveClass('--hover'));
+      await expect(getComputedStyle(edit).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+      await userEvent.unhover(edit);
+    });
+
+    await step('keyboard focus draws a 2dp ring directly outside the surface', async () => {
+      await userEvent.keyboard('{ArrowDown}');
+      const focused = await waitFor(() => {
+        const active = document.activeElement as HTMLElement | null;
+        expect(active).toHaveClass('md-menu-item');
+        return active as HTMLElement;
+      });
+      const ring = getComputedStyle(focused, '::before');
+      await expect(ring.outlineStyle).toBe('solid');
+      await expect(ring.outlineWidth).toBe('2px');
+      await expect(ring.outlineOffset).toBe('0px');
+      await expect(getComputedStyle(focused).outlineStyle).toBe('none');
+    });
+
+    await step('the divider sits 6dp from the surfaces either side and 12dp from the edge', async () => {
+      const divider = menu.querySelector<HTMLElement>('.md-menu-divider') as HTMLElement;
+      const d = divider.getBoundingClientRect();
+      const m = menu.getBoundingClientRect();
+      await expect(d.top - surface(favorite).getBoundingClientRect().bottom).toBeCloseTo(6, 0);
+      await expect(surface(remove).getBoundingClientRect().top - d.bottom).toBeCloseTo(6, 0);
+      await expect(d.left - m.left).toBeCloseTo(12, 0);
+      await expect(m.right - d.right).toBeCloseTo(12, 0);
+    });
+
+    await userEvent.keyboard('{Escape}');
+  },
 };
 
 // =============================================================================

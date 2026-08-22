@@ -1,8 +1,17 @@
 /* =============================================================================
    Menu — M3 Expressive Spec
    Container: surface-container-low, elevation level 3, shape corner-large (16px)
-   Items: 48px height, body-large text, on-surface color
+   Items: 48px height, label-large text, on-surface color
    Source: m3.material.io/components/menus/specs
+
+   Geometry follows the M3 Expressive Design Kit ("Menu / Menu item/Standard"
+   and "Menu / Menu"): the list is padded 2dp block and 0 inline, rows are
+   48dp and adjacent, and each row insets its 44dp painted surface by 2dp/4dp.
+   So a hovered or selected surface always sits 4dp inside the container on
+   every side, and consecutive surfaces are 4dp apart. The surface is
+   corner-extra-small in every unselected state and corner-medium when
+   selected; the focus ring is a 2dp stroke drawn directly outside the
+   surface, so its corners are 6dp / 14dp.
    ============================================================================= */
 
 /* ── Menu popup container ── */
@@ -14,11 +23,12 @@
   outline: none;
   animation: menu-in var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
-  /* Default (non-grouped): single container */
+  /* Default (non-grouped): single container. No row gap and no inline
+     padding: the rows' own 2dp/4dp inset spaces the painted surfaces. */
   overflow-y: auto;
-  gap: 2px;
+  gap: 0;
   border-radius: var(--md-sys-shape-corner-large);
-  padding: 4px;
+  padding: 2px 0;
   background-color: var(--md-sys-color-surface-container-low);
   color: var(--md-sys-color-on-surface);
   box-shadow: var(--md-sys-elevation-3);
@@ -42,8 +52,8 @@
 .md-menu-group {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 4px;
+  gap: 0;
+  padding: 2px 0;
   background-color: var(--md-sys-color-surface-container-low);
   color: var(--md-sys-color-on-surface);
   box-shadow: var(--md-sys-elevation-3);
@@ -75,9 +85,9 @@
 
 .md-menu-label {
   display: flex;
-  min-height: 40px;
+  min-height: 32px;
   align-items: center;
-  padding-inline: 12px;
+  padding-inline: 16px;
   color: var(--md-sys-color-on-surface-variant);
   font-family: var(--md-sys-typescale-label-large-font);
   font-size: var(--md-sys-typescale-label-large-size);
@@ -132,13 +142,22 @@
     border-radius: inherit;
   }
 
-  &:focus-visible {
+  /* The ring wraps the painted surface, not the row, so its outer corner is
+     the surface corner plus the stroke (6dp, or 14dp when selected) and it
+     stays inside the row's 2dp/4dp inset instead of being clipped. */
+  &:focus-visible::before {
     outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: -2px;
+    outline-offset: 0;
   }
 
   &:focus-visible > .salty-ripple .salty-ripple-surface::before {
     opacity: var(--md-sys-state-focus-opacity);
+  }
+
+  /* Active: the trigger whose submenu is open keeps the hover layer while
+     the pointer is over the submenu. */
+  &[data-popup-open] > .salty-ripple .salty-ripple-surface::before {
+    opacity: var(--md-sys-state-hover-opacity);
   }
 
   &[data-selected] {
@@ -167,6 +186,14 @@
       var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
       transparent
     );
+  }
+
+  /* Leading and trailing elements dim with the label (kit: 38%). */
+  &[data-disabled] > svg,
+  &[data-disabled] .md-menu-item__trailing,
+  &[data-disabled] .md-menu-item__supporting,
+  &[data-disabled] .md-menu-item__chevron {
+    color: inherit;
   }
 
   /* Icon sizing — direct SVG children */
@@ -220,8 +247,10 @@
   padding: 0;
   border: 0;
   border-top: 1px solid var(--md-sys-color-outline-variant);
-  margin-block: 0;
-  margin-inline: 8px;
+  /* Kit: the line sits 6dp from the surfaces either side (4dp here plus the
+     rows' 2dp inset) and 12dp from the container edge. */
+  margin-block: 4px;
+  margin-inline: 12px;
 }
 
 /* ── Submenu trigger chevron ── */

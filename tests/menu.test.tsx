@@ -878,7 +878,7 @@ test('menu items have a 48dp semantic row', async () => {
   expect(menuCss).toContain('height: 48px');
 });
 
-test('menu content has 4dp container padding', async () => {
+test('menu content has the kit list padding and adjacent rows', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -888,7 +888,87 @@ test('menu content has 4dp container padding', async () => {
     </Menu>,
   );
   expect(screen.getByTestId('content')).toHaveClass('md-menu');
-  expect(menuCss).toContain('padding: 4px');
+  // Kit "Menu / Menu": list padded 2dp block, 0 inline, rows 48dp with no gap.
+  // The rows' own 2dp/4dp inset puts every painted surface 4dp inside the
+  // container and 4dp from its neighbours.
+  expect(menuCss).toMatch(/\.md-menu \{[^}]*?gap: 0;[^}]*?padding: 2px 0;/s);
+  expect(menuCss).toMatch(/\.md-menu-group \{[^}]*?gap: 0;[^}]*?padding: 2px 0;/s);
+  expect(menuCss).toContain('inset: 2px 4px');
+});
+
+test('menu item focus ring wraps the painted surface', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuItem data-testid="item">Item 1</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(screen.getByTestId('item')).toHaveClass('md-menu-item');
+  // Kit "Focus indicator": a 2dp stroke directly outside the 44dp surface, so
+  // the ring's corner is the surface corner plus the stroke (6dp / 14dp).
+  expect(menuCss).toMatch(
+    /&:focus-visible::before \{[^}]*?outline: 2px solid var\(--md-sys-color-primary\);[^}]*?outline-offset: 0;/s,
+  );
+  // The row itself no longer carries a ring.
+  expect(menuCss).not.toMatch(/&:focus-visible \{[^}]*?outline:/s);
+});
+
+test('menu item keeps the hover layer while its submenu is open', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuSub>
+          <MenuSubTrigger data-testid="sub">More</MenuSubTrigger>
+          <MenuSubContent>
+            <MenuItem>Nested</MenuItem>
+          </MenuSubContent>
+        </MenuSub>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(screen.getByTestId('sub')).toHaveClass('md-menu-item');
+  // Kit state "Active": 8% state layer on the trigger whose submenu is open.
+  expect(menuCss).toMatch(
+    /&\[data-popup-open\] > \.salty-ripple \.salty-ripple-surface::before \{[^}]*?opacity: var\(--md-sys-state-hover-opacity\);/s,
+  );
+});
+
+test('disabled menu item dims its icon and trailing text with the label', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuItem data-testid="item" disabled trailingText="⌘D">
+          <svg data-testid="icon" aria-hidden="true" />
+          Item 1
+        </MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  const item = screen.getByTestId('item');
+  expect(item).toHaveAttribute('data-disabled');
+  expect(screen.getByTestId('icon').parentElement).toBe(item);
+  // Kit: leading and trailing elements at 38% alongside the label.
+  expect(menuCss).toMatch(/&\[data-disabled\] > svg,[^{]*\.md-menu-item__trailing,[^{]*\{\s*color: inherit;/s);
+});
+
+test('menu divider keeps the kit rhythm', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuItem>Item 1</MenuItem>
+        <MenuDivider data-testid="divider" />
+        <MenuItem>Item 2</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(screen.getByTestId('divider')).toHaveClass('md-menu-divider');
+  // 4dp plus the rows' 2dp inset = 6dp from each surface; 12dp from the edge.
+  expect(menuCss).toMatch(/\.md-menu-divider \{[^}]*?margin-block: 4px;[^}]*?margin-inline: 12px;/s);
 });
 
 test('menu content uses level-3 elevation', async () => {
