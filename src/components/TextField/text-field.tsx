@@ -103,6 +103,8 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
           data-disabled={disabled || undefined}
           data-populated={populated || undefined}
           data-has-label={String(!!label)}
+          data-has-leading={String(!!leadingIcon)}
+          data-has-trailing={String(!!trailingIcon)}
           className="md-text-field__container"
         >
           {/* Floating label */}
@@ -114,7 +116,6 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
               data-variant={variant}
               data-focused={String(focused)}
               data-error={String(hasError)}
-              data-has-leading={String(!!leadingIcon)}
               data-disabled={disabled || undefined}
             >
               {label}
@@ -139,7 +140,6 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
             {prefixText && (
               <span
                 className="md-text-field__prefix"
-                data-has-leading={String(!!leadingIcon)}
                 data-hidden={String(!!label && !floating)}
                 data-variant={variant}
                 data-floating={String(floating)}
@@ -176,7 +176,6 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
             {suffixText && (
               <span
                 className="md-text-field__suffix"
-                data-has-trailing={String(!!trailingIcon)}
                 data-hidden={String(!!label && !floating)}
                 data-variant={variant}
                 data-floating={String(floating)}
@@ -209,20 +208,24 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
             />
           )}
 
-          {/* Outlined variant: border */}
+          {/* Outlined variant: border, drawn as start | notch | end so the notch
+              opens directly above the input text, after any leading icon. */}
           {variant === 'outlined' && (
-            <fieldset
+            <div
+              aria-hidden="true"
               className="md-text-field__outline"
               data-focused={String(focused)}
               data-error={String(hasError)}
               data-disabled={disabled || undefined}
             >
+              <div className="md-text-field__outline-start" />
               {label && (
-                <legend className="md-text-field__outline-legend" data-floating={String(floating)}>
-                  {label}
-                </legend>
+                <div className="md-text-field__outline-notch" data-floating={String(floating)}>
+                  <span className="md-text-field__outline-legend">{label}</span>
+                </div>
               )}
-            </fieldset>
+              <div className="md-text-field__outline-end" />
+            </div>
           )}
         </div>
 

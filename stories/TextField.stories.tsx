@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { LockIcon, MailIcon, SearchIcon } from 'lucide-react';
+import { expect, waitFor } from 'storybook/test';
 import { TextField } from '../src/components/TextField/text-field';
 
 const meta = {
@@ -175,6 +176,114 @@ export const WithIcons: Story = {
       />
     </div>
   ),
+};
+
+// ─── Leading icon in every state, measured against the M3 spec ───────────
+// Spec (m3.material.io/components/text-fields/specs): container 56dp; icon
+// 24dp, 12dp from the edge, vertically centred; 16dp between icon and text;
+// label aligned with the input text. In the outlined style the label floats
+// into a notch directly above the text start, not to the container's edge.
+const leadingIconStates = ['rest', 'populated', 'error', 'disabled'] as const;
+
+export const LeadingIconStates: Story = {
+  parameters: { layout: 'padded' },
+  render: () => (
+    <div style={{ display: 'flex', gap: 48 }}>
+      {(['outlined', 'filled'] as const).map((variant) => (
+        <div key={variant} style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 280 }}>
+          <p style={{ font: 'var(--md-sys-typescale-title-small)', textTransform: 'capitalize' }}>{variant}</p>
+          {leadingIconStates.map((state) => (
+            <TextField
+              key={state}
+              data-testid={`${variant}-${state}`}
+              variant={variant}
+              label="Email"
+              type="email"
+              leadingIcon={<MailIcon aria-hidden="true" />}
+              defaultValue={state === 'rest' || state === 'error' ? undefined : 'name@company.com'}
+              error={state === 'error'}
+              errorText={state === 'error' ? 'Enter your email address' : undefined}
+              // Disabled supporting text is 38% opacity by spec, which axe reads as a contrast violation.
+              supportingText={state === 'disabled' ? undefined : 'Supporting text'}
+              disabled={state === 'disabled'}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  ),
+  play: async ({ canvas, userEvent, step }) => {
+    const ICON_EDGE = 12;
+    const ICON = 24;
+    const ICON_TEXT = 16;
+    const TEXT_START = ICON_EDGE + ICON + ICON_TEXT;
+
+    const geometry = (input: HTMLElement) => {
+      const container = input.closest('.md-text-field__container') as HTMLElement;
+      const box = container.getBoundingClientRect();
+      const rel = (el: Element | null) => {
+        const r = (el as HTMLElement).getBoundingClientRect();
+        return { x: r.x - box.x, y: r.y - box.y, w: r.width, h: r.height, cy: r.y + r.height / 2 - box.y };
+      };
+      return {
+        height: box.height,
+        icon: rel(container.querySelector('.md-text-field__leading-icon svg')),
+        textStart: rel(input).x + Number.parseFloat(getComputedStyle(input).paddingInlineStart),
+        label: rel(container.querySelector('.md-text-field__label')),
+        notch: container.querySelector('.md-text-field__outline-notch')
+          ? rel(container.querySelector('.md-text-field__outline-notch'))
+          : null,
+      };
+    };
+
+    for (const variant of ['outlined', 'filled'] as const) {
+      for (const state of leadingIconStates) {
+        await step(`${variant} ${state}: icon centred, 12dp in; text 16dp after it`, async () => {
+          const input = canvas.getByTestId(`${variant}-${state}`);
+          const g = geometry(input);
+          await expect(g.height).toBe(56);
+          await expect(g.icon.w).toBe(ICON);
+          await expect(g.icon.h).toBe(ICON);
+          await expect(g.icon.x).toBe(ICON_EDGE);
+          await expect(g.icon.cy).toBe(g.height / 2);
+          await expect(g.textStart).toBe(TEXT_START);
+          await expect(g.label.x).toBe(TEXT_START);
+        });
+      }
+    }
+
+    await step('outlined: the label floats straight up into a notch above the text', async () => {
+      const input = canvas.getByTestId('outlined-rest');
+      const resting = geometry(input);
+      await expect(resting.label.cy).toBe(resting.height / 2);
+
+      await userEvent.click(input);
+      await waitFor(async () => {
+        const g = geometry(input);
+        await expect(g.label.cy).toBe(0); // centred on the top edge of the outline
+      });
+      const floating = geometry(input);
+      await expect(floating.label.x).toBe(TEXT_START);
+      await expect(floating.notch?.x).toBe(TEXT_START - 4);
+      await expect(floating.notch?.w).toBeCloseTo(floating.label.w + 8, 1);
+
+      // The notch is a real gap in the stroke: its top edge is transparent and
+      // the label carries no background to paint over anything.
+      const container = input.closest('.md-text-field__container') as HTMLElement;
+      const notch = container.querySelector('.md-text-field__outline-notch') as HTMLElement;
+      const label = container.querySelector('.md-text-field__label') as HTMLElement;
+      await expect(getComputedStyle(notch).borderTopColor).toBe('rgba(0, 0, 0, 0)');
+      await expect(getComputedStyle(label).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+      await userEvent.tab();
+    });
+
+    await step('filled: the label floats to the top padding, still aligned with the text', async () => {
+      const input = canvas.getByTestId('filled-populated');
+      const g = geometry(input);
+      await expect(g.label.y).toBe(8);
+      await expect(g.label.x).toBe(TEXT_START);
+    });
+  },
 };
 
 // ─── Prefix & suffix text ─────────────────────────────────────────────────

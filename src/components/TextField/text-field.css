@@ -3,7 +3,7 @@
    Variants: filled, outlined
    Height: 56px (3.5rem). Input: body-large. Label: body-large -> body-small.
    Filled: surface-container-highest bg, rounded top, active indicator bottom.
-   Outlined: transparent bg, rounded all, 1px->2px border.
+   Outlined: transparent bg, rounded all, 1px->3px border.
    Source: m3.material.io/components/text-fields/specs
    ============================================================================= */
 
@@ -18,8 +18,28 @@
   }
 }
 
-/* ── Main container ── */
+/* ── Main container ──
+   Horizontal layout is derived from the spec's spacing values below, so the
+   leading icon, the input text, the label in both of its states and the
+   outline notch all share one origin:
+
+     no icon:    | 16 | content …
+     with icon:  | 12 | 24 icon | 16 | content …
+
+   `--_content-start` is where the input text begins, measured from the
+   container's leading edge. The label rests and floats at that x, and the
+   outlined notch opens 4px (`--_label-padding`) before it. */
 .md-text-field__container {
+  --_leading-space: 16px;
+  --_trailing-space: 16px;
+  --_icon-size: 24px;
+  --_icon-edge-space: 12px;
+  --_icon-content-space: 16px;
+  --_label-padding: 4px;
+  --_content-inset-start: var(--_leading-space);
+  --_content-inset-end: var(--_trailing-space);
+  --_content-start: var(--_leading-space);
+  --_content-end: var(--_trailing-space);
   --_text-field-content-top: 16px;
   --_text-field-content-bottom: 16px;
   position: relative;
@@ -30,6 +50,16 @@
   font-family: var(--md-sys-typescale-body-large-font);
   font-size: var(--md-sys-typescale-body-large-size);
   line-height: var(--md-sys-typescale-body-large-line-height);
+
+  &[data-has-leading="true"] {
+    --_content-inset-start: var(--_icon-content-space);
+    --_content-start: calc(var(--_icon-edge-space) + var(--_icon-size) + var(--_icon-content-space));
+  }
+
+  &[data-has-trailing="true"] {
+    --_content-inset-end: var(--_icon-content-space);
+    --_content-end: calc(var(--_icon-edge-space) + var(--_icon-size) + var(--_icon-content-space));
+  }
 
   &[data-has-label="true"] {
     --_text-field-content-top: 24px;
@@ -60,22 +90,29 @@
   }
 }
 
-/* ── Floating label ── */
+/* ── Floating label ──
+   Always aligned with the input text. Floating only moves it up: into the
+   filled container's top padding, or onto the outlined container's top edge
+   where the notch has opened for it. */
 .md-text-field__label {
   pointer-events: none;
   position: absolute;
   z-index: 2;
+  inset-inline-start: var(--_content-start);
+  max-width: calc(100% - var(--_content-start) - var(--_content-end));
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   transform-origin: top left;
   letter-spacing: var(--md-sys-typescale-body-large-tracking);
   transition:
     top 150ms cubic-bezier(0.2, 0, 0, 1),
-    left 150ms cubic-bezier(0.2, 0, 0, 1),
     transform 150ms cubic-bezier(0.2, 0, 0, 1),
     color 150ms cubic-bezier(0.2, 0, 0, 1),
     font-size 150ms cubic-bezier(0.2, 0, 0, 1),
     line-height 150ms cubic-bezier(0.2, 0, 0, 1),
-    padding-inline 150ms cubic-bezier(0.2, 0, 0, 1),
-    background-color 150ms cubic-bezier(0.2, 0, 0, 1);
+    letter-spacing 150ms cubic-bezier(0.2, 0, 0, 1);
 
   /* Resting state (not floating) */
   &[data-floating="false"] {
@@ -87,14 +124,6 @@
     color: var(--md-sys-color-on-surface-variant);
   }
 
-  &[data-floating="false"][data-has-leading="false"] {
-    left: 16px;
-  }
-
-  &[data-floating="false"][data-has-leading="true"] {
-    left: 48px;
-  }
-
   /* Floating state */
   &[data-floating="true"] {
     font-family: var(--md-sys-typescale-body-small-font);
@@ -104,23 +133,14 @@
     transform: none;
   }
 
-  &[data-floating="true"][data-has-leading="false"] {
-    left: 16px;
-  }
-
-  &[data-floating="true"][data-has-leading="true"] {
-    left: 48px;
-  }
-
   &[data-floating="true"][data-variant="filled"] {
     top: 8px;
   }
 
+  /* Centred on the outline's top edge, inside the notch. */
   &[data-floating="true"][data-variant="outlined"] {
     top: 0;
     transform: translateY(-50%);
-    padding-inline: 4px;
-    background-color: var(--md-sys-color-surface);
   }
 
   /* Color states */
@@ -141,19 +161,25 @@
   }
 }
 
-/* ── Leading icon ── */
-.md-text-field__leading-icon {
+/* ── Leading / trailing icons ──
+   A fixed 24px box, vertically centred in the container, 12px from the edge.
+   The fixed box is what lets `--_content-start` be derived rather than
+   measured: whatever is slotted in is centred inside it. */
+.md-text-field__leading-icon,
+.md-text-field__trailing-icon {
   display: flex;
   flex-shrink: 0;
-  align-self: stretch;
+  align-self: center;
   align-items: center;
-  padding-inline-start: 16px;
+  justify-content: center;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
   color: var(--md-sys-color-on-surface-variant);
   box-sizing: border-box;
 
   & svg {
-    width: 24px;
-    height: 24px;
+    width: var(--_icon-size);
+    height: var(--_icon-size);
   }
 
   &[data-disabled] {
@@ -161,7 +187,20 @@
   }
 }
 
-/* ── Input area wrapper ── */
+.md-text-field__leading-icon {
+  margin-inline-start: var(--_icon-edge-space);
+}
+
+.md-text-field__trailing-icon {
+  margin-inline-end: var(--_icon-edge-space);
+
+  &[data-error] {
+    color: var(--md-sys-color-error);
+  }
+}
+
+/* ── Input area wrapper ──
+   Owns the horizontal spacing between the edge (or the icon) and the text. */
 .md-text-field__input-area {
   position: relative;
   display: flex;
@@ -171,14 +210,16 @@
   align-items: center;
   padding-top: var(--_text-field-content-top);
   padding-bottom: var(--_text-field-content-bottom);
+  padding-inline: var(--_content-inset-start) var(--_content-inset-end);
   box-sizing: border-box;
 }
 
-/* ── Prefix text ── */
-.md-text-field__prefix {
+/* ── Prefix / suffix text ── */
+.md-text-field__prefix,
+.md-text-field__suffix {
   display: flex;
   align-items: center;
-  padding-left: 16px;
+  white-space: nowrap;
   font-family: var(--md-sys-typescale-body-large-font);
   font-size: var(--md-sys-typescale-body-large-size);
   line-height: var(--md-sys-typescale-body-large-line-height);
@@ -186,10 +227,6 @@
   letter-spacing: var(--md-sys-typescale-body-large-tracking);
   color: var(--md-sys-color-on-surface-variant);
   transition: opacity 150ms;
-
-  &[data-has-leading="true"] {
-    padding-left: 12px;
-  }
 
   &[data-hidden="true"] {
     opacity: 0;
@@ -207,8 +244,7 @@
   min-width: 0;
   flex: 1;
   border: none;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0;
   background-color: transparent;
   font-family: var(--md-sys-typescale-body-large-font);
   font-size: var(--md-sys-typescale-body-large-size);
@@ -227,29 +263,13 @@
     opacity: 0;
   }
 
-  /* Default padding */
-  &[data-pad-left="default"] {
-    padding-left: 16px;
-  }
-
-  &[data-pad-left="icon"] {
-    padding-left: 16px;
-  }
-
+  /* Gap between a prefix/suffix and the value; edge spacing is on the input area. */
   &[data-pad-left="prefix"] {
-    padding-left: 4px;
-  }
-
-  &[data-pad-right="default"] {
-    padding-right: 16px;
-  }
-
-  &[data-pad-right="icon"] {
-    padding-right: 16px;
+    padding-inline-start: 4px;
   }
 
   &[data-pad-right="suffix"] {
-    padding-right: 4px;
+    padding-inline-end: 4px;
   }
 
   /* Error caret */
@@ -260,57 +280,6 @@
   /* Disabled */
   &[data-disabled] {
     color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
-  }
-}
-
-/* ── Suffix text ── */
-.md-text-field__suffix {
-  display: flex;
-  align-items: center;
-  padding-right: 16px;
-  font-family: var(--md-sys-typescale-body-large-font);
-  font-size: var(--md-sys-typescale-body-large-size);
-  line-height: var(--md-sys-typescale-body-large-line-height);
-  font-weight: var(--md-sys-typescale-body-large-weight);
-  letter-spacing: var(--md-sys-typescale-body-large-tracking);
-  color: var(--md-sys-color-on-surface-variant);
-  transition: opacity 150ms;
-
-  &[data-has-trailing="true"] {
-    padding-right: 12px;
-  }
-
-  &[data-hidden="true"] {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  &[data-disabled] {
-    opacity: var(--md-sys-state-disabled-opacity);
-  }
-}
-
-/* ── Trailing icon ── */
-.md-text-field__trailing-icon {
-  display: flex;
-  flex-shrink: 0;
-  align-self: stretch;
-  align-items: center;
-  padding-inline-end: 16px;
-  color: var(--md-sys-color-on-surface-variant);
-  box-sizing: border-box;
-
-  & svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  &[data-error] {
-    color: var(--md-sys-color-error);
-  }
-
-  &[data-disabled] {
-    opacity: var(--md-sys-state-disabled-opacity);
   }
 }
 
@@ -341,33 +310,83 @@
   }
 }
 
-/* ── Outlined border (fieldset) ── */
+/* ── Outlined border ──
+   Three segments side by side: start | notch | end. The start segment is
+   exactly as wide as the space before the input text minus the label padding,
+   so the notch opens directly above the text and the floating label drops
+   straight into it. While the label rests the notch keeps its top edge, so
+   the outline reads as one continuous stroke. */
 .md-text-field__outline {
+  --_outline-width: 1px;
+  --_outline-color: var(--md-sys-color-outline);
   pointer-events: none;
   position: absolute;
   inset: 0;
-  margin: 0;
+  display: flex;
   border-radius: inherit;
-  border: 1px solid var(--md-sys-color-outline);
-  padding: 0;
-  min-inline-size: 0;
-  transition: all 150ms;
 
-  &[data-focused="true"][data-error="false"] {
-    border: 3px solid var(--md-sys-color-primary);
+  &[data-focused="true"] {
+    --_outline-width: 3px;
+    --_outline-color: var(--md-sys-color-primary);
   }
 
   &[data-error="true"] {
-    border: 1px solid var(--md-sys-color-error);
-  }
-
-  &[data-focused="true"][data-error="true"] {
-    border-width: 3px;
+    --_outline-color: var(--md-sys-color-error);
   }
 
   &[data-disabled] {
-    border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+    --_outline-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
   }
+}
+
+.md-text-field__outline-start,
+.md-text-field__outline-notch,
+.md-text-field__outline-end {
+  box-sizing: border-box;
+  border: var(--_outline-width) solid var(--_outline-color);
+  transition:
+    border-color 150ms cubic-bezier(0.2, 0, 0, 1),
+    border-width 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.md-text-field__outline-start {
+  flex: none;
+  width: calc(var(--_content-start) - var(--_label-padding));
+  border-inline-end: none;
+  border-start-start-radius: inherit;
+  border-end-start-radius: inherit;
+}
+
+.md-text-field__outline-notch {
+  flex: none;
+  max-width: calc(100% - var(--_content-start) - var(--_content-end) + 2 * var(--_label-padding));
+  padding-inline: var(--_label-padding);
+  border-inline: none;
+
+  &[data-floating="true"] {
+    border-top-color: transparent;
+  }
+}
+
+.md-text-field__outline-end {
+  flex: 1;
+  min-width: 0;
+  border-inline-start: none;
+  border-start-end-radius: inherit;
+  border-end-end-radius: inherit;
+}
+
+/* Invisible copy of the label at its floating size; it gives the notch its width. */
+.md-text-field__outline-legend {
+  display: block;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--md-sys-typescale-body-small-font);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
 }
 
 /* ── Hover: stroke darkens to on-surface (shared by both variants) ── */
@@ -378,38 +397,12 @@
 
 .md-text-field__container:hover
   > .md-text-field__outline[data-focused="false"][data-error="false"]:not([data-disabled]) {
-  border-color: var(--md-sys-color-on-surface);
+  --_outline-color: var(--md-sys-color-on-surface);
 }
 
 .md-text-field__container[data-variant="outlined"]:hover:not([data-disabled])
   > .md-text-field__label[data-focused="false"]:not([data-error="true"]) {
   color: var(--md-sys-color-on-surface);
-}
-
-/* ── Outline legend ── */
-.md-text-field__outline-legend {
-  box-sizing: border-box;
-  visibility: hidden;
-  height: 11px;
-  overflow: hidden;
-  white-space: nowrap;
-  margin-inline-start: 12px;
-  font-family: var(--md-sys-typescale-body-small-font);
-  font-size: var(--md-sys-typescale-body-small-size);
-  line-height: var(--md-sys-typescale-body-small-line-height);
-  transition:
-    max-width 150ms cubic-bezier(0.2, 0, 0, 1),
-    padding-inline 150ms cubic-bezier(0.2, 0, 0, 1);
-
-  &[data-floating="false"] {
-    max-width: 0.01px;
-    padding-inline: 0;
-  }
-
-  &[data-floating="true"] {
-    max-width: 100%;
-    padding-inline: 4px;
-  }
 }
 
 /* ── Supporting text row ── */
