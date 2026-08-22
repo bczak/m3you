@@ -50,3 +50,34 @@ test('spring transitions pair matching duration and easing families', () => {
     expect(new Set(durations), declaration.trim()).toEqual(new Set(easings));
   }
 });
+
+test('overlay layers come from the stacking scale instead of hard-coded z-index values', () => {
+  const scale = readFileSync(resolve(process.cwd(), 'src/styles/tokens/sys.z-index.css'), 'utf8');
+  const rungs = Object.fromEntries(
+    [...scale.matchAll(/--md-sys-z-index-([a-z]+):\s*(\d+);/g)].map(([, name, value]) => [name, Number(value)]),
+  );
+  expect(Object.keys(rungs).sort()).toEqual(['backdrop', 'dialog', 'navigation', 'popup', 'snackbar']);
+  // The blocker this scale exists to fix: a popup opened inside a dialog has to
+  // paint and hit-test above the dialog surface.
+  expect(rungs.popup).toBeGreaterThan(rungs.dialog);
+  expect(rungs.snackbar).toBeGreaterThan(rungs.popup);
+  expect(rungs.dialog).toBeGreaterThan(rungs.navigation);
+  expect(rungs.navigation).toBeGreaterThan(rungs.backdrop);
+
+  const lowestRung = Math.min(...Object.values(rungs));
+  for (const declaration of componentCss.match(/z-index:\s*[^;]+/g) ?? []) {
+    const value = declaration.split(':')[1].trim();
+    // Small numbers order the parts of a single component (a state layer under
+    // its icon, a slider handle over its track) and are not overlay layers.
+    if (/^\d+$/.test(value) && Number(value) < lowestRung) continue;
+    expect(declaration.trim()).toMatch(/var\(--md-sys-z-index-[a-z]+\)/);
+  }
+});
+
+test('every anchored popup positioner carries the popup layer class', () => {
+  const positioners = [...componentSource.matchAll(/<\w+\.Positioner\b[^>]*>/g)].map(([match]) => match);
+  expect(positioners.length).toBeGreaterThan(0);
+  for (const positioner of positioners) {
+    expect(positioner).toContain('md-popup-positioner');
+  }
+});

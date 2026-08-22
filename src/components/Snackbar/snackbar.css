@@ -84,3 +84,12 @@
   min-width: 40px;
   height: 40px;
 }
+
+/* ── Host (Sonner Toaster) ──
+   Sonner ships a nine-digit z-index of its own. Clamp the host onto the
+   library's stacking scale instead, above dialogs and popups but on the same
+   ladder. The attribute is Sonner's own, and is only here to out-specify its
+   stylesheet without `!important`. */
+.md-snackbar-host[data-sonner-toaster] {
+  z-index: var(--md-sys-z-index-snackbar);
+}

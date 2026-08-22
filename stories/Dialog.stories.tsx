@@ -12,6 +12,7 @@ import {
   XIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import { expect, screen, waitFor } from 'storybook/test';
 import { Button } from '../src/components/Button/button';
 import {
   Dialog,
@@ -33,6 +34,7 @@ import {
   FullScreenDialogTrigger,
 } from '../src/components/Dialog/dialog';
 import { IconButton } from '../src/components/IconButton/icon-button';
+import { Menu, MenuContent, MenuItem, MenuTrigger } from '../src/components/Menu/menu';
 
 const meta = {
   title: 'Containment/Dialog',
@@ -1120,4 +1122,154 @@ function ControlledStory() {
 
 export const Controlled: Story = {
   render: () => <ControlledStory />,
+};
+
+// =============================================================================
+// Popups inside a dialog — the stacking regression test
+// =============================================================================
+
+export const MenuInsideDialog: Story = {
+  parameters: {
+    a11y: {
+      // Base UI's focus sentinels are aria-hidden and focusable by design.
+      config: { rules: [{ id: 'aria-hidden-focus', enabled: false }] },
+    },
+    docs: {
+      description: {
+        story:
+          'A `Menu` opened from inside a dialog has to paint *and hit-test* above the dialog surface, or every form that offers a choice inside a dialog is dead on arrival. The dialog sits on the `dialog` rung of the stacking scale and popup positioners sit on the `popup` rung above it; the play function proves it by hit-testing the centre of the open menu with `document.elementFromPoint`, in both a standard and a full-screen dialog. The dialog scrim still covers the page behind.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: 12 }}>
+      <Dialog>
+        <DialogTrigger
+          render={
+            <Button variant="filled" size="sm" shape="round">
+              Open dialog
+            </Button>
+          }
+        />
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Move file</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <Menu modal={false}>
+              <MenuTrigger
+                render={
+                  <Button variant="outlined" size="sm" shape="round">
+                    Choose folder
+                  </Button>
+                }
+              />
+              <MenuContent>
+                <MenuItem>Documents</MenuItem>
+                <MenuItem>Downloads</MenuItem>
+                <MenuItem>Projects</MenuItem>
+              </MenuContent>
+            </Menu>
+          </DialogBody>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button variant="text" size="sm" shape="round">
+                  Cancel
+                </Button>
+              }
+            />
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <FullScreenDialog>
+        <FullScreenDialogTrigger
+          render={
+            <Button variant="tonal" size="sm" shape="round">
+              Open full screen
+            </Button>
+          }
+        />
+        <FullScreenDialogContent>
+          <FullScreenDialogHeader
+            icon={
+              <FullScreenDialogClose
+                render={
+                  <IconButton variant="standard" size="sm" aria-label="Close">
+                    <XIcon aria-hidden="true" />
+                  </IconButton>
+                }
+              />
+            }
+          >
+            New expense
+          </FullScreenDialogHeader>
+          <FullScreenDialogBody>
+            <Menu modal={false}>
+              <MenuTrigger
+                render={
+                  <Button variant="outlined" size="sm" shape="round">
+                    Choose category
+                  </Button>
+                }
+              />
+              <MenuContent>
+                <MenuItem>Groceries</MenuItem>
+                <MenuItem>Transport</MenuItem>
+                <MenuItem>Rent</MenuItem>
+              </MenuContent>
+            </Menu>
+          </FullScreenDialogBody>
+        </FullScreenDialogContent>
+      </FullScreenDialog>
+    </div>
+  ),
+  play: async ({ canvas, userEvent, step }) => {
+    const openMenu = async (triggerName: string) => {
+      await userEvent.click(await screen.findByRole('button', { name: triggerName }));
+      const menu = await waitFor(() => {
+        const popup = document.querySelector<HTMLElement>('.md-menu');
+        if (!popup) throw new Error('menu did not open');
+        return popup;
+      });
+      // The popup scales in; hit-test the settled layout.
+      await Promise.all(menu.getAnimations({ subtree: true }).map((animation) => animation.finished));
+      return menu;
+    };
+
+    const topmostAt = (rect: DOMRect) =>
+      document.elementFromPoint(Math.round(rect.left + rect.width / 2), Math.round(rect.top + rect.height / 2));
+
+    await step('a menu opened inside a dialog is hittable above the dialog surface', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Open dialog' }));
+      const menu = await openMenu('Choose folder');
+      const hit = topmostAt(menu.getBoundingClientRect());
+      await expect(hit).not.toBeNull();
+      await expect(hit?.closest('.md-menu')).toBe(menu);
+      // …and every row of it, not just the centre.
+      for (const item of menu.querySelectorAll<HTMLElement>('.md-menu-item')) {
+        await expect(topmostAt(item.getBoundingClientRect())?.closest('.md-menu')).toBe(menu);
+      }
+    });
+
+    await step('the dialog scrim still covers the page behind the menu', async () => {
+      const scrim = document.querySelector('.md-dialog-overlay');
+      await expect(scrim).not.toBeNull();
+      await expect(document.elementFromPoint(2, 2)?.closest('.md-dialog-overlay')).toBe(scrim);
+      await userEvent.keyboard('{Escape}');
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() => expect(document.querySelector('.md-dialog-content')).toBeNull());
+    });
+
+    await step('the same holds inside a full-screen dialog', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Open full screen' }));
+      const menu = await openMenu('Choose category');
+      const hit = topmostAt(menu.getBoundingClientRect());
+      await expect(hit?.closest('.md-menu')).toBe(menu);
+      await expect(hit?.closest('.md-fullscreen-dialog-body')).toBeNull();
+      await userEvent.keyboard('{Escape}');
+      await userEvent.keyboard('{Escape}');
+    });
+  },
 };

@@ -58,7 +58,7 @@ const TooltipContent = forwardRef<HTMLDivElement, React.PropsWithoutRef<TooltipC
   ({ side = 'top', sideOffset = 4, className, portalProps, ...props }, ref) => {
     return (
       <BaseTooltip.Portal {...portalProps}>
-        <BaseTooltip.Positioner side={side} sideOffset={sideOffset}>
+        <BaseTooltip.Positioner className="md-popup-positioner" side={side} sideOffset={sideOffset}>
           <BaseTooltip.Popup ref={ref} className={cx('md-tooltip', className)} {...props} />
         </BaseTooltip.Positioner>
       </BaseTooltip.Portal>
@@ -112,7 +112,7 @@ const RichTooltipContent = forwardRef<HTMLDivElement, React.PropsWithoutRef<Rich
   ({ headline, actions, side = 'bottom', sideOffset = 4, className, children, portalProps, ...props }, ref) => {
     return (
       <BaseTooltip.Portal {...portalProps}>
-        <BaseTooltip.Positioner side={side} sideOffset={sideOffset}>
+        <BaseTooltip.Positioner className="md-popup-positioner" side={side} sideOffset={sideOffset}>
           <BaseTooltip.Popup ref={ref} className={cx('md-rich-tooltip', className)} {...props}>
             {headline && <div className="md-rich-tooltip__headline">{headline}</div>}
             <div className="md-rich-tooltip__body" data-has-headline={headline ? '' : undefined}>

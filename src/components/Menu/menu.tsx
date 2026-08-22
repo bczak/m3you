@@ -102,7 +102,7 @@ const MenuContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuC
     const color = useContext(MenuColorContext);
     return (
       <BaseMenu.Portal {...portalProps}>
-        <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
+        <BaseMenu.Positioner className="md-popup-positioner" side={side} align={align} sideOffset={4}>
           <BaseMenu.Popup
             ref={ref}
             className={cx('md-menu', className)}
@@ -325,7 +325,7 @@ const MenuSubContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<Me
   ({ className, children, portalProps, ...props }, ref) => {
     return (
       <BaseMenu.Portal {...portalProps}>
-        <BaseMenu.Positioner sideOffset={4}>
+        <BaseMenu.Positioner className="md-popup-positioner" sideOffset={4}>
           <BaseMenu.Popup ref={ref} className={cx('md-menu', className)} {...props}>
             {children}
           </BaseMenu.Popup>

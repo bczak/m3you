@@ -8,7 +8,7 @@
 .md-side-sheet-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: var(--md-sys-z-index-dialog);
   background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
   transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
@@ -22,7 +22,7 @@
 .md-side-sheet-viewport {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: var(--md-sys-z-index-dialog);
 }
 
 .md-side-sheet-viewport[data-variant="standard"] {
@@ -34,7 +34,7 @@
   box-sizing: border-box;
   position: fixed;
   top: 0;
-  z-index: 50;
+  z-index: var(--md-sys-z-index-dialog);
   display: flex;
   height: 100%;
   width: min(320px, 100vw);

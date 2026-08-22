@@ -167,3 +167,28 @@ test('rich tooltip renders without actions', () => {
   expect(screen.getByText('Title')).toBeInTheDocument();
   expect(screen.getByText('No actions here')).toBeInTheDocument();
 });
+
+// Popups have to clear dialogs: the positioner carries the popup rung of the
+// stacking scale, so a tooltip opened inside a dialog is visible and hittable.
+test('the plain tooltip positioner carries the popup layer class', () => {
+  render(
+    <TooltipProvider>
+      <Tooltip open>
+        <TooltipTrigger>Save</TooltipTrigger>
+        <TooltipContent>Save file</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>,
+  );
+  expect(screen.getByText('Save file').parentElement).toHaveClass('md-popup-positioner');
+});
+
+test('the rich tooltip positioner carries the popup layer class', () => {
+  render(
+    <RichTooltip open>
+      <RichTooltipTrigger render={<Button>Details</Button>} />
+      <RichTooltipContent headline="Heads up">Body copy</RichTooltipContent>
+    </RichTooltip>,
+  );
+  const popup = document.querySelector('.md-rich-tooltip');
+  expect(popup?.parentElement).toHaveClass('md-popup-positioner');
+});

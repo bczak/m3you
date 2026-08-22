@@ -68,7 +68,7 @@ const SplitButtonMenu = ({
         }
       />
       <BaseMenu.Portal>
-        <BaseMenu.Positioner side={side} align={align} sideOffset={4}>
+        <BaseMenu.Positioner className="md-popup-positioner" side={side} align={align} sideOffset={4}>
           <BaseMenu.Popup className="md-menu">{children}</BaseMenu.Popup>
         </BaseMenu.Positioner>
       </BaseMenu.Portal>

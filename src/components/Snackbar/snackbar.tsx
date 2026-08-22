@@ -70,10 +70,11 @@ export type SnackbarHostProps = Omit<React.ComponentProps<typeof SonnerToaster>,
 const SnackbarHost = React.forwardRef<
   React.ComponentRef<typeof SonnerToaster>,
   React.PropsWithoutRef<SnackbarHostProps>
->(({ position = 'bottom-center', ...props }, ref) => {
+>(({ className, position = 'bottom-center', ...props }, ref) => {
   return (
     <SonnerToaster
       ref={ref}
+      className={cx('md-snackbar-host', className)}
       position={position}
       offset={16}
       gap={8}

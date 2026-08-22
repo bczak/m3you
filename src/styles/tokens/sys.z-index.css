@@ -1,0 +1,28 @@
+/* =============================================================================
+   M3 Stacking Scale
+
+   One scale for everything that leaves the page flow. Components pick a rung;
+   they never hard-code a number, so the layers can be reasoned about — and
+   re-tuned — in one place.
+
+     backdrop    invisible click-away layers that sit behind app chrome
+     navigation  the fixed navigation bar and navigation rail
+     dialog      modal surfaces and their scrims: dialogs, full-screen dialogs,
+                 bottom and side sheets, the expanded search view
+     popup       anchored popups: menus, submenus, tooltips, rich tooltips and
+                 the pickers' popups. Above `dialog`, so a menu opened inside a
+                 dialog paints and hit-tests above it — every real form needs
+                 this — while the dialog's own scrim still covers the page.
+     snackbar    transient messages, above everything else
+
+   Painting order *within* a component (a ripple over a label, a slider handle
+   over its track) stays a small local z-index and is not part of this scale.
+   ============================================================================= */
+
+:root {
+  --md-sys-z-index-backdrop: 30;
+  --md-sys-z-index-navigation: 40;
+  --md-sys-z-index-dialog: 50;
+  --md-sys-z-index-popup: 60;
+  --md-sys-z-index-snackbar: 70;
+}

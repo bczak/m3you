@@ -987,3 +987,27 @@ test('menu content uses the deployed level-2 elevation', async () => {
   expect(screen.getByTestId('content')).toHaveClass('md-menu');
   expect(menuCss).toContain('box-shadow: var(--md-sys-elevation-2)');
 });
+
+// =============================================================================
+// Stacking — popups must clear dialogs
+// =============================================================================
+
+test('the menu positioner carries the popup layer class', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent data-testid="content">
+        <MenuItem>Item</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  const positioner = screen.getByTestId('content').parentElement;
+  expect(positioner).toHaveClass('md-popup-positioner');
+});
+
+test('the popup layer sits above the dialog layer on the stacking scale', () => {
+  const scale = readFileSync('src/styles/tokens/sys.z-index.css', 'utf8');
+  const rung = (name: string) => Number(scale.match(new RegExp(`--md-sys-z-index-${name}:\\s*(\\d+)`))?.[1]);
+  expect(rung('popup')).toBeGreaterThan(rung('dialog'));
+  expect(readFileSync('src/styles/utilities.css', 'utf8')).toContain('z-index: var(--md-sys-z-index-popup)');
+});

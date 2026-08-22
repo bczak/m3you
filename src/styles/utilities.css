@@ -14,3 +14,12 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Anchored popup layer.
+   Base UI positions menus, tooltips and pickers with a positioner element it
+   does not style. Putting the popup rung on that element is what lets a menu
+   opened inside a dialog paint — and hit-test — above the dialog surface,
+   while the dialog's scrim still covers the page behind it. */
+.md-popup-positioner {
+  z-index: var(--md-sys-z-index-popup);
+}
