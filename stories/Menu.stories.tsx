@@ -625,7 +625,7 @@ export const KitGeometry: Story = {
     docs: {
       description: {
         story:
-          'Opens the menu and measures it against the M3 Expressive Design Kit: 48dp rows sit edge to edge 2dp below the container top; each row insets a 44dp painted surface by 2dp/4dp, so hover, selection and focus all land 4dp inside the container; unselected surfaces use the extra-small corner, the selected one the medium corner, and the focus ring is a 2dp stroke directly outside the surface.',
+          'Opens the menu and measures the deployed material.you geometry: the container is a 4dp-padded, 16dp-cornered surface whose rows sit 2dp apart, so the first row starts one padding step below the container top and the rows pitch by height + gap; each row is 48dp tall, inset by the container padding on both inline edges, carries a 12dp inline text inset and body-medium text, and is itself the painted surface — the ripple fills it edge to edge. Rows rest on the 4dp inner corner and take the 12dp outer corner where they meet the container corner or become selected, and hover, focus and selection paint on the row rather than an inset child.',
       },
     },
   },
@@ -645,6 +645,9 @@ export const KitGeometry: Story = {
         <MenuItem selected leadingIcon={<StarIcon />}>
           Favorite
         </MenuItem>
+        <MenuItem>
+          <CopyIcon /> Duplicate
+        </MenuItem>
         <MenuDivider />
         <MenuItem>
           <Trash2Icon /> Delete
@@ -662,69 +665,117 @@ export const KitGeometry: Story = {
     // The popup scales in; measure the settled layout.
     await Promise.all(menu.getAnimations({ subtree: true }).map((animation) => animation.finished));
     const items = Array.from(menu.querySelectorAll<HTMLElement>('.md-menu-item'));
-    const [edit, favorite, remove] = items;
+    const [edit, favorite, duplicate, remove] = items;
     const surface = (item: HTMLElement) => item.querySelector<HTMLElement>(':scope > .salty-ripple') as HTMLElement;
+    /** Alpha of a computed `rgb()`/`rgba()` colour — 0 when fully transparent. */
+    const alphaOf = (color: string) => {
+      const parts = color.match(/[\d.]+/g);
+      if (!parts) throw new Error(`unparsable colour: ${color}`);
+      return parts.length > 3 ? Number(parts[3]) : 1;
+    };
 
-    await step('rows are 48dp, flush with the container inline edges and adjacent', async () => {
+    // The measured expectations below are derived from these three declared
+    // values, so a change to either the declaration or the resulting layout
+    // fails the story.
+    const CONTAINER_PADDING = 4;
+    const ROW_GAP = 2;
+    const ROW_HEIGHT = 48;
+
+    await step('the container is a 4dp-padded surface with a 2dp gap and the 16dp large corner', async () => {
+      const container = getComputedStyle(menu);
+      await expect(container.padding).toBe(`${CONTAINER_PADDING}px`);
+      await expect(container.rowGap).toBe(`${ROW_GAP}px`);
+      await expect(container.borderRadius).toBe('16px');
+    });
+
+    await step('rows are 48dp, inset by the container padding, and pitch by height + gap', async () => {
       const m = menu.getBoundingClientRect();
       const a = edit.getBoundingClientRect();
       const b = favorite.getBoundingClientRect();
-      await expect(a.top - m.top).toBeCloseTo(2, 0);
-      await expect(a.left - m.left).toBeCloseTo(0, 0);
-      await expect(m.right - a.right).toBeCloseTo(0, 0);
-      await expect(a.height).toBeCloseTo(48, 0);
-      await expect(b.top - a.top).toBeCloseTo(48, 0);
+      await expect(a.top - m.top).toBeCloseTo(CONTAINER_PADDING, 0);
+      await expect(a.left - m.left).toBeCloseTo(CONTAINER_PADDING, 0);
+      await expect(m.right - a.right).toBeCloseTo(CONTAINER_PADDING, 0);
+      await expect(a.height).toBeCloseTo(ROW_HEIGHT, 0);
+      await expect(b.top - a.top).toBeCloseTo(ROW_HEIGHT + ROW_GAP, 0);
+      await expect(b.top - a.bottom).toBeCloseTo(ROW_GAP, 0);
     });
 
-    await step('the 44dp painted surface sits 4dp inside the container on every side', async () => {
-      const m = menu.getBoundingClientRect();
+    await step('the row is the painted surface: the ripple fills it edge to edge', async () => {
+      const a = edit.getBoundingClientRect();
       const r = surface(edit).getBoundingClientRect();
-      await expect(r.top - m.top).toBeCloseTo(4, 0);
-      await expect(r.left - m.left).toBeCloseTo(4, 0);
-      await expect(m.right - r.right).toBeCloseTo(4, 0);
-      await expect(r.height).toBeCloseTo(44, 0);
-      const painted = getComputedStyle(edit, '::before');
-      await expect(painted.top).toBe('2px');
-      await expect(painted.left).toBe('4px');
-      await expect(surface(favorite).getBoundingClientRect().top - r.bottom).toBeCloseTo(4, 0);
+      await expect(r.top - a.top).toBeCloseTo(0, 0);
+      await expect(r.left - a.left).toBeCloseTo(0, 0);
+      await expect(a.right - r.right).toBeCloseTo(0, 0);
+      await expect(r.height).toBeCloseTo(ROW_HEIGHT, 0);
     });
 
-    await step('unselected surfaces use the extra-small corner, the selected one the medium corner', async () => {
-      await expect(getComputedStyle(edit, '::before').borderRadius).toBe('4px');
-      await expect(getComputedStyle(surface(edit)).borderRadius).toBe('4px');
-      await expect(getComputedStyle(favorite, '::before').borderRadius).toBe('12px');
-      await expect(getComputedStyle(surface(favorite)).borderRadius).toBe('12px');
+    await step('rows inset their content by 12dp and set body-medium text', async () => {
+      const row = getComputedStyle(edit);
+      await expect(row.paddingLeft).toBe('12px');
+      await expect(row.paddingRight).toBe('12px');
+      await expect(row.fontSize).toBe('14px');
+      await expect(row.lineHeight).toBe('20px');
     });
 
-    await step('hover paints the 8% layer on the surface, not the row', async () => {
-      await userEvent.hover(edit);
-      await waitFor(() => expect(edit.querySelector('.salty-ripple-surface')).toHaveClass('--hover'));
-      await expect(getComputedStyle(edit).backgroundColor).toBe('rgba(0, 0, 0, 0)');
-      await userEvent.unhover(edit);
+    await step('rows rest on the 4dp inner corner and take the 12dp outer corner at the ends', async () => {
+      const first = getComputedStyle(edit);
+      await expect(first.borderTopLeftRadius).toBe('12px');
+      await expect(first.borderTopRightRadius).toBe('12px');
+      await expect(first.borderBottomLeftRadius).toBe('4px');
+      await expect(first.borderBottomRightRadius).toBe('4px');
+
+      const middle = getComputedStyle(duplicate);
+      await expect(middle.borderRadius).toBe('4px');
+
+      const last = getComputedStyle(remove);
+      await expect(last.borderTopLeftRadius).toBe('4px');
+      await expect(last.borderTopRightRadius).toBe('4px');
+      await expect(last.borderBottomLeftRadius).toBe('12px');
+      await expect(last.borderBottomRightRadius).toBe('12px');
+
+      // The ripple inherits the row's corner, so the painted surface matches.
+      await expect(getComputedStyle(surface(duplicate)).borderRadius).toBe('4px');
     });
 
-    await step('keyboard focus draws a 2dp ring directly outside the surface', async () => {
+    await step('the selected row is an opaque container on the 12dp outer corner', async () => {
+      const selected = getComputedStyle(favorite);
+      await expect(selected.borderRadius).toBe('12px');
+      await expect(alphaOf(selected.backgroundColor)).toBe(1);
+      // …while an unselected row paints nothing at rest.
+      await expect(alphaOf(getComputedStyle(duplicate).backgroundColor)).toBe(0);
+    });
+
+    await step('hover paints the 8% state layer on the row itself', async () => {
+      await userEvent.hover(duplicate);
+      await waitFor(() => expect(duplicate.querySelector('.salty-ripple-surface')).toHaveClass('--hover'));
+      await waitFor(async () => {
+        await expect(alphaOf(getComputedStyle(duplicate).backgroundColor)).toBeCloseTo(0.08, 2);
+      });
+      await userEvent.unhover(duplicate);
+    });
+
+    await step('keyboard focus paints the 12% state layer on the row, with no outline ring', async () => {
       await userEvent.keyboard('{ArrowDown}');
       const focused = await waitFor(() => {
         const active = document.activeElement as HTMLElement | null;
         expect(active).toHaveClass('md-menu-item');
         return active as HTMLElement;
       });
-      const ring = getComputedStyle(focused, '::before');
-      await expect(ring.outlineStyle).toBe('solid');
-      await expect(ring.outlineWidth).toBe('2px');
-      await expect(ring.outlineOffset).toBe('0px');
+      // The state layer transitions in; wait for it to settle.
+      await waitFor(async () => {
+        await expect(alphaOf(getComputedStyle(focused).backgroundColor)).toBeCloseTo(0.12, 2);
+      });
       await expect(getComputedStyle(focused).outlineStyle).toBe('none');
     });
 
-    await step('the divider sits 6dp from the surfaces either side and 12dp from the edge', async () => {
+    await step('the divider sits one gap from the rows either side and 12dp from the container edge', async () => {
       const divider = menu.querySelector<HTMLElement>('.md-menu-divider') as HTMLElement;
       const d = divider.getBoundingClientRect();
       const m = menu.getBoundingClientRect();
-      await expect(d.top - surface(favorite).getBoundingClientRect().bottom).toBeCloseTo(6, 0);
-      await expect(surface(remove).getBoundingClientRect().top - d.bottom).toBeCloseTo(6, 0);
-      await expect(d.left - m.left).toBeCloseTo(12, 0);
-      await expect(m.right - d.right).toBeCloseTo(12, 0);
+      await expect(d.top - duplicate.getBoundingClientRect().bottom).toBeCloseTo(ROW_GAP, 0);
+      await expect(remove.getBoundingClientRect().top - d.bottom).toBeCloseTo(ROW_GAP, 0);
+      await expect(d.left - m.left).toBeCloseTo(CONTAINER_PADDING + 8, 0);
+      await expect(m.right - d.right).toBeCloseTo(CONTAINER_PADDING + 8, 0);
     });
 
     await userEvent.keyboard('{Escape}');
