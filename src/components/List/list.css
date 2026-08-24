@@ -15,6 +15,7 @@
   --md-list-item-outer-shape: var(--md-sys-shape-corner-large);
   --md-list-item-gap: 2px;
   --md-list-max-width: 60ch;
+  --md-list-item-text-measure: 60ch;
 
   display: flex;
   flex-direction: column;
@@ -31,9 +32,9 @@
      styles to keep text between 40-60 characters per line"
      (m3.material.io/foundations/layout/breakpoints/overview) — which is right
      for rows that read as prose and wrong for rows whose trailing content is
-     meant to sit at the container's edge. The row's own text block is capped at
-     60ch either way (`.md-list-item__content`), so the headline never runs past
-     a readable line even when the list fills a monitor. */
+     meant to sit at the container's edge. A row's own lines of text keep the
+     measure either way (`--md-list-item-text-measure`), so the headline never
+     runs past a readable line even when the list fills a monitor. */
   &[data-measure="text"] {
     max-inline-size: var(--md-list-max-width);
   }
@@ -167,11 +168,16 @@
   }
 }
 
+/* A flex line, not a four-track grid. The row's slots are optional, and grid
+   charges a column gap for a track even when nothing is placed in it — a row
+   with no leading icon and no selection indicator paid 32px of dead gutter at
+   its trailing edge, and, because grid auto-placement fills tracks in DOM
+   order, that row also put its text in the fixed `auto` track and left the
+   flexible one empty. Flex puts gaps only between slots that exist. */
 .md-list-item__layout,
 .md-list-item__action {
   position: relative;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  display: flex;
   align-items: center;
   gap: 16px;
   inline-size: 100%;
@@ -206,7 +212,6 @@
 
   & > .md-list-item__action,
   & > .md-list-item__layout {
-    grid-template-columns: auto minmax(0, 1fr);
     padding-inline-end: 8px;
   }
 
@@ -246,7 +251,6 @@
 
 .md-list-item__trailing {
   gap: 4px;
-  justify-self: end;
 
   & > button,
   & > a,
@@ -259,13 +263,25 @@
   }
 }
 
+/* The row's elastic slot. It takes every pixel the fixed slots leave, so a
+   trailing block lands on the row's trailing edge; the readable measure is a
+   cap on the lines of text inside it, not on the slot. */
 .md-list-item__content {
   position: relative;
   z-index: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   min-inline-size: 0;
-  max-inline-size: 60ch;
+}
+
+/* M3's readable measure — "keep text between 40-60 characters per line"
+   (m3.material.io/foundations/layout/breakpoints/overview) — so a headline
+   never runs past a readable line even when the row spans a monitor. */
+.md-list-item__headline,
+.md-list-item__overline,
+.md-list-item__supporting-text {
+  max-inline-size: var(--md-list-item-text-measure, 60ch);
 }
 
 .md-list-item__headline {
@@ -358,13 +374,10 @@
   background: var(--md-sys-color-outline-variant);
 }
 
-.md-list-item-accordion__trigger {
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-}
-
 .md-list-item-accordion__icon {
   position: relative;
   z-index: 1;
+  flex: none;
   inline-size: 24px;
   block-size: 24px;
   color: var(--md-list-item-supporting-color);

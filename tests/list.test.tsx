@@ -496,6 +496,109 @@ test('selection indicators support checkbox, check, custom element, string, and 
   expect(screen.getByText('7')).toBeInTheDocument();
 });
 
+test('a selection list can be highlight-only, with no indicator gutter', () => {
+  // A list-detail ledger marks the open row with the selected container colour
+  // and `aria-selected`; a radio button in a ledger implies a form, and the
+  // empty-but-present gutter it reserved stole ~40px from every row.
+  render(
+    <List mode="single-select" aria-label="Ledger" defaultValue="two">
+      <ListItem value="one" headline="One" selectionIndicator="none" />
+      <ListItem value="two" headline="Two" selectionIndicator="none" trailing={<span>12.00</span>} />
+    </List>,
+  );
+
+  const one = screen.getByRole('option', { name: 'One' });
+  const two = screen.getByRole('option', { name: 'Two' });
+  expect(one.querySelector('.md-list-item__selection')).toBeNull();
+  expect(two.querySelector('.md-list-item__selection')).toBeNull();
+
+  // Listbox semantics and the selected container colour are untouched.
+  expect(two).toHaveAttribute('aria-selected', 'true');
+  expect(two).toHaveAttribute('data-selected', 'true');
+  expect(one).toHaveAttribute('aria-selected', 'false');
+  expect(one).not.toHaveAttribute('data-selected');
+  expect(two).toHaveAttribute('aria-posinset', '2');
+  expect(two).toHaveAttribute('aria-setsize', '2');
+
+  fireEvent.click(one);
+  expect(one).toHaveAttribute('aria-selected', 'true');
+  expect(one).toHaveAttribute('data-selected', 'true');
+  expect(two).toHaveAttribute('aria-selected', 'false');
+});
+
+test('the indicator gutter stays for every value but the opt-out', () => {
+  const { rerender } = render(
+    <List mode="single-select" aria-label="Radio" defaultValue="one">
+      <ListItem value="one" headline="One" />
+    </List>,
+  );
+  const radioRow = screen.getByRole('option', { name: 'One' });
+  expect(radioRow.querySelector('.md-list-item__selection')).not.toBeNull();
+  expect(radioRow.querySelector('.md-radio')).not.toBeNull();
+
+  rerender(
+    <List mode="multi-select" aria-label="Checkbox" defaultValue={['one']}>
+      <ListItem value="one" headline="One" />
+    </List>,
+  );
+  const checkboxRow = screen.getByRole('option', { name: 'One' });
+  expect(checkboxRow.querySelector('.md-list-item__selection')).not.toBeNull();
+  expect(checkboxRow.querySelector('.md-checkbox')).not.toBeNull();
+
+  // `false` still renders the slot with nothing in it — unchanged behaviour,
+  // and the reason a distinct `none` was needed.
+  rerender(
+    <List mode="multi-select" aria-label="Empty" defaultValue={['one']}>
+      <ListItem value="one" headline="One" selectionIndicator={false} />
+    </List>,
+  );
+  const emptyRow = screen.getByRole('option', { name: 'One' });
+  expect(emptyRow.querySelector('.md-list-item__selection')).not.toBeNull();
+  expect(emptyRow.querySelector('.md-list-item__selection')).toBeEmptyDOMElement();
+});
+
+test('a highlight-only row keeps its leading and trailing slots', () => {
+  render(
+    <List mode="single-select" aria-label="Ledger" defaultValue="one">
+      <ListItem
+        value="one"
+        headline="One"
+        selectionIndicator="none"
+        selectionIndicatorPosition="leading"
+        leading={<span data-testid="avatar">A</span>}
+        trailing={<span data-testid="amount">12.00</span>}
+      />
+    </List>,
+  );
+  const row = screen.getByRole('option', { name: 'One' });
+  expect(row.querySelector('.md-list-item__selection')).toBeNull();
+  expect(screen.getByTestId('avatar')).toBeInTheDocument();
+  expect(screen.getByTestId('amount')).toBeInTheDocument();
+});
+
+test('the row lays its slots out in a flex line, so an absent slot costs nothing', () => {
+  // The row was a four-track grid — leading, content, trailing, selection —
+  // whose gaps are charged even when the track is empty, and whose tracks are
+  // filled by auto-placement in DOM order, so a row without `leading` put its
+  // text in the fixed track and left the flexible one empty. Flex gaps only
+  // sit between slots that exist.
+  expect(listCss).toMatch(/\.md-list-item__layout,\s*\.md-list-item__action \{[^}]*display: flex;/s);
+  expect(listCss).not.toContain('grid-template-columns: auto minmax(0, 1fr) auto auto');
+  expect(listCss).toMatch(/\.md-list-item__content \{[^}]*flex: 1;/s);
+});
+
+test('the readable measure caps the row text, not the row', () => {
+  // The cap used to sit on `.md-list-item__content`, which is also the row's
+  // elastic slot: a 60ch text block stopped growing and left the trailing
+  // column floating in the middle of a wide row. The measure belongs to the
+  // lines of text.
+  expect(listCss).toContain('--md-list-item-text-measure: 60ch');
+  expect(listCss).toMatch(
+    /\.md-list-item__headline,\s*\.md-list-item__overline,\s*\.md-list-item__supporting-text \{[^}]*max-inline-size: var\(--md-list-item-text-measure, 60ch\);/s,
+  );
+  expect(listCss).not.toMatch(/\.md-list-item__content \{[^}]*max-inline-size: 60ch/s);
+});
+
 test('invalid composition warnings explain ignored and missing actions', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
   render(
@@ -561,7 +664,7 @@ test('a list fills its container unless it asks for the readable text measure', 
   // still carries the readable measure on its own.
   expect(listCss).toMatch(/&\[data-measure="text"\]\s*{\s*max-inline-size: var\(--md-list-max-width\);/);
   expect(listCss).toContain('--md-list-max-width: 60ch');
-  expect(listCss).toMatch(/\.md-list-item__content\s*{[^}]*max-inline-size: 60ch/s);
+  expect(listCss).toMatch(/max-inline-size: var\(--md-list-item-text-measure, 60ch\)/);
 });
 
 test('list CSS contains the expressive geometry, targets, responsive behavior, and reduced-motion guard', () => {

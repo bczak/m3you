@@ -28,8 +28,10 @@ type ListBaseProps = Omit<React.ComponentProps<'ul'>, 'defaultValue' | 'onChange
    * measure. Right for rows that read as prose; wrong for rows whose trailing
    * content should sit at the container's edge, such as a ledger's amounts.
    *
-   * A row's own text block is capped at 60ch either way, so a headline never
-   * runs past a readable line even when the list fills a monitor.
+   * A row's own lines of text keep the 60ch measure either way
+   * (`--md-list-item-text-measure`), so a headline never runs past a readable
+   * line even when the list fills a monitor, while the slot holding it still
+   * stretches to put the trailing content on the row's edge.
    */
   measure?: ListMeasure;
 };
@@ -66,7 +68,16 @@ export type ListMultiSelectionProps = ListBaseProps & {
 
 export type ListProps = ListNonSelectionProps | ListSingleSelectionProps | ListMultiSelectionProps;
 
-export type ListSelectionIndicator = 'check' | 'radio' | 'checkbox' | React.ReactNode;
+/**
+ * The indicators the list draws for you.
+ *
+ * `none` renders no indicator and no slot: the row is marked selected by its
+ * container colour and `aria-selected` alone, which is M3's list-detail
+ * pattern. Every other value reserves the leading/trailing selection slot.
+ */
+export type ListSelectionIndicatorKind = 'check' | 'radio' | 'checkbox' | 'none';
+
+export type ListSelectionIndicator = ListSelectionIndicatorKind | React.ReactNode;
 
 export type ListItemProps = Omit<React.ComponentProps<'li'>, 'children' | 'onClick' | 'value'> & {
   /** Stable selection value. Required when the parent list is selectable. */
@@ -99,7 +110,10 @@ export type ListItemProps = Omit<React.ComponentProps<'li'>, 'children' | 'onCli
   disabled?: boolean;
   /** Render the dragged state, for a row being reordered. */
   dragged?: boolean;
-  /** Which indicator marks selection — a check, a radio, a checkbox, or your own node. */
+  /**
+   * Which indicator marks selection — a check, a radio, a checkbox, your own
+   * node, or `none` for a highlight-only row that reserves no gutter.
+   */
   selectionIndicator?: ListSelectionIndicator;
   /** Which end of the row the selection indicator sits on. */
   selectionIndicatorPosition?: 'leading' | 'trailing';
@@ -514,11 +528,15 @@ const ListItem = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemP
       }
     }, [actionMode, href, mode, onClick, selectionMode, trailing, value]);
 
-    const selectionMark = selectionMode ? (
-      <span className="md-list-item__selection" aria-hidden="true">
-        {renderSelectionIndicator(indicator, selected)}
-      </span>
-    ) : null;
+    // `none` collapses the slot rather than emptying it: M3's list-detail
+    // layout marks the open row with the selected container colour and
+    // `aria-selected`, and a ledger has no room for 40px of empty gutter.
+    const selectionMark =
+      selectionMode && indicator !== 'none' ? (
+        <span className="md-list-item__selection" aria-hidden="true">
+          {renderSelectionIndicator(indicator, selected)}
+        </span>
+      ) : null;
 
     const content = (includeTrailing: boolean) => (
       <>

@@ -99,6 +99,7 @@ export type {
   ListNonSelectionProps,
   ListProps,
   ListSelectionIndicator,
+  ListSelectionIndicatorKind,
   ListSingleSelectionProps,
 } from './components/List/list';
 export { List, ListDivider, ListItem, ListItemAccordion, ListItemSwipe } from './components/List/list';

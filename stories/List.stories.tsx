@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ArchiveIcon, InboxIcon, MoreVerticalIcon, StarIcon, UserIcon } from 'lucide-react';
 import { useState } from 'react';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 
 import { IconButton } from '../src/components/IconButton/icon-button';
 import { List, ListDivider, ListItem, ListItemAccordion, ListItemSwipe } from '../src/components/List/list';
@@ -423,6 +423,209 @@ export const SegmentedGeometry: Story = {
     await step('the container colour stays overridable', async () => {
       const [custom] = rows('Overridden container colour');
       await expect(getComputedStyle(custom).backgroundColor).toBe('rgb(250, 240, 230)');
+    });
+  },
+};
+
+// =============================================================================
+// Highlight-only selection — measured in the browser
+// =============================================================================
+
+export const HighlightOnlySelection: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`selectionIndicator=\"none\"` marks the selected row the way M3's list-detail layout does — with the row's selected container colour and `aria-selected` — and reserves no indicator gutter. Every other value keeps the 40px gutter (a 24px indicator plus the row's 16px gap). The play function measures the trailing slot against the row's padding edge in all three lists and checks the selected container colour and the listbox semantics are identical either way.",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32, inlineSize: 720 }}>
+      <List mode="single-select" aria-label="Highlight only" defaultValue="rent">
+        <ListItem value="rent" headline="Rent" supportingText="Housing" trailing="1,200.00" selectionIndicator="none" />
+        <ListItem
+          value="coffee"
+          headline="Coffee"
+          supportingText="Eating out"
+          trailing="4.20"
+          selectionIndicator="none"
+        />
+      </List>
+      <List mode="single-select" aria-label="Radio indicator" defaultValue="rent">
+        <ListItem value="rent" headline="Rent" supportingText="Housing" trailing="1,200.00" />
+        <ListItem value="coffee" headline="Coffee" supportingText="Eating out" trailing="4.20" />
+      </List>
+      <List mode="multi-select" aria-label="Checkbox indicator" defaultValue={['rent']}>
+        <ListItem value="rent" headline="Rent" supportingText="Housing" trailing="1,200.00" />
+        <ListItem value="coffee" headline="Coffee" supportingText="Eating out" trailing="4.20" />
+      </List>
+    </div>
+  ),
+  play: async ({ canvas, step, userEvent }) => {
+    const rows = (label: string) =>
+      Array.from(canvas.getByRole('listbox', { name: label }).querySelectorAll<HTMLElement>('.md-list-item'));
+    const slot = (row: HTMLElement, name: string) => row.querySelector<HTMLElement>(`.md-list-item__${name}`);
+    /** How far the trailing slot stops short of the row's own padding edge. */
+    const gutter = (row: HTMLElement) => {
+      const trailing = slot(row, 'trailing') as HTMLElement;
+      const padding = Number.parseFloat(
+        getComputedStyle(row.querySelector('.md-list-item__layout') as HTMLElement).paddingInlineEnd,
+      );
+      return row.getBoundingClientRect().right - padding - trailing.getBoundingClientRect().right;
+    };
+
+    const resolve = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    };
+
+    const [highlighted, plain] = rows('Highlight only');
+    const [radioSelected] = rows('Radio indicator');
+    const [checkboxSelected] = rows('Checkbox indicator');
+
+    await step('a highlight-only row renders no indicator and reserves no gutter', async () => {
+      await expect(slot(highlighted, 'selection')).toBeNull();
+      await expect(slot(plain, 'selection')).toBeNull();
+      // The amount lands on the row's padding edge, not 40px inside it.
+      await expect(gutter(highlighted)).toBeCloseTo(0, 1);
+      await expect(gutter(plain)).toBeCloseTo(0, 1);
+    });
+
+    await step('radio and checkbox indicators still reserve their gutter', async () => {
+      const radio = slot(radioSelected, 'selection') as HTMLElement;
+      const checkbox = slot(checkboxSelected, 'selection') as HTMLElement;
+      await expect(radio).not.toBeNull();
+      await expect(checkbox).not.toBeNull();
+      // The slot plus the row's 16px gap: 48px touch targets here, and never
+      // less than the slot's own 24px minimum.
+      await expect(radio.getBoundingClientRect().width).toBeCloseTo(48, 1);
+      await expect(checkbox.getBoundingClientRect().width).toBeCloseTo(48, 1);
+      await expect(gutter(radioSelected)).toBeCloseTo(64, 1);
+      await expect(gutter(checkboxSelected)).toBeCloseTo(64, 1);
+      await expect(gutter(radioSelected) - gutter(highlighted)).toBeGreaterThanOrEqual(40);
+    });
+
+    await step('the selected row keeps its container colour and listbox semantics', async () => {
+      const selectedContainer = resolve('--md-sys-color-secondary-container');
+      await expect(getComputedStyle(highlighted).backgroundColor).toBe(selectedContainer);
+      await expect(getComputedStyle(radioSelected).backgroundColor).toBe(selectedContainer);
+      await expect(getComputedStyle(plain).backgroundColor).toBe(resolve('--md-sys-color-surface-container'));
+
+      await expect(highlighted).toHaveAttribute('role', 'option');
+      await expect(highlighted).toHaveAttribute('aria-selected', 'true');
+      await expect(highlighted).toHaveAttribute('aria-posinset', '1');
+      await expect(highlighted).toHaveAttribute('aria-setsize', '2');
+      await expect(plain).toHaveAttribute('aria-selected', 'false');
+    });
+
+    await step('selecting another row moves the highlight', async () => {
+      await userEvent.click(plain);
+      await expect(plain).toHaveAttribute('aria-selected', 'true');
+      await expect(highlighted).toHaveAttribute('aria-selected', 'false');
+      // The container colour is transitioned, so settle before reading it.
+      await waitFor(async () => {
+        await expect(getComputedStyle(plain).backgroundColor).toBe(resolve('--md-sys-color-secondary-container'));
+        await expect(getComputedStyle(highlighted).backgroundColor).toBe(resolve('--md-sys-color-surface-container'));
+      });
+    });
+  },
+};
+
+// =============================================================================
+// Ledger row geometry — measured in the browser
+// =============================================================================
+
+export const LedgerRowGeometry: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A row is a flex line, so an absent slot costs nothing and the trailing block lands on the row's padding edge however few slots the row uses. The readable 60ch measure caps the row's lines of text (`--md-list-item-text-measure`), not the elastic slot that holds them, so a wide row keeps a readable headline without leaving a hole in front of its amounts.",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32, inlineSize: 1120 }}>
+      <List mode="single-select" aria-label="Ledger" defaultValue="groceries" density={-4}>
+        <ListItem
+          value="groceries"
+          headline="Weekly groceries, the market on the corner and two deliveries besides, all on one card"
+          selectionIndicator="none"
+          trailing={
+            <span
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '7rem 5rem 6rem',
+                alignItems: 'center',
+                gap: 16,
+                textAlign: 'end',
+              }}
+            >
+              <span>Groceries</span>
+              <span>Sam</span>
+              <span>84.10</span>
+            </span>
+          }
+        />
+        <ListItem
+          value="rent"
+          headline="Rent"
+          selectionIndicator="none"
+          trailing={
+            <span
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '7rem 5rem 6rem',
+                alignItems: 'center',
+                gap: 16,
+                textAlign: 'end',
+              }}
+            >
+              <span>Housing</span>
+              <span>Ada</span>
+              <span>1,200.00</span>
+            </span>
+          }
+        />
+      </List>
+    </div>
+  ),
+  play: async ({ canvas, step }) => {
+    const [long, short] = Array.from(
+      canvas.getByRole('listbox', { name: 'Ledger' }).querySelectorAll<HTMLElement>('.md-list-item'),
+    );
+    const box = (row: HTMLElement, name: string) =>
+      (row.querySelector(`.md-list-item__${name}`) as HTMLElement).getBoundingClientRect();
+    /** The readable measure as the browser resolves it on the row's own text. */
+    const measure = () =>
+      Number.parseFloat(getComputedStyle(long.querySelector('.md-list-item__headline') as HTMLElement).maxInlineSize);
+
+    await step('the trailing column block lands on the row edge in every row', async () => {
+      const padding = Number.parseFloat(
+        getComputedStyle(long.querySelector('.md-list-item__layout') as HTMLElement).paddingInlineEnd,
+      );
+      await expect(long.getBoundingClientRect().right - box(long, 'trailing').right).toBeCloseTo(padding, 1);
+      await expect(short.getBoundingClientRect().right - box(short, 'trailing').right).toBeCloseTo(padding, 1);
+      // Both rows put the amounts on the same x, which is what makes a header
+      // row above the list stay aligned.
+      await expect(box(long, 'trailing').left).toBeCloseTo(box(short, 'trailing').left, 1);
+    });
+
+    await step('the text keeps the readable measure while its slot fills the row', async () => {
+      const headline = box(long, 'headline');
+      const content = box(long, 'content');
+      const cap = measure();
+      // The headline is long enough to reach the measure and stop there.
+      await expect(cap).toBeCloseTo(headline.width, 1);
+      // The slot is wider than the measure — the cap is on the text, so no hole
+      // opens between the description and the amounts.
+      await expect(content.width).toBeGreaterThan(cap);
+      await expect(box(long, 'trailing').left - content.right).toBeCloseTo(16, 1);
     });
   },
 };

@@ -20,8 +20,9 @@ Material's readable measure, for lists whose rows read as prose.
 
 Rows whose trailing slot carries a value — an amount, a date, a count — want the
 default, so the value lands on the container's trailing edge rather than 60
-characters in. Either way the row's own text column keeps the 60ch measure, so a
-headline never runs past a readable line.
+characters in. Either way the row's own lines of text keep the 60ch measure
+(`--md-list-item-text-measure`), so a headline never runs past a readable line
+while its slot still stretches to put the trailing block on the row's edge.
 
 ```tsx
 <List measure="text">…</List>
@@ -33,6 +34,17 @@ Setting `mode` turns the list into a selection control. Single-select lists
 behave like radios and multi-select lists like checkboxes, with keyboard
 navigation to match. Selection lists must carry an `aria-label`, and each item
 needs a stable `value`.
+
+`selectionIndicator` chooses the mark: `radio`, `checkbox`, `check`, a node of
+your own, or `none`. `none` renders no mark and reserves no gutter — the row is
+marked by its selected container colour and `aria-selected` alone, which is how
+Material's list-detail layout shows which row the detail pane is displaying. A
+radio button in a ledger implies a form; every other value keeps the indicator
+slot.
+
+```tsx
+<ListItem value="txn-1" headline="Weekly groceries" selectionIndicator="none" />
+```
 
 <Example
   name="list/selection"
