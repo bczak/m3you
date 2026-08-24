@@ -19,13 +19,24 @@
   display: flex;
   flex-direction: column;
   inline-size: 100%;
-  max-inline-size: var(--md-list-max-width);
   box-sizing: border-box;
   padding: 0;
   margin: 0;
   list-style: none;
   background: var(--md-list-container-color);
   color: var(--md-list-item-color);
+
+  /* A container fills the space its layout gives it; the layout owns width.
+     `measure="text"` opts into M3's readable measure — "adjust margins and type
+     styles to keep text between 40-60 characters per line"
+     (m3.material.io/foundations/layout/breakpoints/overview) — which is right
+     for rows that read as prose and wrong for rows whose trailing content is
+     meant to sit at the container's edge. The row's own text block is capped at
+     60ch either way (`.md-list-item__content`), so the headline never runs past
+     a readable line even when the list fills a monitor. */
+  &[data-measure="text"] {
+    max-inline-size: var(--md-list-max-width);
+  }
 
   &[data-appearance="segmented"] {
     gap: var(--md-list-item-gap);
@@ -442,8 +453,10 @@
   transition: none;
 }
 
+/* A compact window is narrower than the measure anyway, and a phone pane has no
+   room to give any of it away. */
 @media (max-width: 599px) {
-  .md-list {
+  .md-list[data-measure="text"] {
     max-inline-size: none;
   }
 }

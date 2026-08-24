@@ -11,11 +11,27 @@ export type ListAppearance = 'standard' | 'segmented';
 
 export type ListMode = 'static' | 'single-action' | 'multi-action' | 'single-select' | 'multi-select';
 
+export type ListMeasure = 'container' | 'text';
+
 type ListBaseProps = Omit<React.ComponentProps<'ul'>, 'defaultValue' | 'onChange'> & {
   /** Expressive segmented containers are the recommended M3 appearance. */
   appearance?: ListAppearance;
   /** Density offset applied to row heights. */
   density?: 0 | -2 | -4;
+  /**
+   * How wide the list may run.
+   *
+   * `container` — fill the parent. The layout owns width, which is what a
+   * container component should do.
+   *
+   * `text` — cap the list at `--md-list-max-width` (60ch), M3's readable
+   * measure. Right for rows that read as prose; wrong for rows whose trailing
+   * content should sit at the container's edge, such as a ledger's amounts.
+   *
+   * A row's own text block is capped at 60ch either way, so a headline never
+   * runs past a readable line even when the list fills a monitor.
+   */
+  measure?: ListMeasure;
 };
 
 export type ListNonSelectionProps = ListBaseProps & {
@@ -250,6 +266,7 @@ const List = React.forwardRef<HTMLUListElement, React.PropsWithoutRef<ListProps>
     {
       appearance = 'segmented',
       density = 0,
+      measure = 'container',
       mode = 'static',
       value: selectionValue,
       defaultValue: defaultSelectionValue,
@@ -413,6 +430,7 @@ const List = React.forwardRef<HTMLUListElement, React.PropsWithoutRef<ListProps>
           className={cx('md-list', className)}
           data-appearance={appearance}
           data-density={density}
+          data-measure={measure}
           data-mode={mode}
           role={selectionMode ? 'listbox' : listProps.role}
           aria-multiselectable={isMulti || undefined}

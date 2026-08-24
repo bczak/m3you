@@ -12,6 +12,21 @@ is the recommended Material 3 look.
 
 <Example name="list/basic" title="A three-line list" layout="stretch" />
 
+## Width
+
+A list fills the container it is given: width is the layout's decision, not the
+component's. Set `measure="text"` to cap it at `--md-list-max-width` (60ch),
+Material's readable measure, for lists whose rows read as prose.
+
+Rows whose trailing slot carries a value — an amount, a date, a count — want the
+default, so the value lands on the container's trailing edge rather than 60
+characters in. Either way the row's own text column keeps the 60ch measure, so a
+headline never runs past a readable line.
+
+```tsx
+<List measure="text">…</List>
+```
+
 ## Selection
 
 Setting `mode` turns the list into a selection control. Single-select lists

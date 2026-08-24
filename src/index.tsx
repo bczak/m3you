@@ -93,6 +93,7 @@ export type {
   ListItemProps,
   ListItemSwipeProps,
   ListItemSwipeSide,
+  ListMeasure,
   ListMode,
   ListMultiSelectionProps,
   ListNonSelectionProps,

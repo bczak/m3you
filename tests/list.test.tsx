@@ -546,6 +546,24 @@ test('empty action and static lists safely ignore keyboard events', () => {
   expect(() => fireEvent.keyDown(screen.getByTestId('list'), { key: 'ArrowDown' })).not.toThrow();
 });
 
+test('a list fills its container unless it asks for the readable text measure', () => {
+  // The 60ch cap used to be unconditional, so a ledger row's trailing amount
+  // stopped 60 characters in and floated in the middle of a wide pane, with no
+  // prop to opt out. Width is the layout's decision; the row's own text block
+  // keeps its measure regardless.
+  const { rerender } = render(<List data-testid="list" />);
+  expect(screen.getByTestId('list')).toHaveAttribute('data-measure', 'container');
+
+  rerender(<List data-testid="list" measure="text" />);
+  expect(screen.getByTestId('list')).toHaveAttribute('data-measure', 'text');
+
+  // The cap itself only exists behind the opt-in, and the row's text column
+  // still carries the readable measure on its own.
+  expect(listCss).toMatch(/&\[data-measure="text"\]\s*{\s*max-inline-size: var\(--md-list-max-width\);/);
+  expect(listCss).toContain('--md-list-max-width: 60ch');
+  expect(listCss).toMatch(/\.md-list-item__content\s*{[^}]*max-inline-size: 60ch/s);
+});
+
 test('list CSS contains the expressive geometry, targets, responsive behavior, and reduced-motion guard', () => {
   expect(listCss).toContain('--md-list-item-gap: 2px');
   expect(listCss).toContain('min-block-size: 56px');
@@ -553,6 +571,7 @@ test('list CSS contains the expressive geometry, targets, responsive behavior, a
   expect(listCss).toContain('min-block-size: 88px');
   expect(listCss).toContain('min-inline-size: 48px');
   expect(listCss).toContain('@media (max-width: 599px)');
+  expect(listCss).toMatch(/@media \(max-width: 599px\) {\s*\.md-list\[data-measure="text"\]/);
   expect(listCss).toContain('@media (prefers-reduced-motion: reduce)');
   expect(listCss).not.toContain('!important');
 });
