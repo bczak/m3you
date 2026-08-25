@@ -111,7 +111,51 @@ The deprecated Bottom App Bar kit set maps to a horizontal `Toolbar`. m3you does
 
 The following compatible m3you extensions remain available alongside kit-backed defaults: elevated `IconButton` and `ToggleIconButton`, `RichTooltip`, heavy/inset `Divider`, extra FAB sizes and legacy variants, elevated Input Chip, bare Card composition, Display XLarge, and LoadingIndicator size variants.
 
-Segmented Button sheets, shape sheets, keyboard diagrams, layout grids, and decorative kit pages are reference material rather than standalone components. XR canvases are permanently outside this library's web scope.
+### Per-item colour on a FAB menu
+
+`FABMenu` items accept a `color`, which is two deliberate departures from M3
+rather than one, so both are stated here.
+
+**Items may differ from one another.** M3 gives a FAB menu a single colour set
+for the whole menu — primary, secondary or tertiary — with one
+`list-item.container.color` token per set, so no two items can differ.
+`FABMenuItemOption.color` overrides the menu's `color` for one item; an item
+that omits it inherits the menu's, so nothing changes for existing callers. The
+extension exists for menus whose actions carry opposite meanings, and colour
+stays decorative in it: M3 makes the icon and the label the differentiators
+("The icon provides a differentiation between items"; "FAB menu items should
+always have label text"), and both are required fields.
+
+**The palette gains `error-container`, and nothing else.** The type is
+`FABMenuItemColor`, which is `FABColor` plus `error-container`. `FABColor`
+itself is unchanged, so no error role reaches the FAB, the extended FAB or the
+extendable FAB — M3 lists six colour styles for a FAB, none of them error, and
+the guidelines say to "avoid using a FAB for minor or destructive actions, such
+as… Alerts or errors". Only the container pair is offered; the solid `error`
+fill, which M3 defines as "attention-grabbing… indicating urgency", is not,
+because a menu of routine actions is not an alarm. An app needing more than
+this one extra semantic colour should do what M3 actually recommends and define
+custom colour roles, which come back as main/on-main/container/on-container and
+participate in dynamic colour and user-controlled contrast.
+
+Contrast, measured in a real browser by the `Per-item colour` story at the
+baseline seed:
+
+| Role pair | Light | Dark |
+| --- | --- | --- |
+| `error-container` / `on-error-container` | 7.24:1 | 7.24:1 |
+| `tertiary-container` / `on-tertiary-container` | 4.55:1 | 4.55:1 |
+| `secondary-container` / `on-secondary-container` | 4.57:1 | 4.57:1 |
+
+All clear the 4.5:1 small-text figure, as M3 promises for any `on-` role against
+its pair. Against the page, `error-container` measures 1.23:1 in light and
+1.98:1 in dark — identical to `secondary-container`, the menu's own default.
+FAB menu items are clustered, so M3 asks for 3:1 there, and no `*-container`
+role in the palette reaches it against `surface`; the shortfall belongs to every
+colour set equally and is not introduced by this extension. In forced-colors
+mode all roles collapse to the system palette, which is the correct outcome —
+the item keeps a `ButtonBorder` outline so it still reads as a button, and the
+label carries the meaning.
 
 ### Carousel accessibility
 

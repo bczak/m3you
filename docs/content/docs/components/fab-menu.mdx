@@ -13,6 +13,53 @@ an `ExtendedFAB`.
   description="Click the FAB to open the stack."
 />
 
+## Items
+
+Each entry in `items` is a `FABMenuItemOption`:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `icon` | `ReactNode` | Leading icon. Required — M3 relies on it to tell items apart. |
+| `label` | `string` | Visible text. Required, and also the item's React key. |
+| `onClick` | `(event) => void` | Called when the action is chosen. |
+| `keepOpen` | `boolean` | Leave the menu open after this item is clicked. |
+| `disabled` | `boolean` | Non-interactive, with the M3 disabled treatment. |
+| `color` | `FABMenuItemColor` | Colour role for this item alone. Falls back to the menu's `color`. |
+| `aria-label` | `string` | Accessible name, when the visible label is not the whole story. |
+
+## Colour
+
+The menu's `color` sets every item and an unconfigured trigger. An item that
+sets its own `color` overrides it for that item only — the trigger and the other
+items are untouched.
+
+<Example
+  name="fab-menu/per-item-color"
+  title="One menu, two meanings"
+  description="Expense takes the error container pair, income the tertiary one, and transfer inherits the menu's."
+/>
+
+`FABMenuItemColor` is [`FABColor`](/docs/components/fab) plus `error-container`.
+Both of those are departures from the spec, and worth knowing before you reach
+for them:
+
+- M3 gives a FAB menu **one** colour set for the whole menu, with a single
+  `list-item.container.color` token per set. Per-item colour is an m3you
+  extension. Keep colour decorative — M3 makes the icon and the label the
+  things that distinguish items, which is why both are required.
+- M3 lists **no** error colour style for a FAB or a FAB menu, and its FAB
+  guidelines say to avoid FABs for destructive actions, alerts and errors.
+  `error-container` is offered for a single negative action inside the menu;
+  the solid `error` fill, which M3 reserves for urgency, is not offered at all,
+  and `FABColor` itself is unchanged so no error role can reach a FAB. If you
+  need more than one extra semantic colour, define custom colour roles instead.
+
+Colour never changes contrast for the worse here, because only intended M3
+pairs are reachable: `error-container` measures 7.24:1 against
+`on-error-container` in both light and dark, and the container pairs measure
+4.55–4.57:1. In forced-colors mode every role collapses to the system palette
+and the label alone carries the meaning, which is the correct outcome.
+
 ## Props
 
 <PropsTable of="FABMenu" extends="<div>" />

@@ -143,6 +143,17 @@
   color: var(--md-sys-color-on-tertiary-container);
 }
 
+/* Extension: the error container pair, for a menu item whose action is
+   destructive or negative. Deliberately the container pair and not `error`
+   itself — M3's FAB guidelines say to avoid alerts and errors on a FAB, so the
+   loud fill is not offered here. The label and icon take `on-error-container`,
+   which the M3 palette pairs with `error-container` at 7.24:1 in both themes,
+   and the state layers follow because they mix from `currentColor`. */
+.md-button.md-fab-menu-item[data-fab-color="error-container"] {
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+
 .md-button.md-fab-menu-item:disabled[data-fab-color] {
   background-color: color-mix(
     in srgb,
@@ -155,4 +166,23 @@
     transparent
   );
   box-shadow: none;
+}
+
+/* ── Forced colors ──
+   The system palette replaces every role, so two items that differ only by
+   colour become identical. That is the correct outcome, not a regression: the
+   label text carries the meaning. All this block does is keep each item's
+   container readable as a distinct button against the forced background. */
+@media (forced-colors: active) {
+  .md-button.md-fab-menu-item[data-fab-color] {
+    border: 1px solid ButtonBorder;
+    background-color: ButtonFace;
+    color: ButtonText;
+  }
+
+  .md-button.md-fab-menu-item:disabled[data-fab-color] {
+    border-color: GrayText;
+    background-color: ButtonFace;
+    color: GrayText;
+  }
 }

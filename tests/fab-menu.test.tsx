@@ -353,3 +353,54 @@ test('the menu colour wins over a trigger colour prop, but not over data-fab-col
   );
   expect(container.querySelector('.md-fab-menu-trigger')).toHaveAttribute('data-fab-color', 'secondary');
 });
+
+// =============================================================================
+// Per-item colour resolution
+// =============================================================================
+
+const itemColors = (root: ParentNode) => menuItems(root).map((item) => item.getAttribute('data-fab-color'));
+
+test('every item takes the menu default colour when none of them sets one', () => {
+  const { container } = render(
+    <FABMenu items={makeItems()} open>
+      <button type="button">Add</button>
+    </FABMenu>,
+  );
+
+  // The documented default, unchanged for callers that never touched colour.
+  expect(itemColors(container)).toEqual(['secondary-container', 'secondary-container', 'secondary-container']);
+});
+
+test('every item follows an explicit menu colour', () => {
+  const { container } = render(
+    <FABMenu items={makeItems()} open color="tertiary">
+      <button type="button">Add</button>
+    </FABMenu>,
+  );
+
+  expect(itemColors(container)).toEqual(['tertiary', 'tertiary', 'tertiary']);
+});
+
+test("an item's own colour wins, and its neighbours still fall back to the menu's", () => {
+  const { container } = render(
+    <FABMenu
+      items={makeItems([{ color: 'error-container' }, {}, { color: 'tertiary-container' }])}
+      open
+      color="primary-container"
+    >
+      <button type="button">Add</button>
+    </FABMenu>,
+  );
+
+  expect(itemColors(container)).toEqual(['error-container', 'primary-container', 'tertiary-container']);
+});
+
+test('an item colour never leaks onto the trigger', () => {
+  const { container } = render(
+    <FABMenu items={makeItems([{ color: 'error-container' }])} open color="tertiary-container">
+      <ExtendedFAB label="Add" icon={<span>+</span>} />
+    </FABMenu>,
+  );
+
+  expect(container.querySelector('.md-fab-menu-trigger')).toHaveAttribute('data-fab-color', 'tertiary-container');
+});

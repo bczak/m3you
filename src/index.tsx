@@ -77,7 +77,7 @@ export type { ExtendedFABProps } from './components/ExtendedFab/extended-fab';
 export { ExtendedFAB } from './components/ExtendedFab/extended-fab';
 export type { FABColor, FABProps, FABSize } from './components/Fab/fab';
 export { FAB } from './components/Fab/fab';
-export type { FABMenuItemOption, FABMenuProps } from './components/FabMenu/fab-menu';
+export type { FABMenuItemColor, FABMenuItemOption, FABMenuProps } from './components/FabMenu/fab-menu';
 export { FABMenu } from './components/FabMenu/fab-menu';
 export type { IconButtonProps } from './components/IconButton/icon-button';
 export { IconButton } from './components/IconButton/icon-button';
