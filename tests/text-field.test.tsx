@@ -151,6 +151,24 @@ test('calls onValueChange with the latest input value', async () => {
   expect(capturedValue).toBe('hello');
 });
 
+test('number fields hide browser spin buttons without weakening native numeric semantics', async () => {
+  render(<TextField label="Amount" type="number" inputMode="decimal" min="0" step="0.01" defaultValue="42.50" />);
+
+  const input = screen.getByRole('spinbutton');
+  expect(input).toHaveAttribute('type', 'number');
+  expect(input).toHaveAttribute('inputmode', 'decimal');
+  expect(input).toHaveAttribute('min', '0');
+  expect(input).toHaveAttribute('step', '0.01');
+
+  const inputRule = rule('.md-text-field__input');
+  // Firefox follows the standard appearance; Chromium and WebKit expose the
+  // two vendor pseudo-elements. CSS only changes their chrome, not the input.
+  expect(inputRule).toMatch(/&\[type="number"\] \{[^}]*appearance: textfield;/s);
+  expect(inputRule).toMatch(
+    /&\[type="number"\]::-webkit-inner-spin-button,\s*&\[type="number"\]::-webkit-outer-spin-button \{[^}]*-webkit-appearance: none;/s,
+  );
+});
+
 test('forwards ref to the input element', async () => {
   const ref = createRef<HTMLInputElement>();
 
