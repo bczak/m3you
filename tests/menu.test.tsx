@@ -634,6 +634,23 @@ test('MenuTrigger render applies ARIA props to the given element', async () => {
   expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
 
+test('MenuTrigger supports a non-button rendered trigger without a Base UI warning', () => {
+  const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+  render(
+    <Menu>
+      <MenuTrigger nativeButton={false} render={<input readOnly aria-label="Choose value" />} />
+      <MenuContent>
+        <MenuItem>Value</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+
+  expect(screen.getByRole('button', { name: 'Choose value' })).toHaveAttribute('aria-haspopup', 'menu');
+  expect(consoleError).not.toHaveBeenCalled();
+  consoleError.mockRestore();
+});
+
 // `asChild` is deprecated in favour of `render`, but still supported so existing
 // consumers keep working. This guards that promise.
 test('MenuTrigger asChild still clones child with ARIA props', async () => {

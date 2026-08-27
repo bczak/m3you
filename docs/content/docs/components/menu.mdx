@@ -9,7 +9,9 @@ without any wiring.
 
 `MenuTrigger` takes a `render` prop to use your own button as the trigger, the
 same convention as Dialog, Tooltip and the sheets. (`asChild` still works but is
-deprecated.)
+deprecated.) When the rendered trigger is not a native button, pass
+`nativeButton={false}` so Base UI applies the correct keyboard and accessibility
+semantics.
 
 Use `MenuLabel` directly when a group needs a visible heading, or pass `label`
 to `MenuGroup` to have it rendered for you.

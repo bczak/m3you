@@ -44,6 +44,11 @@ Menu.displayName = 'Menu';
 
 export interface MenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
+   * Whether `render` is a native button. Set this to `false` when rendering a
+   * different interactive element, such as a read-only input.
+   */
+  nativeButton?: boolean;
+  /**
    * Render the trigger as your own element instead of a plain `<button>`:
    * `<MenuTrigger render={<Button variant="outlined">Open</Button>} />`.
    *
