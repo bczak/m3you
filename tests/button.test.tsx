@@ -1,8 +1,11 @@
+import { readFileSync } from 'node:fs';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { expect, test } from 'vitest';
 import { Button } from '../src/components/Button/button';
 import { ButtonGroupContext, ButtonGroupItemContext } from '../src/components/ButtonGroup/button-group-context';
+
+const buttonCss = readFileSync('src/components/Button/button.css', 'utf8');
 
 // Variant tests
 test('renders with default variant (filled)', async () => {
@@ -46,6 +49,21 @@ test('applies text variant correctly', async () => {
   const button = screen.getByRole('button', { name: 'Text' });
   expect(button).toHaveClass('md-button');
   expect(button).toHaveAttribute('data-variant', 'text');
+});
+
+test('applies an explicit M3 colour family without changing the variant', async () => {
+  render(
+    <Button variant="tonal" color="tertiary">
+      Tertiary
+    </Button>,
+  );
+  const button = screen.getByRole('button', { name: 'Tertiary' });
+  expect(button).toHaveAttribute('data-variant', 'tonal');
+  expect(button).toHaveAttribute('data-color', 'tertiary');
+  expect(buttonCss).toMatch(/\[data-color="tertiary"\][^{]*\{[^}]*--_button-color:\s*var\(--md-sys-color-tertiary\)/s);
+  expect(buttonCss).toMatch(
+    /\[data-color\][^{]*\[data-variant="tonal"\][^{]*\{[^}]*background-color:\s*var\(--_button-container-color\)/s,
+  );
 });
 
 // Shape tests
@@ -171,7 +189,7 @@ test('reflects unselected state via data-selected and aria-pressed', async () =>
 });
 
 // Button group context inheritance
-test('inherits size, shape, morph and selection from the button group context and toggles on click', async () => {
+test('inherits size, shape, morph, colour and selection from the button group context and toggles on click', async () => {
   let toggledIndex = -1;
   render(
     <ButtonGroupContext.Provider
@@ -179,6 +197,7 @@ test('inherits size, shape, morph and selection from the button group context an
         size: 'lg',
         shape: 'square',
         morph: true,
+        color: 'error',
         selectedIndices: new Set([0]),
         handleToggle: (index) => {
           toggledIndex = index;
@@ -194,9 +213,30 @@ test('inherits size, shape, morph and selection from the button group context an
   expect(button).toHaveAttribute('data-size', 'lg');
   expect(button).toHaveAttribute('data-shape', 'square');
   expect(button).toHaveAttribute('data-morph');
+  expect(button).toHaveAttribute('data-color', 'error');
   expect(button).toHaveAttribute('data-selected', 'true');
   expect(button).toHaveAttribute('aria-pressed', 'true');
 
   fireEvent.click(button);
   expect(toggledIndex).toBe(0);
+});
+
+test('a button colour overrides its group colour', async () => {
+  render(
+    <ButtonGroupContext.Provider
+      value={{
+        size: 'sm',
+        shape: 'round',
+        morph: false,
+        color: 'primary',
+        selectedIndices: new Set([0]),
+        handleToggle: () => {},
+      }}
+    >
+      <ButtonGroupItemContext.Provider value={{ index: 0 }}>
+        <Button color="tertiary">Override</Button>
+      </ButtonGroupItemContext.Provider>
+    </ButtonGroupContext.Provider>,
+  );
+  expect(screen.getByRole('button', { name: 'Override' })).toHaveAttribute('data-color', 'tertiary');
 });

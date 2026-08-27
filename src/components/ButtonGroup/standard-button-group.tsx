@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import type { ButtonColor } from '../Button/button';
 import { ButtonGroup, type ButtonGroupProps } from './button-group';
 import { ButtonGroupContext, ButtonGroupItemContext } from './button-group-context';
 import { type UseButtonGroupSelectionOptions, useButtonGroupSelection } from './use-button-group-selection';
@@ -17,6 +18,8 @@ export interface StandardButtonGroupProps
   shape?: 'round' | 'square';
   /** Let buttons change shape while held. */
   morph?: boolean;
+  /** M3 colour family inherited by every button in the group. */
+  color?: ButtonColor;
 }
 
 const StandardButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<StandardButtonGroupProps>>(
@@ -27,6 +30,7 @@ const StandardButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutR
       size = 'sm',
       shape = 'round',
       morph = true,
+      color,
       selectionMode = 'multiple',
       required = false,
       value,
@@ -47,8 +51,8 @@ const StandardButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutR
 
     // Memoised so every button in the group does not redraw on each render.
     const groupValue = React.useMemo(
-      () => ({ size, shape, morph, selectedIndices, handleToggle }),
-      [size, shape, morph, selectedIndices, handleToggle],
+      () => ({ size, shape, morph, color, selectedIndices, handleToggle }),
+      [size, shape, morph, color, selectedIndices, handleToggle],
     );
     const itemCount = React.Children.count(children);
     const itemContexts = React.useMemo(() => Array.from({ length: itemCount }, (_, index) => ({ index })), [itemCount]);
@@ -61,6 +65,7 @@ const StandardButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutR
           className={className}
           data-standard-group
           data-size={size}
+          data-color={color}
           {...props}
         >
           {React.Children.map(children, (child, index) => (

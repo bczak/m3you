@@ -263,6 +263,36 @@
     color: var(--md-sys-color-primary);
   }
 
+  /* ── Optional colour family ──
+     Variant still owns emphasis; colour only swaps the M3 role family. */
+  &[data-color="primary"] {
+    --_button-color: var(--md-sys-color-primary);
+    --_button-on-color: var(--md-sys-color-on-primary);
+    --_button-container-color: var(--md-sys-color-primary-container);
+    --_button-on-container-color: var(--md-sys-color-on-primary-container);
+  }
+
+  &[data-color="secondary"] {
+    --_button-color: var(--md-sys-color-secondary);
+    --_button-on-color: var(--md-sys-color-on-secondary);
+    --_button-container-color: var(--md-sys-color-secondary-container);
+    --_button-on-container-color: var(--md-sys-color-on-secondary-container);
+  }
+
+  &[data-color="tertiary"] {
+    --_button-color: var(--md-sys-color-tertiary);
+    --_button-on-color: var(--md-sys-color-on-tertiary);
+    --_button-container-color: var(--md-sys-color-tertiary-container);
+    --_button-on-container-color: var(--md-sys-color-on-tertiary-container);
+  }
+
+  &[data-color="error"] {
+    --_button-color: var(--md-sys-color-error);
+    --_button-on-color: var(--md-sys-color-on-error);
+    --_button-container-color: var(--md-sys-color-error-container);
+    --_button-on-container-color: var(--md-sys-color-on-error-container);
+  }
+
   /* ── Selected: false (unselected toggle) ── */
   &[data-selected="false"][data-variant="filled"] {
     background-color: var(--md-sys-color-surface-container);
@@ -324,6 +354,51 @@
   &[data-selected="true"][data-variant="text"] {
     background-color: var(--md-sys-color-secondary-container);
     color: var(--md-sys-color-on-secondary-container);
+  }
+
+  /* Explicit colour roles override only enabled colour slots. The disabled
+     treatment below remains neutral and therefore still wins by exclusion. */
+  &[data-color]:not(:disabled):not([data-disabled])[data-variant="filled"] {
+    background-color: var(--_button-color);
+    color: var(--_button-on-color);
+  }
+
+  &[data-color]:not(:disabled):not([data-disabled])[data-selected="false"][data-variant="filled"] {
+    background-color: var(--md-sys-color-surface-container);
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  &[data-color]:not(:disabled):not([data-disabled])[data-variant="elevated"] {
+    color: var(--_button-color);
+  }
+
+  &[data-color]:not(:disabled):not([data-disabled])[data-selected="true"][data-variant="elevated"] {
+    background-color: var(--_button-color);
+    color: var(--_button-on-color);
+  }
+
+  &[data-color]:not(:disabled):not([data-disabled])[data-variant="tonal"] {
+    background-color: var(--_button-container-color);
+    color: var(--_button-on-container-color);
+  }
+
+  &[data-color]:not(:disabled):not([data-disabled])[data-selected="true"][data-variant="tonal"] {
+    background-color: var(--_button-color);
+    color: var(--_button-on-color);
+  }
+
+  &[data-color]:not(:disabled):not([data-disabled]):is([data-variant="outlined"], [data-variant="text"]) {
+    color: var(--_button-color);
+  }
+
+  &[data-color]:not(:disabled):not([data-disabled])[data-selected="true"][data-variant="outlined"] {
+    background-color: var(--_button-color);
+    color: var(--_button-on-color);
+  }
+
+  &[data-color]:not(:disabled):not([data-disabled])[data-selected="true"][data-variant="text"] {
+    background-color: var(--_button-container-color);
+    color: var(--_button-on-container-color);
   }
 
   /* ── Selected: true + shape swap ── */

@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import type { ButtonColor } from '../Button/button';
 import { ButtonGroup, type ButtonGroupProps } from './button-group';
 import { ButtonGroupContext, ButtonGroupItemContext } from './button-group-context';
 import { type UseButtonGroupSelectionOptions, useButtonGroupSelection } from './use-button-group-selection';
@@ -15,6 +16,8 @@ export interface ConnectedButtonGroupProps
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   /** Corner style of the unselected segments. */
   shape?: 'round' | 'square';
+  /** M3 colour family inherited by every button in the group. */
+  color?: ButtonColor;
 }
 
 const ConnectedButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<ConnectedButtonGroupProps>>(
@@ -24,6 +27,7 @@ const ConnectedButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithout
       orientation = 'horizontal',
       size = 'sm',
       shape = 'round',
+      color,
       selectionMode = 'multiple',
       required = false,
       value,
@@ -44,8 +48,8 @@ const ConnectedButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithout
 
     // Memoised so every button in the group does not redraw on each render.
     const groupValue = React.useMemo(
-      () => ({ size, shape, morph: false, selectedIndices, handleToggle }),
-      [size, shape, selectedIndices, handleToggle],
+      () => ({ size, shape, morph: false, color, selectedIndices, handleToggle }),
+      [size, shape, color, selectedIndices, handleToggle],
     );
     const itemCount = React.Children.count(children);
     const itemContexts = React.useMemo(() => Array.from({ length: itemCount }, (_, index) => ({ index })), [itemCount]);
@@ -58,6 +62,7 @@ const ConnectedButtonGroup = React.forwardRef<HTMLDivElement, React.PropsWithout
           className={className}
           data-connected-group
           data-size={size}
+          data-color={color}
           {...props}
         >
           {React.Children.map(children, (child, index) => (

@@ -5,7 +5,7 @@ import { cx } from '../../lib/cx';
 import { Button, type ButtonProps } from '../Button/button';
 import type { FABColor, FABSize } from '../Fab/fab';
 
-export type ExtendedFABProps = Omit<ButtonProps, 'shape'> & {
+export type ExtendedFABProps = Omit<ButtonProps, 'shape' | 'color'> & {
   /** Icon shown before the label. */
   icon?: React.ReactNode;
   /** Text label. Required — the component measures it to animate its own width. */

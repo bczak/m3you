@@ -45,6 +45,16 @@ test.each(['standard', 'filled', 'elevated', 'tonal', 'outlined'] as const)('sup
   expect(screen.getByTestId('ib')).toHaveAttribute('data-variant', variant);
 });
 
+test('supports an explicit M3 colour family', () => {
+  render(
+    <IconButton data-testid="ib" variant="tonal" color="tertiary">
+      +
+    </IconButton>,
+  );
+
+  expect(screen.getByTestId('ib')).toHaveAttribute('data-color', 'tertiary');
+});
+
 test.each(['round', 'square'] as const)('supports the %s shape', (shape) => {
   render(
     <IconButton data-testid="ib" shape={shape}>

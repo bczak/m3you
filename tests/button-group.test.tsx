@@ -23,6 +23,7 @@ function GroupItem({ label }: { label: string }) {
       data-size={ctx?.size}
       data-shape={ctx?.shape}
       data-morph={ctx?.morph ? 'true' : undefined}
+      data-color={ctx?.color}
       data-incontext={ctx ? 'true' : undefined}
       onClick={() => ctx?.onClick()}
     >
@@ -108,6 +109,16 @@ test('ConnectedButtonGroup renders with default data attributes', async () => {
   expect(group).toHaveAttribute('data-orientation', 'horizontal');
   // morph is always false for the connected group
   expect(screen.getByTestId('a')).not.toHaveAttribute('data-morph');
+});
+
+test('ConnectedButtonGroup exposes and inherits its M3 colour family', async () => {
+  render(
+    <ConnectedButtonGroup data-testid="group" color="primary">
+      <GroupItem label="a" />
+    </ConnectedButtonGroup>,
+  );
+  expect(screen.getByTestId('group')).toHaveAttribute('data-color', 'primary');
+  expect(screen.getByTestId('a')).toHaveAttribute('data-color', 'primary');
 });
 
 test('ConnectedButtonGroup forwards ref, className, orientation and extra props', async () => {

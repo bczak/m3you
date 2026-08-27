@@ -14,7 +14,7 @@ export type FABColor =
 
 export type FABSize = 'small' | 'medium' | 'large';
 
-export type FABProps = Omit<IconButtonProps, 'shape' | 'width'> & {
+export type FABProps = Omit<IconButtonProps, 'shape' | 'width' | 'color'> & {
   /** Use the lowered elevation, for a FAB resting on a coloured surface. */
   lowered?: boolean;
   /** M3 FAB color role. Overrides the legacy `variant` color mapping. */

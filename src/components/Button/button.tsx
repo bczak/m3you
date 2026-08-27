@@ -6,7 +6,9 @@ import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 import { useButtonGroup } from '../ButtonGroup/button-group-context';
 
-export type ButtonProps = React.ComponentProps<'button'> & {
+export type ButtonColor = 'primary' | 'secondary' | 'tertiary' | 'error';
+
+export type ButtonProps = Omit<React.ComponentProps<'button'>, 'color'> & {
   /** Visual emphasis, from `filled` (highest) through `tonal`, `elevated` and `outlined` to `text` (lowest). Use one filled button per screen. */
   variant?: 'filled' | 'elevated' | 'tonal' | 'outlined' | 'text';
   /** Corner style. `round` is the M3 default; `square` reads as more structural. */
@@ -17,6 +19,8 @@ export type ButtonProps = React.ComponentProps<'button'> & {
   morph?: boolean;
   /** Renders the selected state. Setting this also emits `aria-pressed`, making the button a toggle. */
   selected?: boolean;
+  /** M3 colour family. Omit it to keep the variant's baseline colour mapping. */
+  color?: ButtonColor;
 };
 
 const Button = forwardRef<HTMLButtonElement, React.PropsWithoutRef<ButtonProps>>(
@@ -28,6 +32,7 @@ const Button = forwardRef<HTMLButtonElement, React.PropsWithoutRef<ButtonProps>>
       size: sizeProp,
       morph: morphProp,
       selected: selectedProp,
+      color: colorProp,
       children,
       onClick,
       ...props
@@ -40,6 +45,7 @@ const Button = forwardRef<HTMLButtonElement, React.PropsWithoutRef<ButtonProps>>
     const shape = shapeProp ?? groupProps?.shape ?? 'round';
     const morph = morphProp ?? groupProps?.morph ?? false;
     const selected = selectedProp ?? groupProps?.selected;
+    const color = colorProp ?? groupProps?.color;
     const selectedValue = selected !== undefined ? String(selected) : undefined;
 
     const activateButton = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -55,6 +61,7 @@ const Button = forwardRef<HTMLButtonElement, React.PropsWithoutRef<ButtonProps>>
         data-size={size}
         data-morph={morph || undefined}
         data-selected={selectedValue}
+        data-color={color}
         aria-pressed={selected !== undefined ? selected : undefined}
         onClick={activateButton}
         ref={ref}

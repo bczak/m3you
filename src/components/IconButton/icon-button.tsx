@@ -2,9 +2,10 @@ import './icon-button.css';
 import * as React from 'react';
 import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
+import type { ButtonColor } from '../Button/button';
 import { useButtonGroup } from '../ButtonGroup/button-group-context';
 
-export type IconButtonProps = React.ComponentProps<'button'> & {
+export type IconButtonProps = Omit<React.ComponentProps<'button'>, 'color'> & {
   /** Visual emphasis. `standard` has no container; the rest match the Button variants. */
   variant?: 'standard' | 'filled' | 'elevated' | 'tonal' | 'outlined';
   /** Corner style. `round` is the M3 default. */
@@ -17,6 +18,8 @@ export type IconButtonProps = React.ComponentProps<'button'> & {
   morph?: boolean;
   /** Renders the selected state and emits `aria-pressed`. */
   selected?: boolean;
+  /** M3 colour family. Omit it to keep the variant's baseline colour mapping. */
+  color?: ButtonColor;
 };
 
 const IconButton = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<IconButtonProps>>(
@@ -29,6 +32,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<Ico
       width = 'default',
       morph: morphProp,
       selected: selectedProp,
+      color: colorProp,
       children,
       onClick,
       ...props
@@ -41,6 +45,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<Ico
     const shape = shapeProp ?? groupProps?.shape ?? 'round';
     const morph = morphProp ?? groupProps?.morph ?? false;
     const selected = selectedProp ?? groupProps?.selected;
+    const color = colorProp ?? groupProps?.color;
     const selectedValue = selected !== undefined ? String(selected) : undefined;
 
     const activateIconButton = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -58,6 +63,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<Ico
         data-width={width}
         data-morph={morph || undefined}
         data-selected={selectedValue}
+        data-color={color}
         aria-pressed={selected !== undefined ? selected : undefined}
         onClick={activateIconButton}
         ref={ref}

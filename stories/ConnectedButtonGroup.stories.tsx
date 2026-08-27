@@ -20,7 +20,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['orientation', 'size', 'shape', 'selectionMode', 'required'],
+      include: ['orientation', 'size', 'shape', 'color', 'selectionMode', 'required'],
     },
   },
   tags: ['autodocs'],
@@ -227,6 +227,26 @@ export const SelectionRequired: Story = {
         Right
       </Button>
     </ConnectedButtonGroup>
+  ),
+};
+
+export const ColorRoles: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {(['primary', 'secondary', 'tertiary', 'error'] as const).map((color) => (
+        <ConnectedButtonGroup
+          key={color}
+          color={color}
+          selectionMode="single"
+          required
+          defaultValue={[0]}
+          aria-label={`${color} colour family`}
+        >
+          <Button variant="tonal">Selected</Button>
+          <Button variant="tonal">Unselected</Button>
+        </ConnectedButtonGroup>
+      ))}
+    </div>
   ),
 };
 

@@ -14,7 +14,7 @@ export {
   BottomSheetContent,
   BottomSheetTrigger,
 } from './components/BottomSheet/bottom-sheet';
-export type { ButtonProps } from './components/Button/button';
+export type { ButtonColor, ButtonProps } from './components/Button/button';
 export { Button } from './components/Button/button';
 export type { ButtonGroupProps } from './components/ButtonGroup/button-group';
 export { ButtonGroup } from './components/ButtonGroup/button-group';

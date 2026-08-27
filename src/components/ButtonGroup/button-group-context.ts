@@ -1,9 +1,11 @@
 import { createContext, useContext } from 'react';
+import type { ButtonColor } from '../Button/button';
 
 interface ButtonGroupContextValue {
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   shape: 'round' | 'square';
   morph: boolean;
+  color?: ButtonColor;
   selectedIndices: Set<number>;
   handleToggle: (index: number) => void;
 }
@@ -25,6 +27,7 @@ export function useButtonGroup() {
     size: group.size,
     shape: group.shape,
     morph: group.morph,
+    color: group.color,
     selected: group.selectedIndices.has(item.index),
     onClick: () => group.handleToggle(item.index),
   };

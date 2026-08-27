@@ -10,7 +10,7 @@ const meta = {
     controls: {
       // Button spreads native <button> props, so without an allow-list the table
       // would flood with every HTML attribute. Keep it to the M3-specific props.
-      include: ['variant', 'shape', 'size', 'morph', 'selected', 'disabled', 'children'],
+      include: ['variant', 'color', 'shape', 'size', 'morph', 'selected', 'disabled', 'children'],
       // Show the description + default-value columns in the Controls table.
       expanded: true,
     },
@@ -21,6 +21,12 @@ const meta = {
       options: ['filled', 'elevated', 'tonal', 'outlined', 'text'],
       description: 'Visual emphasis level following the M3 button hierarchy.',
       table: { category: 'Appearance', defaultValue: { summary: 'filled' } },
+    },
+    color: {
+      control: 'select',
+      options: [undefined, 'primary', 'secondary', 'tertiary', 'error'],
+      description: 'Optional M3 colour family. The variant continues to control emphasis.',
+      table: { category: 'Appearance' },
     },
     shape: {
       control: 'inline-radio',
@@ -136,4 +142,16 @@ export const OutlinedDefault: Story = {
 
 export const TextDefault: Story = {
   render: () => <VariantStory variant="text" />,
+};
+
+export const ColorRoles: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+      {(['primary', 'secondary', 'tertiary', 'error'] as const).map((color) => (
+        <Button key={color} variant="tonal" color={color}>
+          {color}
+        </Button>
+      ))}
+    </div>
+  ),
 };
