@@ -286,3 +286,12 @@ test('icons sit in a fixed 24px box centred in the container', async () => {
   expect(rule('.md-text-field__leading-icon')).toContain('margin-inline-start: var(--_icon-edge-space);');
   expect(rule('.md-text-field__trailing-icon')).toContain('margin-inline-end: var(--_icon-edge-space);');
 });
+
+test('optional icons keep the input and trailing affordance in stable grid columns', async () => {
+  // Auto-placement shifts both remaining children left when the optional
+  // leading icon is absent. Explicit tracks keep the input flexible and the
+  // trailing icon on the field edge in every icon combination.
+  expect(rule('.md-text-field__leading-icon')).toContain('grid-column: 1;');
+  expect(rule('.md-text-field__input-area')).toContain('grid-column: 2;');
+  expect(rule('.md-text-field__trailing-icon')).toContain('grid-column: 3;');
+});

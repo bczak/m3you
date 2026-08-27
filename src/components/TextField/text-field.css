@@ -188,10 +188,12 @@
 }
 
 .md-text-field__leading-icon {
+  grid-column: 1;
   margin-inline-start: var(--_icon-edge-space);
 }
 
 .md-text-field__trailing-icon {
+  grid-column: 3;
   margin-inline-end: var(--_icon-edge-space);
 
   &[data-error] {
@@ -204,6 +206,7 @@
 .md-text-field__input-area {
   position: relative;
   display: flex;
+  grid-column: 2;
   min-width: 0;
   flex: 1;
   align-self: stretch;

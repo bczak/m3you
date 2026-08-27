@@ -16,6 +16,14 @@
   flex-direction: column;
 }
 
+.md-button-group[data-full-width="true"] {
+  width: 100%;
+}
+
+.md-button-group[data-full-width="true"][data-orientation="horizontal"] > :is(.md-button, .md-icon-button) {
+  flex: 1 1 0;
+}
+
 /* ── Standard: size-dependent gap ── */
 
 .md-button-group[data-standard-group][data-size="xs"] {

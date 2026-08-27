@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
@@ -6,6 +7,8 @@ import { ButtonGroup } from '../src/components/ButtonGroup/button-group';
 import { ButtonGroupContext, useButtonGroup } from '../src/components/ButtonGroup/button-group-context';
 import { ConnectedButtonGroup } from '../src/components/ButtonGroup/connected-button-group';
 import { StandardButtonGroup } from '../src/components/ButtonGroup/standard-button-group';
+
+const buttonGroupCss = readFileSync('src/components/ButtonGroup/button-group.css', 'utf8');
 
 afterEach(cleanup);
 
@@ -119,6 +122,21 @@ test('ConnectedButtonGroup forwards ref, className, orientation and extra props'
   expect(group).toHaveClass('custom');
   expect(group).toHaveAttribute('data-orientation', 'vertical');
   expect(group).toHaveAttribute('aria-label', 'Toolbar');
+});
+
+test('fullWidth fills the group and divides a horizontal row equally', async () => {
+  render(
+    <ConnectedButtonGroup data-testid="group" fullWidth>
+      <Button>Long first label</Button>
+      <Button>Second</Button>
+    </ConnectedButtonGroup>,
+  );
+
+  expect(screen.getByTestId('group')).toHaveAttribute('data-full-width', 'true');
+  expect(buttonGroupCss).toMatch(/\.md-button-group\[data-full-width="true"\]\s*\{[^}]*width:\s*100%/s);
+  expect(buttonGroupCss).toMatch(
+    /\.md-button-group\[data-full-width="true"\]\[data-orientation="horizontal"\][^{]*\{[^}]*flex:\s*1 1 0/s,
+  );
 });
 
 test('ConnectedButtonGroup handles non-element children (string)', async () => {
