@@ -612,6 +612,66 @@ export const Vibrant: Story = {
   ),
 };
 
+const LONG_MENU_ITEMS = Array.from({ length: 24 }, (_, index) => `Currency ${index + 1}`);
+
+export const LongScrollable: Story = {
+  parameters: {
+    viewport: { defaultViewport: 'm3Compact' },
+    a11y: {
+      config: { rules: [{ id: 'aria-hidden-focus', enabled: false }] },
+    },
+    docs: {
+      description: {
+        story:
+          'Long menus use Base UI’s collision-safe available height, keep 48dp rows, scroll inside the rounded surface, and reveal the selected item when opened.',
+      },
+    },
+  },
+  render: () => (
+    <Menu modal={false}>
+      <MenuTrigger
+        render={
+          <Button variant="outlined" size="sm" shape="round">
+            Choose currency
+          </Button>
+        }
+      />
+      <MenuContent>
+        {LONG_MENU_ITEMS.map((label, index) => (
+          <MenuItem key={label} selected={index === LONG_MENU_ITEMS.length - 2}>
+            {label}
+          </MenuItem>
+        ))}
+      </MenuContent>
+    </Menu>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Choose currency' }));
+    const menu = await waitFor(() => {
+      const popup = document.querySelector<HTMLElement>('.md-menu');
+      if (!popup) throw new Error('menu did not open');
+      expect(popup.scrollHeight).toBeGreaterThan(popup.clientHeight);
+      return popup;
+    });
+    const rect = menu.getBoundingClientRect();
+    await expect(rect.top).toBeGreaterThanOrEqual(4);
+    await expect(rect.bottom).toBeLessThanOrEqual(window.innerHeight - 4);
+
+    const selected = menu.querySelector<HTMLElement>('[data-selected]');
+    if (!selected) throw new Error('selected item is missing');
+    await waitFor(() => {
+      const item = selected.getBoundingClientRect();
+      expect(item.top).toBeGreaterThanOrEqual(menu.getBoundingClientRect().top);
+      expect(item.bottom).toBeLessThanOrEqual(menu.getBoundingClientRect().bottom);
+      expect(menu.scrollTop).toBeGreaterThan(0);
+    });
+
+    await userEvent.keyboard('{Home}{End}');
+    await waitFor(() => expect(document.activeElement).toHaveTextContent('Currency 24'));
+    await expect(menu.scrollTop).toBeGreaterThan(0);
+  },
+};
+
 // =============================================================================
 // Kit geometry — measured in the browser
 // =============================================================================

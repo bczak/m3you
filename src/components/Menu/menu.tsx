@@ -87,6 +87,11 @@ MenuTrigger.displayName = 'MenuTrigger';
 // MenuContent
 // =============================================================================
 
+function assignRef<T>(ref: React.ForwardedRef<T>, value: T | null) {
+  if (typeof ref === 'function') ref(value);
+  else if (ref) ref.current = value;
+}
+
 export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Lay the items out as connected groups rather than a single surface. */
   grouped?: boolean;
@@ -105,11 +110,35 @@ export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
 const MenuContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuContentProps>>(
   ({ className, grouped, side = 'bottom', align = 'start', children, portalProps, ...props }, ref) => {
     const color = useContext(MenuColorContext);
+    const selectedScrollFrame = React.useRef<number | null>(null);
+    const setPopupRef = React.useCallback(
+      (node: HTMLDivElement | null) => {
+        assignRef(ref, node);
+        if (selectedScrollFrame.current !== null) {
+          cancelAnimationFrame(selectedScrollFrame.current);
+          selectedScrollFrame.current = null;
+        }
+        if (!node) return;
+
+        // Positioning resolves in Base UI's layout effects. Waiting until the
+        // next frame lets the popup receive --available-height and establish
+        // its scrollport before bringing a selected value into view.
+        selectedScrollFrame.current = requestAnimationFrame(() => {
+          selectedScrollFrame.current = null;
+          if (!node.isConnected) return;
+          node.querySelector<HTMLElement>('[data-selected]')?.scrollIntoView?.({
+            block: 'nearest',
+            inline: 'nearest',
+          });
+        });
+      },
+      [ref],
+    );
     return (
       <BaseMenu.Portal {...portalProps}>
         <BaseMenu.Positioner className="md-popup-positioner" side={side} align={align} sideOffset={4}>
           <BaseMenu.Popup
-            ref={ref}
+            ref={setPopupRef}
             className={cx('md-menu', className)}
             data-color={color}
             data-grouped={grouped || undefined}

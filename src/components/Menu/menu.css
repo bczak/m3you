@@ -11,15 +11,22 @@
 
 /* ── Menu popup container ── */
 .md-menu {
+  box-sizing: border-box;
   display: flex;
   min-width: 112px;
   max-width: 280px;
+  /* Base UI publishes the collision-safe space on Positioner. Capping the
+     popup to it turns long menus into a scrollport instead of letting their
+     intrinsic height overlap the trigger, a sheet, or the viewport edge. */
+  max-block-size: var(--available-height);
   flex-direction: column;
   outline: none;
   animation: menu-in var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 
   /* Default (non-grouped): single container */
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-block: 4px;
   gap: 2px;
   border-radius: var(--md-sys-shape-corner-large);
   padding: 4px;
@@ -33,7 +40,7 @@
 
   /* Grouped: transparent wrapper, groups provide their own container */
   &[data-grouped] {
-    overflow: visible;
+    overflow-y: auto;
     gap: 2px;
     border-radius: 0;
     padding: 0;
@@ -45,6 +52,7 @@
 /* ── Menu group ── */
 .md-menu-group {
   display: flex;
+  flex-shrink: 0;
   flex-direction: column;
   gap: 2px;
   padding: 4px;
@@ -79,6 +87,7 @@
 
 .md-menu-label {
   display: flex;
+  flex-shrink: 0;
   min-height: 40px;
   align-items: center;
   padding-inline: 12px;
@@ -100,6 +109,7 @@
   isolation: isolate;
   box-sizing: border-box;
   display: flex;
+  flex-shrink: 0;
   height: 48px;
   cursor: pointer;
   user-select: none;
@@ -241,6 +251,7 @@
 /* ── Menu divider ── */
 .md-menu-divider {
   box-sizing: border-box;
+  flex-shrink: 0;
   height: 1px;
   padding: 0;
   border: 0;

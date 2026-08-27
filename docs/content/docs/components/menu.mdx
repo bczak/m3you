@@ -16,6 +16,11 @@ semantics.
 Use `MenuLabel` directly when a group needs a visible heading, or pass `label`
 to `MenuGroup` to have it rendered for you.
 
+Long menus are capped to the collision-safe height exposed by Base UI and
+scroll within their rounded surface. A visually `selected` item is scrolled
+into view when the menu opens; arrow-key navigation continues to keep the
+highlighted item visible.
+
 <Example name="menu/basic" title="Icons, shortcuts and a divider" />
 
 ## Sub-menus

@@ -1005,6 +1005,46 @@ test('menu content uses the deployed level-2 elevation', async () => {
   expect(menuCss).toContain('box-shadow: var(--md-sys-elevation-2)');
 });
 
+test('long menus are bounded to Base UI available height and scroll without shrinking rows', () => {
+  expect(menuCss).toMatch(/\.md-menu \{[^}]*?max-block-size: var\(--available-height\);/s);
+  expect(menuCss).toMatch(/\.md-menu \{[^}]*?overflow-y: auto;[^}]*?overscroll-behavior: contain;/s);
+  expect(menuCss).toMatch(/\.md-menu-item \{[^}]*?flex-shrink: 0;/s);
+  expect(menuCss).toMatch(/&\[data-grouped\] \{[^}]*?overflow-y: auto;/s);
+});
+
+test('opening a bounded menu brings its selected item into the scrollport', async () => {
+  const original = Element.prototype.scrollIntoView;
+  const scrollIntoView = vi.fn();
+  Object.defineProperty(Element.prototype, 'scrollIntoView', {
+    configurable: true,
+    value: scrollIntoView,
+  });
+
+  try {
+    render(
+      <Menu defaultOpen>
+        <MenuTrigger>Open</MenuTrigger>
+        <MenuContent>
+          <MenuItem>First</MenuItem>
+          <MenuItem selected>Selected</MenuItem>
+        </MenuContent>
+      </Menu>,
+    );
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest', inline: 'nearest' });
+  } finally {
+    if (original) {
+      Object.defineProperty(Element.prototype, 'scrollIntoView', {
+        configurable: true,
+        value: original,
+      });
+    } else {
+      Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
+    }
+  }
+});
+
 // =============================================================================
 // Stacking — popups must clear dialogs
 // =============================================================================
