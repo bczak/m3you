@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MapPinIcon, StarIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
+import { expect, within } from 'storybook/test';
 
 import {
   BottomSheet,
@@ -10,6 +11,7 @@ import {
   BottomSheetTrigger,
 } from '../src/components/BottomSheet/bottom-sheet';
 import { Button } from '../src/components/Button/button';
+import { List, ListItem } from '../src/components/List/list';
 
 const meta = {
   title: 'Containment/BottomSheet',
@@ -49,6 +51,41 @@ export const Basic: Story = {
       </BottomSheetContent>
     </BottomSheet>
   ),
+};
+
+function SelectableListStory() {
+  const [value, setValue] = useState<string | null>('system');
+
+  return (
+    <BottomSheet defaultOpen>
+      <BottomSheetContent aria-labelledby="selectable-list-sheet-title">
+        <BottomSheetBody>
+          <h2 id="selectable-list-sheet-title" style={{ margin: '0 0 16px' }}>
+            Appearance
+          </h2>
+          <output data-testid="selected-theme">Selected: {value}</output>
+          <List mode="single-select" aria-label="Theme" value={value ?? undefined} onValueChange={setValue}>
+            <ListItem value="system" headline="System" />
+            <ListItem value="ocean" headline="Ocean" />
+          </List>
+        </BottomSheetBody>
+      </BottomSheetContent>
+    </BottomSheet>
+  );
+}
+
+/** Selectable list rows must remain clickable inside the sheet's swipe surface. */
+export const SelectableList: Story = {
+  render: () => <SelectableListStory />,
+  play: async ({ canvasElement, userEvent }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const ocean = await body.findByRole('option', { name: 'Ocean' });
+
+    await expect(ocean).toHaveAttribute('data-base-ui-swipe-ignore', '');
+    await userEvent.click(ocean);
+    await expect(ocean).toHaveAttribute('aria-selected', 'true');
+    await expect(body.getByTestId('selected-theme')).toHaveTextContent('Selected: ocean');
+  },
 };
 
 // ─── Snap points: peek (30%), half (60%), full (100vh − top gutter) ───────

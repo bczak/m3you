@@ -307,6 +307,18 @@ test('controlled single selection reports changes without mutating itself', () =
   expect(screen.getByRole('option', { name: 'Two' })).toHaveAttribute('aria-selected', 'true');
 });
 
+test('selectable rows opt out of an enclosing drawer swipe gesture', () => {
+  render(
+    <List mode="single-select" aria-label="Theme" defaultValue="system">
+      <ListItem value="system" headline="System" />
+      <ListItem value="light" headline="Light" />
+    </List>,
+  );
+
+  expect(screen.getByRole('option', { name: 'System' })).toHaveAttribute('data-base-ui-swipe-ignore', '');
+  expect(screen.getByRole('option', { name: 'Light' })).toHaveAttribute('data-base-ui-swipe-ignore', '');
+});
+
 test('multiple selection supports controlled and uncontrolled stable values', () => {
   const uncontrolledChange = vi.fn();
   const { rerender } = render(

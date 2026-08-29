@@ -620,6 +620,9 @@ const ListItem = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemP
           {...props}
           ref={ref}
           className={cx('md-list-item', className)}
+          // Base UI Drawer otherwise treats this non-native interactive row as
+          // a swipe surface and captures pointer input before selection runs.
+          data-base-ui-swipe-ignore=""
           data-md-list-item=""
           data-item-key={itemKey}
           data-list-value={value}
