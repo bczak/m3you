@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ArchiveIcon, InboxIcon, MoreVerticalIcon, StarIcon, UserIcon } from 'lucide-react';
 import { useState } from 'react';
 import { expect, waitFor } from 'storybook/test';
+import { page as browserPage } from 'vitest/browser';
 
 import { IconButton } from '../src/components/IconButton/icon-button';
 import { List, ListDivider, ListItem, ListItemAccordion, ListItemSwipe } from '../src/components/List/list';
@@ -140,6 +141,39 @@ function SelectionExamples() {
 
 export const SelectionModes: Story = {
   render: () => <SelectionExamples />,
+};
+
+export const FullRowHover: Story = {
+  render: () => (
+    <List mode="single-select" aria-label="Choose a display density" defaultValue="comfortable">
+      <ListItem
+        value="comfortable"
+        headline="Comfortable"
+        supportingText="Balanced spacing"
+        leading={<UserIcon aria-label="Account" />}
+      />
+    </List>
+  ),
+  play: async ({ canvas, step }) => {
+    const row = canvas.getByRole('option', { name: /Comfortable Balanced spacing/ });
+    const surface = row.querySelector<HTMLElement>('.md-ripple-hover-layer__surface') as HTMLElement;
+    const targets = [
+      ['headline', row.querySelector<HTMLElement>('.md-list-item__headline')],
+      ['supporting text', row.querySelector<HTMLElement>('.md-list-item__supporting-text')],
+      ['leading content', row.querySelector<HTMLElement>('.md-list-item__leading')],
+      ['selection indicator', row.querySelector<HTMLElement>('.md-list-item__selection')],
+    ] as const;
+
+    for (const [label, target] of targets) {
+      await step(`hover remains visible over ${label}`, async () => {
+        await browserPage.elementLocator(target as HTMLElement).hover();
+        await expect(row.matches(':hover')).toBe(true);
+        await waitFor(() => expect(getComputedStyle(surface).opacity).toBe('0.08'));
+      });
+    }
+
+    await browserPage.elementLocator(row).unhover();
+  },
 };
 
 export const ActionModes: Story = {

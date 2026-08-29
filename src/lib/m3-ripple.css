@@ -1,0 +1,26 @@
+/* m3-ripple listens for pointerenter/leave in capture phase. Descendant
+   boundary events therefore toggle its hover state while the pointer remains
+   inside the host. Keep press geometry upstream, but let CSS own hover from
+   the host's actual boundary so text and icons cannot create dead areas. */
+.md-ripple-hover-layer__surface {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--ripple-color, currentColor);
+  opacity: 0;
+  transition:
+    opacity var(--ripple-duration, 150ms),
+    background-color var(--ripple-duration, 150ms);
+}
+
+.md-ripple-hover-layer[data-disabled] {
+  display: none;
+}
+
+@media (hover: hover) {
+  :not(:disabled, [aria-disabled="true"], [data-disabled]):hover
+    > .md-ripple-hover-layer
+    > .md-ripple-hover-layer__surface {
+    opacity: var(--md-ripple-hover-opacity, 0.08);
+  }
+}
