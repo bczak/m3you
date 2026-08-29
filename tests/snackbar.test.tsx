@@ -100,7 +100,16 @@ test('forwards ref to the underlying output element', async () => {
 
 test('renders the snackbar host with the default position', async () => {
   render(<SnackbarHost />);
-  expect(document.querySelector('section[aria-label^="Notifications"]')).toBeInTheDocument();
+  snackbar({ message: 'Placement', closable: true });
+  await screen.findByText('Placement');
+  const host = document.querySelector<HTMLElement>('[data-sonner-toaster]');
+  expect(host).toBeInTheDocument();
+  expect(host).toHaveAttribute('data-y-position', 'bottom');
+  expect(host?.style.getPropertyValue('--offset-bottom')).toBe('calc(16px + env(safe-area-inset-bottom, 0px))');
+  expect(host?.style.getPropertyValue('--mobile-offset-bottom')).toBe('calc(16px + env(safe-area-inset-bottom, 0px))');
+  expect(host?.style.getPropertyValue('--offset-left')).toBe('16px');
+  expect(host?.style.getPropertyValue('--mobile-offset-right')).toBe('16px');
+  snackbar.dismiss();
 });
 
 test('renders the snackbar host with an overridden position', async () => {

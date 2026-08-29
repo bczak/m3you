@@ -62,6 +62,13 @@ Snackbar.displayName = 'Snackbar';
 
 // ─── Snackbar Host (Sonner Toaster) ──────────────────────────────────────────
 
+const VIEWPORT_OFFSET = {
+  top: 16,
+  right: 16,
+  bottom: 'calc(16px + env(safe-area-inset-bottom, 0px))',
+  left: 16,
+} as const;
+
 export type SnackbarHostProps = Omit<React.ComponentProps<typeof SonnerToaster>, 'position'> & {
   /** Where queued snackbars appear on screen. */
   position?: React.ComponentProps<typeof SonnerToaster>['position'];
@@ -76,7 +83,8 @@ const SnackbarHost = React.forwardRef<
       ref={ref}
       className={cx('md-snackbar-host', className)}
       position={position}
-      offset={16}
+      offset={VIEWPORT_OFFSET}
+      mobileOffset={VIEWPORT_OFFSET}
       gap={8}
       visibleToasts={1}
       toastOptions={{
