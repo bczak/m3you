@@ -1,0 +1,34 @@
+---
+title: OTP input
+description: A one-time code field with separate visual digit slots.
+---
+
+import { OTPInput } from 'm3you';
+
+OTP inputs collect short numeric verification codes. The code appears in
+separate slots, while a single native input preserves keyboard navigation,
+paste, password-manager and one-time-code autofill behavior.
+
+The input accepts digits only by default. `onValueChange` gives you the whole
+code as a string, and `onComplete` runs when every slot is filled.
+
+<Playground
+  name="OTPInput"
+  controls={{
+    length: { min: 4, max: 8, default: 6 },
+    label: 'Verification code',
+    supportingText: 'Enter the code from your email',
+    errorText: 'That code is not valid',
+    error: false,
+    disabled: false,
+  }}
+  render={(props) => (
+    <div style={{ width: '22rem', maxWidth: '100%' }}>
+      <OTPInput {...props} />
+    </div>
+  )}
+/>
+
+## Props
+
+<PropsTable of="OTPInput" extends="<input>" />

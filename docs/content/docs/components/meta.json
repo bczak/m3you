@@ -47,6 +47,7 @@
     "date-picker",
     "time-picker",
     "---Text inputs---",
+    "otp-input",
     "text-field"
   ]
 }

@@ -150,6 +150,8 @@ export {
   NavigationRailMenuButton,
   NavigationRailSection,
 } from './components/NavigationRail/navigation-rail';
+export type { OTPInputProps } from './components/OTPInput/otp-input';
+export { OTPInput } from './components/OTPInput/otp-input';
 export type { RadioButtonProps } from './components/RadioButton/radio-button';
 export { RadioButton } from './components/RadioButton/radio-button';
 export type { RadioGroupProps } from './components/RadioButton/radio-group';

@@ -27,6 +27,7 @@ export default defineConfig(async () => {
           '@base-ui/react',
           /^@base-ui\/react\//,
           '@material/material-color-utilities',
+          'input-otp',
           'lucide-react',
           'm3-ripple',
           'sonner',

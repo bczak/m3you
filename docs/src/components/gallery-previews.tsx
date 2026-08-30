@@ -24,6 +24,7 @@ import {
   NavigationBarItem,
   NavigationRail,
   NavigationRailItem,
+  OTPInput,
   RadioButton,
   SearchBar,
   Slider,
@@ -299,6 +300,11 @@ export const GALLERY_PREVIEWS: Record<string, ReactNode> = {
   ),
 
   // ── Text inputs ──
+  'otp-input': (
+    <div className="m3-gp-wide m3-gp-inset">
+      <OTPInput aria-label="Verification code" defaultValue="123456" />
+    </div>
+  ),
   'text-field': (
     <div className="m3-gp-wide m3-gp-inset">
       <TextField label="Label" variant="outlined" />

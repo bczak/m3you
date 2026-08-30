@@ -441,6 +441,14 @@ export const COMPONENTS: ComponentEntry[] = [
 
   // ── Text inputs ──────────────────────────────────────────────────────────
   {
+    slug: 'otp-input',
+    name: 'OTP input',
+    category: 'Text inputs',
+    summary: 'A one-time code field with separate visual digit slots',
+    docgen: ['OTPInput'],
+    exports: ['OTPInput'],
+  },
+  {
     slug: 'text-field',
     name: 'Text field',
     category: 'Text inputs',

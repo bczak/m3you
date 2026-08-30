@@ -234,6 +234,7 @@
     "Menu",
     "NavigationBar",
     "NavigationRail",
+    "OTPInput",
     "RadioButton",
     "Search",
     "SideSheet",
@@ -257,6 +258,7 @@
     "Elevated Input Chip",
     "Bare Card composition",
     "LoadingIndicator size extensions",
+    "OTPInput one-time code field",
     "Display XLarge"
   ],
   "intentionalNonComponents": [

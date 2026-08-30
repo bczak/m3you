@@ -1,0 +1,158 @@
+/* =============================================================================
+   OTPInput — M3-styled one-time code field
+   One accessible native input drives individually rendered 56dp digit slots.
+   ============================================================================= */
+
+.md-otp-input {
+  display: inline-flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+
+  &[data-disabled] {
+    pointer-events: none;
+  }
+}
+
+.md-otp-input__control {
+  --_slot-size: 48px;
+  --_slot-gap: 8px;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.md-otp-input__slots {
+  display: grid;
+  width: min(100%, calc(var(--_slot-count) * var(--_slot-size) + (var(--_slot-count) - 1) * var(--_slot-gap)));
+  margin-inline: auto;
+  grid-template-columns: repeat(var(--_slot-count), minmax(0, 1fr));
+  gap: var(--_slot-gap);
+}
+
+.md-otp-input__label {
+  width: fit-content;
+  font-family: var(--md-sys-typescale-body-small-font);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  font-weight: var(--md-sys-typescale-body-small-weight);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+  color: var(--md-sys-color-on-surface-variant);
+  transition: color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+
+  &[data-focused]:not([data-error]) {
+    color: var(--md-sys-color-primary);
+  }
+
+  &[data-error] {
+    color: var(--md-sys-color-error);
+  }
+
+  &[data-disabled] {
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+}
+
+.md-otp-input__slot {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  height: 56px;
+  place-items: center;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background-color: transparent;
+  box-sizing: border-box;
+  font-family: var(--md-sys-typescale-headline-small-font);
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  font-weight: var(--md-sys-typescale-headline-small-weight);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--md-sys-typescale-headline-small-tracking);
+  color: var(--md-sys-color-on-surface);
+  transition:
+    border-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    border-width var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-fast-spatial);
+
+  .md-otp-input__slots[data-hovered]:not([data-disabled]) &:not([data-active]) {
+    border-color: var(--md-sys-color-on-surface);
+    background-color: color-mix(
+      in srgb,
+      transparent,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-hover-opacity) * 100%)
+    );
+  }
+
+  &[data-active]:not([data-error]) {
+    border: 3px solid var(--md-sys-color-primary);
+    border-radius: var(--md-sys-shape-corner-small);
+  }
+
+  &[data-error] {
+    border-color: var(--md-sys-color-error);
+  }
+
+  &[data-active][data-error] {
+    border-width: 3px;
+  }
+
+  &[data-disabled] {
+    border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 4%, transparent);
+    color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+  }
+}
+
+.md-otp-input__caret {
+  position: absolute;
+  width: 2px;
+  height: 24px;
+  border-radius: 1px;
+  background-color: var(--md-sys-color-primary);
+  animation: md-otp-input-caret-blink 1s steps(1, end) infinite;
+
+  .md-otp-input__slot[data-error] & {
+    background-color: var(--md-sys-color-error);
+  }
+}
+
+.md-otp-input__supporting-text {
+  min-height: 16px;
+  padding-inline: 4px;
+  font-family: var(--md-sys-typescale-body-small-font);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  font-weight: var(--md-sys-typescale-body-small-weight);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+  color: var(--md-sys-color-on-surface-variant);
+
+  &[data-error] {
+    color: var(--md-sys-color-error);
+  }
+
+  &[data-disabled] {
+    opacity: var(--md-sys-state-disabled-opacity);
+  }
+}
+
+@keyframes md-otp-input-caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-otp-input__caret {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .md-otp-input__slot[data-active] {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+}
