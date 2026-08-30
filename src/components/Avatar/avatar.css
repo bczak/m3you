@@ -8,8 +8,8 @@
   justify-content: center;
   overflow: hidden;
   border-radius: 50%;
-  background-color: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+  background-color: var(--md-avatar-container-color, var(--md-sys-color-primary-container));
+  color: var(--md-avatar-label-color, var(--md-sys-color-on-primary-container));
   font-family: var(--md-sys-typescale-label-large-font);
   font-size: var(--md-sys-typescale-label-large-size);
   line-height: var(--md-sys-typescale-label-large-line-height);

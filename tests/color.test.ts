@@ -21,10 +21,14 @@ vi.mock('@material/material-color-utilities', () => {
     SchemeContent: function SchemeContent(_hct: unknown, isDark: boolean, _contrast: number) {
       return new Proxy({}, { get: (_t, prop) => colorFor(String(prop), isDark) });
     },
+    customColor: (_source: number, custom: { value: number }) => ({
+      light: { colorContainer: colorFor('container', false), onColorContainer: colorFor(`on${custom.value}`, false) },
+      dark: { colorContainer: colorFor('container', true), onColorContainer: colorFor(`on${custom.value}`, true) },
+    }),
   };
 });
 
-import { applyM3Theme, generateM3Theme } from '../src/lib/color';
+import { applyM3Theme, generateCustomColor, generateM3Theme } from '../src/lib/color';
 
 afterEach(() => {
   document.documentElement.removeAttribute('data-theme');
@@ -99,4 +103,15 @@ test('applyM3Theme targets a provided element', async () => {
 
   expect(el.style.getPropertyValue('--md-sys-color-primary')).not.toBe('');
   expect(document.documentElement.style.getPropertyValue('--md-sys-color-primary')).toBe('');
+});
+
+test('generateCustomColor returns a container pair per mode for a colour outside the scheme', async () => {
+  const pair = generateCustomColor('#4caf50');
+
+  expect(pair.light.container).toMatch(HEX);
+  expect(pair.light.onContainer).toMatch(HEX);
+  expect(pair.dark.container).toMatch(HEX);
+  expect(pair.dark.onContainer).toMatch(HEX);
+  // The container flips with the mode, the way the scheme's own containers do.
+  expect(pair.light.container).not.toBe(pair.dark.container);
 });

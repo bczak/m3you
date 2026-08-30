@@ -8,6 +8,12 @@ image with meaningful alternative text, a short monogram, or a familiar icon.
 
 <Example name="avatar/basic" title="Image, monogram, and icon" />
 
+Pass `sourceColor` when the avatar stands for something with a colour of its
+own — a category, a calendar, a label. The circle takes M3's custom-colour
+container for that hex and its content takes the matching on-container, so the
+avatar carries the identity and still flips correctly between light and dark
+mode. Without it the avatar stays on the theme's primary container.
+
 ## Props
 
 <PropsTable of="Avatar" extends="<span>" />

@@ -1,5 +1,5 @@
 import type { DynamicScheme } from '@material/material-color-utilities';
-import { argbFromHex, Hct, hexFromArgb, SchemeContent } from '@material/material-color-utilities';
+import { argbFromHex, customColor, Hct, hexFromArgb, SchemeContent } from '@material/material-color-utilities';
 
 type TokenMap = Record<string, string>;
 
@@ -89,6 +89,31 @@ export function generateM3Theme(seedHex: string): { light: TokenMap; dark: Token
   return {
     light: extractTokens(lightScheme),
     dark: extractTokens(darkScheme),
+  };
+}
+
+/** A container colour and the colour that stays legible on it. */
+export type CustomColorPair = { container: string; onContainer: string };
+
+/**
+ * The container pair M3 derives for a *custom colour* — one colour from outside
+ * the scheme, such as a category's or a calendar's own, that still has to sit on
+ * the app's surfaces. This is M3's own custom-colour mapping, so the pair behaves
+ * like the scheme's containers do: a pale tint of the colour under a dark glyph
+ * in light mode, a deep one under a light glyph in dark mode.
+ *
+ * Throws on anything `argbFromHex` cannot read, which is what a caller wants: a
+ * colour that silently fell back would be a wrong colour, not a missing one.
+ */
+export function generateCustomColor(sourceHex: string): { light: CustomColorPair; dark: CustomColorPair } {
+  const argb = argbFromHex(sourceHex);
+  // `blend: false` keeps the colour its own rather than harmonising it towards
+  // the seed: the point of a custom colour here is that it identifies something.
+  const { light, dark } = customColor(argb, { value: argb, name: sourceHex, blend: false });
+
+  return {
+    light: { container: hexFromArgb(light.colorContainer), onContainer: hexFromArgb(light.onColorContainer) },
+    dark: { container: hexFromArgb(dark.colorContainer), onContainer: hexFromArgb(dark.onColorContainer) },
   };
 }
 

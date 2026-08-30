@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { UserIcon } from 'lucide-react';
+import { BusIcon, HouseIcon, ShoppingCartIcon, UserIcon, UtensilsIcon } from 'lucide-react';
 
 import { Avatar } from '../src/components/Avatar/avatar';
 
@@ -32,4 +32,27 @@ export const Variants: Story = {
 
 export const DecorativeImage: Story = {
   render: () => <Avatar variant="image" src={portrait} alt="" />,
+};
+
+/** One colour per thing named, the way a calendar or a category list colours its rows. */
+export const SourceColor: Story = {
+  render: () => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+      <Avatar variant="icon" sourceColor="#4caf50" role="img" aria-label="Groceries">
+        <ShoppingCartIcon aria-hidden="true" />
+      </Avatar>
+      <Avatar variant="icon" sourceColor="#ff9800" role="img" aria-label="Eating out">
+        <UtensilsIcon aria-hidden="true" />
+      </Avatar>
+      <Avatar variant="icon" sourceColor="#2196f3" role="img" aria-label="Transport">
+        <BusIcon aria-hidden="true" />
+      </Avatar>
+      <Avatar variant="icon" sourceColor="#795548" role="img" aria-label="Housing">
+        <HouseIcon aria-hidden="true" />
+      </Avatar>
+      <Avatar variant="monogram" sourceColor="#9c27b0">
+        AJ
+      </Avatar>
+    </div>
+  ),
 };

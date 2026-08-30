@@ -23,6 +23,10 @@ export default defineConfig({
         test: {
           name: 'unit',
           environment: 'happy-dom',
+          // @material/material-color-utilities ships extensionless ESM imports
+          // that node cannot resolve; letting Vite bundle it makes any module
+          // that reaches the colour helpers importable from a test.
+          server: { deps: { inline: ['@material/material-color-utilities'] } },
           setupFiles: ['./vitest.setup.ts'],
           include: ['tests/**/*.test.{ts,tsx}'],
         },
