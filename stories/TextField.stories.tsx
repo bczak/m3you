@@ -23,6 +23,7 @@ const meta = {
         'prefixText',
         'suffixText',
         'maxCharCount',
+        'rows',
       ],
       expanded: true,
     },
@@ -36,9 +37,14 @@ const meta = {
     },
     type: {
       control: 'select',
-      options: ['text', 'email', 'password', 'number', 'search', 'tel', 'url'],
-      description: 'Native input type forwarded to the underlying `<input>`.',
+      options: ['text', 'email', 'password', 'number', 'search', 'tel', 'url', 'textarea'],
+      description: '`textarea` renders a multiline native control; other values render an `<input>`.',
       table: { category: 'Behavior', defaultValue: { summary: 'text' } },
+    },
+    rows: {
+      control: { type: 'number', min: 1 },
+      description: 'Initial visible line count when `type="textarea"`.',
+      table: { category: 'Behavior', defaultValue: { summary: '2' } },
     },
     label: {
       control: 'text',
@@ -158,6 +164,29 @@ export const Types: Story = {
       {types.map((type) => (
         <TextField key={type} variant="outlined" type={type} label={type} placeholder={`Enter ${type}`} />
       ))}
+    </div>
+  ),
+};
+
+export const Multiline: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 360 }}>
+      <TextField
+        type="textarea"
+        variant="filled"
+        rows={3}
+        label="Description"
+        supportingText="Add any useful context"
+        maxCharCount={240}
+      />
+      <TextField
+        type="textarea"
+        variant="outlined"
+        rows={4}
+        label="Notes"
+        defaultValue={'First line\nSecond line'}
+        maxCharCount={240}
+      />
     </div>
   ),
 };

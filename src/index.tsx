@@ -195,7 +195,7 @@ export type { SwitchProps } from './components/Switch/switch';
 export { Switch } from './components/Switch/switch';
 export type { TabProps, TabsProps } from './components/Tabs/tabs';
 export { Tab, Tabs } from './components/Tabs/tabs';
-export type { TextFieldProps } from './components/TextField/text-field';
+export type { TextFieldElement, TextFieldProps } from './components/TextField/text-field';
 export { TextField } from './components/TextField/text-field';
 export type { TimePickerProps } from './components/TimePicker/time-picker';
 export { TimePicker } from './components/TimePicker/time-picker';

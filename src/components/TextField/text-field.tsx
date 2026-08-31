@@ -3,11 +3,15 @@ import * as React from 'react';
 
 import { cx } from '../../lib/cx';
 
-export type TextFieldProps = Omit<React.ComponentProps<'input'>, 'type'> & {
+export type TextFieldElement = HTMLInputElement | HTMLTextAreaElement;
+
+export type TextFieldProps = Omit<React.ComponentProps<'input'>, 'type' | 'onChange' | 'onFocus' | 'onBlur'> & {
   /** `filled` uses a tinted container; `outlined` uses a border. */
   variant?: 'filled' | 'outlined';
-  /** Native input type. */
-  type?: 'text' | 'email' | 'password' | 'number' | 'search' | 'tel' | 'url';
+  /** Native input type. `textarea` renders a multiline `<textarea>`. */
+  type?: 'text' | 'email' | 'password' | 'number' | 'search' | 'tel' | 'url' | 'textarea';
+  /** Initial visible line count for `type="textarea"`. */
+  rows?: number;
   /** Floating label. Animates into the outline on focus. */
   label?: string;
   /** Guidance shown under the field. */
@@ -33,14 +37,21 @@ export type TextFieldProps = Omit<React.ComponentProps<'input'>, 'type'> & {
   maxCharCount?: number;
   /** Called with the input's string value — saves reaching into the event. */
   onValueChange?: (value: string) => void;
+  /** Native change event from the rendered input or textarea. */
+  onChange?: React.ChangeEventHandler<TextFieldElement>;
+  /** Native focus event from the rendered input or textarea. */
+  onFocus?: React.FocusEventHandler<TextFieldElement>;
+  /** Native blur event from the rendered input or textarea. */
+  onBlur?: React.FocusEventHandler<TextFieldElement>;
 };
 
-const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextFieldProps>>(
+const TextField = React.forwardRef<TextFieldElement, React.PropsWithoutRef<TextFieldProps>>(
   (
     {
       className,
       variant = 'filled',
       type = 'text',
+      rows = 2,
       label,
       supportingText,
       errorText,
@@ -50,6 +61,7 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
       prefixText,
       suffixText,
       maxCharCount,
+      maxLength,
       disabled,
       onValueChange,
       onChange,
@@ -71,7 +83,8 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
     const isControlled = value !== undefined;
     const currentValue = isControlled ? value : internalValue;
     const populated = String(currentValue).length > 0;
-    const floating = focused || populated;
+    const multiline = type === 'textarea';
+    const floating = multiline || focused || populated;
     // The error state comes from `error` alone. `errorText` only supplies the
     // message shown while `error` is set — a form that pre-declares its
     // message must not render red, and must not claim `aria-invalid`, before
@@ -80,7 +93,7 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
     const displaySupportingText = hasError ? (errorText ?? supportingText) : supportingText;
     const charCount = String(currentValue).length;
 
-    const updateTextValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const updateTextValue = (e: React.ChangeEvent<TextFieldElement>) => {
       if (!isControlled) {
         setInternalValue(e.target.value);
       }
@@ -88,12 +101,12 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
       onChange?.(e);
     };
 
-    const showFloatingLabel = (e: React.FocusEvent<HTMLInputElement>) => {
+    const showFloatingLabel = (e: React.FocusEvent<TextFieldElement>) => {
       setFocused(true);
       onFocus?.(e);
     };
 
-    const hideFloatingLabel = (e: React.FocusEvent<HTMLInputElement>) => {
+    const hideFloatingLabel = (e: React.FocusEvent<TextFieldElement>) => {
       setFocused(false);
       onBlur?.(e);
     };
@@ -103,7 +116,11 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
     const padRight = suffixText ? 'suffix' : trailingIcon ? 'icon' : 'default';
 
     return (
-      <div className={cx('md-text-field', className)} data-disabled={disabled || undefined}>
+      <div
+        className={cx('md-text-field', className)}
+        data-disabled={disabled || undefined}
+        data-multiline={multiline || undefined}
+      >
         {/* Main container */}
         <div
           data-variant={variant}
@@ -114,6 +131,7 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
           data-has-label={String(!!label)}
           data-has-leading={String(!!leadingIcon)}
           data-has-trailing={String(!!trailingIcon)}
+          data-multiline={multiline || undefined}
           className="md-text-field__container"
         >
           {/* Floating label */}
@@ -144,7 +162,11 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
           )}
 
           {/* Input area */}
-          <div className="md-text-field__input-area" data-has-label={String(!!label)}>
+          <div
+            className="md-text-field__input-area"
+            data-has-label={String(!!label)}
+            data-multiline={multiline || undefined}
+          >
             {/* Prefix */}
             {prefixText && (
               <span
@@ -159,27 +181,53 @@ const TextField = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<TextF
             )}
 
             {/* Input element */}
-            <input
-              ref={ref}
-              id={inputId}
-              type={type}
-              disabled={disabled}
-              value={currentValue}
-              onChange={updateTextValue}
-              onFocus={showFloatingLabel}
-              onBlur={hideFloatingLabel}
-              aria-invalid={hasError || undefined}
-              aria-describedby={displaySupportingText || maxCharCount ? supportingTextId : undefined}
-              className="md-text-field__input"
-              data-pad-left={padLeft}
-              data-pad-right={padRight}
-              data-variant={variant}
-              data-has-label={String(!!label)}
-              data-floating={String(floating)}
-              data-error={hasError || undefined}
-              data-disabled={disabled || undefined}
-              {...props}
-            />
+            {multiline ? (
+              <textarea
+                ref={ref as React.ForwardedRef<HTMLTextAreaElement>}
+                id={inputId}
+                rows={rows}
+                disabled={disabled}
+                value={currentValue}
+                maxLength={maxLength ?? maxCharCount}
+                onChange={updateTextValue}
+                onFocus={showFloatingLabel}
+                onBlur={hideFloatingLabel}
+                aria-invalid={hasError || undefined}
+                aria-describedby={displaySupportingText || maxCharCount ? supportingTextId : undefined}
+                className="md-text-field__input"
+                data-pad-left={padLeft}
+                data-pad-right={padRight}
+                data-variant={variant}
+                data-has-label={String(!!label)}
+                data-floating={String(floating)}
+                data-error={hasError || undefined}
+                data-disabled={disabled || undefined}
+                {...(props as React.ComponentPropsWithoutRef<'textarea'>)}
+              />
+            ) : (
+              <input
+                ref={ref as React.ForwardedRef<HTMLInputElement>}
+                id={inputId}
+                type={type}
+                disabled={disabled}
+                value={currentValue}
+                maxLength={maxLength ?? maxCharCount}
+                onChange={updateTextValue}
+                onFocus={showFloatingLabel}
+                onBlur={hideFloatingLabel}
+                aria-invalid={hasError || undefined}
+                aria-describedby={displaySupportingText || maxCharCount ? supportingTextId : undefined}
+                className="md-text-field__input"
+                data-pad-left={padLeft}
+                data-pad-right={padRight}
+                data-variant={variant}
+                data-has-label={String(!!label)}
+                data-floating={String(floating)}
+                data-error={hasError || undefined}
+                data-disabled={disabled || undefined}
+                {...props}
+              />
+            )}
 
             {/* Suffix */}
             {suffixText && (

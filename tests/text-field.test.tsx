@@ -151,6 +151,50 @@ test('calls onValueChange with the latest input value', async () => {
   expect(capturedValue).toBe('hello');
 });
 
+test('textarea type renders a multiline native control with two rows by default', async () => {
+  const { container } = render(<TextField type="textarea" label="Notes" />);
+
+  const textarea = screen.getByRole('textbox');
+  expect(textarea).toBeInstanceOf(HTMLTextAreaElement);
+  expect(textarea).toHaveAttribute('rows', '2');
+  expect(container.querySelector('.md-text-field')).toHaveAttribute('data-multiline');
+  expect(container.querySelector('.md-text-field__container')).toHaveAttribute('data-multiline');
+  expect(container.querySelector('.md-text-field__input-area')).toHaveAttribute('data-multiline');
+  expect(screen.getByText('Notes')).toHaveAttribute('data-floating', 'true');
+});
+
+test('textarea supports explicit rows, character limits, value changes, and refs', async () => {
+  const ref = createRef<HTMLTextAreaElement>();
+  let capturedValue = '';
+
+  render(
+    <TextField
+      ref={ref}
+      type="textarea"
+      rows={4}
+      label="Notes"
+      maxCharCount={20}
+      onValueChange={(nextValue) => {
+        capturedValue = nextValue;
+      }}
+    />,
+  );
+
+  const textarea = screen.getByRole('textbox');
+  expect(ref.current).toBeInstanceOf(HTMLTextAreaElement);
+  expect(textarea).toHaveAttribute('rows', '4');
+  expect(textarea).toHaveAttribute('maxlength', '20');
+
+  fireEvent.change(textarea, { target: { value: 'Several lines' } });
+  expect(capturedValue).toBe('Several lines');
+});
+
+test('multiline controls grow from their row count and can be resized vertically', async () => {
+  expect(rule('.md-text-field__input-area')).toMatch(/&\[data-multiline\] \{[^}]*align-items: flex-start;/s);
+  expect(rule('textarea.md-text-field__input')).toContain('height: auto;');
+  expect(rule('textarea.md-text-field__input')).toContain('resize: vertical;');
+});
+
 test('number fields hide browser spin buttons without weakening native numeric semantics', async () => {
   render(<TextField label="Amount" type="number" inputMode="decimal" min="0" step="0.01" defaultValue="42.50" />);
 

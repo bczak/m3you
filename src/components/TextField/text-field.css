@@ -215,6 +215,10 @@
   padding-bottom: var(--_text-field-content-bottom);
   padding-inline: var(--_content-inset-start) var(--_content-inset-end);
   box-sizing: border-box;
+
+  &[data-multiline] {
+    align-items: flex-start;
+  }
 }
 
 /* ── Prefix / suffix text ── */
@@ -297,6 +301,13 @@
   &[data-disabled] {
     color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
   }
+}
+
+textarea.md-text-field__input {
+  width: 100%;
+  height: auto;
+  min-height: 24px;
+  resize: vertical;
 }
 
 /* ── Active indicator (filled variant bottom border) ── */

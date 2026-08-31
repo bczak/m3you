@@ -6,8 +6,9 @@ description: Filled and outlined fields with labels and supporting text.
 import { TextField } from 'm3you';
 
 Text fields collect typed input. Both variants animate the label into the field
-outline on focus. Use `supportingText` for guidance that is always relevant, and
-`errorText` for a message that replaces it when `error` is set.
+outline on focus. Use `type="textarea"` for multiline input and control its
+initial height with `rows`. Use `supportingText` for guidance that is always
+relevant, and `errorText` for a message that replaces it when `error` is set.
 
 `onValueChange` gives you the string directly, so you rarely need to reach into
 the event.
@@ -18,7 +19,7 @@ the event.
     variant: ['filled', 'outlined'],
     label: 'Label',
     supportingText: 'Supporting text',
-    type: ['text', 'email', 'password', 'number', 'search', 'tel', 'url'],
+    type: ['text', 'email', 'password', 'number', 'search', 'tel', 'url', 'textarea'],
     error: false,
     disabled: false,
   }}
@@ -42,8 +43,20 @@ the event.
   layout="stretch"
 />
 
+## Multiline
+
+```tsx
+<TextField
+  type="textarea"
+  variant="outlined"
+  rows={4}
+  label="Notes"
+  maxCharCount={500}
+/>
+```
+
 ## Props
 
-<PropsTable of="TextField" extends="<input>" />
+<PropsTable of="TextField" extends="<input> or <textarea>" />
 
 <SpecLink slug="text-field" source="src/components/TextField" />
