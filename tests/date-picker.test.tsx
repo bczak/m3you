@@ -1,7 +1,10 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef, useState } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
 import { DatePicker } from '../src/components/DatePicker/date-picker';
+
+const datePickerCss = readFileSync('src/components/DatePicker/date-picker.css', 'utf8');
 
 afterEach(cleanup);
 
@@ -17,6 +20,12 @@ if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
 test('renders date picker root with md-date-picker class', async () => {
   const { container } = render(<DatePicker />);
   expect(container.querySelector('.md-date-picker')).toBeInTheDocument();
+});
+
+test('calendar geometry contracts inside a narrow dialog without clipping controls', () => {
+  expect(datePickerCss).toContain('max-width: 100%');
+  expect(datePickerCss).toContain('@media (max-width: 359px)');
+  expect(datePickerCss).toContain('.md-date-picker__grid-wrap');
 });
 
 test('merges custom className', async () => {

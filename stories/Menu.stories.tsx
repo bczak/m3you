@@ -45,6 +45,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const TriggerWidthDropdown: Story = {
+  render: () => (
+    <Menu>
+      <MenuTrigger
+        render={
+          <Button variant="outlined" style={{ width: 320 }}>
+            Choose a category
+          </Button>
+        }
+      />
+      <MenuContent matchTriggerWidth>
+        <MenuItem leadingIcon={<StarIcon />}>Groceries</MenuItem>
+        <MenuItem leadingIcon={<UserIcon />}>Household</MenuItem>
+      </MenuContent>
+    </Menu>
+  ),
+};
+
 // =============================================================================
 // Showcase — static render (no portal) to display all features inline
 // =============================================================================

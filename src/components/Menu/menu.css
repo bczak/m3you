@@ -49,6 +49,14 @@
   }
 }
 
+/* Exposed dropdowns align their popup surface with the field that owns it.
+   Ordinary action menus retain the M3 112–280px intrinsic sizing above. */
+.md-menu[data-match-trigger-width] {
+  width: var(--anchor-width);
+  min-width: var(--anchor-width);
+  max-width: var(--anchor-width);
+}
+
 /* ── Menu group ── */
 .md-menu-group {
   display: flex;

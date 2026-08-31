@@ -60,6 +60,14 @@ export const WithRangeBounds: Story = {
   render: () => <DatePicker defaultValue={new Date(2026, 3, 18)} minDate={MIN_DATE} maxDate={MAX_DATE} />,
 };
 
+export const NarrowSheetBody: Story = {
+  render: () => (
+    <div style={{ width: 332, overflow: 'hidden', background: 'var(--md-sys-color-surface-container-high)' }}>
+      <DatePicker defaultValue={DEFAULT_DATE} />
+    </div>
+  ),
+};
+
 // Docked pattern per M3 spec: consumer wraps the plain calendar in an
 // elevated surface (surface-container-high + elevation-2 + extra-large radius).
 export const Docked: Story = {

@@ -548,6 +548,20 @@ test('grouped MenuContent has no background and uses gap', async () => {
   expect(content).toHaveAttribute('data-grouped');
 });
 
+test('MenuContent can opt into the trigger width for exposed dropdowns', () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent data-testid="content" matchTriggerWidth>
+        <MenuItem>Item</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(screen.getByTestId('content')).toHaveAttribute('data-match-trigger-width');
+  expect(menuCss).toContain('.md-menu[data-match-trigger-width]');
+  expect(menuCss).toContain('width: var(--anchor-width)');
+});
+
 // =============================================================================
 // Ripple
 // =============================================================================

@@ -10,6 +10,7 @@
 .md-date-picker {
   display: inline-flex;
   width: 360px;
+  max-width: 100%;
   box-sizing: border-box;
   flex-direction: column;
 }
@@ -175,7 +176,7 @@
 
 .md-date-picker__weekday {
   display: flex;
-  width: 48px;
+  min-width: 0;
   height: 48px;
   align-items: center;
   justify-content: center;
@@ -209,8 +210,24 @@
 
 /* ── Day cell (empty placeholder for outside-month) ── */
 .md-date-picker__day-empty {
-  width: 48px;
+  min-width: 0;
   height: 48px;
+}
+
+@media (max-width: 359px) {
+  .md-date-picker__nav {
+    gap: 0;
+    padding-inline: 4px;
+  }
+
+  .md-date-picker__selector-btn {
+    padding-inline: 8px;
+  }
+
+  .md-date-picker__weekdays,
+  .md-date-picker__grid-wrap {
+    padding-inline: 4px;
+  }
 }
 
 /* ── Day cell (button) ── */

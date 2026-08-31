@@ -95,6 +95,8 @@ function assignRef<T>(ref: React.ForwardedRef<T>, value: T | null) {
 export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Lay the items out as connected groups rather than a single surface. */
   grouped?: boolean;
+  /** Size an exposed dropdown menu to the inline width of its trigger. */
+  matchTriggerWidth?: boolean;
   /** Which side of the trigger the menu opens towards. */
   side?: 'top' | 'bottom';
   /** How the menu aligns to the trigger along that side. */
@@ -108,7 +110,10 @@ export interface MenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const MenuContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuContentProps>>(
-  ({ className, grouped, side = 'bottom', align = 'start', children, portalProps, ...props }, ref) => {
+  (
+    { className, grouped, matchTriggerWidth, side = 'bottom', align = 'start', children, portalProps, ...props },
+    ref,
+  ) => {
     const color = useContext(MenuColorContext);
     const selectedScrollFrame = React.useRef<number | null>(null);
     const setPopupRef = React.useCallback(
@@ -142,6 +147,7 @@ const MenuContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuC
             className={cx('md-menu', className)}
             data-color={color}
             data-grouped={grouped || undefined}
+            data-match-trigger-width={matchTriggerWidth || undefined}
             {...props}
           >
             {children}
