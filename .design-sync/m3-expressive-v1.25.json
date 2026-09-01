@@ -238,6 +238,7 @@
     "RadioButton",
     "Search",
     "SideSheet",
+    "Skeleton",
     "Slider",
     "Snackbar",
     "SplitButton",
@@ -258,6 +259,7 @@
     "Elevated Input Chip",
     "Bare Card composition",
     "LoadingIndicator size extensions",
+    "Skeleton loading placeholder",
     "OTPInput one-time code field",
     "Display XLarge"
   ],

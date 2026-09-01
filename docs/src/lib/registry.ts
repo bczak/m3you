@@ -170,6 +170,14 @@ export const COMPONENTS: ComponentEntry[] = [
     spec: 'components/loading-indicator',
   },
   {
+    slug: 'skeleton',
+    name: 'Skeleton',
+    category: 'Communication',
+    summary: 'A content-shaped placeholder that preserves layout while data loads',
+    docgen: ['Skeleton'],
+    exports: ['Skeleton'],
+  },
+  {
     slug: 'snackbar',
     name: 'Snackbar',
     category: 'Communication',

@@ -179,6 +179,8 @@ export {
   SideSheetHeader,
   SideSheetTrigger,
 } from './components/SideSheet/side-sheet';
+export type { SkeletonProps, SkeletonShape } from './components/Skeleton/skeleton';
+export { Skeleton } from './components/Skeleton/skeleton';
 export type { RangeSliderInputProps, RangeSliderProps, SliderProps } from './components/Slider/slider';
 export { RangeSlider, Slider } from './components/Slider/slider';
 export type { SnackbarHostProps, SnackbarProps } from './components/Snackbar/snackbar';

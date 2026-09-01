@@ -1,0 +1,30 @@
+---
+title: Skeleton
+description: A content-shaped placeholder that preserves layout while data loads.
+---
+
+Skeletons reserve the geometry of content that is still loading. Match each
+placeholder to the shape and size of the content it replaces so the finished
+layout does not jump.
+
+Material 3 does not define skeletons as a catalog component. This primitive
+therefore uses the system surface, shape, and motion tokens without inventing a
+new semantic colour role. Its loading wave stops when reduced motion is enabled.
+
+<Playground
+  name="Skeleton"
+  controls={{
+    shape: ['rounded', 'text', 'rectangle', 'circle'],
+    animated: [true, false],
+  }}
+  render={(props) => <Skeleton {...props} width={320} height={72} />}
+/>
+
+Skeletons are decorative and hidden from assistive technology. Wrap a group in
+a labelled `role="status"` region when the loading state should be announced.
+
+## Props
+
+<PropsTable of="Skeleton" extends="<span>" />
+
+<SpecLink source="src/components/Skeleton" />

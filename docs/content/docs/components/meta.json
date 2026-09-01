@@ -19,6 +19,7 @@
     "circular-progress",
     "linear-progress",
     "loading-indicator",
+    "skeleton",
     "snackbar",
     "---Containment---",
     "avatar",
