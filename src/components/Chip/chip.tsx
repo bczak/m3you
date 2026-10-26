@@ -12,7 +12,7 @@ export type ChipProps = Omit<React.ComponentProps<'button'>, 'type'> & {
   variant?: 'outlined' | 'elevated';
   /** Selected state, for filter chips. */
   selected?: boolean;
-  /** Icon before the label. On a selected filter chip this is conventionally a check. */
+  /** Icon before the label. On a filter chip it shows while unselected; selecting swaps it for the built-in check. */
   leadingIcon?: React.ReactNode;
   /** 24px avatar configuration for input chips. */
   avatar?: React.ReactNode;
@@ -20,6 +20,11 @@ export type ChipProps = Omit<React.ComponentProps<'button'>, 'type'> & {
   trailingIcon?: React.ReactNode;
   /** Called when an input chip's remove affordance is pressed. */
   onClose?: () => void;
+  /**
+   * Opt into the Expressive chip shapes: 12px corners at rest, 8px while pressed, and a full pill once a filter or
+   * input chip is selected, springing between them. Off by default, which keeps the baseline M3 8px corners.
+   */
+  morph?: boolean;
 };
 
 const Chip = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ChipProps>>(
@@ -33,6 +38,7 @@ const Chip = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ChipProps
       avatar,
       trailingIcon,
       onClose,
+      morph = false,
       disabled,
       children,
       onKeyDown,
@@ -42,7 +48,9 @@ const Chip = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ChipProps
   ) => {
     const innerRef = useRef<HTMLButtonElement>(null);
 
-    // For filter chips: always render check icon container for animation
+    // For filter chips: always render check icon container for animation. A
+    // filter chip's own leading icon shows while unselected and the check
+    // takes its place once selected.
     const isFilterChip = type === 'filter';
 
     // For input chips: show close button
@@ -101,12 +109,18 @@ const Chip = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ChipProps
       'data-has-leading-icon': hasLeadingIcon || undefined,
       'data-has-trailing-icon': hasTrailingIcon || undefined,
       'data-has-avatar': hasAvatar || undefined,
+      'data-morph': morph || undefined,
     };
 
     const body = (
       <>
         {isFilterChip && (
-          <span aria-hidden="true" className="md-chip__filter-icon" data-selected={String(selected)}>
+          <span
+            aria-hidden="true"
+            className="md-chip__filter-icon"
+            data-selected={String(selected)}
+            data-replaces-icon={leadingIcon ? 'true' : undefined}
+          >
             <Check />
           </span>
         )}
@@ -115,12 +129,12 @@ const Chip = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ChipProps
             {avatar}
           </span>
         )}
-        {!isFilterChip && !hasAvatar && leadingIcon && (
+        {(!isFilterChip || !selected) && !hasAvatar && leadingIcon && (
           <span aria-hidden="true" className="md-chip__leading-icon">
             {leadingIcon}
           </span>
         )}
-        <span>{children}</span>
+        <span className="md-chip__label">{children}</span>
         {!showCloseButton && trailingIcon && (
           <span aria-hidden="true" className="md-chip__trailing-icon">
             {trailingIcon}
@@ -162,8 +176,13 @@ const Chip = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ChipProps
             disabled={disabled}
             className="md-chip__close"
           >
+            {/* A direct child, so a press anywhere on the full-height target
+                ripples; CSS clips it to the icon. The icon span carries the
+                focus ring, so the ring circles the icon, not the target. */}
             <Ripple />
-            <X aria-hidden="true" />
+            <span className="md-chip__close-icon">
+              <X aria-hidden="true" />
+            </span>
           </button>
         </span>
       );
