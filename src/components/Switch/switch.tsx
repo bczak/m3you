@@ -51,10 +51,15 @@ const Switch = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SwitchPr
     // Merge refs
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-    // A form reset restores the default without a `change` event, so the
-    // internal state (and the input React keeps in step with it) would hold on
-    // to the old value; adopt the restored one.
-    useFormReset(inputRef, !isControlled, (input) => setInternalChecked((input as HTMLInputElement).checked));
+    // A form reset restores the input without a `change` event, so the internal
+    // state (and the input React keeps in step with it) would hold on to the
+    // old value; return both to `defaultChecked`. The input needs it too: the
+    // reset restored its `checked` attribute, which React set from the state at
+    // mount.
+    useFormReset(inputRef, !isControlled, (input) => {
+      (input as HTMLInputElement).checked = defaultChecked;
+      setInternalChecked(defaultChecked);
+    });
 
     const updateSwitchChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!isControlled) {

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { createRef } from 'react';
+import { createRef, type ReactNode, useState } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
 import { Switch } from '../src/components/Switch/switch';
 
@@ -515,8 +515,9 @@ test('works with all props combined', async () => {
 
 /**
  * `reset` is dispatched before the form restores its controls (a browser runs a
- * microtask checkpoint in between when a reset button is pressed), so the
- * component re-reads its input on the next task. Wait that task out.
+ * microtask checkpoint in between when a reset button is pressed), and a
+ * later listener can still cancel it, so the component restores its default
+ * on the next task. Wait that task out.
  */
 const settleReset = () => act(() => new Promise<void>((resolve) => setTimeout(resolve)));
 
@@ -587,6 +588,98 @@ test('a controlled switch leaves a form reset to its owner', () => {
   );
   expect(add.mock.calls.some(([type]) => type === 'reset')).toBe(false);
   add.mockRestore();
+});
+
+/**
+ * A form whose Clear button resets it and, in the same handler, updates the
+ * form's own state, as a form clearing its validation errors would. React
+ * re-renders the control from that update before the reset settles, writing
+ * the control's pre-reset state back onto its input. `control` is called on
+ * every render, so the control re-renders with the form.
+ */
+function ClearableForm({ control }: { control: () => ReactNode }) {
+  const [, setErrors] = useState({});
+  return (
+    <form>
+      {control()}
+      <button
+        type="button"
+        onClick={(event) => {
+          event.currentTarget.form?.reset();
+          setErrors({});
+        }}
+      >
+        Clear
+      </button>
+    </form>
+  );
+}
+
+test.each([
+  false,
+  true,
+])('a reset that also updates the form returns the switch to defaultChecked=%s', async (defaultChecked) => {
+  render(<ClearableForm control={() => <Switch aria-label="Option" defaultChecked={defaultChecked} />} />);
+  const input = screen.getByRole('switch') as HTMLInputElement;
+  fireEvent.click(input);
+  expect(input.checked).toBe(!defaultChecked);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+  await settleReset();
+  // Both what the form submits and what the switch draws.
+  expect(input.checked).toBe(defaultChecked);
+  expect(input.closest('label')).toHaveAttribute('data-checked', String(defaultChecked));
+});
+
+// The browser restores the input's `checked` attribute, which React set from the state at mount.
+test('a form reset puts the input on a defaultChecked that changed after mount', async () => {
+  const form = (defaultChecked: boolean) => (
+    <form data-testid="form">
+      <Switch aria-label="Option" defaultChecked={defaultChecked} />
+    </form>
+  );
+  const { rerender } = render(form(false));
+  rerender(form(true));
+  const input = screen.getByRole('switch');
+  fireEvent.click(input);
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(input).toBeChecked();
+  expect(input.closest('label')).toHaveAttribute('data-checked', 'true');
+});
+
+// A browser fires `reset` before it restores anything, and restores nothing once a listener cancels it.
+// happy-dom's `reset()` restores the controls first and ignores the cancel, so fire the event on its own,
+// which is all a canceled reset amounts to.
+test('a canceled form reset leaves the switch alone', async () => {
+  render(
+    <form data-testid="form" onReset={(event) => event.preventDefault()}>
+      <Switch aria-label="Option" />
+    </form>,
+  );
+  const input = screen.getByRole('switch');
+  fireEvent.click(input);
+  fireEvent.reset(screen.getByTestId('form'));
+  await settleReset();
+  expect(input).toBeChecked();
+  expect(input.closest('label')).toHaveAttribute('data-checked', 'true');
+});
+
+test('a reset that also updates the form leaves a controlled switch on its checked prop', async () => {
+  const onCheckedChange = vi.fn();
+  const form = (checked: boolean) => (
+    <ClearableForm control={() => <Switch aria-label="Option" checked={checked} onCheckedChange={onCheckedChange} />} />
+  );
+  // Checked after mount, so the reset restores the input to unchecked.
+  const { rerender } = render(form(false));
+  rerender(form(true));
+  const input = screen.getByRole('switch');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+  await settleReset();
+  expect(input).toBeChecked();
+  expect(input.closest('label')).toHaveAttribute('data-checked', 'true');
+  expect(onCheckedChange).not.toHaveBeenCalled();
 });
 
 // =============================================================================

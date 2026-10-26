@@ -91,12 +91,10 @@ const RadioButton = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Rad
     // A form reset restores `defaultChecked` without a `change` event; redraw from it.
     // The reset also bypasses the `checked` setter React tracks the input through,
     // so React would still hold the pre-reset value and swallow the next change
-    // back to it; writing the restored value back through the setter re-arms it.
-    useFormReset(inputRef, !isControlled && !decorative, (element) => {
-      const input = element as HTMLInputElement;
-      const { checked: restored } = input;
-      input.checked = restored;
-      setInternalChecked(restored);
+    // back to it; writing the default back through the setter re-arms it.
+    useFormReset(inputRef, !isControlled && !decorative, (input) => {
+      (input as HTMLInputElement).checked = defaultChecked;
+      setInternalChecked(defaultChecked);
     });
 
     const updateRadioChecked = (e: React.ChangeEvent<HTMLInputElement>) => {

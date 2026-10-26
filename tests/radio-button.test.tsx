@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { createRef } from 'react';
+import { createRef, type ReactNode, useState } from 'react';
 import { afterEach, beforeAll, expect, test, vi } from 'vitest';
 import { RadioButton } from '../src/components/RadioButton/radio-button';
 import { RadioGroup } from '../src/components/RadioButton/radio-group';
@@ -732,8 +732,9 @@ test('the interactive form is unaffected: it still selects and reports', () => {
 
 /**
  * `reset` is dispatched before the form restores its controls (a browser runs a
- * microtask checkpoint in between when a reset button is pressed), so the
- * components re-read the controls on the next task. Wait that task out.
+ * microtask checkpoint in between when a reset button is pressed), and a
+ * later listener can still cancel it, so the components restore their defaults
+ * on the next task. Wait that task out.
  */
 const settleReset = () => act(() => new Promise<void>((resolve) => setTimeout(resolve)));
 const labelOf = (input: HTMLElement) => input.closest('label') as HTMLElement;
@@ -919,7 +920,7 @@ test('a form reset clears an uncontrolled RadioGroup that started with no select
   expect(labelOf(m)).toHaveAttribute('data-selected', 'false');
 });
 
-test('a RadioGroup only adopts radios of its own name after a reset', async () => {
+test('a RadioGroup only resets radios of its own name', async () => {
   render(
     <form data-testid="form">
       <RadioGroup name="size" defaultValue="s">
@@ -936,6 +937,33 @@ test('a RadioGroup only adopts radios of its own name after a reset', async () =
   await settleReset();
   expect(labelOf(screen.getByRole('radio', { name: 's' }))).toHaveAttribute('data-selected', 'true');
   expect(labelOf(m)).toHaveAttribute('data-selected', 'false');
+  expect(screen.getByRole('radio', { name: 'x' })).toBeChecked();
+});
+
+// An item that mounts while selected gets a `checked` attribute, so the browser's reset restores it
+// rather than the `defaultValue` the group already shows.
+test('a form reset puts the radios on defaultValue even when an item mounted selected', async () => {
+  const form = (key: string) => (
+    <form data-testid="form">
+      <RadioGroup defaultValue="a">
+        <RadioGroupItem value="a" />
+        <RadioGroupItem key={key} value="b" />
+      </RadioGroup>
+    </form>
+  );
+  const { rerender } = render(form('first'));
+  fireEvent.click(screen.getByRole('radio', { name: 'b' }));
+  rerender(form('remounted'));
+  const a = screen.getByRole('radio', { name: 'a' });
+  const b = screen.getByRole('radio', { name: 'b' });
+  fireEvent.click(a);
+
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(a).toBeChecked();
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'true');
+  expect(b).not.toBeChecked();
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'false');
 });
 
 test('a controlled RadioGroup leaves a form reset to its owner', () => {
@@ -949,6 +977,141 @@ test('a controlled RadioGroup leaves a form reset to its owner', () => {
   );
   expect(add.mock.calls.some(([type]) => type === 'reset')).toBe(false);
   add.mockRestore();
+});
+
+/**
+ * A form whose Clear button resets it and, in the same handler, updates the
+ * form's own state, as a form clearing its validation errors would. React
+ * re-renders the controls from that update before the reset settles, writing
+ * their pre-reset state back onto controlled inputs. `controls` is called on
+ * every render, so the controls re-render with the form.
+ */
+function ClearableForm({ controls }: { controls: () => ReactNode }) {
+  const [, setErrors] = useState({});
+  return (
+    <form>
+      {controls()}
+      <button
+        type="button"
+        onClick={(event) => {
+          event.currentTarget.form?.reset();
+          setErrors({});
+        }}
+      >
+        Clear
+      </button>
+    </form>
+  );
+}
+const clear = () => fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+
+test.each([
+  undefined,
+  'a',
+])('a reset that also updates the form returns a RadioGroup to defaultValue=%s', async (defaultValue) => {
+  render(
+    <ClearableForm
+      controls={() => (
+        <RadioGroup defaultValue={defaultValue}>
+          <RadioGroupItem value="a" />
+          <RadioGroupItem value="b" />
+        </RadioGroup>
+      )}
+    />,
+  );
+  const [a, b] = screen.getAllByRole('radio') as HTMLInputElement[];
+  fireEvent.click(b);
+  expect(b).toBeChecked();
+
+  clear();
+  await settleReset();
+  // Both what the form submits and what the radios draw.
+  expect(a.checked).toBe(defaultValue === 'a');
+  expect(labelOf(a)).toHaveAttribute('data-selected', String(defaultValue === 'a'));
+  expect(b).not.toBeChecked();
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'false');
+});
+
+test.each([
+  false,
+  true,
+])('a reset that also updates the form returns a RadioButton to defaultChecked=%s', async (defaultChecked) => {
+  render(
+    <ClearableForm
+      controls={() => (
+        <>
+          <RadioButton name="x" value="a" aria-label="A" defaultChecked={defaultChecked} />
+          <RadioButton name="x" value="b" aria-label="B" />
+        </>
+      )}
+    />,
+  );
+  const [a, b] = screen.getAllByRole('radio') as HTMLInputElement[];
+  fireEvent.click(b);
+
+  clear();
+  await settleReset();
+  expect(a.checked).toBe(defaultChecked);
+  expect(labelOf(a)).toHaveAttribute('data-selected', String(defaultChecked));
+  expect(b).not.toBeChecked();
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'false');
+});
+
+// A browser fires `reset` before it restores anything, and restores nothing once a listener cancels it.
+// happy-dom's `reset()` restores the controls first and ignores the cancel, so fire the event on its own,
+// which is all a canceled reset amounts to.
+test('a canceled form reset leaves a RadioGroup and bare radios alone', async () => {
+  render(
+    <form data-testid="form" onReset={(event) => event.preventDefault()}>
+      <RadioGroup defaultValue="a">
+        <RadioGroupItem value="a" />
+        <RadioGroupItem value="b" />
+      </RadioGroup>
+      <RadioButton name="x" value="c" aria-label="c" />
+    </form>,
+  );
+  const b = screen.getByRole('radio', { name: 'b' });
+  const c = screen.getByRole('radio', { name: 'c' });
+  fireEvent.click(b);
+  fireEvent.click(c);
+
+  fireEvent.reset(screen.getByTestId('form'));
+  await settleReset();
+  expect(b).toBeChecked();
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'true');
+  expect(labelOf(screen.getByRole('radio', { name: 'a' }))).toHaveAttribute('data-selected', 'false');
+  expect(c).toBeChecked();
+  expect(labelOf(c)).toHaveAttribute('data-selected', 'true');
+});
+
+test('a reset that also updates the form leaves controlled radios on their value', async () => {
+  const onValueChange = vi.fn();
+  const form = (value: string) => (
+    <ClearableForm
+      controls={() => (
+        <>
+          <RadioGroup value={value} onValueChange={onValueChange}>
+            <RadioGroupItem value="a" />
+            <RadioGroupItem value="b" />
+          </RadioGroup>
+          <RadioButton name="x" value="c" aria-label="c" checked={value === 'b'} onValueChange={onValueChange} />
+        </>
+      )}
+    />
+  );
+  // Selected after mount, so the reset restores the inputs to the mount-time selection.
+  const { rerender } = render(form('a'));
+  rerender(form('b'));
+  const b = screen.getByRole('radio', { name: 'b' });
+  const c = screen.getByRole('radio', { name: 'c' });
+
+  clear();
+  await settleReset();
+  expect(b).toBeChecked();
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'true');
+  expect(c).toBeChecked();
+  expect(labelOf(c)).toHaveAttribute('data-selected', 'true');
+  expect(onValueChange).not.toHaveBeenCalled();
 });
 
 // =============================================================================

@@ -88,13 +88,16 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Checkb
     // Merge refs
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-    // A form reset restores the default without a `change` event, so the
-    // internal state (and the input React keeps in step with it) would hold on
-    // to the old value; adopt the restored one. A decorative checkbox has no
-    // input to reset, and the listener has to come back if it stops being one.
-    useFormReset(inputRef, !isControlled && !decorative, (input) =>
-      setInternalChecked((input as HTMLInputElement).checked),
-    );
+    // A form reset restores the input without a `change` event, so the internal
+    // state (and the input React keeps in step with it) would hold on to the
+    // old value; return both to `defaultChecked`. The input needs it too: the
+    // reset restored its `checked` attribute, which React set from the state at
+    // mount. A decorative checkbox has no input to reset, and the listener has
+    // to come back if it stops being one.
+    useFormReset(inputRef, !isControlled && !decorative, (input) => {
+      (input as HTMLInputElement).checked = defaultChecked;
+      setInternalChecked(defaultChecked);
+    });
 
     // Set indeterminate state via ref (not an HTML attribute)
     React.useEffect(() => {

@@ -44,12 +44,16 @@ const RadioGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<RadioG
 
     React.useImperativeHandle(ref, () => groupRef.current as HTMLDivElement);
 
-    // A form reset puts each radio back to its `checked` attribute (the item
-    // selected when it mounted) without a `change` event. Adopt whichever radio
-    // the reset left selected, so the visuals match what the form will submit.
+    // A form reset puts each radio back to its `checked` attribute without a
+    // `change` event. That attribute is whether the item was selected when it
+    // mounted, not whether it is the `defaultValue`, so return both the state
+    // and the radios to `defaultValue`: the visuals then match what the form
+    // will submit.
     useFormReset(groupRef, !isControlled, (group) => {
-      const radios = Array.from(group.querySelectorAll<HTMLInputElement>('input[type="radio"]'));
-      setInternalValue(radios.find((radio) => radio.name === name && radio.checked)?.value ?? '');
+      for (const radio of Array.from(group.querySelectorAll<HTMLInputElement>('input[type="radio"]'))) {
+        if (radio.name === name) radio.checked = radio.value === defaultValue;
+      }
+      setInternalValue(defaultValue);
     });
 
     const handleValueChange = React.useCallback(
