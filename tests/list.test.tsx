@@ -906,6 +906,18 @@ test('selected, focused, pressed and dragged rows morph to corner-large in eithe
   expect(morphAt).toBeGreaterThan(listCss.indexOf('.md-list[data-appearance="segmented"] > :last-child'));
 });
 
+test('the corner morph eases on the effects spring, which does not overshoot', () => {
+  // CLAUDE.md: an in-place corner change takes the effects spring; the
+  // fast-spatial overshoot left the pressed corner wobbling after release.
+  const transition = ruleBody(/\.md-list-item/).match(/transition:([^;]*);/)?.[1] ?? '';
+  const radius = transition.split(',').find((entry) => entry.trim().startsWith('border-radius'));
+  expect(radius?.trim().split(/\s+/)).toEqual([
+    'border-radius',
+    'var(--md-sys-motion-duration-spring-default-effects)',
+    'var(--md-sys-motion-easing-spring-default-effects)',
+  ]);
+});
+
 test('a dragged row mixes its 16% layer from on-tertiary-container', () => {
   expect(listCss).toMatch(
     /var\(--md-sys-color-tertiary-container\),\s*var\(--md-sys-color-on-tertiary-container\) calc\(var\(--md-sys-state-dragged-opacity\) \* 100%\)/,
@@ -1094,10 +1106,17 @@ test('leading media CSS matches the kit Avatar, Image and Video building blocks'
   const video = ruleBody(/\.md-list-item__leading\[data-leading="video"\] > :is\(img, video\)/);
   expect(video).toContain('inline-size: 114px;');
   expect(video).toContain('block-size: 64px;');
-  // Video rows pad 12px above and below the thumbnail at every line count.
-  expect(listCss).toMatch(
-    /:is\(\.md-list-item__layout, \.md-list-item__action\):has\(> \.md-list-item__leading\[data-leading="video"\]\) \{\s*padding-block: max\(0px, var\(--md-list-item-three-line-padding-block, 12px\)/,
-  );
+  // Video rows pad 12px above and below the thumbnail at every line count, in
+  // either appearance: the token is not the three-line padding, which a
+  // segmented list sets to 10px, and no appearance overrides it.
+  expect(pxToken(ruleBody(/\.md-list/), '--md-list-item-video-padding-block')).toBe(12);
+  expect(ruleBody(/&\[data-appearance="segmented"\]/)).not.toContain('--md-list-item-video-padding-block');
+  const videoRow =
+    ':is(.md-list-item__layout, .md-list-item__action):has(> .md-list-item__leading[data-leading="video"]) {\n' +
+    '  padding-block: max(0px, var(--md-list-item-video-padding-block, 12px) + var(--_density, 0) * 2px);';
+  expect(listCss).toContain(videoRow);
+  // After the three-line rule, which it ties on specificity.
+  expect(listCss.indexOf(videoRow)).toBeGreaterThan(listCss.indexOf('.md-list-item[data-lines="3"] {'));
 });
 
 // =============================================================================
@@ -1365,6 +1384,69 @@ test('closing a side takes focus off its hidden action: to the row content, or o
   fireEvent.click(remove);
   expect(screen.getByTestId('bare')).not.toHaveAttribute('data-revealed-side');
   expect(remove).not.toHaveFocus();
+  expect(document.body).toHaveFocus();
+});
+
+test('focus leaving a hidden action skips content that cannot take it, and leaves the button if none can', () => {
+  render(
+    <ul>
+      <ListItemSwipe data-testid="controls" startAction="Archive">
+        <input aria-label="Disabled input" disabled />
+        <select aria-label="Disabled select" disabled>
+          <option>One</option>
+        </select>
+        <textarea aria-label="Disabled textarea" disabled />
+        <button type="button" aria-disabled="true">
+          Unavailable
+        </button>
+        <div hidden>
+          <a href="#hidden">Hidden link</a>
+        </div>
+        <div data-testid="inert">
+          <a href="#inert">Inert link</a>
+        </div>
+        <a href="#message">Open message</a>
+      </ListItemSwipe>
+      <ListItemSwipe data-testid="disabled-only" endAction="Delete">
+        <input aria-label="Only input" disabled />
+      </ListItemSwipe>
+      <ListItemSwipe data-testid="unrendered" endAction="Remove">
+        <a href="#gone" style={{ display: 'none' }}>
+          Gone
+        </a>
+      </ListItemSwipe>
+    </ul>,
+  );
+  // @types/react 18 has no `inert` prop.
+  screen.getByTestId('inert').setAttribute('inert', '');
+
+  // Disabled controls, an aria-disabled one, and links in hidden or inert
+  // subtrees all come before the link; focus lands on the link, not on a
+  // control that refuses it while the action, slid out of sight, keeps it.
+  const archive = screen.getByRole('button', { name: 'Archive' });
+  act(() => archive.focus());
+  fireEvent.keyDown(archive, { key: 'Escape' });
+  expect(screen.getByTestId('controls')).not.toHaveAttribute('data-revealed-side');
+  expect(screen.getByRole('link', { name: 'Open message' })).toHaveFocus();
+
+  // Only a disabled input: nothing can take focus, so the action gives it up.
+  const remove = screen.getByRole('button', { name: 'Delete' });
+  act(() => remove.focus());
+  fireEvent.click(remove);
+  expect(screen.getByTestId('disabled-only')).not.toHaveAttribute('data-revealed-side');
+  expect(remove).not.toHaveFocus();
+  expect(document.body).toHaveFocus();
+
+  // A browser refuses focus to an element that is not rendered, which
+  // happy-dom does not: the stub stands in for it. The refusal is noticed and
+  // the action still gives up focus.
+  const gone = screen.getByText('Gone');
+  const refuse = vi.spyOn(gone, 'focus').mockImplementation(() => {});
+  const hide = screen.getByRole('button', { name: 'Remove' });
+  act(() => hide.focus());
+  fireEvent.keyDown(hide, { key: 'Escape' });
+  expect(refuse).toHaveBeenCalled();
+  expect(hide).not.toHaveFocus();
   expect(document.body).toHaveFocus();
 });
 

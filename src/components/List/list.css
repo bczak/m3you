@@ -27,6 +27,10 @@
   --md-list-item-three-line-padding-block: 12px;
   --md-list-item-padding-inline: 16px;
   --md-list-item-slot-gap: 16px;
+  /* A row with a leading video thumbnail pads 12px above and below it at
+     every line count, in either appearance (kit "List Item: 0 Density"
+     Leading=Video: an 88dp one-line row). */
+  --md-list-item-video-padding-block: 12px;
   /* A leading or trailing icon, and the narrowest an icon slot gets: 24dp in
      the baseline row (kit "List Item: 0 Density" Leading/Trailing element). */
   --md-list-item-icon-size: 24px;
@@ -103,8 +107,8 @@
   transition:
     background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
-    border-radius var(--md-sys-motion-duration-spring-default-spatial)
-    var(--md-sys-motion-easing-spring-default-spatial),
+    border-radius var(--md-sys-motion-duration-spring-default-effects)
+    var(--md-sys-motion-easing-spring-default-effects),
     box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-lines="2"] {
@@ -357,12 +361,6 @@
   block-size: 64px;
 }
 
-/* The kit's video rows pad 12dp above and below the 64dp thumbnail at every
-   line count, so a one-line video row is 88dp rather than 80. */
-:is(.md-list-item__layout, .md-list-item__action):has(> .md-list-item__leading[data-leading="video"]) {
-  padding-block: max(0px, var(--md-list-item-three-line-padding-block, 12px) + var(--_density, 0) * 2px);
-}
-
 /* Kit "Trailing text": Label Large (14/20, 0.1 tracking, Medium) in On Surface
    Variant — "2m", "56dp", "1,200.00" — rather than whatever the page sets. */
 .md-list-item__trailing {
@@ -459,6 +457,14 @@
   & .md-list-item__selection {
     align-items: flex-start;
   }
+}
+
+/* The kit's video rows pad 12dp above and below the 64dp thumbnail at every
+   line count, so a one-line video row is 88dp rather than 80. Its own token,
+   not the three-line padding, which a segmented row sets to 10px. Written
+   after the three-line rule, at equal specificity, so it holds there too. */
+:is(.md-list-item__layout, .md-list-item__action):has(> .md-list-item__leading[data-leading="video"]) {
+  padding-block: max(0px, var(--md-list-item-video-padding-block, 12px) + var(--_density, 0) * 2px);
 }
 
 .md-list-item__selection-mark {

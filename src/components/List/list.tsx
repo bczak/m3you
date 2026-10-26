@@ -234,6 +234,20 @@ function isDisabledTarget(element: HTMLElement) {
   return element.getAttribute('aria-disabled') === 'true' || (element instanceof HTMLButtonElement && element.disabled);
 }
 
+/**
+ * Whether `element` is worth offering focus to: tabbable, not disabled — by
+ * its own `disabled`, a disabled fieldset's (both `:disabled`) or
+ * `aria-disabled` — and not inside a hidden or inert subtree. Whether it is
+ * rendered is left to `focus()` itself, which the caller checks.
+ */
+function isFocusCandidate(element: HTMLElement) {
+  return (
+    element.tabIndex >= 0 &&
+    !element.matches(':disabled, [aria-disabled="true"]') &&
+    element.closest('[hidden], [inert]') === null
+  );
+}
+
 function getListTargets(root: HTMLUListElement, mode: ListMode) {
   const selector = isSelectionMode(mode)
     ? '[data-md-list-item][role="option"]'
@@ -909,17 +923,21 @@ const ListItemSwipe = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<List
     // Once a side closes — Escape, an action, a swipe or the owner — an action
     // that still holds focus has slid under the surface, where Enter would
     // trigger it unseen. Focus moves to the row's own content, or off the
-    // hidden button when the row has nothing focusable.
+    // hidden button when the row has nothing focusable. A candidate only
+    // counts once the document confirms it took focus: a browser refuses an
+    // element that is not rendered, and the action would keep focus.
     React.useEffect(() => {
       const surface = surfaceRef.current as HTMLDivElement;
-      const active = surface.ownerDocument.activeElement as HTMLElement;
+      const ownerDocument = surface.ownerDocument;
+      const active = ownerDocument.activeElement as HTMLElement;
       const side = getSwipeActionSide(startActionsRef, endActionsRef, active);
       if (side === null || side === revealedSide) return;
-      const content = Array.from(surface.querySelectorAll<HTMLElement>(INTERACTIVE_SELECTOR)).find(
-        (element) => element.tabIndex >= 0 && !isDisabledTarget(element),
-      );
-      if (content) content.focus();
-      else active.blur();
+      const moved = Array.from(surface.querySelectorAll<HTMLElement>(INTERACTIVE_SELECTOR)).some((element) => {
+        if (!isFocusCandidate(element)) return false;
+        element.focus();
+        return ownerDocument.activeElement === element;
+      });
+      if (!moved) active.blur();
     }, [revealedSide]);
 
     const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {

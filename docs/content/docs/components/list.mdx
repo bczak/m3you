@@ -33,8 +33,9 @@ the row's padding rather than growing the row.
 The row geometry is exposed as custom properties on the list:
 `--md-list-item-one-line-height`, `--md-list-item-two-line-height`,
 `--md-list-item-three-line-height`, `--md-list-item-padding-block`,
-`--md-list-item-three-line-padding-block`, `--md-list-item-padding-inline`,
-`--md-list-item-slot-gap` and `--md-list-item-icon-size`.
+`--md-list-item-three-line-padding-block`, `--md-list-item-video-padding-block`,
+`--md-list-item-padding-inline`, `--md-list-item-slot-gap` and
+`--md-list-item-icon-size`.
 
 ## Leading and trailing icons
 
@@ -51,7 +52,8 @@ the list to change the icon size.
 A bare `<img>` in `leading` is a 40px avatar circle. Set `leadingType="image"`
 for a 56px thumbnail or `leadingType="video"` for a 114x64 video thumbnail —
 both on the extra-small corner with a 1px outline-variant stroke. A video row
-pads 12px above and below its thumbnail.
+pads 12px above and below its thumbnail in either appearance
+(`--md-list-item-video-padding-block`), so a one-line video row is 88px.
 
 ```tsx
 <ListItem headline="Holiday" leadingType="image" leading={<img src={src} alt="" />} />
@@ -117,8 +119,9 @@ A closed row's actions sit under its surface, so keyboard focus reaching one
 slides that side open. Focus moving off the action — on to the row's content or
 out of the row — closes a side that focus opened; a side opened by a swipe stays
 open. When a side closes while its action still holds focus — Escape, the
-action itself, or a controlled `revealedSide` — focus moves to the row's first
-focusable content, or off the hidden button if there is none. The action's
+action itself, or a controlled `revealedSide` — focus moves to the first of the
+row's content that takes it, skipping disabled, `aria-disabled`, hidden and
+inert controls. If none does, focus leaves the hidden button. The action's
 focus ring is drawn inside the pill in its content colour: the row clips an
 outer ring, and the default secondary ring would barely show on primary.
 

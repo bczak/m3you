@@ -378,27 +378,43 @@ export const LeadingMedia: Story = {
     docs: {
       description: {
         story:
-          'A bare `<img>` in `leading` is a 40px avatar circle. `leadingType="image"` frames it as the kit\'s 56px thumbnail and `leadingType="video"` as its 114x64 video thumbnail — Corner/Extra-small with a 1px Outline Variant stroke — and a video row pads 12px above and below the thumbnail.',
+          'A bare `<img>` in `leading` is a 40px avatar circle. `leadingType="image"` frames it as the kit\'s 56px thumbnail and `leadingType="video"` as its 114x64 video thumbnail — Corner/Extra-small with a 1px Outline Variant stroke — and a video row pads 12px above and below the thumbnail in either appearance.',
       },
     },
   },
   render: () => (
-    <List appearance="standard" aria-label="Leading media" style={{ maxWidth: 480 }}>
-      <ListItem headline="Avatar" supportingText="A bare image" leading={<img alt="" src={thumbnail(210)} />} />
-      <ListItem
-        headline="Image"
-        supportingText="leadingType image"
-        leadingType="image"
-        leading={<img alt="" src={thumbnail(140)} />}
-      />
-      <ListItem headline="Video" leadingType="video" leading={<img alt="" src={thumbnail(20)} />} />
-    </List>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32, maxWidth: 480 }}>
+      {(['standard', 'segmented'] as const).map((appearance) => (
+        <List key={appearance} appearance={appearance} aria-label={`Leading media, ${appearance}`}>
+          <ListItem headline="Avatar" supportingText="A bare image" leading={<img alt="" src={thumbnail(210)} />} />
+          <ListItem
+            headline="Image"
+            supportingText="leadingType image"
+            leadingType="image"
+            leading={<img alt="" src={thumbnail(140)} />}
+          />
+          <ListItem headline="Video" leadingType="video" leading={<img alt="" src={thumbnail(20)} />} />
+          <ListItem
+            overline="Overline"
+            headline="Video"
+            supportingText="Three lines"
+            leadingType="video"
+            leading={<img alt="" src={thumbnail(300)} />}
+          />
+        </List>
+      ))}
+    </div>
   ),
   play: async ({ canvas, step }) => {
-    const [avatarRow, imageRow, videoRow] = Array.from(
-      canvas.getByRole('list', { name: 'Leading media' }).querySelectorAll<HTMLElement>('.md-list-item'),
-    );
+    const rows = (appearance: string) =>
+      Array.from(
+        canvas
+          .getByRole('list', { name: `Leading media, ${appearance}` })
+          .querySelectorAll<HTMLElement>('.md-list-item'),
+      );
     const media = (row: HTMLElement) => row.querySelector('.md-list-item__leading > img') as HTMLElement;
+    const layout = (row: HTMLElement) => getComputedStyle(row.querySelector('.md-list-item__layout') as HTMLElement);
+    const [avatarRow, imageRow] = rows('standard');
 
     await step('a bare image is a 40px avatar circle', async () => {
       const box = media(avatarRow).getBoundingClientRect();
@@ -413,11 +429,18 @@ export const LeadingMedia: Story = {
       await expect(imageRow.getBoundingClientRect().height).toBeCloseTo(72, 0);
     });
 
-    await step('a video thumbnail is 114x64, and its one-line row is 88px', async () => {
-      const box = media(videoRow).getBoundingClientRect();
-      await expect([box.width, box.height]).toEqual([114, 64]);
-      await expect(videoRow.getBoundingClientRect().height).toBeCloseTo(88, 0);
-    });
+    for (const appearance of ['standard', 'segmented']) {
+      await step(`${appearance}: a video thumbnail is 114x64, padded 12px at every line count`, async () => {
+        const [, , videoRow, threeLineVideoRow] = rows(appearance);
+        const box = media(videoRow).getBoundingClientRect();
+        await expect([box.width, box.height]).toEqual([114, 64]);
+        // Kit "List Item: 0 Density" Leading=Video: 12 + 64 + 12.
+        await expect(videoRow.getBoundingClientRect().height).toBeCloseTo(88, 0);
+        for (const row of [videoRow, threeLineVideoRow]) {
+          await expect([layout(row).paddingTop, layout(row).paddingBottom]).toEqual(['12px', '12px']);
+        }
+      });
+    }
   },
 };
 
