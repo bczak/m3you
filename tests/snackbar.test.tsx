@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import * as sonner from 'sonner';
@@ -5,6 +6,16 @@ import { afterEach, expect, test, vi } from 'vitest';
 
 import { Snackbar, SnackbarHost } from '../src/components/Snackbar/snackbar';
 import { snackbar } from '../src/components/Snackbar/snackbar-api';
+
+const snackbarCss = readFileSync('src/components/Snackbar/snackbar.css', 'utf8');
+
+/** Declarations of the top-level rule written exactly as `selector {` (flat rules only). */
+function ruleBody(selector: string): string {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = snackbarCss.match(new RegExp(`(?:^|\\n)${escaped} \\{([^{}]*)`));
+  if (!match) throw new Error(`snackbar.css has no rule for ${selector}`);
+  return match[1];
+}
 
 afterEach(() => {
   cleanup();
@@ -201,4 +212,62 @@ test('a closable snackbar with no actionLabel renders only the dismiss control',
   expect(container.querySelector('.md-snackbar__action')).toBeNull();
   fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
   expect(onClose).toHaveBeenCalledOnce();
+});
+
+// =============================================================================
+// Kit geometry (happy-dom applies no layout, so these read the stylesheet)
+// =============================================================================
+
+test('the action and close buttons keep their round shape when pressed', () => {
+  render(<Snackbar message="Deleted" actionLabel="Undo" closable />);
+  const action = screen.getByRole('button', { name: 'Undo' });
+  const close = screen.getByRole('button', { name: 'Dismiss' });
+
+  expect(action).toHaveAttribute('data-shape', 'round');
+  expect(action).not.toHaveAttribute('data-morph');
+  expect(close).toHaveAttribute('data-shape', 'round');
+  expect(close).not.toHaveAttribute('data-morph');
+});
+
+test('a text-only snackbar ends its message 16px short of the container edge', () => {
+  const { container } = render(<Snackbar message="Saved" />);
+  const message = container.querySelector('.md-snackbar__message');
+
+  expect(message?.nextElementSibling).toBeNull();
+  expect(ruleBody('.md-snackbar__message')).toMatch(/padding-inline: 16px 0;/);
+  expect(ruleBody('.md-snackbar__message:last-child')).toMatch(/padding-inline-end: 16px;/);
+});
+
+test('the action uses the kit 12px label padding, 4px from the text and 8px from the edge', () => {
+  expect(ruleBody('.md-snackbar .md-snackbar__action.md-button')).toMatch(/padding-inline: 12px;/);
+  expect(ruleBody('.md-snackbar .md-snackbar__action.md-button')).toMatch(/margin-block: 4px;/);
+  expect(ruleBody('.md-snackbar:not([data-layout="longerAction"]) .md-snackbar__action.md-button')).toMatch(
+    /margin-inline-start: 4px;/,
+  );
+  expect(ruleBody('.md-snackbar .md-snackbar__action.md-button:last-child')).toMatch(/margin-inline-end: 8px;/);
+  // The row itself adds no end padding, so a trailing close frame sits flush.
+  expect(ruleBody('.md-snackbar__actions')).not.toMatch(/padding/);
+});
+
+test('the close button sits in a 48px frame, 4px from the action and the container edges', () => {
+  render(<Snackbar message="Deleted" actionLabel="Undo" closable />);
+  const close = screen.getByRole('button', { name: 'Dismiss' });
+
+  expect(close.previousElementSibling).toBe(screen.getByRole('button', { name: 'Undo' }));
+  expect(close.nextElementSibling).toBeNull();
+  expect(ruleBody('.md-snackbar .md-snackbar__close.md-icon-button')).toMatch(/margin: 4px;/);
+});
+
+test('the longer-action layout spaces the message and action row to the kit 112px', () => {
+  // 14 + two 20px lines + 0, then 10 + (4 + 40 + 4) for the action row = 112.
+  expect(ruleBody('.md-snackbar[data-layout="longerAction"] .md-snackbar__message')).toMatch(/padding: 14px 16px 0;/);
+  const row = ruleBody('.md-snackbar[data-layout="longerAction"] .md-snackbar__actions');
+  expect(row).toMatch(/justify-content: flex-end;/);
+  expect(row).toMatch(/padding-block: 10px 0;/);
+  expect(row).toMatch(/padding-inline: 8px 0;/);
+  expect(row).not.toMatch(/gap:/);
+  // Without an action row the message closes like a text-only snackbar.
+  expect(ruleBody('.md-snackbar[data-layout="longerAction"] .md-snackbar__message:last-child')).toMatch(
+    /padding-bottom: 14px;/,
+  );
 });
