@@ -31,8 +31,9 @@ const meta = {
   argTypes: {
     variant: {
       control: 'inline-radio',
-      options: ['filled', 'outlined'],
-      description: 'Visual style — filled has a bottom active indicator, outlined has a notched border.',
+      options: ['filled', 'outlined', 'tonal'],
+      description:
+        'Visual style — filled has a bottom active indicator, outlined has a notched border, tonal (provisional) is a rounded surface-container field with no indicator.',
       table: { category: 'Appearance', defaultValue: { summary: 'filled' } },
     },
     type: {
@@ -139,7 +140,32 @@ export const Outlined: Story = {
   ),
 };
 
-// ─── Both variants side-by-side ───────────────────────────────────────────
+// ─── variant: 'tonal' (provisional) ───────────────────────────────────────
+// Compose's Expressive rounded field (TextFieldDefaults.roundedShape +
+// tonalColors), marked "TODO(b/448727879)" upstream: the values may change.
+// Medium corners all round, surface-container fill, no indicator line. Focus is
+// the primary label plus the shared focus ring — tab into the fields to see it,
+// including the label-less search field, where the ring is the only cue.
+export const Tonal: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 280 }}>
+      <TextField variant="tonal" label="Empty" supportingText="Supporting text" />
+      <TextField variant="tonal" label="Populated" defaultValue="Hello world" supportingText="Supporting text" />
+      <TextField variant="tonal" label="Error" error errorText="This field is required" />
+      <TextField variant="tonal" label="Disabled" defaultValue="Disabled value" disabled />
+      <TextField
+        variant="tonal"
+        aria-label="Search"
+        placeholder="Search"
+        leadingIcon={<SearchIcon aria-hidden="true" />}
+      />
+      <TextField variant="tonal" label="Amount" type="number" prefixText="$" suffixText="USD" defaultValue="42" />
+      <TextField variant="tonal" type="textarea" rows={3} label="Notes" maxCharCount={240} />
+    </div>
+  ),
+};
+
+// ─── All three variants side-by-side ──────────────────────────────────────
 export const Variants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 48 }}>
@@ -150,6 +176,10 @@ export const Variants: Story = {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 240 }}>
         <p style={{ font: 'var(--md-sys-typescale-title-small)' }}>Outlined</p>
         <TextField variant="outlined" label="Username" supportingText="Supporting text" />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 240 }}>
+        <p style={{ font: 'var(--md-sys-typescale-title-small)' }}>Tonal (provisional)</p>
+        <TextField variant="tonal" label="Username" supportingText="Supporting text" />
       </div>
     </div>
   ),
@@ -187,6 +217,7 @@ export const Multiline: Story = {
         defaultValue={'First line\nSecond line'}
         maxCharCount={240}
       />
+      <TextField type="textarea" variant="tonal" rows={3} label="Comments" supportingText="Tonal (provisional)" />
     </div>
   ),
 };
@@ -345,16 +376,37 @@ export const ErrorState: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 280 }}>
       <TextField variant="filled" label="Email" type="email" defaultValue="invalid" error errorText="Invalid email" />
       <TextField variant="outlined" label="Email" type="email" defaultValue="invalid" error errorText="Invalid email" />
+      {/* Empty: the resting label takes the error colour too. */}
+      <TextField variant="filled" label="Email" type="email" error errorText="Email is required" />
+      <TextField variant="outlined" label="Email" type="email" error errorText="Email is required" />
     </div>
   ),
 };
 
 // ─── disabled: true ───────────────────────────────────────────────────────
 export const Disabled: Story = {
+  parameters: {
+    a11y: {
+      // Disabled supporting text dims to 38% per the kit (WCAG 1.4.3 exempts
+      // inactive UI text), but axe only treats the input itself as disabled,
+      // not the plain supporting-text span beside it. Exclude just that span
+      // so the rest of the story's text is still contrast-checked.
+      config: { rules: [{ id: 'color-contrast', selector: ':not(.md-text-field__supporting-text)' }] },
+    },
+  },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 280 }}>
-      <TextField variant="filled" label="Filled" defaultValue="Disabled" disabled />
-      <TextField variant="outlined" label="Outlined" defaultValue="Disabled" disabled />
+      <TextField variant="filled" label="Filled" defaultValue="Disabled" supportingText="Supporting text" disabled />
+      <TextField
+        variant="outlined"
+        label="Outlined"
+        defaultValue="Disabled"
+        supportingText="Supporting text"
+        disabled
+      />
+      {/* Resting label and placeholder-only fields: both dim to on-surface at 38%. */}
+      <TextField variant="filled" label="Resting label" disabled />
+      <TextField variant="outlined" aria-label="Outlined placeholder" placeholder="Placeholder" disabled />
     </div>
   ),
 };
@@ -379,7 +431,7 @@ export const CharacterCounter: Story = {
 export const AllVariants: Story = {
   parameters: { layout: 'padded' },
   render: () => {
-    const variants = ['filled', 'outlined'] as const;
+    const variants = ['filled', 'outlined', 'tonal'] as const;
     return (
       <div style={{ display: 'flex', gap: 48 }}>
         {variants.map((variant) => (
