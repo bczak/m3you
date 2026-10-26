@@ -1,7 +1,10 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test } from 'vitest';
 import { Badge, BadgeAnchor } from '../src/components/Badge/badge';
+
+const badgeCss = readFileSync('src/components/Badge/badge.css', 'utf8');
 
 afterEach(() => {
   cleanup();
@@ -137,6 +140,45 @@ test('accepts custom className on Badge', async () => {
   const badge = screen.getByTestId('badge');
   expect(badge).toHaveClass('custom-class');
   expect(badge).toHaveClass('md-badge');
+});
+
+test('BadgeAnchor wrapper is a flex box so it shrink-wraps the badge, not the inherited line box', async () => {
+  render(
+    <BadgeAnchor badge={<Badge count={5} data-testid="badge" />} position="bottom-left" overlap="circular">
+      <span>Child</span>
+    </BadgeAnchor>,
+  );
+  const wrapper = screen.getByTestId('badge').parentElement;
+  expect(wrapper).toHaveClass('md-badge-anchor__badge');
+  expect(wrapper).toHaveAttribute('data-position', 'bottom-left');
+  expect(wrapper).toHaveAttribute('data-overlap', 'circular');
+  expect(badgeCss).toMatch(/\.md-badge-anchor__badge \{\n {2}position: absolute;[^}]*\n {2}display: flex;/);
+});
+
+test('BadgeAnchor defaults to the top-right corner of a rectangular anchor', async () => {
+  render(
+    <BadgeAnchor badge={<Badge count={5} data-testid="badge" />}>
+      <span>Child</span>
+    </BadgeAnchor>,
+  );
+  const wrapper = screen.getByTestId('badge').parentElement;
+  expect(wrapper).toHaveAttribute('data-position', 'top-right');
+  expect(wrapper).toHaveAttribute('data-overlap', 'rectangular');
+});
+
+test('large badge pill radius is half its height, not a literal', () => {
+  const large = badgeCss.match(/&\[data-size="large"\] \{([^}]*)\}/)?.[1] ?? '';
+  expect(large).toContain('--_height: 16px;');
+  expect(large).toContain('height: var(--_height);');
+  expect(large).toContain('min-width: var(--_height);');
+  expect(large).toContain('border-radius: calc(var(--_height) / 2);');
+});
+
+test('badge stays visible in forced-colors mode for every size and colour role', () => {
+  const forced = badgeCss.match(/@media \(forced-colors: active\) \{([\s\S]*?)\n\}/)?.[1] ?? '';
+  // [data-size] lifts the selector to the size/colour rules' specificity so the
+  // later system colours win over var(--md-sys-color-*) for all four roles.
+  expect(forced).toMatch(/\.md-badge\[data-size\] \{[^}]*background-color: CanvasText;[^}]*color: Canvas;/);
 });
 
 test('accepts custom className on BadgeAnchor', async () => {

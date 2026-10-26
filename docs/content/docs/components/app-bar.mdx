@@ -37,6 +37,26 @@ when the bar itself is the search field.
 
 <Example name="app-bar/variants" title="Small, medium and large" layout="stretch" />
 
+Each leading icon and trailing action gets its own 48dp cell, with the icon
+button centred in it. With only a headline, the medium and large bars are 112dp
+and 120dp tall. Adding `supportingText` makes them taller (136dp and 152dp)
+rather than overlapping the icon row: the headline always starts 8dp below the
+icons. When `centerAligned` is set on a small bar, a long headline is clipped
+with an ellipsis between the actions.
+
+## Search
+
+The `search` variant's field is a button with hover, pressed and focus states.
+Use `onSearchClick` to open a search view when it is clicked or activated from
+the keyboard. Pass extra attributes such as `aria-haspopup`, `aria-expanded` or
+a fuller `aria-label` through `searchProps`. The button is named by the visible
+label by default, and an override should still contain it so that voice control
+can target the field. Content in `searchTrailing`,
+such as a voice-search button, is a separate control that sits on top of the
+field. It is never placed inside the field's button.
+
+<Example name="app-bar/search" title="Activating search" layout="stretch" />
+
 ## Props
 
 <PropsTable of="AppBar" extends="<header>" />

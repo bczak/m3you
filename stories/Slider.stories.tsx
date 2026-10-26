@@ -44,7 +44,8 @@ const meta = {
     },
     step: {
       control: 'number',
-      description: 'Step increment. Set it to enable discrete mode with stop indicators.',
+      description:
+        'Step increment. Set it to enable discrete mode with stop indicators. Without it the slider still moves in steps of 1 from the minimum, like a native range input.',
       table: { category: 'Behavior' },
     },
     showTooltip: {
@@ -337,6 +338,23 @@ function ControlledRangeStory() {
 
 export const Range: Story = {
   render: () => <ControlledRangeStory />,
+};
+
+// ─── Right-to-left ──────────────────────────────────────────
+
+export const RightToLeft: Story = {
+  render: () => (
+    <div dir="rtl" style={{ display: 'flex', flexDirection: 'column', gap: 32, width: 320 }}>
+      <Slider aria-label="Volume" defaultValue={30} showTooltip />
+      <Slider aria-label="Volume" size="lg" step={25} defaultValue={50} icon={<Volume2Icon />} />
+      <RangeSlider
+        defaultValue={[20, 70]}
+        showTooltip
+        lowerInputProps={{ 'aria-label': 'Minimum value' }}
+        upperInputProps={{ 'aria-label': 'Maximum value' }}
+      />
+    </div>
+  ),
 };
 
 export const RangeVertical: Story = {

@@ -6,7 +6,8 @@
 
    This geometry intentionally matches the implementation deployed on
    material.you: 4px container padding, 2px item gap, and connected item
-   corners with a direct state-layer background.
+   corners. The row is the painted surface; its single state layer is the
+   ripple, drawn in the row's content colour (kit: 8% hover, 10% focus).
    ============================================================================= */
 
 /* ── Menu popup container ── */
@@ -34,8 +35,11 @@
   color: var(--md-sys-color-on-surface);
   box-shadow: var(--md-sys-elevation-2);
 
+  /* Kit Theme=Vibrant: the whole surface is Tertiary Container and its
+     content takes On Tertiary Container. */
   &[data-color="vibrant"] {
     background-color: var(--md-sys-color-tertiary-container);
+    color: var(--md-sys-color-on-tertiary-container);
   }
 
   /* Grouped: transparent wrapper, groups provide their own container */
@@ -91,6 +95,13 @@
 
 .md-menu[data-color="vibrant"] .md-menu-group {
   background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+
+/* Tertiary Container has no "variant" on-role, so a vibrant group heading
+   follows the surface's content colour instead of on-surface-variant. */
+.md-menu[data-color="vibrant"] .md-menu-label {
+  color: inherit;
 }
 
 .md-menu-label {
@@ -111,6 +122,9 @@
 .md-menu-item {
   --_outer-radius: var(--md-sys-shape-corner-medium); /* 12px */
   --_inner-radius: var(--md-sys-shape-corner-extra-small); /* 4px */
+  /* The on-role of the surface under the row. The label, and the ripple's
+     hover/focus/pressed layers (all currentColor), follow it. */
+  --_content-color: var(--md-sys-color-on-surface);
 
   position: relative;
   z-index: 0;
@@ -126,7 +140,7 @@
   overflow: hidden;
   border-radius: var(--_inner-radius);
   padding-inline: 12px;
-  color: var(--md-sys-color-on-surface);
+  color: var(--_content-color);
   font-family: var(--md-sys-typescale-body-medium-font);
   font-size: var(--md-sys-typescale-body-medium-size);
   line-height: var(--md-sys-typescale-body-medium-line-height);
@@ -155,60 +169,72 @@
     border-radius: var(--_outer-radius);
   }
 
-  &:focus-visible > .salty-ripple .salty-ripple-surface::before {
+  /* State layers. The row paints no state background of its own. Hover,
+     Active and focus all drive ONE element, the M3Ripple hover layer, in
+     currentColor, so they resolve to the row's on-role on every surface
+     (kit: On Surface / On Tertiary Container / On Tertiary) and never stack.
+     The kit has no combined state, so the strongest one wins. */
+
+  /* Active (kit: one 8% layer): the trigger whose submenu is open holds its
+     own hover layer on, so it stays lit while the pointer is over the
+     submenu, and it cannot stack a second layer while the trigger itself is
+     still hovered (both rules drive the same element to the same 8%). */
+  &[data-popup-open] > .md-ripple-hover-layer > .md-ripple-hover-layer__surface {
+    opacity: var(--md-sys-state-hover-opacity);
+  }
+
+  /* Focused (kit: one 10% layer). Base UI moves focus with the pointer, so
+     after any arrow key the hovered row is also :focus-visible; on the same
+     layer the 10% replaces the 8% hover/Active value instead of adding to
+     it (8% + 10% would composite to ~17%). The doubled class outranks
+     m3-ripple's :hover rule and the Active rule above in any bundle order. */
+  &:focus-visible > .salty-ripple.md-ripple-hover-layer > .md-ripple-hover-layer__surface {
     opacity: var(--md-sys-state-focus-opacity);
   }
 
-  &:hover {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
-  }
-
-  &:focus-visible {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
-  }
-
-  /* Active: the trigger whose submenu is open keeps the hover layer while
-     the pointer is over the submenu. */
-  &[data-popup-open] > .salty-ripple .salty-ripple-surface::before {
-    opacity: var(--md-sys-state-hover-opacity);
+  /* Kit Menu item/Vibrant: unselected rows sit on Tertiary Container. */
+  &[data-color="vibrant"] {
+    --_content-color: var(--md-sys-color-on-tertiary-container);
   }
 
   &[data-selected] {
     --_menu-item-container: var(--md-sys-color-tertiary-container);
+    --_content-color: var(--md-sys-color-on-tertiary-container);
     border-radius: var(--_outer-radius);
     background-color: var(--_menu-item-container);
-    color: var(--md-sys-color-on-tertiary-container);
   }
 
   &[data-selected][data-color="vibrant"] {
     --_menu-item-container: var(--md-sys-color-tertiary);
-    background-color: var(--_menu-item-container);
-    color: var(--md-sys-color-on-tertiary);
+    --_content-color: var(--md-sys-color-on-tertiary);
   }
 
+  /* Disabled rows dim their own on-role to 38%, so a vibrant row stays
+     legible on its tinted fill instead of fading to on-surface. */
   &[data-disabled] {
     pointer-events: none;
-    color: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
-      transparent
-    );
+    color: color-mix(in srgb, var(--_content-color) calc(var(--md-sys-state-disabled-opacity) * 100%), transparent);
   }
 
+  /* Kit State=Disabled, Selected=True: Standard drops the fill (content on
+     the surface again); Vibrant keeps its Tertiary fill and on-role. */
   &[data-disabled][data-selected] {
-    --_menu-item-container: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
-      transparent
-    );
-    background-color: var(--_menu-item-container);
+    --_menu-item-container: transparent;
+    --_content-color: var(--md-sys-color-on-surface);
   }
 
-  /* Leading and trailing elements dim with the label (kit: 38%). */
-  &[data-disabled] > svg,
-  &[data-disabled] .md-menu-item__trailing,
-  &[data-disabled] .md-menu-item__supporting,
-  &[data-disabled] .md-menu-item__chevron {
+  &[data-disabled][data-selected][data-color="vibrant"] {
+    --_menu-item-container: var(--md-sys-color-tertiary);
+    --_content-color: var(--md-sys-color-on-tertiary);
+  }
+
+  /* Leading and trailing elements use on-surface-variant on the plain
+     surface. On a tinted row (vibrant or selected) they take the row's
+     on-role, and on a disabled row they dim with the label (kit: 38%). */
+  &:is([data-color="vibrant"], [data-selected], [data-disabled]) > svg,
+  &:is([data-color="vibrant"], [data-selected], [data-disabled]) .md-menu-item__trailing,
+  &:is([data-color="vibrant"], [data-selected], [data-disabled]) .md-menu-item__supporting,
+  &:is([data-color="vibrant"], [data-selected], [data-disabled]) .md-menu-item__chevron {
     color: inherit;
   }
 
@@ -219,6 +245,20 @@
     flex-shrink: 0;
     color: var(--md-sys-color-on-surface-variant);
   }
+}
+
+/* Grouped menus: only the container's own corners are outer. Where a group
+   meets the next one it rounds to the 8dp small corner, so the row 4dp
+   inside that edge stays on the 4dp inner corner (kit: Content r=4 between
+   groups). A selected row keeps its 12dp container shape. */
+.md-menu-group:not(:first-child) > .md-menu-item:first-child:not([data-selected]) {
+  border-top-left-radius: var(--_inner-radius);
+  border-top-right-radius: var(--_inner-radius);
+}
+
+.md-menu-group:not(:last-child) > .md-menu-item:last-child:not([data-selected]) {
+  border-bottom-left-radius: var(--_inner-radius);
+  border-bottom-right-radius: var(--_inner-radius);
 }
 
 /* ── Menu item content wrapper (when supportingText is present) ── */
@@ -280,5 +320,26 @@
   & svg {
     width: 20px;
     height: 20px;
+  }
+}
+
+/* ── Forced colours ──
+   The UA drops the elevation shadow and the tinted fills, and m3-ripple hides
+   every .salty-ripple, so the hover/focus state layer vanishes with it. Draw
+   the surface edge, the keyboard-focused row and disabled rows with system
+   colours instead. Kept last so the equal-specificity disabled rule wins. */
+@media (forced-colors: active) {
+  .md-menu:not([data-grouped]),
+  .md-menu-group {
+    outline: 1px solid CanvasText;
+  }
+
+  .md-menu-item:focus-visible {
+    outline: var(--md-sys-state-focus-indicator-thickness) solid Highlight;
+    outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
+  }
+
+  .md-menu-item[data-disabled] {
+    color: GrayText;
   }
 }

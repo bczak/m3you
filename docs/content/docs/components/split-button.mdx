@@ -13,6 +13,28 @@ trailing chevron; both inherit `variant`, `size` and `shape` from the root.
   description="The trailing half opens a menu."
 />
 
+## Shape and morph
+
+The two halves share a 2dp gap. Their outer corners follow `shape`; the inner
+corners stay small so the pair reads as one control. Hovering or pressing a half
+grows its two inner corners — 4 to 8dp at `xs`, 4 to 12dp at `sm` and `md`, 8
+to 20dp at `lg` and 12 to 20dp at `xl` — and the outer corners stay put. While
+the menu is open the trigger becomes fully round. `morph` is on by default; pass
+`morph={false}` to keep the inner corners still.
+
+<Example
+  name="split-button/morph"
+  title="Inner-corner morph"
+  description="Hover or press either half. The second has morph={false} and keeps its shape."
+/>
+
+## Disabled
+
+`disabled` disables both halves. Outlined halves drop to an On Surface stroke
+at 10% with no container fill, the other variants to a 10% On Surface container.
+
+<Example name="split-button/disabled" title="Disabled" />
+
 ## Props
 
 <PropsTable of="SplitButton" extends="<div>" />

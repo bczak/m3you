@@ -38,14 +38,47 @@
   z-index: 10;
 }
 
-/* ── Trigger morph: FAB (IconButton) → round when open ──
-   Specificity 0,4,0 beats .md-icon-button.md-fab[data-size] at 0,3,0 */
-.md-icon-button.md-fab.md-fab-menu-trigger[data-menu-state="open"] {
-  border-radius: calc(var(--_height) / 2);
+/* ── Open trigger → the kit's close button ──
+   The kit has a single close button whatever the FAB rested at: 56×56, a full
+   circle (r = 28) and a 20dp icon (.Building Blocks/FAB Menu/<Color>/FAB, no
+   size axis). So a medium (80) or large (96) FAB, and an extended FAB of any
+   size, all settle on the same 56dp circle when open. Resetting --_height
+   keeps the radius calc and IconButton's default width in step with the box.
+
+   Specificity 0,4,0 (0,4,1 for the icon) beats every FAB and ExtendedFAB size
+   rule — `.md-icon-button.md-fab[data-size="lg"]`,
+   `.md-button.md-extended-fab[data-fab-size="medium"]` and their `svg`
+   descendants are all 0,3,0 / 0,3,1 — whatever order the stylesheets load in. */
+
+/* FAB (IconButton). The size change rides the same spatial spring as the
+   extended FAB's collapse below, so an 80 or 96dp FAB shrinks into the close
+   button rather than snapping; a 56dp FAB has nothing to animate. The corner
+   keeps IconButton's effects spring. */
+.md-icon-button.md-fab.md-fab-menu-trigger {
+  transition:
+    color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-duration-spring-default-effects)
+    var(--md-sys-motion-easing-spring-default-effects),
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    width var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial),
+    height var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial);
 }
 
-/* ── Trigger morph: ExtendedFAB (Button) → round 56dp when open ──
-   Adds width/padding/gap transitions for the collapse animation */
+.md-icon-button.md-fab.md-fab-menu-trigger[data-menu-state="open"] {
+  --_height: 56px;
+  width: var(--_height);
+  height: var(--_height);
+  border-radius: calc(var(--_height) / 2);
+
+  & svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ExtendedFAB (Button). Width, height, padding and gap animate so the label
+   collapses into the circle. */
 .md-button.md-extended-fab.md-fab-menu-trigger {
   width: var(--_natural-width, auto);
   transition:
@@ -55,15 +88,54 @@
     var(--md-sys-motion-easing-spring-default-spatial),
     box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     width var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial),
+    height var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial),
     padding var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial),
     gap var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial);
 }
 
+/* `min-width: 0` lifts Button's 58px floor, which would otherwise leave a
+   58×56 pill instead of a circle. */
 .md-button.md-extended-fab.md-fab-menu-trigger[data-menu-state="open"] {
+  --_height: 56px;
   width: var(--_height);
+  min-width: 0;
+  height: var(--_height);
   padding: 0;
   gap: 0;
   border-radius: calc(var(--_height) / 2);
+
+  & svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ── Open trigger colour ──
+   Kit (Buttons/FAB menu, every Color variant): the segments take the
+   X-container pair, but the close button takes the solid X role with its
+   on-colour — Secondary for "Secondary container", Primary for "Primary
+   container", Tertiary for "Tertiary container". The state layers mix from
+   currentColor, so they become On X as the kit draws them. A menu already set
+   to a solid role has nothing to switch to and keeps it.
+
+   0,6,0 outranks the FAB and ExtendedFAB colour-role rules (0,3,0);
+   `:not(:disabled)` leaves a disabled trigger to their flat disabled
+   treatment. */
+:is(.md-icon-button.md-fab, .md-button.md-extended-fab).md-fab-menu-trigger[data-menu-state="open"]:not(:disabled) {
+  &[data-fab-color="primary-container"] {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+
+  &[data-fab-color="secondary-container"] {
+    background-color: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-secondary);
+  }
+
+  &[data-fab-color="tertiary-container"] {
+    background-color: var(--md-sys-color-tertiary);
+    color: var(--md-sys-color-on-tertiary);
+  }
 }
 
 /* ── Content ── */

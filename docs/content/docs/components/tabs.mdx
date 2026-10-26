@@ -9,6 +9,10 @@ Tabs organise content into peer groups at the same level of hierarchy. Primary
 tabs sit directly under an app bar; secondary tabs sit inside a section that
 already has primary tabs above it.
 
+The active indicator marks the selected tab. On primary tabs it is as wide as
+the tab's content, and at least 24px wide so a short label still gets a visible
+bar. On secondary tabs it spans the whole tab.
+
 `Tabs` is controlled: give it a `value` and an `onValueChange`.
 
 <Playground
@@ -37,7 +41,23 @@ already has primary tabs above it.
 
 ## Icons and badges
 
-<Example name="tabs/icons" title="Secondary tabs with icons" layout="stretch" />
+Primary tabs stack the icon above the label, and a `badge` overlays the icon's
+top-right corner. Secondary tabs put the icon and label in one row, and the
+badge follows the label. On label-only tabs of either variant the badge also
+follows the label, 4px after it and centred on its line. On icon-only tabs the
+badge always sits on the icon.
+Pass a `Badge` to get the error-coloured dot or count.
+
+<Example name="tabs/icons" title="Primary and secondary tabs with icons and badges" layout="stretch" />
+
+## Scrollable tabs
+
+By default, tabs stretch to share the full width. Set `fullWidth={false}` when
+there are too many tabs to fit: each tab sizes to its content but is at least
+90px wide, the row starts 52px in from the leading edge, and the row scrolls
+sideways.
+
+<Example name="tabs/scrollable" title="Scrollable tabs" layout="stretch" />
 
 ## Props
 

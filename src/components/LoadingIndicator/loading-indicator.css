@@ -1,7 +1,8 @@
 /* =============================================================================
    Loading Indicator — M3 Expressive
    Shape polygons are injected via document.head on first mount (see .tsx).
-   Animation is pure CSS: clip-path morph + 1080° rotation over 4998ms.
+   Animation is pure CSS: clip-path morph + 1080° rotation over 4998ms, seven
+   equal steps (100% / 7 each, 714ms and ~154° per morph).
    ============================================================================= */
 
 .md-loading-indicator {
@@ -9,10 +10,13 @@
   flex-shrink: 0;
   vertical-align: middle;
   aspect-ratio: 1 / 1;
+  /* A non-auto height keeps flex/grid stretch from turning the circle into an
+     oval; max-content in the block axis resolves to the width via aspect-ratio,
+     so sizing by width alone (presets or style={{ width }}) stays square. */
+  height: max-content;
 
   --_color: var(--md-loading-indicator-color, var(--md-sys-color-primary));
   --_container-color: var(--md-loading-indicator-container-color, var(--md-sys-color-primary-container));
-  --_indicator-size: 38px;
 
   &[data-variant="contained"] {
     --_color: var(--md-loading-indicator-color, var(--md-sys-color-on-primary-container));
@@ -20,14 +24,12 @@
 
   &[data-size="sm"] {
     width: 24px;
-    --_indicator-size: 19px;
   }
   &[data-size="md"] {
     width: 48px;
   }
   &[data-size="lg"] {
     width: 64px;
-    --_indicator-size: 50.667px;
   }
 }
 
@@ -45,8 +47,11 @@
 }
 
 .md-loading-indicator__indicator {
-  width: var(--_indicator-size);
-  height: var(--_indicator-size);
+  /* Kit: a 38dp shape box centred in the 48dp container (79.17%) at every
+     size. Width-only + aspect-ratio keeps the morphing shape square even if
+     the container is ever stretched. */
+  width: calc(100% * 38 / 48);
+  aspect-ratio: 1 / 1;
   flex: none;
   background-color: var(--_color);
   transform-origin: center;
@@ -61,32 +66,32 @@
     transform: rotate(0deg);
     animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
-  14% {
+  14.286% {
     clip-path: var(--_polygon-7-sided-cookie);
     transform: rotate(154deg);
     animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
-  29% {
+  28.571% {
     clip-path: var(--_polygon-pentagon);
     transform: rotate(309deg);
     animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
-  43% {
+  42.857% {
     clip-path: var(--_polygon-pill);
     transform: rotate(463deg);
     animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
-  57% {
+  57.143% {
     clip-path: var(--_polygon-very-sunny);
     transform: rotate(617deg);
     animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
-  71% {
+  71.429% {
     clip-path: var(--_polygon-4-sided-cookie);
     transform: rotate(771deg);
     animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);
   }
-  83% {
+  85.714% {
     clip-path: var(--_polygon-oval);
     transform: rotate(926deg);
     animation-timing-function: var(--md-sys-motion-easing-spring-default-spatial);

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test } from 'vitest';
@@ -13,6 +14,27 @@ import {
 } from '../src/components/SideSheet/side-sheet';
 
 afterEach(cleanup);
+
+// happy-dom loads no stylesheets, so the geometry contract is read as text.
+// Comments are stripped and whitespace collapsed so matches survive reformatting.
+const sideSheetCss = readFileSync('src/components/SideSheet/side-sheet.css', 'utf8')
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .replace(/\s+/g, ' ');
+
+/** Body of the top-level rule whose selector is exactly `selector`, nested rules included. */
+function ruleBody(selector: string): string {
+  const head = `${selector} {`;
+  const at = sideSheetCss.indexOf(head);
+  expect(at, `missing rule: ${selector}`).toBeGreaterThan(-1);
+  let depth = 1;
+  let end = at + head.length;
+  while (depth > 0 && end < sideSheetCss.length) {
+    const char = sideSheetCss[end++];
+    if (char === '{') depth++;
+    if (char === '}') depth--;
+  }
+  return sideSheetCss.slice(at + head.length, end - 1).trim();
+}
 
 // =============================================================================
 // SideSheet (Root) + Trigger
@@ -354,4 +376,59 @@ test('SideSheetFooter renders with class and slot', () => {
   expect(footer).toHaveAttribute('data-slot', 'side-sheet-footer');
   expect(footer).toHaveClass('md-side-sheet-footer');
   expect(footer).toHaveClass('custom-footer');
+});
+
+// =============================================================================
+// Header geometry (kit: top-aligned 76dp row, pad 12/12/16/24, 48dp icon-button
+// frames, 40dp title frame with a 12dp top pad; leading pad 4 behind a back button)
+// =============================================================================
+
+test('header uses the kit padding and restores the 48dp frame around the 40px sm icon buttons', () => {
+  const header = ruleBody('.md-side-sheet-header');
+  // 12 + (4 + 40 + 4) + 16 = 76 tall; close button 16px from the top and trailing edge.
+  expect(header).toContain('align-items: flex-start;');
+  expect(header).toContain('padding-block: 12px 16px;');
+  expect(header).toContain('padding-inline: 24px 12px;');
+  expect(header).toContain('& > .md-icon-button { flex-shrink: 0; margin: 4px; }');
+  expect(header).not.toMatch(/(^|[ ;{])gap:/);
+  expect(header).not.toContain('min-height');
+});
+
+test('title is the kit 40dp frame: its 12px top pad drops the headline to y=24', () => {
+  expect(ruleBody('.md-side-sheet-title')).toContain('padding-block-start: 12px;');
+});
+
+test('back-button header pulls the leading pad in to 4px on both variants, mirrored in RTL', () => {
+  const header = ruleBody('.md-side-sheet-header');
+  // 4 + 4dp frame inset: the visible back button sits 8px in and the 208px title starts at 52.
+  expect(header).toContain('&[data-has-back] { padding-inline-start: 4px; }');
+  expect(header).not.toContain('[data-has-back][data-variant');
+  expect(sideSheetCss).not.toMatch(/padding-(left|right)/);
+});
+
+test('back and close buttons are direct md-icon-button children of the header, so the frame margin reaches them', () => {
+  render(
+    <SideSheet defaultOpen modal={false}>
+      <SideSheetContent>
+        <SideSheetHeader data-testid="header" onBack={() => {}}>
+          Header
+        </SideSheetHeader>
+      </SideSheetContent>
+    </SideSheet>,
+  );
+  const header = screen.getByTestId('header');
+  expect(header).toHaveAttribute('data-has-back', 'true');
+  expect(header).toHaveAttribute('data-variant', 'standard');
+  const buttons = header.querySelectorAll(':scope > .md-icon-button');
+  expect(buttons).toHaveLength(2);
+  expect(buttons[0]).toHaveAttribute('aria-label', 'Back');
+  expect(buttons[0]).toHaveAttribute('data-size', 'sm');
+  expect(buttons[1]).toHaveAttribute('aria-label', 'Close');
+  expect(buttons[1]).toHaveAttribute('data-size', 'sm');
+});
+
+test('forced colours keeps the modal edge and the divider visible with a system colour', () => {
+  const forced = ruleBody('@media (forced-colors: active)');
+  expect(forced).toContain('.md-side-sheet-content[data-variant="modal"] { outline: 1px solid CanvasText; }');
+  expect(forced).toContain('.md-side-sheet-divider { background-color: CanvasText; }');
 });

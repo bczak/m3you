@@ -26,11 +26,46 @@ const computeCircle = (diameter: number, strokeWidth: number, padding: number): 
   return { cx: r + totalPadding, cy: r + totalPadding, r, padding: totalPadding };
 };
 
+/** Wave phase that closes the wave seamlessly round a full circle (see the header). */
+const wavePhase = (waveCount: number): number => (Math.PI / 2) * (waveCount - 1);
+
+/** Radius of the wave at `angle` (radians, as returned by degreesToRadians). */
+const waveRadius = (circle: Circle, waveCount: number, amplitude: number, angle: number): number =>
+  circle.r - amplitude * Math.sin(angle * waveCount + wavePhase(waveCount));
+
 export type ArcResult = { path: string; viewBox: string };
 
 export const sizeToDegrees = (size: number, diameter: number, strokeWidth: number, amplitude: number): number => {
   const { r } = computeCircle(diameter, strokeWidth, amplitude);
   return size * (360 / (2 * Math.PI * r));
+};
+
+/**
+ * Angle (degrees) between two points on concentric circles of radii `r1` and `r2` that sit `distance` apart in a
+ * straight line. Gaps between round-capped arcs are straight-line distances between their end caps, which on a small,
+ * tightly curved ring is noticeably less than the same length measured along the arc.
+ */
+export const separationDegrees = (distance: number, r1: number, r2: number): number => {
+  const cos = (r1 * r1 + r2 * r2 - distance * distance) / (2 * r1 * r2);
+  return (Math.acos(Math.min(1, Math.max(-1, cos))) * 180) / Math.PI;
+};
+
+/** Radius, from the centre, of the wave drawWavyArc draws with the same arguments at `degrees`. */
+export const wavyRadiusAt = ({
+  diameter,
+  strokeWidth,
+  wavelength,
+  amplitude,
+  degrees,
+}: {
+  diameter: number;
+  strokeWidth: number;
+  wavelength: number;
+  amplitude: number;
+  degrees: number;
+}): number => {
+  const circle = computeCircle(diameter, strokeWidth, amplitude);
+  return waveRadius(circle, (2 * Math.PI * circle.r) / wavelength, amplitude, degreesToRadians(degrees));
 };
 
 /** Standard circular arc between two angles, drawn clockwise. */
@@ -40,34 +75,23 @@ export const drawCircularArc = ({
   amplitude,
   startAngle = 0,
   endAngle = 360,
-  gap = 0,
 }: {
   diameter: number;
   strokeWidth: number;
   amplitude: number;
   startAngle?: number;
   endAngle?: number;
-  gap?: number;
 }): ArcResult => {
   if (diameter === 0 || strokeWidth === 0) return { path: '', viewBox: '0 0 0 0' };
 
   const circle = computeCircle(diameter, strokeWidth, amplitude);
-  let a0 = startAngle;
-  let a1 = endAngle;
-
-  if (gap > 0) {
-    const gapDeg = sizeToDegrees(gap, diameter, strokeWidth, amplitude);
-    a0 += gapDeg;
-    a1 -= gapDeg;
-  }
-
   // SVG arcs can't represent a 360° sweep with a single A command — back off
   // by a thousandth of a degree so it stays a true arc.
-  if (a1 - a0 >= 360) a1 = a0 + 359.999;
+  const a1 = endAngle - startAngle >= 360 ? startAngle + 359.999 : endAngle;
 
   const start = polarToCartesian(circle, a1);
-  const end = polarToCartesian(circle, a0);
-  const largeArc = a1 - a0 <= 180 ? '0' : '1';
+  const end = polarToCartesian(circle, startAngle);
+  const largeArc = a1 - startAngle <= 180 ? '0' : '1';
   const path = `M ${start.x} ${start.y} A ${circle.r} ${circle.r} 0 ${largeArc} 0 ${end.x} ${end.y}`;
   const viewBox = `0 0 ${diameter + circle.padding * 2} ${diameter + circle.padding * 2}`;
   return { path, viewBox };
@@ -81,7 +105,6 @@ export const drawWavyArc = ({
   amplitude,
   startAngle = 0,
   endAngle = 360,
-  gap = 0,
   steps = 200,
 }: {
   diameter: number;
@@ -90,36 +113,25 @@ export const drawWavyArc = ({
   amplitude: number;
   startAngle?: number;
   endAngle?: number;
-  gap?: number;
   steps?: number;
 }): ArcResult => {
   if (diameter === 0 || strokeWidth === 0) return { path: '', viewBox: '0 0 0 0' };
 
   const circle = computeCircle(diameter, strokeWidth, amplitude);
 
-  let a0 = startAngle;
-  let a1 = endAngle;
-  if (gap > 0) {
-    const gapDeg = sizeToDegrees(gap, diameter, strokeWidth, amplitude);
-    a0 += gapDeg;
-    a1 -= gapDeg;
-  }
-
-  const startRad = degreesToRadians(a0);
-  let endRad = degreesToRadians(a1);
-  if (a0 === a1) endRad = startRad;
+  const startRad = degreesToRadians(startAngle);
+  let endRad = degreesToRadians(endAngle);
+  if (startAngle === endAngle) endRad = startRad;
   else if (endRad < startRad) endRad += Math.PI * 2;
 
   const totalAngle = endRad - startRad;
   const waveCount = (2 * Math.PI * circle.r) / wavelength;
-  const phase = (Math.PI / 2) * (waveCount - 1);
 
   const parts: string[] = [];
   for (let i = 0; i <= steps; i++) {
     const t = steps === 0 ? 0 : i / steps;
     const angle = startRad + t * totalAngle;
-    const wave = Math.sin(angle * waveCount + phase);
-    const radius = circle.r - amplitude * wave;
+    const radius = waveRadius(circle, waveCount, amplitude, angle);
     const x = radius * Math.cos(angle) + circle.cx;
     const y = radius * Math.sin(angle) + circle.cy;
     parts.push(i === 0 ? `M ${x},${y}` : `L ${x},${y}`);

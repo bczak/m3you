@@ -17,7 +17,7 @@ export interface SplitButtonProps extends React.ComponentProps<'div'> {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   /** Corner style of the outer edges. */
   shape?: 'round' | 'square';
-  /** Change corner radius while a half is held. */
+  /** Grow a half's inner corners while it is hovered or pressed. */
   morph?: boolean;
   /** Renders the selected state on both halves. */
   selected?: boolean;

@@ -1,5 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { CalendarIcon, MapPinIcon, SparklesIcon, StarIcon, UserIcon } from 'lucide-react';
+import {
+  CalendarIcon,
+  CoffeeIcon,
+  FuelIcon,
+  HotelIcon,
+  MapPinIcon,
+  PillIcon,
+  ShoppingCartIcon,
+  SparklesIcon,
+  SquareParkingIcon,
+  StarIcon,
+  UserIcon,
+  UtensilsIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Chip } from '../src/components/Chip/chip';
 import { ChipGroup } from '../src/components/ChipGroup/chip-group';
@@ -10,7 +23,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['type', 'variant', 'selected', 'disabled', 'children'],
+      include: ['type', 'variant', 'selected', 'morph', 'disabled', 'children'],
       expanded: true,
     },
   },
@@ -31,6 +44,12 @@ const meta = {
       control: 'boolean',
       description: 'Selected state. Most meaningful for `filter` chips (drives the check + container fill).',
       table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    morph: {
+      control: 'boolean',
+      description:
+        'Opt into the Expressive chip shapes: 12px at rest, 8px while pressed, a pill once a filter or input chip is selected.',
+      table: { category: 'Appearance', defaultValue: { summary: 'false' } },
     },
     disabled: {
       control: 'boolean',
@@ -67,6 +86,7 @@ export const Default: Story = {
     type: 'assist',
     variant: 'outlined',
     selected: false,
+    morph: false,
     disabled: false,
     children: 'Chip',
   },
@@ -87,6 +107,9 @@ const AssistStory = () => (
       <Chip type="assist" variant="outlined" disabled>
         Disabled
       </Chip>
+      <Chip type="assist" variant="outlined" leadingIcon={<SparklesIcon />} disabled>
+        Disabled icon
+      </Chip>
     </div>
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
       <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>Elevated</span>
@@ -98,6 +121,9 @@ const AssistStory = () => (
       </Chip>
       <Chip type="assist" variant="elevated" disabled>
         Disabled
+      </Chip>
+      <Chip type="assist" variant="elevated" leadingIcon={<SparklesIcon />} disabled>
+        Disabled icon
       </Chip>
     </div>
   </div>
@@ -115,6 +141,9 @@ const FilterStory = () => (
       <InteractiveFilterChip variant="outlined" selected>
         Selected
       </InteractiveFilterChip>
+      <InteractiveFilterChip variant="outlined" leadingIcon={<StarIcon />}>
+        With icon
+      </InteractiveFilterChip>
       <Chip type="filter" variant="outlined" disabled>
         Disabled
       </Chip>
@@ -127,6 +156,9 @@ const FilterStory = () => (
       <InteractiveFilterChip variant="elevated">Filter</InteractiveFilterChip>
       <InteractiveFilterChip variant="elevated" selected>
         Selected
+      </InteractiveFilterChip>
+      <InteractiveFilterChip variant="elevated" leadingIcon={<StarIcon />}>
+        With icon
       </InteractiveFilterChip>
       <Chip type="filter" variant="elevated" disabled>
         Disabled
@@ -266,6 +298,44 @@ export const WithIcons: Story = {
 
 // ─── Interactive Stories ────────────────────────────────────
 
+/**
+ * The kit draws every chip group in a 360dp frame. Constraining the group
+ * stories to the same width makes the scroll layout overflow and the wrap
+ * layout break onto a second row, as they do there.
+ */
+const GroupFrame = ({ children }: { children: React.ReactNode }) => <div style={{ width: 360 }}>{children}</div>;
+
+const places = [
+  { label: 'Restaurants', icon: <UtensilsIcon /> },
+  { label: 'Coffee', icon: <CoffeeIcon /> },
+  { label: 'Hotels', icon: <HotelIcon /> },
+  { label: 'Gas', icon: <FuelIcon /> },
+  { label: 'Groceries', icon: <ShoppingCartIcon /> },
+  { label: 'Parking', icon: <SquareParkingIcon /> },
+  { label: 'Pharmacies', icon: <PillIcon /> },
+];
+
+/**
+ * The default `scroll` layout (kit: Single row - scrollable). Elevated chips,
+ * as over a map, so the group's 8dp block padding is visibly what keeps their
+ * shadow and a focused chip's ring from being clipped by the scroll container.
+ */
+const ScrollGroupStory = () => (
+  <GroupFrame>
+    <ChipGroup>
+      {places.map(({ label, icon }) => (
+        <Chip key={label} variant="elevated" leadingIcon={icon}>
+          {label}
+        </Chip>
+      ))}
+    </ChipGroup>
+  </GroupFrame>
+);
+
+export const ScrollGroup: Story = {
+  render: () => <ScrollGroupStory />,
+};
+
 const InteractiveFilterGroupStory = () => {
   const labels = ['All', 'Favorites', 'Recent', 'Shared', 'Archived'];
   const [selected, setSelected] = useState<Set<string>>(new Set(['All']));
@@ -280,13 +350,15 @@ const InteractiveFilterGroupStory = () => {
   };
 
   return (
-    <ChipGroup layout="wrap">
-      {labels.map((label) => (
-        <Chip key={label} type="filter" selected={selected.has(label)} onClick={() => toggle(label)}>
-          {label}
-        </Chip>
-      ))}
-    </ChipGroup>
+    <GroupFrame>
+      <ChipGroup layout="wrap">
+        {labels.map((label) => (
+          <Chip key={label} type="filter" selected={selected.has(label)} onClick={() => toggle(label)}>
+            {label}
+          </Chip>
+        ))}
+      </ChipGroup>
+    </GroupFrame>
   );
 };
 
@@ -298,13 +370,15 @@ const InteractiveInputGroupStory = () => {
   const [tags, setTags] = useState(['React', 'TypeScript', 'Material 3', 'Storybook', 'CSS']);
 
   return (
-    <ChipGroup layout="wrap">
-      {tags.map((tag) => (
-        <Chip key={tag} type="input" onClose={() => setTags((t) => t.filter((v) => v !== tag))}>
-          {tag}
-        </Chip>
-      ))}
-    </ChipGroup>
+    <GroupFrame>
+      <ChipGroup layout="wrap">
+        {tags.map((tag) => (
+          <Chip key={tag} type="input" onClose={() => setTags((t) => t.filter((v) => v !== tag))}>
+            {tag}
+          </Chip>
+        ))}
+      </ChipGroup>
+    </GroupFrame>
   );
 };
 
@@ -363,6 +437,51 @@ export const WithAvatar: Story = {
   render: () => <WithAvatarStory />,
 };
 
+// ─── Expressive shape morph ─────────────────────────────────
+
+const MorphStory = () => {
+  const [filters, setFilters] = useState(['Nearby']);
+  const toggle = (label: string) =>
+    setFilters((current) => (current.includes(label) ? current.filter((l) => l !== label) : [...current, label]));
+
+  return (
+    <div style={{ display: 'flex', gap: '64px' }}>
+      {[false, true].map((morph) => (
+        <div key={String(morph)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>
+            {morph ? 'morph — 12px, 8px pressed, pill selected' : 'Default — 8px'}
+          </span>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {['Nearby', 'Open now', 'Top rated'].map((label) => (
+              <Chip
+                key={label}
+                type="filter"
+                morph={morph}
+                selected={filters.includes(label)}
+                onClick={() => toggle(label)}
+              >
+                {label}
+              </Chip>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <Chip type="assist" morph={morph} leadingIcon={<CalendarIcon />}>
+              Add to calendar
+            </Chip>
+            <Chip type="input" morph={morph} selected onClose={() => {}}>
+              Selected input
+            </Chip>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const Morph: Story = {
+  render: () => <MorphStory />,
+};
+
 // ─── All Combinations ──────────────────────────────────────
 
 const AllCombinations = () => {
@@ -395,11 +514,9 @@ const AllCombinations = () => {
                       Selected
                     </Chip>
                   )}
-                  {type !== 'filter' && (
-                    <Chip type={type} variant={variant} leadingIcon={<StarIcon />}>
-                      Icon
-                    </Chip>
-                  )}
+                  <Chip type={type} variant={variant} leadingIcon={<StarIcon />}>
+                    Icon
+                  </Chip>
                   {type === 'input' && (
                     <Chip type={type} variant={variant} onClose={() => {}}>
                       Closable

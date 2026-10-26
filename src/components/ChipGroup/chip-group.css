@@ -2,6 +2,11 @@
   display: flex;
   box-sizing: border-box;
   width: 100%;
+  /* Kit (Chips / Chip groups, every type and layout): 8dp above and below the
+     chips, none at the sides, 8dp between chips. One row of 32dp chips makes a
+     48dp group. The block padding also leaves room for an elevated chip's
+     shadow, which the scroll layout's overflow would otherwise clip. */
+  padding-block: 8px;
   gap: 8px;
 
   &[data-layout="scroll"] {
@@ -17,9 +22,22 @@
     & > * {
       flex: none;
     }
+
+    /* The row's overflow clips at its start and end, and the kit gives it no
+       side padding, so an outer ring loses its side wherever a chip meets an
+       edge: the first chip at rest, the last once scrolled to the end, any
+       chip part-scrolled out. Chips in the row draw the ring just inside
+       their edge instead — the inner offset the focus tokens provide for a
+       ring that would be clipped. */
+    & .md-chip:is(:focus-visible, :has(> .md-chip__primary:focus-visible)) {
+      outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
+    }
   }
 
+  /* Kit (Multiple rows - overflow): rows sit 16dp apart (crossGap), chips in a
+     row keep the 8dp gap. 8 + 32 + 16 + 32 + 8 = 96dp for two rows. */
   &[data-layout="wrap"] {
     flex-wrap: wrap;
+    row-gap: 16px;
   }
 }

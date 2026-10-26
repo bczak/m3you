@@ -33,6 +33,19 @@ reach that action.
 
 <Example name="fab/variants" title="Colour variants" />
 
+## Shape
+
+The corners follow the size: 16dp on the 56dp FAB, 20dp on the 80dp medium
+FAB and 28dp on the 96dp large FAB. A FAB keeps its corner radius when pressed.
+Unlike an icon button it does not morph by default; pass `morph` to opt in.
+
+## Elevation
+
+Every FAB rests at elevation level 3, whatever its `variant` or size. It rises to
+level 4 on hover and drops back to level 3 while pressed. `lowered` moves it down
+to level 1 (level 2 on hover), for a FAB that sits on a coloured surface. A
+disabled FAB is flat.
+
 ## Props
 
 <PropsTable of="FAB" extends="<button>" />

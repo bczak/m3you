@@ -41,3 +41,11 @@
     }
   }
 }
+
+/* Forced colors replaces the line's background with Canvas, hiding it; draw it
+   with a system colour instead (covers full-width, inset, heavy and vertical). */
+@media (forced-colors: active) {
+  .md-divider {
+    background-color: CanvasText;
+  }
+}

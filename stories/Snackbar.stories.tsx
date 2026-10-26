@@ -63,6 +63,14 @@ export const Showcase: Story = {
         message="This item will be deleted in 5 days"
         actionLabel="Learn more"
         onAction={() => {}}
+      />
+
+      {/* Longer action — action + close below message */}
+      <Snackbar
+        layout="longerAction"
+        message="This item will be deleted in 5 days"
+        actionLabel="Learn more"
+        onAction={() => {}}
         closable
         onClose={() => {}}
       />

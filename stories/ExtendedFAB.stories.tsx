@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { EditIcon, NavigationIcon, PlusIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { expect } from 'storybook/test';
 import { ExtendedFAB } from '../src/components/ExtendedFab/extended-fab';
 
 const sizes = ['sm', 'md', 'lg'] as const;
@@ -100,6 +101,95 @@ export const AllSizes: Story = {
   render: () => (
     <SizeShowcase renderItem={(size) => <ExtendedFAB size={size} icon={<EditIcon />} label={`Size ${size}`} />} />
   ),
+};
+
+// Kit-backed `fabSize` (56/80/96dp) and `color` roles. The legacy md and lg
+// sizes above render the same geometry as fabSize="small" and "large".
+export const KitSizesAndColors: Story = {
+  args: {
+    label: 'Create',
+  },
+  render: () => (
+    <div style={stackStyle}>
+      <div style={rowStyle}>
+        {(['small', 'medium', 'large'] as const).map((fabSize) => (
+          <ExtendedFAB key={fabSize} fabSize={fabSize} color="primary" icon={<EditIcon />} label="Label" />
+        ))}
+      </div>
+      <div style={{ ...rowStyle, gap: '16px', flexWrap: 'wrap' }}>
+        {(
+          [
+            'primary',
+            'secondary',
+            'tertiary',
+            'primary-container',
+            'secondary-container',
+            'tertiary-container',
+          ] as const
+        ).map((color) => (
+          <ExtendedFAB key={color} fabSize="small" color={color} icon={<EditIcon />} label={color} />
+        ))}
+      </div>
+    </div>
+  ),
+};
+
+const paddingCases = [
+  { name: 'fabSize small', props: { fabSize: 'small' }, padding: 16 },
+  { name: 'fabSize medium', props: { fabSize: 'medium' }, padding: 26 },
+  { name: 'fabSize large', props: { fabSize: 'large' }, padding: 28 },
+  { name: 'size md', props: { size: 'md' }, padding: 16 },
+  { name: 'size lg', props: { size: 'lg' }, padding: 28 },
+] as const;
+
+export const KitPadding: Story = {
+  args: {
+    label: 'Create',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Checks the inline padding in a real browser. A filled extended FAB has the kit’s 16dp (small), 26dp (medium) or 28dp (large) padding. An outlined one takes its stroke out of that padding, so it is exactly as wide as the filled one.',
+      },
+    },
+  },
+  render: () => (
+    <div style={stackStyle}>
+      {(['filled', 'outlined'] as const).map((variant) => (
+        <div key={variant} style={rowStyle}>
+          {paddingCases.map(({ name, props }) => (
+            <ExtendedFAB
+              key={name}
+              {...props}
+              variant={variant}
+              icon={<EditIcon />}
+              label="Create"
+              aria-label={`${variant} ${name}`}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  ),
+  play: async ({ canvas, step }) => {
+    for (const { name, padding } of paddingCases) {
+      await step(`${name}: ${padding}dp inline padding, outlined as wide as filled`, async () => {
+        const filled = canvas.getByRole('button', { name: `filled ${name}` });
+        const outlined = canvas.getByRole('button', { name: `outlined ${name}` });
+        const filledStyle = getComputedStyle(filled);
+        const outlinedStyle = getComputedStyle(outlined);
+
+        await expect(filledStyle.paddingInlineStart).toBe(`${padding}px`);
+        await expect(filledStyle.paddingInlineEnd).toBe(`${padding}px`);
+        await expect(Number.parseFloat(outlinedStyle.borderInlineStartWidth)).toBeGreaterThan(0);
+        await expect(
+          Number.parseFloat(outlinedStyle.paddingInlineStart) + Number.parseFloat(outlinedStyle.borderInlineStartWidth),
+        ).toBe(padding);
+        await expect(outlined.getBoundingClientRect().width).toBeCloseTo(filled.getBoundingClientRect().width, 1);
+      });
+    }
+  },
 };
 
 const VariantStory = ({ variant }: { variant: 'filled' | 'elevated' | 'tonal' | 'outlined' | 'text' }) => {

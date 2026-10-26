@@ -6,8 +6,13 @@ import { cx } from '../../lib/cx';
 export type TextFieldElement = HTMLInputElement | HTMLTextAreaElement;
 
 export type TextFieldProps = Omit<React.ComponentProps<'input'>, 'type' | 'onChange' | 'onFocus' | 'onBlur'> & {
-  /** `filled` uses a tinted container; `outlined` uses a border. */
-  variant?: 'filled' | 'outlined';
+  /**
+   * `filled` uses a tinted container with an active indicator; `outlined` uses
+   * a border. `tonal` is the Expressive rounded field: a medium-corner
+   * surface-container with no indicator line. Its values are provisional
+   * upstream and may change once Material publishes the tokens.
+   */
+  variant?: 'filled' | 'outlined' | 'tonal';
   /** Native input type. `textarea` renders a multiline `<textarea>`. */
   type?: 'text' | 'email' | 'password' | 'number' | 'search' | 'tel' | 'url' | 'textarea';
   /** Initial visible line count for `type="textarea"`. */
@@ -255,7 +260,8 @@ const TextField = React.forwardRef<TextFieldElement, React.PropsWithoutRef<TextF
             </span>
           )}
 
-          {/* Filled variant: active indicator (bottom border) */}
+          {/* Filled variant: active indicator (bottom border). The tonal
+              variant's indicator is transparent, so it draws none. */}
           {variant === 'filled' && (
             <div
               className="md-text-field__active-indicator"

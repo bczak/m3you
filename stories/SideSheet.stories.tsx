@@ -115,7 +115,7 @@ export const Standard: Story = {
   ),
 };
 
-// ─── modal: 'trap-focus' — scrim-less but keyboard focus stays trapped ─────
+// ─── modal: 'trap-focus' — modal look, focus trapped, page scroll not locked ─
 export const TrapFocus: Story = {
   render: () => (
     <SideSheet modal="trap-focus">
@@ -124,7 +124,8 @@ export const TrapFocus: Story = {
         <SideSheetHeader>Focus-trapped sheet</SideSheetHeader>
         <SideSheetBody>
           <p style={{ margin: 0, color: 'var(--md-sys-color-on-surface-variant)' }}>
-            Behaves like a standard sheet (no scrim) but traps keyboard focus inside while open.
+            Uses the modal presentation (scrim, surface-container-low fill, rounded corners) and keeps keyboard focus
+            trapped inside while open, but does not lock page scroll.
           </p>
         </SideSheetBody>
       </SideSheetContent>
@@ -207,7 +208,7 @@ export const FullAnatomy: Story = {
             ))}
           </div>
         </SideSheetBody>
-        <SideSheetDivider />
+        {/* The footer draws its own full-bleed top divider — no extra <SideSheetDivider /> here. */}
         <SideSheetFooter>
           <SideSheetClose render={<Button variant="filled">Apply</Button>} />
           <SideSheetClose render={<Button variant="text">Cancel</Button>} />

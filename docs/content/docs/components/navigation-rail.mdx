@@ -17,6 +17,31 @@ in normal flow — which is what the example below and the
   layout="stretch"
 />
 
+Wrap items in a `NavigationRailSection` to group them. In the expanded rail a
+section can show a `title`. With `modality="modal"` the expanded rail floats over the
+page as a `surface-container` sheet with large corners, above a scrim. It has no
+shadow, as in the M3 kit: the fill and the scrim set it apart from the page. In
+forced-colors mode it gets a thin outline instead. Clicking the scrim collapses it.
+
+A focused item gets a focus ring. In the collapsed rail the ring sits just inside
+the item. In the expanded rail it wraps the pill around the icon and label. The
+pill is at most as wide as the rail, so a label too long for it ends in an
+ellipsis. The full label is still the item's accessible name.
+
+## Hidden labels
+
+The collapsed rail shows a label under each icon by default. Set `hideLabel` on
+an item to show only the icon. The indicator then becomes a 56dp circle. Use it
+on every item so the rail stays consistent. `label` is still required: it stays
+the item's accessible name, and the expanded rail always shows it.
+
+<Example
+  name="navigation-rail/hidden-labels"
+  title="Icon-only destinations"
+  description="hideLabel switches the collapsed indicator to a 56dp circle."
+  layout="stretch"
+/>
+
 ## Props
 
 <PropsTable of="NavigationRail" extends="<nav>" />
