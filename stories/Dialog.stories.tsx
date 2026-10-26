@@ -3,11 +3,14 @@ import {
   AlertCircleIcon,
   CheckCircleIcon,
   DeleteIcon,
+  GlobeIcon,
   InfoIcon,
   LogOutIcon,
+  PlusIcon,
   RefreshCwIcon,
   SettingsIcon,
   TrashIcon,
+  UserIcon,
   WifiOffIcon,
   XIcon,
 } from 'lucide-react';
@@ -34,6 +37,7 @@ import {
   FullScreenDialogTrigger,
 } from '../src/components/Dialog/dialog';
 import { IconButton } from '../src/components/IconButton/icon-button';
+import { List, ListItem } from '../src/components/List/list';
 import { Menu, MenuContent, MenuItem, MenuTrigger } from '../src/components/Menu/menu';
 
 const meta = {
@@ -210,7 +214,9 @@ export const WithHeroIcon: Story = {
 
 // =============================================================================
 // WithDividerAndList — scrollable content separated by dividers.
-// Mirrors the M3 spec's "Reset settings?" example with an account list.
+// Mirrors the M3 spec's "Reset settings?" example with an account list. The
+// dividers sit directly in DialogContent, so they run edge to edge as the kit's
+// divider slot does; the body between them is what scrolls on a short screen.
 // =============================================================================
 
 const accounts = [
@@ -236,12 +242,12 @@ export const WithDividerAndList: Story = {
           </DialogIcon>
           <DialogTitle>Reset settings?</DialogTitle>
         </DialogHeader>
+        <DialogDescription>
+          This will reset your app preferences back to their default settings. The following accounts will also be
+          signed out:
+        </DialogDescription>
+        <DialogDivider />
         <DialogBody>
-          <p style={{ marginBottom: 16 }}>
-            This will reset your app preferences back to their default settings. The following accounts will also be
-            signed out:
-          </p>
-          <DialogDivider style={{ marginBottom: 8 }} />
           {accounts.map((account) => (
             <div key={account.name} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0' }}>
               <div
@@ -271,8 +277,8 @@ export const WithDividerAndList: Story = {
               </span>
             </div>
           ))}
-          <DialogDivider style={{ marginTop: 8 }} />
         </DialogBody>
+        <DialogDivider />
         <DialogFooter>
           <DialogClose
             render={
@@ -292,6 +298,356 @@ export const WithDividerAndList: Story = {
       </DialogContent>
     </Dialog>
   ),
+};
+
+// =============================================================================
+// ListDialog — the kit's "List dialog": a list that spans the full container
+// width between the inset text and the actions.
+// =============================================================================
+
+// A list paints its rows `surface` by default; inside a dialog the rows take
+// the dialog's own surface-container-high instead.
+const dialogListStyle = { '--md-list-item-container-color': 'transparent' } as React.CSSProperties;
+
+const backupAccounts = ['leevillanuevanotes@google.com', 'alloalejandro@google.com'];
+
+export const ListDialog: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`DialogBody bleed` runs the body edge to edge, past the container's 24px side padding, and 24px below the supporting text — the kit's list dialog. A `List` inside it gets full-width rows whose own 16px padding lines its content up with the dialog edge.",
+      },
+    },
+  },
+  render: () => (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button variant="tonal" size="sm" shape="round">
+            Set backup account
+          </Button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Set backup account</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>Choose the account your photos and settings are backed up to.</DialogDescription>
+        <DialogBody bleed>
+          <List appearance="standard" style={dialogListStyle}>
+            {backupAccounts.map((account) => (
+              <ListItem key={account} headline={account} leading={<UserIcon aria-hidden="true" />} />
+            ))}
+            <ListItem headline="Add account" leading={<PlusIcon aria-hidden="true" />} />
+          </List>
+        </DialogBody>
+        <DialogFooter>
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                Cancel
+              </Button>
+            }
+          />
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                OK
+              </Button>
+            }
+          />
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+};
+
+// =============================================================================
+// ScrollableListDialog — the kit's "Scrollable list dialog": a list far taller
+// than the screen. The headline, text and actions stay pinned; only the list
+// scrolls.
+// =============================================================================
+
+const utcOffsets = Array.from({ length: 27 }, (_, index) => {
+  const hours = index - 12;
+  return `UTC${hours < 0 ? '\u2212' : '+'}${String(Math.abs(hours)).padStart(2, '0')}:00`;
+});
+
+export const ScrollableListDialog: Story = {
+  render: () => (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button variant="tonal" size="sm" shape="round">
+            Choose time zone
+          </Button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <DialogIcon>
+            <GlobeIcon aria-hidden="true" />
+          </DialogIcon>
+          <DialogTitle>Time zone</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>Events and reminders are shown in the time zone you choose.</DialogDescription>
+        <DialogBody bleed>
+          <List appearance="standard" style={dialogListStyle}>
+            {utcOffsets.map((offset) => (
+              <ListItem key={offset} headline={offset} />
+            ))}
+          </List>
+        </DialogBody>
+        <DialogFooter>
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                Cancel
+              </Button>
+            }
+          />
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                OK
+              </Button>
+            }
+          />
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+  play: async ({ canvas, userEvent, step }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Choose time zone' }));
+    const popup = await waitFor(() => {
+      const element = document.querySelector<HTMLElement>('.md-dialog-content');
+      if (!element) throw new Error('dialog did not open');
+      return element;
+    });
+    const part = (selector: string) => popup.querySelector<HTMLElement>(selector) as HTMLElement;
+    // offset* and client* are layout metrics, so the open transition's scale
+    // does not skew them.
+
+    await step('the body scrolls instead of overflowing the popup', async () => {
+      const body = part('.md-dialog-body');
+      await expect(body.scrollHeight).toBeGreaterThan(body.clientHeight);
+      // Focus lands on an action; it must not have scrolled the clipped popup.
+      await expect(popup.scrollTop).toBe(0);
+    });
+
+    await step('the headline and actions stay pinned inside the container', async () => {
+      const footer = part('.md-dialog-footer');
+      await expect(part('.md-dialog-header').offsetTop).toBe(24);
+      await expect(footer.offsetTop + footer.offsetHeight).toBeLessThanOrEqual(popup.clientHeight - 24);
+      // The supporting text keeps its full height; the list alone gives way.
+      const description = part('.md-dialog-description');
+      await expect(description.clientHeight).toBe(description.scrollHeight);
+    });
+
+    await step('the list runs edge to edge across the container', async () => {
+      const body = part('.md-dialog-body');
+      await expect(body.offsetLeft).toBe(0);
+      await expect(body.offsetWidth).toBe(popup.clientWidth);
+    });
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(document.querySelector('.md-dialog-content')).toBeNull());
+  },
+};
+
+// =============================================================================
+// ScrollableDialog — a plain DialogBody far taller than the screen. It is the
+// popup's own child, as it always was; the headline, text and actions stay
+// pinned beside it and the body alone scrolls.
+// =============================================================================
+
+const termsSections = Array.from(
+  { length: 24 },
+  (_, index) =>
+    `${index + 1}. You keep ownership of what you back up. We store it only to sync it across your devices, and you can delete it at any time.`,
+);
+
+export const ScrollableDialog: Story = {
+  render: () => (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button variant="tonal" size="sm" shape="round">
+            Read the terms
+          </Button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Terms of service</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>Read and accept the terms to turn on backup.</DialogDescription>
+        <DialogBody>
+          {termsSections.map((section) => (
+            <p key={section}>{section}</p>
+          ))}
+        </DialogBody>
+        <DialogFooter>
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                Decline
+              </Button>
+            }
+          />
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                Accept
+              </Button>
+            }
+          />
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+  play: async ({ canvas, userEvent, step }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Read the terms' }));
+    const popup = await waitFor(() => {
+      const element = document.querySelector<HTMLElement>('.md-dialog-content');
+      if (!element) throw new Error('dialog did not open');
+      return element;
+    });
+    const part = (selector: string) => popup.querySelector<HTMLElement>(selector) as HTMLElement;
+
+    await step('the body is a direct child of the popup', async () => {
+      await expect(popup.querySelector(':scope > .md-dialog-body')).toBe(part('.md-dialog-body'));
+      await expect(popup.querySelector('.md-dialog-body__frame')).toBeNull();
+    });
+
+    await step('the body alone scrolls; the text and actions stay pinned', async () => {
+      const body = part('.md-dialog-body');
+      await expect(body.scrollHeight).toBeGreaterThan(body.clientHeight);
+      await expect(popup.scrollTop).toBe(0);
+      const description = part('.md-dialog-description');
+      await expect(description.clientHeight).toBe(description.scrollHeight);
+      const footer = part('.md-dialog-footer');
+      await expect(footer.offsetTop + footer.offsetHeight).toBeLessThanOrEqual(popup.clientHeight - 24);
+    });
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(document.querySelector('.md-dialog-content')).toBeNull());
+  },
+};
+
+// =============================================================================
+// ListDialogFocusRing — interactive rows in a bleeding body. The body is a
+// scroll container and its rows reach its edges, so a focused row draws its
+// ring inside itself: an outer ring would be clipped by the scroll box, and
+// around a lone row, which fills the box, clipped away entirely.
+// =============================================================================
+
+function BackupAccountDialog({ title, accounts }: { title: string; accounts: string[] }) {
+  return (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button variant="tonal" size="sm" shape="round">
+            {title}
+          </Button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>Choose the account your photos and settings are backed up to.</DialogDescription>
+        <DialogBody bleed>
+          <List
+            appearance="standard"
+            mode="single-select"
+            aria-label="Accounts"
+            defaultValue={accounts[0]}
+            style={dialogListStyle}
+          >
+            {accounts.map((account) => (
+              <ListItem key={account} value={account} headline={account} leading={<UserIcon aria-hidden="true" />} />
+            ))}
+          </List>
+        </DialogBody>
+        <DialogFooter>
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                Cancel
+              </Button>
+            }
+          />
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                OK
+              </Button>
+            }
+          />
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+const themeVar = (token: string) => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+
+export const ListDialogFocusRing: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A focused row in a `DialogBody bleed` draws its focus ring inside its own box. The body scrolls and the rows reach its edges, so a ring outside the row would be clipped — along the sides of every row, and all the way round a single row, which fills the scroll box. The body sets the list's `--md-list-item-focus-indicator-offset` to the inner focus-indicator offset.",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: 12 }}>
+      <BackupAccountDialog title="Set backup account" accounts={backupAccounts} />
+      <BackupAccountDialog title="Confirm backup account" accounts={backupAccounts.slice(0, 1)} />
+    </div>
+  ),
+  play: async ({ canvas, userEvent, step }) => {
+    for (const title of ['Set backup account', 'Confirm backup account']) {
+      await step(`${title}: the keyboard-focused row's ring is drawn inside the row`, async () => {
+        await userEvent.click(canvas.getByRole('button', { name: title }));
+        const popup = await waitFor(() => {
+          const element = document.querySelector<HTMLElement>('.md-dialog-content');
+          if (!element) throw new Error('dialog did not open');
+          return element;
+        });
+        const body = popup.querySelector<HTMLElement>('.md-dialog-body') as HTMLElement;
+        const rows = [...body.querySelectorAll<HTMLElement>('[role="option"]')];
+
+        // Move focus onto the last row with the keyboard.
+        await waitFor(() => expect(rows).toContain(document.activeElement));
+        await userEvent.keyboard('{End}');
+        const row = rows[rows.length - 1];
+        await expect(row).toHaveFocus();
+        await expect(row.matches(':focus-visible')).toBe(true);
+
+        const ring = getComputedStyle(row);
+        await expect(ring.outlineStyle).toBe('solid');
+        await expect(ring.outlineWidth).toBe(themeVar('--md-sys-state-focus-indicator-thickness'));
+        await expect(ring.outlineOffset).toBe(themeVar('--md-sys-state-focus-indicator-inner-offset'));
+        // The ring's outer edge is offset + width from the row's border box:
+        // at or inside it, nothing of the ring falls outside the row.
+        await expect(Number.parseFloat(ring.outlineOffset) + Number.parseFloat(ring.outlineWidth)).toBeLessThanOrEqual(
+          0,
+        );
+
+        // The row reaches the scroll box's sides, and a lone row fills it.
+        await expect(row.offsetLeft).toBe(body.offsetLeft);
+        await expect(row.offsetWidth).toBe(body.clientWidth);
+        if (rows.length === 1) await expect(row.offsetHeight).toBe(body.clientHeight);
+
+        await userEvent.keyboard('{Escape}');
+        await waitFor(() => expect(document.querySelector('.md-dialog-content')).toBeNull());
+      });
+    }
+  },
 };
 
 // =============================================================================
@@ -392,7 +748,6 @@ export const Showcase: Story = {
           background: 'var(--md-sys-color-surface-container-high)',
           padding: 24,
           width: 280,
-          boxShadow: 'var(--md-sys-elevation-3)',
         }}
       >
         <p
@@ -434,7 +789,6 @@ export const Showcase: Story = {
           background: 'var(--md-sys-color-surface-container-high)',
           padding: 24,
           width: 280,
-          boxShadow: 'var(--md-sys-elevation-3)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -483,7 +837,6 @@ export const Showcase: Story = {
           background: 'var(--md-sys-color-surface-container-high)',
           padding: 24,
           width: 280,
-          boxShadow: 'var(--md-sys-elevation-3)',
         }}
       >
         <p
@@ -595,11 +948,9 @@ export const AllVariants: Story = {
           <DialogHeader>
             <DialogTitle>Notifications</DialogTitle>
           </DialogHeader>
-          <DialogDivider style={{ marginTop: 16 }} />
-          <DialogBody>
-            <p>You have 3 unread notifications from today. Would you like to mark all as read?</p>
-          </DialogBody>
-          <DialogDivider style={{ marginBottom: -8 }} />
+          <DialogDivider />
+          <DialogBody>You have 3 unread notifications from today. Would you like to mark all as read?</DialogBody>
+          <DialogDivider />
           <DialogFooter>
             <DialogClose
               render={

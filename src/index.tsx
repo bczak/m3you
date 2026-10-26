@@ -47,7 +47,12 @@ export type {
 export { CircularProgress } from './components/CircularProgress/circular-progress';
 export type { DatePickerProps } from './components/DatePicker/date-picker';
 export { DatePicker } from './components/DatePicker/date-picker';
-export type { DialogContentProps, DialogHeaderProps, FullScreenDialogHeaderProps } from './components/Dialog/dialog';
+export type {
+  DialogBodyProps,
+  DialogContentProps,
+  DialogHeaderProps,
+  FullScreenDialogHeaderProps,
+} from './components/Dialog/dialog';
 export {
   Dialog,
   DialogBody,

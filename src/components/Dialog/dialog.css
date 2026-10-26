@@ -1,6 +1,6 @@
 /* =============================================================================
    Dialog — M3 Spec
-   Shape: extra-large (28px), BG: surface-container-high, Elevation: level3
+   Shape: extra-large (28px), BG: surface-container-high, no shadow
    Source: m3.material.io/components/dialogs/specs
    ============================================================================= */
 
@@ -21,22 +21,40 @@
 
 /* ── Content ── */
 .md-dialog-content {
+  /* The container's side padding. Full-width parts (a direct-child divider, a
+     bleeding body) pull out by exactly this much. */
+  --_padding: 24px;
+
   box-sizing: border-box;
   position: fixed;
   top: 50%;
   left: 50%;
   z-index: var(--md-sys-z-index-dialog);
-  display: grid;
+  /* A column, not a grid: implicit grid rows never shrink, so content taller
+     than max-height overflowed the clipped popup and focus scrolling hid the
+     headline or the actions. In a column the header, dividers and actions stay
+     pinned (flex-shrink: 0) while the description and body shrink and scroll,
+     as the kit's scrollable list dialog does. */
+  display: flex;
+  flex-direction: column;
   width: min(560px, calc(100vw - 48px));
   min-width: 0;
   max-height: calc(100dvh - 48px);
   transform: translate(-50%, -50%);
   border-radius: var(--md-sys-shape-corner-extra-large);
   background-color: var(--md-sys-color-surface-container-high);
-  padding: 24px;
-  box-shadow: var(--md-sys-elevation-3);
+  padding: var(--_padding);
+  /* No shadow: none of the kit's dialog variants draws one. The tonal
+     container and the scrim separate it from the page, as for the modal
+     bottom sheet. */
   outline: none;
-  overflow: hidden;
+  /* Clipped sideways (the full-width parts reach exactly the padding edge),
+     scrollable as a last resort: the body and description normally absorb any
+     overflow, but when the pinned parts plus a list body's floor (see the body
+     frame) are taller than max-height — a long description beside a body on a
+     short landscape screen, or high zoom — the dialog itself scrolls, so no
+     headline, text, list or action is ever cut off out of reach. */
+  overflow: hidden auto;
   transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 
   &[data-ending-style],
@@ -44,11 +62,29 @@
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.95);
   }
+
+  /* With a body to absorb the overflow, the supporting text stays pinned with
+     the headline and only the body scrolls, as in the kit's scrollable list
+     dialog. Shrinking both would squeeze the text into a sliver of its own
+     scroll box. Without a body, the description is what scrolls. A bleeding
+     body sits in its frame; a plain one is a direct child. */
+  &:has(> .md-dialog-body, > .md-dialog-body__frame) > .md-dialog-description {
+    flex-shrink: 0;
+  }
+
+  /* The kit's divider slot is a full-width rule, edge to edge across the
+     container. Scoped to direct children: a divider nested in a DialogBody
+     stays inset, since the body's scroll box would clip it anyway. */
+  & > .md-dialog-divider {
+    width: auto;
+    margin-inline: calc(-1 * var(--_padding));
+  }
 }
 
 /* ── Header ── */
 .md-dialog-header {
   display: flex;
+  flex-shrink: 0;
   flex-direction: column;
   gap: 16px;
 
@@ -59,7 +95,10 @@
 }
 
 /* ── Icon ── */
+/* A flex box, so the 24px icon is the whole slot. As a block around an inline
+   SVG, the line box added 5px under the icon and pushed the headline down. */
 .md-dialog-icon {
+  display: flex;
   color: var(--md-sys-color-secondary);
 
   & svg {
@@ -79,11 +118,16 @@
 }
 
 /* ── Description / Body ── */
+/* The whole margin, not just the top: the description is a <p>, and its
+   default 1em bottom margin added to the actions' 24px. */
 .md-dialog-description,
 .md-dialog-body {
+  /* The body scrolls and list rows run to its edges, so a focused row's outer
+     ring would be clipped: draw it inside the row instead. */
+  --md-list-item-focus-indicator-offset: var(--md-sys-state-focus-indicator-inner-offset);
   min-height: 0;
   overflow-y: auto;
-  margin-top: 16px;
+  margin: 16px 0 0;
   font-family: var(--md-sys-typescale-body-medium-font);
   font-size: var(--md-sys-typescale-body-medium-size);
   line-height: var(--md-sys-typescale-body-medium-line-height);
@@ -92,9 +136,54 @@
   color: var(--md-sys-color-on-surface-variant);
 }
 
+/* The kit's list dialogs: the list spans the full container width, 24px below
+   the supporting text, while the headline, text and actions keep their inset. */
+.md-dialog-body[data-bleed] {
+  margin: 24px calc(-1 * var(--_padding)) 0;
+}
+
+/* ── Body frame ── */
+/* A bleeding DialogBody's outer box, which gives the list dialog's body a
+   floor. The body is a scroll container, and in a flex column a scroll
+   container's automatic minimum height is 0: when the pinned header, text and
+   actions alone filled max-height, the body collapsed to 0px and its list could
+   not be seen, even though the dialog itself scrolled. A min-height on the body
+   would pad a short list out to the floor. The frame is not a scroll container,
+   so its automatic minimum is the smaller of its content and its height: a long
+   list keeps at least the floor (the dialog scrolls for the rest), a short one
+   keeps its own height, and flex-basis: content still sizes it to its content
+   whenever there is room. Only a bleeding body gets a frame: a plain body stays
+   a direct child of DialogContent, as consumers' selectors and flex styles
+   expect, and has no floor. Anywhere else — nested in the consumer's own
+   wrapper, or in an engine without flex-basis: content — the frame is
+   display: contents and the body lays out as a plain one does. */
+.md-dialog-body__frame {
+  display: contents;
+}
+
+@supports (flex-basis: content) {
+  .md-dialog-content > .md-dialog-body__frame {
+    /* Two of the kit's 56dp one-line list rows, below the bleeding body's
+       24px top margin. */
+    --_floor: 112px;
+
+    display: flex;
+    flex-direction: column;
+    /* The frame, not the body, is the dialog's flex item, so it holds the
+       body's slot: in a dialog given a height or min-height it takes the spare
+       space, keeping the actions at the bottom and letting a body styled
+       flex: 1 fill it. An auto-height dialog has no spare space, so this
+       changes nothing there. */
+    flex-grow: 1;
+    flex-basis: content;
+    height: calc(24px + var(--_floor));
+  }
+}
+
 /* ── Divider ── */
 .md-dialog-divider {
   box-sizing: border-box;
+  flex-shrink: 0;
   width: 100%;
   height: 1px;
   margin: 16px 0 0;
@@ -103,9 +192,23 @@
   background-color: var(--md-sys-color-outline-variant);
 }
 
+/* Forced colours replace every background with Canvas: the divider, painted
+   only by its background, would vanish, and with no shadow the container's
+   edge would too. */
+@media (forced-colors: active) {
+  .md-dialog-content {
+    outline: 1px solid CanvasText;
+  }
+
+  .md-dialog-divider {
+    background-color: CanvasText;
+  }
+}
+
 /* ── Footer / Actions ── */
 .md-dialog-footer {
   display: flex;
+  flex-shrink: 0;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 24px;
