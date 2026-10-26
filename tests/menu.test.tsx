@@ -390,7 +390,6 @@ test('a sub-menu of a vibrant menu shares its colour scheme', async () => {
 
 test('an unknown color value falls back to the standard scheme', async () => {
   render(
-    // @ts-expect-error color is typed as 'standard' | 'vibrant'
     <Menu defaultOpen color="primary">
       <MenuTrigger>Open</MenuTrigger>
       <MenuContent data-testid="content">
@@ -402,10 +401,14 @@ test('an unknown color value falls back to the standard scheme', async () => {
   expect(screen.getByTestId('item')).toHaveAttribute('data-color', 'standard');
 });
 
-test('the color prop is typed as the exported MenuColor union, not a free string', () => {
+test('the color prop offers the MenuColor schemes and still takes the plain strings it used to', () => {
   // Kit Menu: Theme axis = Vibrant | Standard.
   expectTypeOf<MenuColor>().toEqualTypeOf<'standard' | 'vibrant'>();
-  expectTypeOf<MenuProps['color']>().toEqualTypeOf<MenuColor | undefined>();
+  // Before it was typed the prop took any string; narrowing it to the union
+  // would break callers that forward a `string`, so both stay assignable.
+  expectTypeOf<'vibrant'>().toMatchTypeOf<NonNullable<MenuProps['color']>>();
+  const forwarded: string = 'vibrant';
+  expectTypeOf(forwarded).toMatchTypeOf<NonNullable<MenuProps['color']>>();
 });
 
 test('standard selected item has tertiary-container bg', async () => {

@@ -19,9 +19,13 @@ export interface MenuProps {
    * Colour scheme. `standard` sits on the surface container; `vibrant` tints
    * the whole menu, sub-menus included, with the tertiary container. Selected
    * items use the tertiary container (standard) or tertiary (vibrant).
+   * Any other string is accepted for compatibility with the earlier
+   * `string` type and renders the standard scheme.
    * @default 'standard'
    */
-  color?: MenuColor;
+  // `(string & {})` keeps editor completion for the two schemes while still
+  // accepting the plain strings this prop took before it was typed.
+  color?: MenuColor | (string & {});
   /** Open state (controlled). Pair with `onOpenChange`. */
   open?: boolean;
   /** Initial open state when uncontrolled. */
