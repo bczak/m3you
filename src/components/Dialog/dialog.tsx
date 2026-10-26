@@ -159,9 +159,30 @@ DialogDescription.displayName = 'DialogDescription';
 // DialogBody
 // =============================================================================
 
-const DialogBody = forwardRef<HTMLDivElement, React.PropsWithoutRef<React.ComponentProps<'div'>>>(
-  ({ className, ...props }, ref) => (
-    <div data-slot="dialog-body" ref={ref} className={cx('md-dialog-body', className)} {...props} />
+export interface DialogBodyProps extends React.ComponentProps<'div'> {
+  /**
+   * Run the body edge to edge across the dialog, past its 24px side padding,
+   * and 24px below the supporting text — the M3 list dialog, whose list spans
+   * the full container width. Place the body directly in `DialogContent`.
+   */
+  bleed?: boolean;
+}
+
+// The body is wrapped in a frame that keeps it from collapsing to 0px when the
+// pinned parts fill the dialog (see dialog.css). The ref, props and data-slot
+// stay on the body itself, the element that scrolls, so `onScroll`, `scrollTop`
+// and the consumer's styles reach the scroll box.
+const DialogBody = forwardRef<HTMLDivElement, React.PropsWithoutRef<DialogBodyProps>>(
+  ({ className, bleed = false, ...props }, ref) => (
+    <div className="md-dialog-body__frame">
+      <div
+        data-slot="dialog-body"
+        ref={ref}
+        data-bleed={bleed || undefined}
+        className={cx('md-dialog-body', className)}
+        {...props}
+      />
+    </div>
   ),
 );
 DialogBody.displayName = 'DialogBody';
@@ -170,6 +191,8 @@ DialogBody.displayName = 'DialogBody';
 // DialogDivider
 // =============================================================================
 
+// A divider placed directly in DialogContent runs edge to edge, as the kit's
+// does; nested in a DialogBody it stays inset with the body's content.
 const DialogDivider = forwardRef<HTMLHRElement, React.PropsWithoutRef<React.ComponentProps<'hr'>>>(
   ({ className, ...props }, ref) => (
     <hr data-slot="dialog-divider" ref={ref} className={cx('md-dialog-divider', className)} {...props} />

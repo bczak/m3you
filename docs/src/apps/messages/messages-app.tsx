@@ -11,7 +11,6 @@ import {
   Button,
   Chip,
   Dialog,
-  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -303,11 +302,9 @@ function Conversation({
       <Dialog open={confirming} onOpenChange={setConfirming}>
         <DialogContent {...portal}>
           <DialogTitle>Delete conversation?</DialogTitle>
-          <DialogBody>
-            <DialogDescription>
-              The messages with {thread.name} will be removed from this device. This cannot be undone.
-            </DialogDescription>
-          </DialogBody>
+          <DialogDescription>
+            The messages with {thread.name} will be removed from this device. This cannot be undone.
+          </DialogDescription>
           <DialogFooter>
             <Button variant="text" onClick={() => setConfirming(false)}>
               Cancel

@@ -7,14 +7,71 @@ Dialogs interrupt to ask for a decision. They are built on Base UI's dialog
 primitive, so focus trapping, scroll locking, escape handling and ARIA wiring
 come from a library that specialises in them.
 
-Compose a dialog from `Dialog` → `DialogTrigger` → `DialogContent`, with
-`DialogTitle`, `DialogBody` and `DialogFooter` inside.
+Compose a dialog from `Dialog` → `DialogTrigger` → `DialogContent`, with a
+`DialogHeader` (holding an optional `DialogIcon` and the `DialogTitle`), then
+`DialogDescription` for the supporting text, an optional `DialogBody` for
+anything richer, and `DialogFooter` for the actions — all as direct children of
+`DialogContent`.
 
 <Example
   name="dialog/basic"
   title="Basic dialog"
   description="DialogClose wraps the buttons so either one dismisses."
 />
+
+## Long content
+
+The container stops 24px short of the viewport. When its content is taller,
+the header and actions stay where they are and the `DialogBody` scrolls; with
+no body, the `DialogDescription` scrolls instead. The body never shrinks below
+112px — two list rows — unless its content is shorter, so on a short landscape
+phone or at high zoom, where the header, text and actions would otherwise fill
+the dialog, the list stays visible and the whole dialog scrolls for the rest:
+nothing is cut off out of reach. The dialog has no drop shadow — like every M3
+dialog, it sits on its tonal surface over the scrim.
+
+`DialogBody` renders its scroll box inside a layout frame
+(`.md-dialog-body__frame`), which is what holds that floor. Its `ref`,
+`className`, `onScroll` and other props all go to the scroll box itself. The
+floor applies when the body is a direct child of `DialogContent`; nested in
+your own wrapper, the body lays out as a plain scroll box. The frame takes any
+spare height of a `DialogContent` you give a fixed height, so a body styled
+`flex: 1` still fills it and the actions stay at the bottom. To have the whole
+dialog scroll rather than the body, wrap `DialogBody` in your own element
+instead of setting `flex-shrink: 0` on it, which would let it spill out of its
+frame over the actions.
+
+## List dialog
+
+`DialogBody bleed` runs the body edge to edge, past the container's 24px side
+padding, and 24px below the supporting text — the M3 list dialog. A `List`
+inside it gets full-width rows, and on a short screen the list is what scrolls.
+Lists paint their rows `surface` by default, so set
+`--md-list-item-container-color: transparent` on the list to let the rows take
+the dialog's surface.
+
+<Example
+  name="dialog/list"
+  title="List dialog"
+  description="The list spans the dialog; the text and actions keep their inset."
+/>
+
+## Dividers
+
+A `DialogDivider` placed directly in `DialogContent` is a full-width rule, edge
+to edge, as M3 draws the line between a scrolling body and the actions. Nested
+inside a `DialogBody` it stays inset with the body's content.
+
+```tsx
+<DialogContent>
+  <DialogHeader>…</DialogHeader>
+  <DialogDescription>…</DialogDescription>
+  <DialogDivider />
+  <DialogBody>…</DialogBody>
+  <DialogDivider />
+  <DialogFooter>…</DialogFooter>
+</DialogContent>
+```
 
 ## Full-screen dialog
 
@@ -36,5 +93,7 @@ keep dialogs inside the phone frame.
 ## Props
 
 <PropsTable of="DialogContent" />
+
+<PropsTable of="DialogBody" extends="<div>" />
 
 <SpecLink slug="dialog" source="src/components/Dialog" />
