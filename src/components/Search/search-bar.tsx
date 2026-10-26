@@ -23,19 +23,45 @@ export type SearchBarProps = Omit<React.ComponentProps<'div'>, 'onChange'> & {
   onSearch?: (query: string) => void;
   /** Leading icon element (defaults to Search icon) */
   leadingIcon?: React.ReactNode;
-  /** Trailing element (icon, avatar, etc.) */
+  /**
+   * Trailing element, centred in a 48dp slot after the query. The slot is not a
+   * button of its own: for an action (voice search, filters) pass an
+   * `IconButton` with its own `aria-label` and handler. The plain bar hides it
+   * while the query is non-empty, where the Clear button takes its place. On an
+   * expandable bar (one with children) the whole bar is a button, so keep this
+   * non-interactive there.
+   */
   trailingIcon?: React.ReactNode;
+  /**
+   * Avatar shown at the very end of the bar, after `trailingIcon`, in the kit's
+   * avatar target (8dp before, 12dp after). An `Avatar` placed here is sized to
+   * 30dp. It stays visible while the query is non-empty.
+   */
+  avatar?: React.ReactNode;
   /** Whether the search view is open (controlled) */
   open?: boolean;
   /** Default open state for uncontrolled mode */
   defaultOpen?: boolean;
   /** Called when open state changes */
   onOpenChange?: (open: boolean) => void;
-  /** Layout mode forwarded to the expanded SearchView. */
+  /**
+   * Layout mode forwarded to the expanded SearchView. `docked` anchors it over
+   * the bar from 768px up and covers the screen below that; `fullScreen` always
+   * covers the screen.
+   * @default 'docked'
+   */
   viewMode?: SearchViewProps['mode'];
-  /** Surface appearance forwarded to the expanded SearchView. */
+  /**
+   * Layout style forwarded to the expanded SearchView: the contained
+   * `expressive` layout by default, or `baseline` for the divided one.
+   * @default 'expressive'
+   */
   viewAppearance?: SearchViewProps['appearance'];
-  /** Content rendered in the expandable search view */
+  /**
+   * Content rendered in the expandable search view. Passing children, even an
+   * empty list, makes the bar expandable; omit them (or pass `null`) for a plain
+   * search field.
+   */
   children?: React.ReactNode;
 };
 
@@ -50,11 +76,12 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
       onSearch,
       leadingIcon,
       trailingIcon,
+      avatar,
       open,
       defaultOpen,
       onOpenChange,
       viewMode = 'docked',
-      viewAppearance = 'baseline',
+      viewAppearance = 'expressive',
       children,
       ...props
     },
@@ -73,7 +100,11 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
     const isControlledOpen = open !== undefined;
     const isOpen = isControlledOpen ? open : internalOpen;
 
-    const hasView = React.Children.count(children) > 0;
+    // Any children make the bar expandable, an empty list included. Counting the
+    // rendered nodes instead would turn a list that filters down to no matches
+    // into a plain field, unmounting the open view under its focused input.
+    // Omitted or `null` children still give the plain field, as they always have.
+    const hasView = children !== undefined && children !== null;
 
     const updateOpen = React.useCallback(
       (next: boolean) => {
@@ -91,9 +122,12 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
       [isControlledValue, onValueChange],
     );
 
-    const handleBarClick = () => {
-      /* v8 ignore next -- this handler only binds to the button rendered when hasView is true */
-      if (hasView) updateOpen(true);
+    // Only the expandable bar (a button) binds this, after the prop spread so a
+    // consumer onClick cannot replace it. The consumer's handler runs first and
+    // can keep the view closed with preventDefault().
+    const handleBarClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      (props.onClick as React.MouseEventHandler<HTMLButtonElement> | undefined)?.(event);
+      if (!event.defaultPrevented) updateOpen(true);
     };
 
     const handleBack = () => updateOpen(false);
@@ -111,9 +145,9 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
             type="button"
             aria-label={placeholder}
             aria-expanded={isOpen}
-            onClick={handleBarClick}
             className={cx('md-search-bar', className)}
             {...(props as React.ComponentProps<'button'>)}
+            onClick={handleBarClick}
           >
             <Ripple />
             <span className="md-search-bar__leading">{leadingIcon ?? <Search />}</span>
@@ -121,6 +155,7 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
               {currentValue || placeholder}
             </span>
             {trailingIcon && <span className="md-search-bar__trailing">{trailingIcon}</span>}
+            {avatar && <span className="md-search-bar__avatar">{avatar}</span>}
           </button>
         ) : (
           <div className={cx('md-search-bar', className)} {...props}>
@@ -137,22 +172,19 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
               className="md-search-bar__input"
               aria-label={placeholder}
             />
-            {trailingIcon && !currentValue && (
-              <IconButton variant="standard" size="sm" className="md-search-bar__trailing">
-                {trailingIcon}
-              </IconButton>
-            )}
+            {trailingIcon && !currentValue && <span className="md-search-bar__trailing">{trailingIcon}</span>}
             {currentValue && (
               <IconButton
                 variant="standard"
                 size="sm"
-                className="md-search-bar__trailing"
+                className="md-search-bar__clear"
                 onClick={handleClear}
                 aria-label="Clear search"
               >
                 <X />
               </IconButton>
             )}
+            {avatar && <span className="md-search-bar__avatar">{avatar}</span>}
           </div>
         )}
 
