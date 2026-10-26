@@ -23,7 +23,11 @@ export type ExtendableFABProps = Omit<React.ComponentProps<'button'>, 'children'
   extended?: boolean;
   /** Icon shown in both the collapsed and extended states. */
   icon: React.ReactNode;
-  /** Text revealed when extended. Required so the extended width can be measured up front. */
+  /**
+   * Text revealed when extended. Required so the extended width can be measured up front.
+   * It also names the button in both states (via `aria-labelledby`), so any ReactNode works;
+   * pass `aria-label` to use a different name.
+   */
   label: React.ReactNode;
 };
 
@@ -53,7 +57,10 @@ const ExtendableFAB = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<
     const buttonRef = React.useRef<HTMLButtonElement | null>(null);
     const measureRef = React.useRef<HTMLSpanElement | null>(null);
     const [widths, setWidths] = React.useState<ExtendableFABWidths | null>(null);
-    const ariaLabel = props['aria-label'] ?? (!extended && typeof label === 'string' ? label : undefined);
+    // The always-rendered measure copy of the label names the button. While
+    // collapsed the visible label is aria-hidden, but aria-labelledby still
+    // resolves hidden nodes, so non-string labels (e.g. i18n elements) work.
+    const labelId = React.useId();
     const contentStyle = widths
       ? ({
           width: `${extended ? widths.label : 0}px`,
@@ -131,7 +138,7 @@ const ExtendableFAB = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<
         data-extended={extended || undefined}
         data-lowered={lowered || undefined}
         ref={setButtonRef}
-        aria-label={ariaLabel}
+        aria-labelledby={props['aria-label'] ? undefined : labelId}
         style={resolvedStyle}
         onTransitionEnd={onTransitionEnd}
         {...props}
@@ -142,7 +149,9 @@ const ExtendableFAB = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<
           <span className="md-extendable-fab__label">{label}</span>
         </span>
         <span ref={measureRef} className="md-extendable-fab__measure" aria-hidden="true">
-          <span className="md-extendable-fab__measure-label">{label}</span>
+          <span id={labelId} className="md-extendable-fab__measure-label">
+            {label}
+          </span>
         </span>
       </button>
     );

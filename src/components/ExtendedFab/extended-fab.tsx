@@ -1,9 +1,15 @@
-import './extended-fab.css';
 import * as React from 'react';
 
 import { cx } from '../../lib/cx';
 import { Button, type ButtonProps } from '../Button/button';
 import type { FABColor, FABSize } from '../Fab/fab';
+// After Button on purpose: this puts extended-fab.css after button.css in the
+// published stylesheet and in dev, so the extended FAB's (0,3,0) corner rules
+// win their ties with Button's square-shape rules (a medium extended FAB would
+// otherwise fall back to Button's 16dp corner instead of 20dp, and xs/sm to
+// 12dp instead of 16dp). Raising those rules instead would tie them with the
+// FAB menu's (0,4,0) open-trigger circle.
+import './extended-fab.css';
 
 export type ExtendedFABProps = Omit<ButtonProps, 'shape' | 'color' | 'morph'> & {
   /**

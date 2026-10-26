@@ -71,7 +71,11 @@ export {
 } from './components/Dialog/dialog';
 export type { DividerProps } from './components/Divider/divider';
 export { Divider } from './components/Divider/divider';
-export type { ExtendableFABProps } from './components/ExtendableFab/extendable-fab';
+export type {
+  ExtendableFABProps,
+  ExtendableFABSize,
+  ExtendableFABVariant,
+} from './components/ExtendableFab/extendable-fab';
 export { ExtendableFAB } from './components/ExtendableFab/extendable-fab';
 export type { ExtendedFABProps } from './components/ExtendedFab/extended-fab';
 export { ExtendedFAB } from './components/ExtendedFab/extended-fab';
