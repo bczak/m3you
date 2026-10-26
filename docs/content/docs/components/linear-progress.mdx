@@ -8,6 +8,12 @@ import { LinearProgress } from 'm3you';
 Linear progress suits work attached to a region of the screen — a page load, an
 upload, a form submission. It stretches to the width of its container.
 
+The active indicator stops a 4dp gap short of the track, and the track runs to
+the end of the bar with the stop dot sitting on its rounded end. In the
+indeterminate state the track splits around the moving segment, keeping the
+4dp gap on both sides, and the segment widens from about a third to about two
+thirds of the bar as it travels.
+
 <Playground
   name="LinearProgress"
   controls={{
@@ -25,6 +31,22 @@ upload, a form submission. It stretches to the width of its container.
 ## Variants
 
 <Example name="linear-progress/basic" title="Flat, wavy and indeterminate" layout="stretch" />
+
+## Wavy
+
+The wave swings 3px either side of its centre line at both thicknesses — only
+the stroke grows — so a wavy bar is 10px tall at 4dp and 14px at 8dp. It keeps
+that height at every value: at 10% and below, and at 100%, the line lies flat
+inside the same box, so finishing does not shift the layout. The determinate
+wave has a 40px wavelength and the indeterminate one 20px, and both ends of the
+wave are drawn with round caps. With `prefers-reduced-motion: reduce` the wave
+holds still; an indeterminate segment still travels along the track.
+
+## Thickness
+
+`thickness` takes the kit's 4dp or 8dp track.
+
+<Example name="linear-progress/thickness" title="4dp and 8dp, flat and wavy" layout="stretch" />
 
 ## Animated
 
