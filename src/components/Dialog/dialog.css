@@ -50,7 +50,7 @@
   outline: none;
   /* Clipped sideways (the full-width parts reach exactly the padding edge),
      scrollable as a last resort: the body and description normally absorb any
-     overflow, but when the pinned parts plus the body's floor (see the body
+     overflow, but when the pinned parts plus a list body's floor (see the body
      frame) are taller than max-height — a long description beside a body on a
      short landscape screen, or high zoom — the dialog itself scrolls, so no
      headline, text, list or action is ever cut off out of reach. */
@@ -66,8 +66,9 @@
   /* With a body to absorb the overflow, the supporting text stays pinned with
      the headline and only the body scrolls, as in the kit's scrollable list
      dialog. Shrinking both would squeeze the text into a sliver of its own
-     scroll box. Without a body, the description is what scrolls. */
-  &:has(> .md-dialog-body__frame) > .md-dialog-description {
+     scroll box. Without a body, the description is what scrolls. A bleeding
+     body sits in its frame; a plain one is a direct child. */
+  &:has(> .md-dialog-body, > .md-dialog-body__frame) > .md-dialog-description {
     flex-shrink: 0;
   }
 
@@ -142,25 +143,28 @@
 }
 
 /* ── Body frame ── */
-/* DialogBody's outer box, which gives the body a floor. The body is a scroll
-   container, and in a flex column a scroll container's automatic minimum
-   height is 0: when the pinned header, text and actions alone filled
-   max-height, the body collapsed to 0px and its list could not be seen, even
-   though the dialog itself scrolled. A min-height on the body would pad a short
-   body out to the floor. The frame is not a scroll container, so its automatic
-   minimum is the smaller of its content and its height: a long body keeps at
-   least the floor (the dialog scrolls for the rest), a short one keeps its own
-   height, and flex-basis: content still sizes it to its content whenever there
-   is room. Anywhere else — nested in the consumer's own wrapper, or in an
-   engine without flex-basis: content — the frame is display: contents and the
-   body lays out as it always has. */
+/* A bleeding DialogBody's outer box, which gives the list dialog's body a
+   floor. The body is a scroll container, and in a flex column a scroll
+   container's automatic minimum height is 0: when the pinned header, text and
+   actions alone filled max-height, the body collapsed to 0px and its list could
+   not be seen, even though the dialog itself scrolled. A min-height on the body
+   would pad a short list out to the floor. The frame is not a scroll container,
+   so its automatic minimum is the smaller of its content and its height: a long
+   list keeps at least the floor (the dialog scrolls for the rest), a short one
+   keeps its own height, and flex-basis: content still sizes it to its content
+   whenever there is room. Only a bleeding body gets a frame: a plain body stays
+   a direct child of DialogContent, as consumers' selectors and flex styles
+   expect, and has no floor. Anywhere else — nested in the consumer's own
+   wrapper, or in an engine without flex-basis: content — the frame is
+   display: contents and the body lays out as a plain one does. */
 .md-dialog-body__frame {
   display: contents;
 }
 
 @supports (flex-basis: content) {
   .md-dialog-content > .md-dialog-body__frame {
-    /* Two of the kit's 56dp one-line list rows, below the body's top margin. */
+    /* Two of the kit's 56dp one-line list rows, below the bleeding body's
+       24px top margin. */
     --_floor: 112px;
 
     display: flex;
@@ -172,11 +176,7 @@
        changes nothing there. */
     flex-grow: 1;
     flex-basis: content;
-    height: calc(16px + var(--_floor));
-
-    &:has(> .md-dialog-body[data-bleed]) {
-      height: calc(24px + var(--_floor));
-    }
+    height: calc(24px + var(--_floor));
   }
 }
 

@@ -164,17 +164,22 @@ export interface DialogBodyProps extends React.ComponentProps<'div'> {
    * Run the body edge to edge across the dialog, past its 24px side padding,
    * and 24px below the supporting text — the M3 list dialog, whose list spans
    * the full container width. Place the body directly in `DialogContent`.
+   * The body then renders inside a layout frame (`.md-dialog-body__frame`)
+   * that keeps the list at least two rows tall when the dialog runs short.
    */
   bleed?: boolean;
 }
 
-// The body is wrapped in a frame that keeps it from collapsing to 0px when the
-// pinned parts fill the dialog (see dialog.css). The ref, props and data-slot
-// stay on the body itself, the element that scrolls, so `onScroll`, `scrollTop`
-// and the consumer's styles reach the scroll box.
+// A plain body renders as it always has, a direct child of DialogContent, so
+// selectors and flex styles written against `.md-dialog-content >
+// .md-dialog-body` keep working. A bleeding body (the list dialog) is wrapped
+// in a frame that keeps its list from collapsing to 0px when the pinned parts
+// fill the dialog (see dialog.css). Either way the ref, props and data-slot
+// stay on the body itself, the element that scrolls, so `onScroll`,
+// `scrollTop` and the consumer's styles reach the scroll box.
 const DialogBody = forwardRef<HTMLDivElement, React.PropsWithoutRef<DialogBodyProps>>(
-  ({ className, bleed = false, ...props }, ref) => (
-    <div className="md-dialog-body__frame">
+  ({ className, bleed = false, ...props }, ref) => {
+    const body = (
       <div
         data-slot="dialog-body"
         ref={ref}
@@ -182,8 +187,9 @@ const DialogBody = forwardRef<HTMLDivElement, React.PropsWithoutRef<DialogBodyPr
         className={cx('md-dialog-body', className)}
         {...props}
       />
-    </div>
-  ),
+    );
+    return bleed ? <div className="md-dialog-body__frame">{body}</div> : body;
+  },
 );
 DialogBody.displayName = 'DialogBody';
 

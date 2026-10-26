@@ -457,6 +457,86 @@ export const ScrollableListDialog: Story = {
 };
 
 // =============================================================================
+// ScrollableDialog — a plain DialogBody far taller than the screen. It is the
+// popup's own child, as it always was; the headline, text and actions stay
+// pinned beside it and the body alone scrolls.
+// =============================================================================
+
+const termsSections = Array.from(
+  { length: 24 },
+  (_, index) =>
+    `${index + 1}. You keep ownership of what you back up. We store it only to sync it across your devices, and you can delete it at any time.`,
+);
+
+export const ScrollableDialog: Story = {
+  render: () => (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button variant="tonal" size="sm" shape="round">
+            Read the terms
+          </Button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Terms of service</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>Read and accept the terms to turn on backup.</DialogDescription>
+        <DialogBody>
+          {termsSections.map((section) => (
+            <p key={section}>{section}</p>
+          ))}
+        </DialogBody>
+        <DialogFooter>
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                Decline
+              </Button>
+            }
+          />
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                Accept
+              </Button>
+            }
+          />
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+  play: async ({ canvas, userEvent, step }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Read the terms' }));
+    const popup = await waitFor(() => {
+      const element = document.querySelector<HTMLElement>('.md-dialog-content');
+      if (!element) throw new Error('dialog did not open');
+      return element;
+    });
+    const part = (selector: string) => popup.querySelector<HTMLElement>(selector) as HTMLElement;
+
+    await step('the body is a direct child of the popup', async () => {
+      await expect(popup.querySelector(':scope > .md-dialog-body')).toBe(part('.md-dialog-body'));
+      await expect(popup.querySelector('.md-dialog-body__frame')).toBeNull();
+    });
+
+    await step('the body alone scrolls; the text and actions stay pinned', async () => {
+      const body = part('.md-dialog-body');
+      await expect(body.scrollHeight).toBeGreaterThan(body.clientHeight);
+      await expect(popup.scrollTop).toBe(0);
+      const description = part('.md-dialog-description');
+      await expect(description.clientHeight).toBe(description.scrollHeight);
+      const footer = part('.md-dialog-footer');
+      await expect(footer.offsetTop + footer.offsetHeight).toBeLessThanOrEqual(popup.clientHeight - 24);
+    });
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(document.querySelector('.md-dialog-content')).toBeNull());
+  },
+};
+
+// =============================================================================
 // Destructive — delete confirmation with destructive action color
 // =============================================================================
 

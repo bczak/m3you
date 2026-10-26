@@ -332,13 +332,36 @@ test('DialogBody bleed sets data-bleed and forwards its ref', () => {
   expect(ref.current).toBe(body);
 });
 
-test('DialogBody sits in a frame, but its ref, props and slot stay on the element that scrolls', () => {
+test('a plain DialogBody stays a direct child of DialogContent, with no frame', () => {
+  // Consumers' `.md-dialog-content > .md-dialog-body` selectors and their flex
+  // styles on the body rely on the body being the popup's own child.
+  const ref = createRef<HTMLDivElement>();
+  render(
+    <Dialog defaultOpen>
+      <DialogContent data-testid="content">
+        <DialogDescription>Text</DialogDescription>
+        <DialogBody data-testid="body" ref={ref}>
+          Body content
+        </DialogBody>
+      </DialogContent>
+    </Dialog>,
+  );
+  const content = screen.getByTestId('content');
+  const body = screen.getByTestId('body');
+  expect(body.parentElement).toBe(content);
+  expect(content.querySelector(':scope > .md-dialog-body')).toBe(body);
+  expect(content.querySelector('.md-dialog-description + .md-dialog-body')).toBe(body);
+  expect(content.querySelector('.md-dialog-body__frame')).toBeNull();
+  expect(ref.current).toBe(body);
+});
+
+test('a bleeding DialogBody sits in a frame, but its ref, props and slot stay on the element that scrolls', () => {
   const ref = createRef<HTMLDivElement>();
   const onScroll = vi.fn();
   render(
     <Dialog defaultOpen>
       <DialogContent data-testid="content">
-        <DialogBody data-testid="body" ref={ref} className="custom-body" onScroll={onScroll}>
+        <DialogBody data-testid="body" ref={ref} className="custom-body" onScroll={onScroll} bleed>
           Body content
         </DialogBody>
       </DialogContent>
@@ -428,16 +451,19 @@ test('the header, dividers and actions stay pinned while the description and bod
   expect(scrolling).toContain('min-height: 0;');
   expect(scrolling).toContain('overflow-y: auto;');
   expect(scrolling).not.toContain('flex-shrink: 0');
-  // …but with a body beside it, the description stays pinned and the body alone scrolls.
-  expect(ruleBody('&:has(> .md-dialog-body__frame) > .md-dialog-description')).toContain('flex-shrink: 0;');
+  // …but with a body beside it, plain or in its frame, the description stays
+  // pinned and the body alone scrolls.
+  expect(ruleBody('&:has(> .md-dialog-body, > .md-dialog-body__frame) > .md-dialog-description')).toContain(
+    'flex-shrink: 0;',
+  );
 });
 
-test('a body keeps a floor of two list rows instead of collapsing to 0px when the pinned parts fill the dialog', () => {
+test('a bleeding body keeps a floor of two list rows instead of collapsing to 0px when the pinned parts fill the dialog', () => {
   // The body is a scroll container, whose automatic minimum height in a flex
   // column is 0: with a header, text and actions taller than max-height (a
   // short landscape phone, 400% zoom), it shrank to nothing and its list could
   // not be seen. Its frame is not a scroll container, so its automatic minimum
-  // is min(content, height): the floor holds a long body without padding a
+  // is min(content, height): the floor holds a long list without padding a
   // short one, and flex-basis: content keeps the content height otherwise.
   expect(ruleBody('.md-dialog-body__frame')).toContain('display: contents;');
   const supports = dialogCss.indexOf('@supports (flex-basis: content)');
@@ -449,10 +475,9 @@ test('a body keeps a floor of two list rows instead of collapsing to 0px when th
   expect(frame).toContain('display: flex;');
   expect(frame).toContain('flex-direction: column;');
   expect(frame).toContain('flex-basis: content;');
-  // The floor sits below the body's top margin: 16px, or 24px when it bleeds.
-  expect(frame).toContain('height: calc(16px + var(--_floor));');
+  // The floor sits below the bleeding body's 24px top margin.
+  expect(frame).toContain('height: calc(24px + var(--_floor));');
   expect(frame).not.toContain('overflow');
-  expect(ruleBody('&:has(> .md-dialog-body[data-bleed])')).toContain('height: calc(24px + var(--_floor));');
   // A min-height on the body itself would pad a one-line body out to the floor.
   const scrolling = ruleBody('.md-dialog-description,\n.md-dialog-body');
   expect(scrolling).toContain('min-height: 0;');
@@ -511,7 +536,7 @@ test('the parts render as direct children of the popup, which the full-width rul
       </DialogContent>
     </Dialog>,
   );
-  // The body is the one part wrapped in a frame; the frame is the direct child.
+  // A bleeding body is the one part wrapped in a frame; the frame is the direct child.
   const slots = [...screen.getByTestId('content').children].map(
     (child) =>
       child.getAttribute('data-slot') ?? `${child.className} > ${child.firstElementChild?.getAttribute('data-slot')}`,

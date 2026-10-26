@@ -23,23 +23,29 @@ anything richer, and `DialogFooter` for the actions — all as direct children o
 
 The container stops 24px short of the viewport. When its content is taller,
 the header and actions stay where they are and the `DialogBody` scrolls; with
-no body, the `DialogDescription` scrolls instead. The body never shrinks below
-112px — two list rows — unless its content is shorter, so on a short landscape
-phone or at high zoom, where the header, text and actions would otherwise fill
-the dialog, the list stays visible and the whole dialog scrolls for the rest:
-nothing is cut off out of reach. The dialog has no drop shadow — like every M3
-dialog, it sits on its tonal surface over the scrim.
+no body, the `DialogDescription` scrolls instead. The dialog has no drop
+shadow — like every M3 dialog, it sits on its tonal surface over the scrim.
 
-`DialogBody` renders its scroll box inside a layout frame
-(`.md-dialog-body__frame`), which is what holds that floor. Its `ref`,
-`className`, `onScroll` and other props all go to the scroll box itself. The
-floor applies when the body is a direct child of `DialogContent`; nested in
-your own wrapper, the body lays out as a plain scroll box. The frame takes any
-spare height of a `DialogContent` you give a fixed height, so a body styled
-`flex: 1` still fills it and the actions stay at the bottom. To have the whole
-dialog scroll rather than the body, wrap `DialogBody` in your own element
-instead of setting `flex-shrink: 0` on it, which would let it spill out of its
-frame over the actions.
+A plain `DialogBody` is a direct child of `DialogContent` and is itself the
+dialog's flex item, so `.md-dialog-content > .md-dialog-body` selectors and
+`flex`, `flex-shrink` or `min-height` on the body work directly. It has no
+minimum height: on a short landscape phone or at high zoom, where the header,
+text and actions alone fill the dialog, it can shrink to nothing, so give it a
+`min-height` if its content must stay in view.
+
+A bleeding body (see the list dialog below) never shrinks below 112px — two
+list rows — unless its list is shorter, so in that same case the list stays
+visible and the whole dialog scrolls for the rest: nothing is cut off out of
+reach. That floor is held by a layout frame (`.md-dialog-body__frame`) that
+`DialogBody bleed` renders around its scroll box; its `ref`, `className`,
+`onScroll` and other props all go to the scroll box itself. The floor applies
+when the body is a direct child of `DialogContent`; nested in your own
+wrapper, the body lays out as a plain one. The frame takes any spare height of
+a `DialogContent` you give a fixed height, so a bleeding body styled `flex: 1`
+still fills it and the actions stay at the bottom. To have the whole dialog
+scroll rather than a bleeding body, wrap the body in your own element instead
+of setting `flex-shrink: 0` on it, which would let it spill out of its frame
+over the actions.
 
 ## List dialog
 
