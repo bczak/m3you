@@ -94,6 +94,7 @@ export type {
   ListAppearance,
   ListDividerProps,
   ListItemAccordionProps,
+  ListItemLeadingType,
   ListItemProps,
   ListItemSwipeProps,
   ListItemSwipeSide,

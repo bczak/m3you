@@ -85,6 +85,16 @@ export const SelectableList: Story = {
     await userEvent.click(ocean);
     await expect(ocean).toHaveAttribute('aria-selected', 'true');
     await expect(body.getByTestId('selected-theme')).toHaveTextContent('Selected: ocean');
+
+    // A synthetic click is not a trusted pointer event, so it leaves the row
+    // :focus-visible and the row shows List's 10% focus state layer (kit
+    // State=Focused). That layer puts On Secondary Container text at 4.03:1,
+    // which is the generated palette's on-container headroom, not a sheet
+    // defect. A real mouse click shows no focus layer, so blur the row and let
+    // the layer fade. axe then audits the selected row at rest (4.57:1).
+    ocean.blur();
+    const layer = ocean.querySelector('.md-ripple-hover-layer__surface') as HTMLElement;
+    await waitFor(() => expect(getComputedStyle(layer).opacity).toBe('0'));
   },
 };
 
