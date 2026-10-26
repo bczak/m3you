@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
@@ -113,4 +115,77 @@ test('forwards the native input ref and disabled form semantics', () => {
   expect(ref.current).toBeDisabled();
   expect(ref.current).toHaveAttribute('name', 'code');
   expect(ref.current).toBeRequired();
+});
+
+// happy-dom applies no cascade, so the state tests below pull rules out of the
+// CSS, resolve their nesting `&`, and match the rendered slots against them.
+const otpCss = readFileSync('src/components/OTPInput/otp-input.css', 'utf8');
+
+test('the active slot keeps its 3dp stroke and small corner in the error state', () => {
+  const geometry = /\n {2}&\[data-active\] \{([^}]*)\}/.exec(otpCss)?.[1];
+  expect(geometry).toContain('border-width: 3px;');
+  expect(geometry).toContain('border-radius: var(--md-sys-shape-corner-small);');
+  expect(otpCss).toMatch(
+    /&\[data-active\]:not\(\[data-error\]\) \{\s*border-color: var\(--md-sys-color-primary\);\s*\}/,
+  );
+
+  const { container, rerender } = render(<OTPInput aria-label="Code" />);
+  fireEvent.focus(screen.getByRole('textbox', { name: 'Code' }));
+  const active = () => container.querySelector('.md-otp-input__slot[data-active]');
+  expect(active()?.matches('.md-otp-input__slot[data-active]:not([data-error])')).toBe(true);
+
+  // Same geometry rule, error colour instead of primary.
+  rerender(<OTPInput aria-label="Code" error />);
+  expect(active()).toHaveAttribute('data-error');
+  expect(active()?.matches('.md-otp-input__slot[data-active]')).toBe(true);
+  expect(active()?.matches('.md-otp-input__slot[data-active]:not([data-error])')).toBe(false);
+});
+
+test('hover darkens unfocused slots but never paints over the error stroke', () => {
+  const hoverRule = /(\.md-otp-input__slots\[data-hovered\][^{]*&:not\(\[data-active\]\))\s*\{([^}]*)\}/.exec(otpCss);
+  expect(hoverRule, 'missing slot hover rule').not.toBeNull();
+  const [, nestedSelector, hoverBody] = hoverRule as RegExpExecArray;
+  expect(hoverBody).toContain('border-color: var(--md-sys-color-on-surface);');
+  expect(otpCss).toMatch(/&\[data-error\] \{\s*border-color: var\(--md-sys-color-error\);/);
+  const hoverSelector = nestedSelector.replace('&', '.md-otp-input__slot');
+
+  const { container, rerender } = render(<OTPInput aria-label="Code" />);
+  fireEvent.mouseOver(screen.getByRole('textbox', { name: 'Code' }));
+  const slotRow = container.querySelector('.md-otp-input__slots');
+  const slots = () => Array.from(container.querySelectorAll('.md-otp-input__slot'));
+  expect(slotRow).toHaveAttribute('data-hovered');
+  expect(slots().every((slot) => slot.matches(hoverSelector))).toBe(true);
+
+  // Still hovered, now in error: the on-surface hover stroke must not apply,
+  // so every slot keeps the error stroke.
+  rerender(<OTPInput aria-label="Code" error />);
+  expect(slotRow).toHaveAttribute('data-hovered');
+  expect(slotRow).toHaveAttribute('data-error');
+  expect(slots().some((slot) => slot.matches(hoverSelector))).toBe(false);
+  expect(slots().every((slot) => slot.matches('.md-otp-input__slot[data-error]'))).toBe(true);
+});
+
+test('the focus corner morph rides the non-overshooting effects spring', () => {
+  // The medium → small corner change on the active slot reshapes it in place, so
+  // per CLAUDE.md it uses the effects spring. The spatial springs overshoot: the
+  // corner dipped to 7.6px on its way to 8px (and 12.4px back to 12px) on every
+  // focus and blur.
+  const slotRule = /\n\.md-otp-input__slot \{([\s\S]*?)\n {2}\/\* Hover/.exec(otpCss)?.[1] ?? '';
+  const morph =
+    /border-radius\s+var\(--md-sys-motion-duration-([a-z-]+)\)\s+var\(--md-sys-motion-easing-([a-z-]+)\)/.exec(
+      slotRule,
+    );
+  expect(morph, 'missing slot border-radius transition').not.toBeNull();
+  const [, duration, easing] = morph as RegExpExecArray;
+  expect(duration).toBe('spring-default-effects');
+  expect(easing).toBe('spring-default-effects');
+
+  // The curve itself must stay inside [0, 1] so the corner never passes its target.
+  const motion = readFileSync('src/styles/tokens/sys.motion.css', 'utf8');
+  const curve = new RegExp(`--md-sys-motion-easing-${easing}:\\s*cubic-bezier\\(([^)]*)\\)`).exec(motion)?.[1];
+  const [, y1, , y2] = (curve ?? '').split(',').map(Number);
+  for (const y of [y1, y2]) {
+    expect(y).toBeGreaterThanOrEqual(0);
+    expect(y).toBeLessThanOrEqual(1);
+  }
 });
