@@ -19,12 +19,6 @@
   &[data-disabled] {
     pointer-events: none;
   }
-
-  &:has(input:focus-visible) {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: -2px;
-    border-radius: 50%;
-  }
 }
 
 /* ── State layer (40px — hover/focus bg) ── */
@@ -36,7 +30,7 @@
   border-radius: 50%;
   overflow: hidden;
   color: var(--md-sys-color-on-surface);
-  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
 .md-radio[data-variant="primary"][data-selected="true"] .md-radio__state-layer {
@@ -45,6 +39,15 @@
 
 .md-radio[data-variant="error"] .md-radio__state-layer {
   color: var(--md-sys-color-error);
+}
+
+/* ── Focus indicator — the kit's 44dp "Focus indicator": a 3dp Secondary stroke
+   drawn outside, i.e. 2dp clear of the 40dp state layer (ring spans 44dp → 50dp).
+   Drawn on the state layer so the offset is measured from the container, not
+   the 48dp touch target. ── */
+.md-radio:has(> .md-radio__input:focus-visible) .md-radio__state-layer {
+  outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+  outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
 }
 
 /* ── Outer circle (20px border-box) ── */
@@ -60,7 +63,7 @@
   justify-content: center;
   border-radius: 50%;
   border: 2px solid;
-  transition: border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-selected="false"][data-variant="primary"] {
     border-color: var(--md-sys-color-on-surface-variant);
@@ -98,7 +101,7 @@
 /* ── Inner dot (10px when selected, scale(0) when not) ── */
 .md-radio__inner {
   border-radius: 50%;
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-variant="primary"] {
     background-color: var(--md-sys-color-primary);

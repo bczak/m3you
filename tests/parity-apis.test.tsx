@@ -54,7 +54,10 @@ test('Slider exposes centered mode and clamps its origin and controlled value', 
   const root = container.querySelector('.md-slider');
   expect(root).toHaveAttribute('data-mode', 'centered');
   expect(screen.getByRole('slider')).toHaveValue('100');
-  expect(container.querySelector('.md-slider__handle')).toHaveStyle({ left: '100%' });
+  // The handle centre travels 6px in from each end, placed with a logical inset so it mirrors in RTL.
+  expect((container.querySelector('.md-slider__handle') as HTMLElement).style.insetInlineStart).toBe(
+    'calc(100% - 6px)',
+  );
 });
 
 test('RangeSlider normalizes defaults, updates uncontrolled tuples, and forwards both input refs', () => {
@@ -388,21 +391,34 @@ test('RangeSlider drags each thumb independently and clamps them against each ot
   const onValueChange = vi.fn();
   const { container } = render(<RangeSlider defaultValue={[20, 80]} min={0} max={100} onValueChange={onValueChange} />);
   const root = container.querySelector('.md-range-slider') as HTMLElement;
+  const track = container.querySelector('.md-slider__track') as HTMLElement;
+  // A 112px track: the handle centre travels 6..106px, so a 0–100 value sits at x = 6 + value.
+  vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({
+    x: 0,
+    y: 0,
+    left: 0,
+    top: 0,
+    right: 112,
+    bottom: 112,
+    width: 112,
+    height: 112,
+    toJSON: () => ({}),
+  } as DOMRect);
   const [lowerHandle, upperHandle] = Array.from(container.querySelectorAll('.md-slider__handle')) as HTMLElement[];
 
-  // Lower thumb: press, drag, release.
-  fireEvent.pointerDown(lowerHandle, { button: 0, pointerId: 1, clientX: 0, clientY: 0 });
+  // Lower thumb: press it, drag it past the upper thumb and release; it stops at the upper value.
+  fireEvent.pointerDown(lowerHandle, { button: 0, pointerId: 1, clientX: 26, clientY: 0 });
   expect(root).toHaveAttribute('data-dragging', 'lower');
-  fireEvent.pointerMove(lowerHandle, { pointerId: 1, clientX: 1, clientY: 0 });
-  fireEvent.pointerUp(lowerHandle, { pointerId: 1, clientX: 1, clientY: 0 });
+  fireEvent.pointerMove(lowerHandle, { pointerId: 1, clientX: 106, clientY: 0 });
+  fireEvent.pointerUp(lowerHandle, { pointerId: 1, clientX: 106, clientY: 0 });
   expect(root).not.toHaveAttribute('data-dragging');
-  // A zero-width track maps any x to the maximum, so the lower thumb clamps at the upper.
   expect(onValueChange).toHaveBeenLastCalledWith([80, 80]);
 
-  // Upper thumb.
-  fireEvent.pointerDown(upperHandle, { button: 0, pointerId: 2, clientX: 0, clientY: 0 });
+  // Upper thumb: a press near it, then a drag up, moves only the upper value.
+  fireEvent.pointerDown(upperHandle, { button: 0, pointerId: 2, clientX: 96, clientY: 0 });
   expect(root).toHaveAttribute('data-dragging', 'upper');
-  fireEvent.pointerUp(upperHandle, { pointerId: 2, clientX: 0, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith([80, 90]);
+  fireEvent.pointerUp(upperHandle, { pointerId: 2, clientX: 96, clientY: 0 });
   expect(root).not.toHaveAttribute('data-dragging');
 });
 

@@ -8,7 +8,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['variant', 'size', 'color', 'fabSize', 'lowered', 'disabled'],
+      include: ['variant', 'size', 'color', 'fabSize', 'lowered', 'morph', 'disabled'],
     },
   },
   tags: ['autodocs'],
@@ -22,6 +22,7 @@ export const Default: Story = {
     variant: 'filled',
     size: 'md',
     lowered: false,
+    morph: false,
     disabled: false,
   },
   render: (args) => (

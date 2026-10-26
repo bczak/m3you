@@ -5,6 +5,7 @@ import { Button, Card, Chip, generateM3Theme, Switch, TextField } from 'm3you';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { SiteFooter } from '@/components/site-footer';
 import { baseOptions } from '@/lib/layout.shared';
+import { copyableThemeCss } from '@/lib/seed-css';
 import { DEFAULT_SEED, SEED_PRESETS, useSeed } from '@/lib/theme';
 
 export const Route = createFileRoute('/theme')({
@@ -173,7 +174,7 @@ function ThemePage() {
         <section className="theme__section">
           <div className="theme__section-head">
             <h2 className="m3-catgroup__title">Every role</h2>
-            <CopyCss tokens={tokens} mode={mode} seed={seed} />
+            <CopyCss palette={palette} mode={mode} seed={seed} />
           </div>
 
           {ROLE_GROUPS.map((group) => (
@@ -207,19 +208,21 @@ function Role({ role, onRole, tokens }: { role: string; onRole: string; tokens: 
   );
 }
 
-function CopyCss({ tokens, mode, seed }: { tokens: Record<string, string>; mode: string; seed: string }) {
+function CopyCss({
+  palette,
+  mode,
+  seed,
+}: {
+  palette: { light: Record<string, string>; dark: Record<string, string> };
+  mode: 'light' | 'dark';
+  seed: string;
+}) {
   const [copied, setCopied] = useState(false);
   const timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => () => clearTimeout(timeout.current), []);
 
-  const css = useMemo(() => {
-    const selector = mode === 'dark' ? '[data-theme="dark"]' : ':root';
-    const body = Object.entries(tokens)
-      .map(([name, value]) => `  ${name}: ${value};`)
-      .join('\n');
-    return `/* m3you — generated from seed ${seed} */\n${selector} {\n${body}\n}\n`;
-  }, [tokens, mode, seed]);
+  const css = useMemo(() => copyableThemeCss(seed, palette, mode), [palette, mode, seed]);
 
   return (
     <Button

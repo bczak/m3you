@@ -7,21 +7,21 @@ export default function ListBasic() {
       <ListItem
         headline="Documents"
         supportingText="24 files"
-        leading={<Folder size={22} aria-hidden="true" />}
-        trailing={<ChevronRight size={20} aria-hidden="true" />}
+        leading={<Folder aria-hidden="true" />}
+        trailing={<ChevronRight aria-hidden="true" />}
       />
       <ListItem
         headline="Photos"
         supportingText="1,204 items"
-        leading={<Image size={22} aria-hidden="true" />}
-        trailing={<ChevronRight size={20} aria-hidden="true" />}
+        leading={<Image aria-hidden="true" />}
+        trailing={<ChevronRight aria-hidden="true" />}
       />
       <ListItem
         headline="Music"
         overline="Recently played"
         supportingText="Three albums added this week"
         lineCount={3}
-        leading={<Music size={22} aria-hidden="true" />}
+        leading={<Music aria-hidden="true" />}
       />
     </List>
   );

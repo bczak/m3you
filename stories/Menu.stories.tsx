@@ -16,7 +16,6 @@ import {
   Trash2Icon,
   UserIcon,
 } from 'lucide-react';
-import { Ripple } from 'm3-ripple';
 import { useState } from 'react';
 import { expect, waitFor } from 'storybook/test';
 import { Button } from '../src/components/Button/button';
@@ -32,6 +31,7 @@ import {
   MenuSubTrigger,
   MenuTrigger,
 } from '../src/components/Menu/menu';
+import { M3Ripple as Ripple } from '../src/lib/m3-ripple';
 
 const meta = {
   title: 'Containment/Menu',
@@ -73,15 +73,15 @@ export const Showcase: Story = {
       {/* Basic items — no icons */}
       <div role="menu" className="md-menu" style={{ width: 200 }}>
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           Cut
         </div>
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           Copy
         </div>
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           Paste
         </div>
       </div>
@@ -89,15 +89,15 @@ export const Showcase: Story = {
       {/* Items with icons */}
       <div role="menu" className="md-menu" style={{ width: 200 }}>
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           <ScissorsIcon /> Cut
         </div>
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           <CopyIcon /> Copy
         </div>
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           <EditIcon /> Paste
         </div>
       </div>
@@ -105,16 +105,16 @@ export const Showcase: Story = {
       {/* Mixed — icons, supporting text, divider, disabled */}
       <div role="menu" className="md-menu" style={{ width: 240 }}>
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           <EditIcon /> Edit
         </div>
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           <CopyIcon /> Duplicate
         </div>
         <hr className="md-menu-divider" />
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           <UserIcon />
           <span className="md-menu-item__content">
             <span className="md-menu-item__label">Profile</span>
@@ -122,7 +122,7 @@ export const Showcase: Story = {
           </span>
         </div>
         <div className="md-menu-item" role="menuitem" tabIndex={0}>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           <SettingsIcon />
           <span className="md-menu-item__content">
             <span className="md-menu-item__label">Settings</span>
@@ -131,7 +131,7 @@ export const Showcase: Story = {
         </div>
         <hr className="md-menu-divider" />
         <div className="md-menu-item" role="menuitem" tabIndex={-1} data-disabled>
-          <Ripple hoverOpacity={0} />
+          <Ripple />
           <Trash2Icon /> Delete
         </div>
       </div>
@@ -140,101 +140,95 @@ export const Showcase: Story = {
       <div style={{ display: 'flex', gap: 4, alignItems: 'flex-start' }}>
         <div role="menu" className="md-menu" style={{ width: 200 }}>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <EditIcon /> Edit
           </div>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <CopyIcon /> Copy
           </div>
-          <div
-            className="md-menu-item"
-            role="menuitem"
-            tabIndex={0}
-            style={{
-              backgroundColor: 'color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent)',
-            }}
-          >
-            <Ripple hoverOpacity={0} />
+          {/* data-popup-open: the Active state of a trigger whose sub-menu is open. */}
+          <div className="md-menu-item" role="menuitem" tabIndex={0} data-popup-open="">
+            <Ripple />
             <ShareIcon /> Share
             <span className="md-menu-item__chevron" aria-hidden="true">
               <ChevronRightIcon />
             </span>
           </div>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <Trash2Icon /> Delete
           </div>
         </div>
         <div role="menu" className="md-menu" style={{ width: 180, marginTop: 100 }}>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <LinkIcon /> Copy Link
           </div>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <MailIcon /> Email
           </div>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <DownloadIcon /> Download
           </div>
         </div>
       </div>
 
       {/* Grouped — two groups */}
-      <div role="menu" className="md-menu" style={{ width: 200 }}>
+      <div role="menu" className="md-menu" data-grouped="" style={{ width: 200 }}>
         <div className="md-menu-group">
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <StarIcon /> Favorite
           </div>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <ShareIcon /> Share
           </div>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <CopyIcon /> Copy
           </div>
         </div>
         <div className="md-menu-group">
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <Trash2Icon /> Delete
           </div>
         </div>
       </div>
 
       {/* Grouped — three groups */}
-      <div role="menu" className="md-menu" style={{ width: 200 }}>
+      <div role="menu" className="md-menu" data-grouped="" style={{ width: 200 }}>
         <div className="md-menu-group">
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <UserIcon /> Profile
           </div>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <SettingsIcon /> Settings
           </div>
         </div>
         <div className="md-menu-group">
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <MailIcon /> Inbox
           </div>
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <FileIcon /> Files
           </div>
         </div>
         <div className="md-menu-group">
           <div className="md-menu-item" role="menuitem" tabIndex={0}>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <DownloadIcon /> Export
           </div>
           <div className="md-menu-item" role="menuitem" tabIndex={-1} data-disabled>
-            <Ripple hoverOpacity={0} />
+            <Ripple />
             <Trash2Icon /> Delete
           </div>
         </div>
@@ -602,7 +596,7 @@ export const Vibrant: Story = {
     docs: {
       description: {
         story:
-          'The `vibrant` color scheme tints the popup with the tertiary container. Selected items use the tertiary accent and show a leading check. Rendered open to show the styling.',
+          'The `vibrant` color scheme tints the popup, and any sub-menu, with the tertiary container; its labels, icons, shortcuts and state layers take on-tertiary-container. Selected items use the tertiary accent with on-tertiary content and show a leading check. A disabled selected item keeps the tertiary fill and dims its content to 38%. Rendered open to show the styling.',
       },
     },
   },
@@ -622,12 +616,55 @@ export const Vibrant: Story = {
         <MenuItem>
           <ShareIcon /> Share
         </MenuItem>
-        <MenuItem>
+        <MenuItem trailingText="⌘C">
           <CopyIcon /> Copy
         </MenuItem>
+        <MenuItem selected disabled>
+          Pinned
+        </MenuItem>
+        <MenuSub>
+          <MenuSubTrigger>
+            <MailIcon /> Send to
+          </MenuSubTrigger>
+          <MenuSubContent>
+            <MenuItem>Email</MenuItem>
+            <MenuItem>Messages</MenuItem>
+          </MenuSubContent>
+        </MenuSub>
       </MenuContent>
     </Menu>
   ),
+  play: async ({ step }) => {
+    const menu = await waitFor(() => {
+      const popup = document.querySelector<HTMLElement>('.md-menu[data-color="vibrant"]');
+      if (!popup) throw new Error('vibrant menu did not open');
+      return popup;
+    });
+    const rows = Array.from(menu.querySelectorAll<HTMLElement>(':scope > .md-menu-item'));
+
+    await step('unselected rows take the surface on-role (on-tertiary-container)', async () => {
+      const share = rows.find((row) => row.textContent?.includes('Share')) as HTMLElement;
+      await expect(getComputedStyle(share).color).toBe(getComputedStyle(menu).color);
+    });
+
+    await step('every icon, shortcut and chevron follows its row colour', async () => {
+      for (const row of rows) {
+        const parts = row.querySelectorAll<HTMLElement>(
+          ':scope > svg, :scope > .md-menu-item__trailing, :scope > .md-menu-item__chevron',
+        );
+        for (const part of parts) {
+          await expect(getComputedStyle(part).color).toBe(getComputedStyle(row).color);
+        }
+      }
+    });
+
+    await step('a disabled selected row keeps the opaque tertiary fill', async () => {
+      const pinned = rows.find((row) => row.hasAttribute('data-disabled')) as HTMLElement;
+      const favorite = rows.find((row) => row.textContent?.includes('Favorite')) as HTMLElement;
+      await expect(getComputedStyle(pinned).backgroundColor).toBe(getComputedStyle(favorite).backgroundColor);
+      await expect(getComputedStyle(pinned).color).not.toBe(getComputedStyle(favorite).color);
+    });
+  },
 };
 
 const LONG_MENU_ITEMS = Array.from({ length: 24 }, (_, index) => `Currency ${index + 1}`);
@@ -703,7 +740,7 @@ export const KitGeometry: Story = {
     docs: {
       description: {
         story:
-          'Opens the menu and measures the deployed material.you geometry: the container is a 4dp-padded, 16dp-cornered surface whose rows sit 2dp apart, so the first row starts one padding step below the container top and the rows pitch by height + gap; each row is 48dp tall, inset by the container padding on both inline edges, carries a 12dp inline text inset and body-medium text, and is itself the painted surface — the ripple fills it edge to edge. Rows rest on the 4dp inner corner and take the 12dp outer corner where they meet the container corner or become selected, and hover, focus and selection paint on the row rather than an inset child.',
+          'Opens the menu and measures the deployed material.you geometry: the container is a 4dp-padded, 16dp-cornered surface whose rows sit 2dp apart, so the first row starts one padding step below the container top and the rows pitch by height + gap; each row is 48dp tall, inset by the container padding on both inline edges, carries a 12dp inline text inset and body-medium text, and is itself the painted surface — the ripple fills it edge to edge. Rows rest on the 4dp inner corner and take the 12dp outer corner where they meet the container corner or become selected. Selection paints on the row, and its icon follows the selected on-role; hover (8%) and focus (10%) are a single ripple layer over the row, never a second row background, so a row that is hovered and keyboard-focused at once shows only the 10% focus layer.',
       },
     },
   },
@@ -734,7 +771,22 @@ export const KitGeometry: Story = {
     </Menu>
   ),
   play: async ({ canvas, userEvent, step }) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Open menu' }));
+    // The state-layer steps need real input. CSS :hover follows the real
+    // pointer, and Chrome's :focus-visible heuristic follows the last real
+    // device: synthetic `userEvent` events move neither. Only Vitest's
+    // browser mode can drive real input, and `vitest/browser` throws when
+    // evaluated anywhere else, so load it once here, fall back to the
+    // synthetic events elsewhere, and skip the pointer-only steps there.
+    const browser = await import('vitest/browser').then(
+      (module) => ({ page: module.page, userEvent: module.userEvent }),
+      () => null,
+    );
+    const browserPage = browser?.page ?? null;
+    const input = browser?.userEvent ?? userEvent;
+    // A real click puts Chrome in pointer modality, so a row Base UI focuses
+    // under the mouse is not :focus-visible, as for a mouse user; a real
+    // arrow key later switches it to keyboard modality.
+    await input.click(canvas.getByRole('button', { name: 'Open menu' }));
     const menu = await waitFor(() => {
       const popup = document.querySelector<HTMLElement>('.md-menu');
       if (!popup) throw new Error('menu did not open');
@@ -823,20 +875,53 @@ export const KitGeometry: Story = {
       await expect(alphaOf(getComputedStyle(duplicate).backgroundColor)).toBe(0);
     });
 
-    await step('hover paints the 8% state layer on the row itself', async () => {
-      await userEvent.hover(duplicate);
-      await waitFor(() => expect(duplicate.querySelector('.salty-ripple-surface')).toHaveClass('--hover'));
-      await waitFor(async () => {
-        // Base UI may move roving focus to a hovered menu item. In that case
-        // the later 12% focus rule correctly wins over the 8% hover rule.
-        const expectedAlpha = duplicate.matches(':focus-visible') ? 0.12 : 0.08;
-        await expect(alphaOf(getComputedStyle(duplicate).backgroundColor)).toBeCloseTo(expectedAlpha, 2);
-      });
-      await userEvent.unhover(duplicate);
+    await step('content on the selected container takes its on-role: the icon matches the label', async () => {
+      const selectedIcon = favorite.querySelector<SVGElement>(':scope > svg') as SVGElement;
+      await expect(getComputedStyle(selectedIcon).color).toBe(getComputedStyle(favorite).color);
+      // …while an unselected row's icon stays on-surface-variant beside its on-surface label.
+      const restingIcon = edit.querySelector<SVGElement>(':scope > svg') as SVGElement;
+      await expect(getComputedStyle(restingIcon).color).not.toBe(getComputedStyle(edit).color);
     });
 
-    await step('keyboard focus paints the 12% state layer on the row, with no outline ring', async () => {
-      await userEvent.keyboard('{ArrowDown}');
+    /** Opacity of the row's single state layer, and of the ripple's ::before (which must stay unused). */
+    const stateLayers = (item: HTMLElement) => {
+      const layer = item.querySelector<HTMLElement>(
+        ':scope > .md-ripple-hover-layer > .md-ripple-hover-layer__surface',
+      ) as HTMLElement;
+      const rippleSurface = item.querySelector<HTMLElement>(
+        ':scope > .salty-ripple:not(.md-ripple-hover-layer) .salty-ripple-surface',
+      ) as HTMLElement;
+      return {
+        layer: Number(getComputedStyle(layer).opacity),
+        before: Number(getComputedStyle(rippleSurface, '::before').opacity),
+      };
+    };
+
+    await step('hover paints one 8% state layer: the ripple hover layer, over a transparent row', async () => {
+      if (!browserPage) return;
+
+      await browserPage.elementLocator(duplicate).hover();
+      await expect(duplicate.matches(':hover')).toBe(true);
+      // A mouse user: Base UI focuses the row, but not visibly.
+      await expect(duplicate.matches(':focus-visible')).toBe(false);
+      // The layer fades in; wait for it to settle.
+      await waitFor(async () => {
+        await expect(stateLayers(duplicate).layer).toBeCloseTo(0.08, 2);
+      });
+      const hoverLayer = duplicate.querySelector<HTMLElement>(
+        ':scope > .md-ripple-hover-layer > .md-ripple-hover-layer__surface',
+      ) as HTMLElement;
+      // It is drawn in the row's content colour…
+      await expect(getComputedStyle(hoverLayer).backgroundColor).toBe(getComputedStyle(duplicate).color);
+      // …and neither the row nor the ripple's ::before paints a second layer,
+      // so nothing stacks past 8%.
+      await expect(stateLayers(duplicate).before).toBe(0);
+      await expect(alphaOf(getComputedStyle(duplicate).backgroundColor)).toBe(0);
+      await browserPage.elementLocator(duplicate).unhover();
+    });
+
+    await step('keyboard focus paints one 10% state layer: the ripple hover layer, with no outline ring', async () => {
+      await input.keyboard('{ArrowDown}');
       const focused = await waitFor(() => {
         const active = document.activeElement as HTMLElement | null;
         expect(active).toHaveClass('md-menu-item');
@@ -844,9 +929,34 @@ export const KitGeometry: Story = {
       });
       // The state layer transitions in; wait for it to settle.
       await waitFor(async () => {
-        await expect(alphaOf(getComputedStyle(focused).backgroundColor)).toBeCloseTo(0.12, 2);
+        await expect(stateLayers(focused).layer).toBeCloseTo(0.1, 2);
       });
+      await expect(stateLayers(focused).before).toBe(0);
+      // No second layer on the row: it keeps its resting fill.
+      const restingAlpha = focused.hasAttribute('data-selected') ? 1 : 0;
+      await expect(alphaOf(getComputedStyle(focused).backgroundColor)).toBe(restingAlpha);
       await expect(getComputedStyle(focused).outlineStyle).toBe('none');
+    });
+
+    await step('a hovered row that is also keyboard-focused shows one 10% layer, not 8% + 10%', async () => {
+      // After an arrow key, Base UI's pointer-driven focus keeps
+      // :focus-visible on whichever row the mouse moves over. Needs a real
+      // pointer (see the top of this play function).
+      if (!browserPage) return;
+
+      const target = document.activeElement === edit ? duplicate : edit;
+      await browserPage.elementLocator(target).hover();
+      await waitFor(async () => {
+        await expect(document.activeElement).toBe(target);
+        await expect(target.matches(':hover')).toBe(true);
+        await expect(target.matches(':focus-visible')).toBe(true);
+        await expect(stateLayers(target).layer).toBeCloseTo(0.1, 2);
+      });
+      // The 10% focus value replaces the hover layer's 8% on the same element;
+      // the ripple's ::before stays off, so nothing composites past 10%.
+      await expect(stateLayers(target).before).toBe(0);
+      await expect(alphaOf(getComputedStyle(target).backgroundColor)).toBe(0);
+      await browserPage.elementLocator(target).unhover();
     });
 
     await step('the divider sits one gap from the rows either side and 12dp from the container edge', async () => {
@@ -859,7 +969,7 @@ export const KitGeometry: Story = {
       await expect(m.right - d.right).toBeCloseTo(CONTAINER_PADDING + 8, 0);
     });
 
-    await userEvent.keyboard('{Escape}');
+    await input.keyboard('{Escape}');
   },
 };
 
@@ -915,7 +1025,7 @@ export const Grouped: Story = {
           </IconButton>
         }
       />
-      <MenuContent>
+      <MenuContent grouped>
         <MenuGroup>
           <MenuItem>
             <StarIcon /> Favorite
@@ -941,6 +1051,18 @@ export const Grouped: Story = {
 };
 
 export const GroupedThreeGroups: Story = {
+  parameters: {
+    a11y: {
+      // Base UI's focus sentinels are aria-hidden and focusable by design.
+      config: { rules: [{ id: 'aria-hidden-focus', enabled: false }] },
+    },
+    docs: {
+      description: {
+        story:
+          "Three connected groups. Only the container's own corners are outer: groups meet on the 8dp small corner, and the rows 4dp inside those inner edges stay on the 4dp inner corner. Rows take the 12dp outer corner only at the top and bottom of the whole menu.",
+      },
+    },
+  },
   render: () => (
     <Menu>
       <MenuTrigger
@@ -950,7 +1072,7 @@ export const GroupedThreeGroups: Story = {
           </IconButton>
         }
       />
-      <MenuContent>
+      <MenuContent grouped>
         <MenuGroup>
           <MenuItem>
             <StarIcon /> Favorite
@@ -993,6 +1115,36 @@ export const GroupedThreeGroups: Story = {
       </MenuContent>
     </Menu>
   ),
+  play: async ({ canvas, userEvent, step }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Example action' }));
+    const menu = await waitFor(() => {
+      const popup = document.querySelector<HTMLElement>('.md-menu[data-grouped]');
+      if (!popup) throw new Error('menu did not open');
+      return popup;
+    });
+    await Promise.all(menu.getAnimations({ subtree: true }).map((animation) => animation.finished));
+    const [first, middle, last] = Array.from(menu.querySelectorAll<HTMLElement>(':scope > .md-menu-group'));
+    const rowsOf = (group: HTMLElement) => Array.from(group.querySelectorAll<HTMLElement>(':scope > .md-menu-item'));
+    const top = (el: HTMLElement) => getComputedStyle(el).borderTopLeftRadius;
+    const bottom = (el: HTMLElement) => getComputedStyle(el).borderBottomLeftRadius;
+
+    await step('groups take the 16dp corner at the container ends and meet on the 8dp corner', async () => {
+      await expect([top(first), bottom(first)]).toEqual(['16px', '8px']);
+      await expect([top(middle), bottom(middle)]).toEqual(['8px', '8px']);
+      await expect([top(last), bottom(last)]).toEqual(['8px', '16px']);
+    });
+
+    await step('rows take the 12dp outer corner only at the container ends, 4dp at inner group edges', async () => {
+      await expect(top(rowsOf(first)[0])).toBe('12px');
+      await expect(bottom(rowsOf(first).at(-1) as HTMLElement)).toBe('4px');
+      await expect(top(rowsOf(middle)[0])).toBe('4px');
+      await expect(bottom(rowsOf(middle).at(-1) as HTMLElement)).toBe('4px');
+      await expect(top(rowsOf(last)[0])).toBe('4px');
+      await expect(bottom(rowsOf(last).at(-1) as HTMLElement)).toBe('12px');
+    });
+
+    await userEvent.keyboard('{Escape}');
+  },
 };
 
 // =============================================================================

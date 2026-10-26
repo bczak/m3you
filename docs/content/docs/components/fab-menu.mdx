@@ -13,6 +13,40 @@ an `ExtendedFAB`.
   description="Click the FAB to open the stack."
 />
 
+## The trigger
+
+The trigger can be a `FAB` of any `fabSize` or an `ExtendedFAB`. Whatever size it
+rests at, opening the menu morphs it into the same close button: a 56dp circle
+with a 20dp icon, which is the only close button the M3 kit defines. A medium or
+large FAB shrinks into it, and an extended FAB collapses its label into it.
+
+The menu owns the trigger's colour. Setting `color`, or a `variant` fill, on the
+trigger does not change what renders — set the menu's `color` instead. (If a
+trigger really has to differ from its menu, `data-fab-color` on the trigger
+overrides it.) While the menu is open, the close button switches from the
+container role to its solid role, as the kit does, and the segments keep the
+container:
+
+| Menu `color` | Segments | Open close button |
+| --- | --- | --- |
+| `primary-container` | `primary-container` | `primary` |
+| `secondary-container` (default) | `secondary-container` | `secondary` |
+| `tertiary-container` | `tertiary-container` | `tertiary` |
+
+A menu set to a solid role (`primary`, `secondary`, `tertiary`) keeps that role
+on the close button.
+
+The trigger keeps its accessible name in both states, and `aria-expanded`
+reports whether the menu is open. An extended FAB's `label` becomes its
+`aria-label` while the label is hidden, unless you gave it an `aria-label`
+yourself.
+
+<Example
+  name="fab-menu/triggers"
+  title="Large FAB and medium extended FAB"
+  description="Both open into the same 56dp close button, filled with the solid role of the menu's colour."
+/>
+
 ## Items
 
 Each entry in `items` is a `FABMenuItemOption`:
@@ -29,9 +63,9 @@ Each entry in `items` is a `FABMenuItemOption`:
 
 ## Colour
 
-The menu's `color` sets every item and an unconfigured trigger. An item that
-sets its own `color` overrides it for that item only — the trigger and the other
-items are untouched.
+The menu's `color` sets every item and the trigger. An item that sets its own
+`color` overrides it for that item only — the trigger and the other items are
+untouched.
 
 <Example
   name="fab-menu/per-item-color"

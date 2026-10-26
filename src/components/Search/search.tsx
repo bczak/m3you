@@ -22,9 +22,19 @@ export type SearchViewProps = Omit<React.ComponentProps<'div'>, 'onChange'> & {
   onSearch?: (query: string) => void;
   /** Called when the back button is pressed */
   onBack?: () => void;
-  /** Display mode: fullScreen (mobile) or docked (desktop panel) */
+  /**
+   * Display mode: fullScreen (mobile) or docked (desktop panel)
+   * @default 'docked'
+   */
   mode?: 'fullScreen' | 'docked';
-  /** Surface treatment. Expressive separates the query surface from results. */
+  /**
+   * Layout style. `expressive` (the default) is the M3 Expressive contained
+   * layout: the query bar and the results are separate surfaces 2dp apart, and
+   * full-screen widens the bar from 24dp to 12dp margins while it has focus.
+   * `baseline` opts into the divided layout, one surface with a divider under
+   * the header, which M3 no longer recommends.
+   * @default 'expressive'
+   */
   appearance?: 'baseline' | 'expressive';
   /** Whether to auto-focus the input on mount */
   autoFocus?: boolean;
@@ -43,7 +53,7 @@ const SearchView = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<Search
       onSearch,
       onBack,
       mode = 'docked',
-      appearance = 'baseline',
+      appearance = 'expressive',
       autoFocus = true,
       children,
       role,

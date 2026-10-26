@@ -84,14 +84,87 @@ export const WithScrim: Story = {
   },
 };
 
-export const FilledVariant: Story = {
+/** A token as the browser computes it inside `scope`, so it can be compared to a used value. */
+const resolveToken = (scope: HTMLElement, token: string) => {
+  const probe = document.createElement('span');
+  probe.style.color = `var(${token})`;
+  scope.append(probe);
+  const value = getComputedStyle(probe).color;
+  probe.remove();
+  return value;
+};
+
+/**
+ * Kit (.Building Blocks/FAB Menu/<Color>/FAB): one close button for every menu,
+ * 56×56 with r=28 and a 20dp icon, filled with the solid role of the menu's
+ * container colour. Checked on a menu that starts open, so no morph is
+ * mid-flight when the play function measures.
+ */
+const expectKitCloseButton = async (canvasElement: HTMLElement, solidRole: string) => {
+  const trigger = canvasElement.querySelector<HTMLElement>('.md-fab-menu-trigger') as HTMLElement;
+  const box = trigger.getBoundingClientRect();
+  await expect([box.width, box.height], 'close button size').toEqual([56, 56]);
+  await expect(getComputedStyle(trigger).borderRadius, 'close button corner').toBe('28px');
+
+  const icon = (trigger.querySelector('svg') as SVGElement).getBoundingClientRect();
+  await expect([icon.width, icon.height], 'close icon size').toEqual([20, 20]);
+
+  const style = getComputedStyle(trigger);
+  await expect(style.backgroundColor, 'close button fill').toBe(
+    resolveToken(canvasElement, `--md-sys-color-${solidRole}`),
+  );
+  await expect(style.color, 'close button icon colour').toBe(
+    resolveToken(canvasElement, `--md-sys-color-on-${solidRole}`),
+  );
+};
+
+// The kit's third Color axis value. Segments take primary-container; the open
+// close button takes solid primary.
+export const PrimaryContainerColor: Story = {
   args: {
+    defaultOpen: true,
+    color: 'primary-container',
     items: defaultItems,
     children: (
-      <FAB aria-label="Create" variant="filled">
+      <FAB aria-label="Create">
         <PlusIcon />
       </FAB>
     ),
+  },
+  play: async ({ canvasElement }) => {
+    await expectKitCloseButton(canvasElement, 'primary');
+  },
+};
+
+// A large (96dp) FAB still opens into the kit's single 56dp close button.
+export const LargeFABTrigger: Story = {
+  args: {
+    defaultOpen: true,
+    items: defaultItems,
+    children: (
+      <FAB aria-label="Create" fabSize="large">
+        <PlusIcon />
+      </FAB>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    await expectKitCloseButton(canvasElement, 'secondary');
+  },
+};
+
+// A medium (80dp) extended FAB collapses into the same 56dp circle, and keeps
+// its label as its accessible name once the label is hidden.
+export const MediumExtendedFABTrigger: Story = {
+  args: {
+    defaultOpen: true,
+    items: defaultItems,
+    children: <ExtendedFAB icon={<PlusIcon />} label="Create" fabSize="medium" />,
+  },
+  play: async ({ canvasElement }) => {
+    await expectKitCloseButton(canvasElement, 'secondary');
+    const trigger = canvasElement.querySelector<HTMLElement>('.md-fab-menu-trigger') as HTMLElement;
+    await expect(trigger).toHaveAttribute('aria-label', 'Create');
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   },
 };
 
@@ -105,6 +178,9 @@ export const TertiaryColor: Story = {
         <PlusIcon />
       </FAB>
     ),
+  },
+  play: async ({ canvasElement }) => {
+    await expectKitCloseButton(canvasElement, 'tertiary');
   },
 };
 
@@ -189,15 +265,8 @@ export const PerItemColor: Story = {
     </div>
   ),
   play: async ({ canvasElement, step }) => {
-    /** A token as the browser computes it *inside this panel*, so it can be compared to a used value. */
-    const resolve = (scope: HTMLElement, token: string) => {
-      const probe = document.createElement('span');
-      probe.style.color = `var(${token})`;
-      scope.append(probe);
-      const value = getComputedStyle(probe).color;
-      probe.remove();
-      return value;
-    };
+    // Tokens resolve *inside each panel*, so they match that panel's theme.
+    const resolve = resolveToken;
 
     const contrast = (a: string, b: string) => {
       const luminance = (color: string) => {
@@ -267,12 +336,13 @@ export const PerItemColor: Story = {
         await expect(vsSurface(0), 'Expense vs surface').toBeGreaterThanOrEqual(vsSurface(2));
       });
 
-      await step(`${theme}: the trigger keeps the menu's colour, not an item's`, async () => {
+      await step(`${theme}: the open trigger takes the solid role of the menu's colour, not an item's`, async () => {
+        // Kit: the segments use Secondary container, the close button solid
+        // Secondary with On Secondary. No item colour reaches it.
         const trigger = panel.querySelector('.md-fab-menu-trigger') as HTMLElement;
         await expect(trigger).toHaveAttribute('data-fab-color', 'secondary-container');
-        await expect(getComputedStyle(trigger).backgroundColor).toBe(
-          resolve(panel, '--md-sys-color-secondary-container'),
-        );
+        await expect(getComputedStyle(trigger).backgroundColor).toBe(resolve(panel, '--md-sys-color-secondary'));
+        await expect(getComputedStyle(trigger).color).toBe(resolve(panel, '--md-sys-color-on-secondary'));
       });
     }
   },

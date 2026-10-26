@@ -32,6 +32,20 @@ Every icon button needs an `aria-label` — there is no visible text to name it.
 
 <Example name="icon-button/variants" title="The five variants" />
 
+## Shape and morph
+
+Round is the default; square gives a more structural feel. While pressed, every
+icon button tightens its corners to a smaller radius — 8dp at `xs` and `sm`,
+12dp at `md`, 16dp at `lg` and `xl` — and springs back on release. This is on by
+default; pass `morph={false}` to keep the corners still. Inside a button group,
+the group's own `morph` applies unless the button sets one.
+
+<Example
+  name="icon-button/morph"
+  title="Pressed shape morph"
+  description="Press and hold each button. The third one opts out."
+/>
+
 ## Width
 
 `width` changes horizontal padding without changing height, so a row of icon

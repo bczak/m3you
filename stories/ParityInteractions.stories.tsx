@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { expect, fn, waitFor } from 'storybook/test';
 
 import { Button } from '../src/components/Button/button';
@@ -7,6 +7,7 @@ import { Card } from '../src/components/Card/card';
 import { ListItemSwipe } from '../src/components/List/list';
 import { SideSheet, SideSheetBody, SideSheetContent, SideSheetHeader } from '../src/components/SideSheet/side-sheet';
 import { RangeSlider } from '../src/components/Slider/slider';
+import { applyM3Theme } from '../src/lib/color';
 
 type ParityInteractionArgs = {
   onCardAction: () => void;
@@ -14,11 +15,46 @@ type ParityInteractionArgs = {
   onUnderlyingAction: () => void;
 };
 
+const SCOPE_STYLE = {
+  padding: 12,
+  background: 'var(--md-sys-color-surface)',
+  color: 'var(--md-sys-color-on-surface)',
+} as const;
+
+// The computed value of `token` as seen from inside `scope`.
+const resolveColor = (scope: Element, token: string) => {
+  const probe = document.createElement('span');
+  probe.style.color = `var(${token})`;
+  scope.append(probe);
+  const value = getComputedStyle(probe).color;
+  probe.remove();
+  return value;
+};
+
+const themeVar = (token: string) => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+
 function BrowserParityFixture({ onCardAction, onNestedAction, onUnderlyingAction }: ParityInteractionArgs) {
   const [range, setRange] = useState<[number, number]>([25, 75]);
+  const seededScope = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (seededScope.current) applyM3Theme('#8B5000', seededScope.current);
+  }, []);
 
   return (
     <div style={{ boxSizing: 'border-box', display: 'grid', gap: 24, width: 560, maxWidth: '100%', padding: 16 }}>
+      <div style={{ display: 'flex', gap: 12 }}>
+        <div data-theme="light" data-testid="light-scope" style={SCOPE_STYLE}>
+          <Button variant="outlined">Light scope action</Button>
+        </div>
+        <div data-theme="dark" data-testid="dark-scope" style={SCOPE_STYLE}>
+          <Button variant="outlined">Dark scope action</Button>
+        </div>
+        <div ref={seededScope} data-testid="seeded-scope" style={SCOPE_STYLE}>
+          <Button variant="outlined">Seeded scope action</Button>
+        </div>
+      </div>
+
       <div style={{ paddingBlock: 12 }}>
         <Button size="xs" data-testid="compact-hit-target">
           Compact action
@@ -88,6 +124,21 @@ type Story = StoryObj<typeof meta>;
 
 export const BrowserContracts: Story = {
   play: async ({ args, canvas, userEvent, step }) => {
+    await step('Focus rings take Secondary from their own colour scope, not the root', async () => {
+      const rings: string[] = [];
+      for (const scope of ['light', 'dark', 'seeded']) {
+        const button = canvas.getByRole('button', { name: `${scope[0].toUpperCase()}${scope.slice(1)} scope action` });
+        const secondary = resolveColor(canvas.getByTestId(`${scope}-scope`), '--md-sys-color-secondary');
+        button.focus();
+        await expect(button.matches(':focus-visible')).toBe(true);
+        await expect(getComputedStyle(button).outlineColor).toBe(secondary);
+        rings.push(secondary);
+      }
+      // Three palettes, three rings: one colour inherited from the root would
+      // have matched at most one of them.
+      await expect(new Set(rings).size).toBe(3);
+    });
+
     await step('Compact surfaces expose real 48px hit targets, focus, and ripple feedback', async () => {
       const compact = canvas.getByTestId('compact-hit-target');
       const rect = compact.getBoundingClientRect();
@@ -96,7 +147,7 @@ export const BrowserContracts: Story = {
 
       compact.focus();
       await expect(compact).toHaveFocus();
-      await expect(getComputedStyle(compact).outlineWidth).toBe('2px');
+      await expect(getComputedStyle(compact).outlineWidth).toBe(themeVar('--md-sys-state-focus-indicator-thickness'));
 
       await userEvent.pointer({ keys: '[MouseLeft>]', target: compact });
       await waitFor(() => expect(compact.querySelector('.salty-ripple-surface')).toHaveClass('--press'));

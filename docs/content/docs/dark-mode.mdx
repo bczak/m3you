@@ -40,6 +40,15 @@ Scoping is genuinely useful: this site's component playgrounds put
 `data-theme="dark"` on the preview stage alone, so you can check a component in
 dark mode without flipping the page.
 
+Scopes nest in both directions: a `data-theme="light"` section inside a dark
+page renders light, and a `data-theme="dark"` card inside a light page renders
+dark. Scopes also follow a palette from [`applyM3Theme`](/docs/theming): a
+scoped section takes the dark or light half of the applied seed, not the
+default palette. They follow it through the `--md-seed-color-*` variables
+`applyM3Theme` publishes, so plain `--md-sys-color-*` overrides stop at a
+nested scope; see
+[nested `data-theme` sections](/docs/theming#nested-data-theme-sections).
+
 ## Also set color-scheme
 
 Tell the browser too, so native form controls, scrollbars and the caret match:

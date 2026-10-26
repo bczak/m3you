@@ -11,6 +11,25 @@ change needs confirming, use a checkbox in a form instead.
 Always label a switch. The examples here wrap it in a `<label>`; in a settings
 list, the row title is the label.
 
+The switch takes up only its 52×32 track in layout. Its 48dp touch target, its
+hover and press halo, and its keyboard focus ring reach up to 8px past the
+track without taking up space. Leave that much room around it, and do not put it
+in a box with `overflow: hidden` that sits right against the track. A press
+anywhere in that touch target, including the far end of the track, draws the
+press ripple around the handle.
+
+In right-to-left text (`dir="rtl"` on any ancestor, such as `<html>`) the switch
+mirrors: the handle starts on the right and moves left when it is turned on. A
+`dir` prop on `Switch` itself goes to the hidden input like its other props, so
+it does not flip the switch. In
+Windows High Contrast and other forced-colors modes, the track and handle use
+system colours, so the handle stays visible and an on switch has a filled track.
+
+Inside a `<form>`, a form reset puts an uncontrolled switch back to
+`defaultChecked`. As with a native reset, `onCheckedChange` is not called. A
+controlled switch keeps showing your `checked` value, so reset that state
+yourself.
+
 <Playground
   name="Switch"
   controls={{

@@ -150,6 +150,23 @@ export const Grouped: Story = {
   render: () => <GroupedStory />,
 };
 
+// ─── Uncontrolled native group ───────────────────────────────────
+
+/** Bare, uncontrolled radios sharing a `name`: selecting one (click or arrow keys) deselects the rest. */
+export const UncontrolledSameName: Story = {
+  name: 'Uncontrolled (shared name)',
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {['Small', 'Medium', 'Large'].map((size) => (
+        <div key={size} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <RadioButton name="story-size" value={size} aria-label={size} defaultChecked={size === 'Medium'} />
+          <span style={{ fontSize: '14px' }}>{size}</span>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
 // ─── RadioGroup Stories ──────────────────────────────────────────
 
 export const Group: Story = {
@@ -177,10 +194,11 @@ function WithLabelsStory() {
           { value: 'spacious', label: 'Spacious', description: 'More room between items' },
         ].map((item) => (
           <div key={item.value} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-            <RadioGroupItem value={item.value} style={{ marginTop: '2px' }} />
-            <div>
-              <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.label}</div>
-              <div style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>
+            <RadioGroupItem value={item.value} aria-label={item.label} />
+            {/* 14px + half the 20px title line = 24px, the centre of the 48dp radio target. */}
+            <div style={{ paddingTop: '14px' }}>
+              <div style={{ fontSize: '14px', lineHeight: '20px', fontWeight: 500 }}>{item.label}</div>
+              <div style={{ fontSize: '12px', lineHeight: '16px', color: 'var(--md-sys-color-on-surface-variant)' }}>
                 {item.description}
               </div>
             </div>

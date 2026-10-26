@@ -101,9 +101,10 @@ export const Wavy: Story = {
         <ShowcasePanel
           eyebrow="Expressive · Determinate"
           title="Wavy indicator"
-          description="The Material 3 Expressive wavy indicator flows while progress advances. The wave flattens at 100% to signal completion."
+          description="The Material 3 Expressive wavy indicator flows while progress advances. It lies flat at 10% and below and at 100%, and keeps the same height at every value."
         >
           <div className="sb-m3-demo-stack">
+            <LinearProgress variant="wavy" value={8} />
             <LinearProgress variant="wavy" value={18} />
             <LinearProgress variant="wavy" value={46} />
             <LinearProgress variant="wavy" value={82} />
@@ -114,9 +115,12 @@ export const Wavy: Story = {
         <ShowcasePanel
           eyebrow="Expressive · Indeterminate"
           title="Wavy activity"
-          description="Use indeterminate wavy progress when completion is unknown but the process is actively working."
+          description="Use indeterminate wavy progress when completion is unknown but the process is actively working. The track splits around the segment, which widens as it travels."
         >
-          <LinearProgress variant="wavy" type="indeterminate" />
+          <div className="sb-m3-demo-stack">
+            <LinearProgress variant="wavy" type="indeterminate" />
+            <LinearProgress variant="wavy" type="indeterminate" thickness={8} />
+          </div>
         </ShowcasePanel>
       </ShowcaseGrid>
     </div>

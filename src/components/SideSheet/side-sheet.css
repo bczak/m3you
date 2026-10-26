@@ -1,6 +1,6 @@
 /* =============================================================================
    SideSheet — M3 Spec
-   Max-width: 400px, BG: surface (standard) / surface-container-low (modal)
+   Width: 320px, BG: surface (standard) / surface-container-low (modal)
    Source: m3.material.io/components/side-sheets/specs
    ============================================================================= */
 
@@ -10,7 +10,7 @@
   inset: 0;
   z-index: var(--md-sys-z-index-dialog);
   background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-ending-style],
   &[data-starting-style] {
@@ -81,17 +81,30 @@
   }
 }
 
-/* ── Header ── */
+/* ── Header ──
+   Kit (Modal and Standard alike): a top-aligned row, padding 12/12/16/24 with
+   no gap, holding 48dp back/close frames around 40dp Small icon buttons and a
+   40dp title frame whose 12dp top padding drops the 28dp headline to y=24.
+   The sm IconButton paints 40px (its 48px target is an ::after overlay), so a
+   4px margin restores the 48dp frame. Result: 12 + 48 + 16 = 76 tall, close
+   button 16px from the top and trailing edge, title at x=24 and 236px wide.
+   With a back button the leading pad drops to 4: the button is 8px in and the
+   208px title starts at x=52. Without a close button the row hugs the 40dp
+   title frame (68px). Logical sides keep the row mirrored in RTL. */
 .md-side-sheet-header {
   box-sizing: border-box;
   display: flex;
-  align-items: center;
-  min-height: 64px;
-  gap: 4px;
-  padding: 8px 12px 8px 16px;
+  align-items: flex-start;
+  padding-block: 12px 16px;
+  padding-inline: 24px 12px;
 
-  &[data-has-back][data-variant="modal"] {
-    padding-left: 16px;
+  &[data-has-back] {
+    padding-inline-start: 4px;
+  }
+
+  & > .md-icon-button {
+    flex-shrink: 0;
+    margin: 4px;
   }
 }
 
@@ -99,6 +112,7 @@
 .md-side-sheet-title {
   flex: 1;
   margin: 0;
+  padding-block-start: 12px;
   color: var(--md-sys-color-on-surface-variant);
   font-family: var(--md-sys-typescale-title-large-font);
   font-size: var(--md-sys-typescale-title-large-size);
@@ -137,7 +151,7 @@
 /* Base UI drawer transforms live with the component so direct imports work. */
 [data-slot="side-sheet-content"][data-swipe-direction="right"] {
   transform: translateX(var(--drawer-swipe-movement-x, 0px));
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
 }
 
 [data-slot="side-sheet-content"][data-swipe-direction="right"]:is([data-starting-style], [data-ending-style]) {
@@ -146,7 +160,7 @@
 
 [data-slot="side-sheet-content"][data-swipe-direction="left"] {
   transform: translateX(var(--drawer-swipe-movement-x, 0px));
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
 }
 
 [data-slot="side-sheet-content"][data-swipe-direction="left"]:is([data-starting-style], [data-ending-style]) {
@@ -155,4 +169,18 @@
 
 [data-slot="side-sheet-content"][data-swiping] {
   transition: none;
+}
+
+/* Forced colours paints every background as Canvas: the modal sheet would lose
+   its edge against the page and the <hr> divider would vanish. Draw both with a
+   system colour (the standard sheet's edge and the footer rule are borders,
+   which forced colours keeps). */
+@media (forced-colors: active) {
+  .md-side-sheet-content[data-variant="modal"] {
+    outline: 1px solid CanvasText;
+  }
+
+  .md-side-sheet-divider {
+    background-color: CanvasText;
+  }
 }

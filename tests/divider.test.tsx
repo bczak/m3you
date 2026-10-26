@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test } from 'vitest';
@@ -63,4 +64,10 @@ test('passes through extra props', async () => {
   render(<Divider data-testid="divider" data-custom="hello" />);
   const divider = screen.getByTestId('divider');
   expect(divider).toHaveAttribute('data-custom', 'hello');
+});
+
+test('stays visible in forced-colors mode by drawing with a system colour', () => {
+  const css = readFileSync('src/components/Divider/divider.css', 'utf8');
+  const forced = css.slice(css.indexOf('@media (forced-colors: active)'));
+  expect(forced).toMatch(/\.md-divider\s*\{\s*background-color:\s*CanvasText;/);
 });

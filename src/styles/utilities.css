@@ -23,3 +23,46 @@
 .md-popup-positioner {
   z-index: var(--md-sys-z-index-popup);
 }
+
+/* Opt-in Material scrollbar.
+   Values follow Compose Material3's NonInteractiveScrollbarDefaults: a 4dp
+   thumb in Outline at 70% opacity, inset 2dp from each end of the track, on
+   no track fill. Add the class to any scroll container. CSS has no hook for
+   "fade out 400ms after scrolling stops", so the thumb stays visible.
+
+   Only the colour (Outline at 70%, no track) matches everywhere. Browsers
+   that implement scrollbar-color (Chromium 121+, Firefox) ignore the
+   ::-webkit-scrollbar rules once it is set and draw their own
+   `scrollbar-width: thin` (Chromium: a 6px thumb in a 10px track). Those rules
+   only reach engines without scrollbar-color, where they give the exact 4px
+   thumb and 2px end insets. */
+.md-scrollbar {
+  --md-scrollbar-thumb-color: color-mix(in srgb, var(--md-sys-color-outline) 70%, transparent);
+  --md-scrollbar-thickness: 4px;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-scrollbar-thumb-color) transparent;
+
+  &::-webkit-scrollbar {
+    width: var(--md-scrollbar-thickness);
+    height: var(--md-scrollbar-thickness);
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-track {
+    margin: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    min-height: 24px;
+    min-width: 24px;
+    border-radius: calc(var(--md-scrollbar-thickness) / 2);
+    background-color: var(--md-scrollbar-thumb-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .md-scrollbar {
+    scrollbar-color: auto;
+  }
+}

@@ -110,6 +110,17 @@ export const ExtraLarge: Story = {
   ),
 };
 
+/** A custom width plus `color` in a flex row whose tall sibling would stretch an auto-height item. */
+export const CustomSizeInStretchedRow: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: 48 }}>
+      <div style={{ width: 4, height: 160, background: 'var(--md-sys-color-outline-variant)' }} />
+      <LoadingIndicator style={{ width: 96 }} color="var(--md-sys-color-tertiary)" />
+      <LoadingIndicator style={{ width: 96 }} color="var(--md-sys-color-tertiary)" variant="contained" />
+    </div>
+  ),
+};
+
 export const ShapesPreview: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>

@@ -2,12 +2,18 @@
    Circular Progress — M3 Expressive
    Two appearance variants: `flat` (classic ring) and `wavy` (sine-wave arc
    with flat inactive track + gap, per Material 3 Expressive).
+   The component computes the box and sets it as --_size: it grows with the
+   stroke so the ring's centre-line stays fixed (kit: Flat 40 → 44, Wave
+   48 → 52 at 8 dp). Applying it here rather than inline leaves a consumer's
+   stylesheet free to resize the root; the svg and its ring scale to fit.
    ============================================================================= */
 
 .md-circular-progress {
   --_color: var(--md-circular-progress-color, var(--md-sys-color-primary));
   --_track-color: var(--md-circular-progress-track-color, var(--md-sys-color-secondary-container));
 
+  inline-size: var(--_size);
+  block-size: var(--_size);
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
@@ -19,19 +25,6 @@
 /* Flat variant                                                               */
 /* -------------------------------------------------------------------------- */
 
-.md-circular-progress[data-variant="flat"][data-size="sm"] {
-  width: 24px;
-  height: 24px;
-}
-.md-circular-progress[data-variant="flat"][data-size="md"] {
-  width: 40px;
-  height: 40px;
-}
-.md-circular-progress[data-variant="flat"][data-size="lg"] {
-  width: 48px;
-  height: 48px;
-}
-
 .md-circular-progress__svg {
   width: 100%;
   height: 100%;
@@ -41,21 +34,39 @@
   animation: md-circular-progress-rotate 2s linear infinite;
 }
 
+/* Dashes are measured from 12 o'clock, clockwise. */
+.md-circular-progress__track,
+.md-circular-progress__indicator {
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition-property: stroke-dasharray, stroke-dashoffset;
+  transition-duration: var(--md-sys-motion-duration-short3);
+  transition-timing-function: var(--md-sys-motion-easing-standard);
+}
+
 .md-circular-progress__track {
   stroke: var(--_track-color);
 }
 
 .md-circular-progress__indicator {
   stroke: currentColor;
-  transition: stroke-dashoffset var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
 }
 
+/* Indeterminate: the indicator grows and shrinks while the track follows it,
+   keeping the 4 dp gap at both ends. The component sets the dash lengths per
+   size (--_dash-*, --_track-*) as patterns one circumference long, so an arc
+   that passes 12 o'clock wraps round rather than sliding off the path. The
+   static values are the mid-cycle frame. */
 .md-circular-progress__indicator[data-indeterminate] {
   animation: md-circular-progress-dash 1.5s ease-in-out infinite;
-  stroke-dasharray: 89, 126;
-  stroke-dashoffset: -35;
-  transform: rotate(-90deg);
-  transform-origin: center;
+  stroke-dasharray: var(--_dash-max);
+  stroke-dashoffset: var(--_dash-offset-mid);
+}
+
+.md-circular-progress__track[data-indeterminate] {
+  animation: md-circular-progress-track-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: var(--_track-dash-max);
+  stroke-dashoffset: var(--_track-offset-mid);
 }
 
 @keyframes md-circular-progress-rotate {
@@ -66,16 +77,31 @@
 
 @keyframes md-circular-progress-dash {
   0% {
-    stroke-dasharray: 1, 200;
+    stroke-dasharray: var(--_dash-min);
     stroke-dashoffset: 0;
   }
   50% {
-    stroke-dasharray: 90, 200;
-    stroke-dashoffset: -35;
+    stroke-dasharray: var(--_dash-max);
+    stroke-dashoffset: var(--_dash-offset-mid);
   }
   100% {
-    stroke-dasharray: 90, 200;
-    stroke-dashoffset: -125;
+    stroke-dasharray: var(--_dash-min);
+    stroke-dashoffset: var(--_dash-offset-end);
+  }
+}
+
+@keyframes md-circular-progress-track-dash {
+  0% {
+    stroke-dasharray: var(--_track-dash-min);
+    stroke-dashoffset: var(--_track-offset-start);
+  }
+  50% {
+    stroke-dasharray: var(--_track-dash-max);
+    stroke-dashoffset: var(--_track-offset-mid);
+  }
+  100% {
+    stroke-dasharray: var(--_track-dash-min);
+    stroke-dashoffset: var(--_track-offset-end);
   }
 }
 

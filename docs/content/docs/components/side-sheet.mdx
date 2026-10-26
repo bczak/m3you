@@ -5,7 +5,9 @@ description: A surface that slides in from the leading or trailing edge.
 
 Side sheets hold supporting content beside the main view — filters, details,
 settings. On expanded window sizes they can stay open permanently; set
-`modal={false}` for that.
+`modal={false}` for that. `modal="trap-focus"` keeps the modal presentation
+(scrim, rounded container) and traps keyboard focus, but leaves page scroll
+unlocked.
 
 <Example
   name="side-sheet/basic"

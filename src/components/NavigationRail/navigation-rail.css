@@ -1,8 +1,11 @@
 /* =============================================================================
-   NavigationRail — M3 Spec
-   Container: width 96px (collapsed) / 220px (expanded)
-   Active indicator: 56x32 secondary-container, corner-full
-   Icons: 24px, Label: title-small, Active weight bold
+   NavigationRail — M3 Expressive spec (Design Kit v1.25)
+   Container: width 96px (collapsed) / 220px (expanded); the modal expanded
+   rail is the kit's Floating type (surface-container, corner-large, no shadow)
+   Collapsed item: full rail width, 64px tall, 4px apart; 56x32 indicator (r=16),
+   or a 56x56 circle with hideLabel; focus ring inside the item
+   Expanded item: 56px pill hugging icon + label; focus ring 2px outside the pill
+   Icons: 24px, Label: label-medium (collapsed) / label-large (expanded)
    Source: m3.material.io/components/navigation-rail/specs
    ============================================================================= */
 
@@ -16,8 +19,10 @@
   padding-block: 44px 20px;
   background-color: var(--md-sys-color-surface);
   transition:
-    min-width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    max-width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    min-width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    max-width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-state="collapsed"] {
     min-width: 96px;
@@ -30,8 +35,16 @@
     padding-inline: 20px;
   }
 
+  /* Kit "Navigation Rail: Expanded", Type=Floating: the modal rail is a
+     Surface Container sheet with Corner/Large on every corner, where the
+     docked rail has no fill of its own and square corners. No shadow: none of
+     the kit's Floating variants draws one (its FABs do, so the extract records
+     them), and Dialog dropped its shadow for the same reason. The tonal fill
+     and the scrim behind it set the sheet apart from the page. */
   &[data-state="expanded"][data-modality="modal"] {
-    box-shadow: var(--md-sys-elevation-3);
+    z-index: var(--md-sys-z-index-navigation);
+    background-color: var(--md-sys-color-surface-container);
+    border-radius: var(--md-sys-shape-corner-large);
   }
 
   &[data-position="fixed"] {
@@ -44,9 +57,14 @@
   &[data-position="relative"] {
     position: relative;
   }
+}
 
-  &[data-state="expanded"][data-modality="modal"] {
-    z-index: var(--md-sys-z-index-navigation);
+/* Forced colours paint every background as Canvas, the scrim included, so the
+   shadowless modal sheet would lose its edge against the page. Draw the edge
+   with a system colour, as Dialog and SideSheet do for their modal sheets. */
+@media (forced-colors: active) {
+  .md-navigation-rail[data-state="expanded"][data-modality="modal"] {
+    outline: 1px solid CanvasText;
   }
 }
 
@@ -57,8 +75,9 @@
   z-index: var(--md-sys-z-index-backdrop);
   cursor: default;
   border: none;
-  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 50%, transparent);
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  /* Kit scrim: Schemes/Scrim at 0.32, as in Dialog, BottomSheet and SideSheet. */
+  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
 /* ── Sections ── */
@@ -90,15 +109,33 @@
   padding: 0;
   align-items: flex-start;
   justify-content: flex-start;
+  /* Keeps the focused item's z-index (see .md-navigation-rail-item) local to
+     the column rather than lifting it over the page around a docked rail. */
+  isolation: isolate;
 }
 
 .md-navigation-rail[data-state="collapsed"] :is(.md-navigation-rail__menu, .md-navigation-rail__fab) {
   justify-content: center;
 }
 
+/* The column scrolls, so it clips anything past its padding box. The expanded
+   focus ring reaches 5dp (2dp offset + 3dp stroke) outside an item's pill, and
+   the first pill sits on the column's top-left corner. Padding the column by
+   that reach and pulling it back out with negative margins gives the ring room
+   without moving the items: the content box is still 180dp wide and 40dp below
+   the FAB, and the overhang lands in the rail's own 20dp inline padding.
+   content-box keeps the 180dp under a consumer's border-box reset. */
 .md-navigation-rail[data-state="expanded"] .md-navigation-rail__items {
+  --_focus-ring-reach: calc(
+    var(--md-sys-state-focus-indicator-outer-offset) +
+    var(--md-sys-state-focus-indicator-thickness)
+  );
+
+  box-sizing: content-box;
   width: 180px;
   gap: 0;
+  margin: calc(40px - var(--_focus-ring-reach)) calc(-1 * var(--_focus-ring-reach)) calc(-1 * var(--_focus-ring-reach));
+  padding: var(--_focus-ring-reach);
 }
 
 .md-navigation-rail__items[data-items-alignment="center"] {
@@ -107,7 +144,11 @@
 
 /* ── Item ── */
 .md-navigation-rail-item {
-  --md-navigation-rail-state-layer-color: var(--md-sys-color-on-surface-variant);
+  /* Kit: unselected items tint hover/focus/pressed with On Surface, selected
+     ones with On Secondary Container (the [data-active] override below). The
+     ripple's hover and press layers read --ripple-color, so they follow too. */
+  --md-navigation-rail-state-layer-color: var(--md-sys-color-on-surface);
+  --ripple-color: var(--md-navigation-rail-state-layer-color);
 
   position: relative;
   display: flex;
@@ -120,12 +161,25 @@
   border: none;
   background-color: transparent;
   outline: none;
-  transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
+  /* The focus ring's placement depends on the rail state (below). Lifting the
+     focused item keeps a flush neighbour, such as a selected item's indicator,
+     from painting over the part of an outer ring that crosses into it. */
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
-    border-radius: var(--md-sys-shape-corner-medium);
+    z-index: 1;
+  }
+
+  /* Collapsed — kit vertical nav item: a 3dp ring drawn INSIDE the item (inner
+     edge inset 3dp with r=12, outer edge on the item bounds). The collapsed item
+     spans the full 96dp rail and the items column scrolls (so it clips), and
+     items sit 4dp apart, so a ring 2dp outside would lose its sides and run into
+     its neighbours. The corner grows by the inset so the inner edge lands on
+     corner-medium, as in NavigationBar's vertical items. */
+  &[data-state="collapsed"]:focus-visible {
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
+    border-radius: calc(var(--md-sys-shape-corner-medium) - var(--md-sys-state-focus-indicator-inner-offset));
   }
 
   &:disabled {
@@ -170,8 +224,8 @@
   border-radius: 0;
   isolation: isolate;
   transition:
-    height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    border-radius var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    height var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
 .md-navigation-rail-item[data-state="expanded"] .md-navigation-rail-item__surface {
@@ -180,6 +234,15 @@
   height: 56px;
   justify-content: flex-start;
   border-radius: 28px;
+}
+
+/* Expanded — kit horizontal nav item, State=Focused: a fully round ring (103x60,
+   r=100) 2dp outside the 99x56 pill that hugs the icon and label, not around the
+   full-width 180dp button. The outline follows the pill's corners, so it stays
+   a pill too. The items column leaves room for it (see __items above). */
+.md-navigation-rail-item[data-state="expanded"]:focus-visible .md-navigation-rail-item__surface {
+  outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+  outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
 }
 
 .md-navigation-rail-item__indicator {
@@ -191,8 +254,8 @@
   border-radius: calc(32px / 2);
   background-color: var(--md-sys-color-secondary-container);
   transition:
-    opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+    opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
   transform: translateX(-50%) scale(0.85);
   opacity: 0;
   z-index: 0;
@@ -226,7 +289,7 @@
   border-radius: calc(32px / 2);
   background-color: var(--md-navigation-rail-state-layer-color);
   opacity: 0;
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   z-index: 1;
   pointer-events: none;
 }
@@ -259,12 +322,16 @@
   min-width: 56px;
   height: 52px;
   align-items: center;
-  justify-content: center;
+  /* Kit vertical nav item: pad 6 + 32dp icon container + gap 4 + 16dp label.
+     The content box starts at the 6dp pad; 4dp above the 24dp icon and 4dp of
+     the 8dp gap stand in for the icon container's own padding, so the icon
+     sits centred in the 32dp indicator and the label lands 4dp below it. */
+  justify-content: flex-start;
   box-sizing: border-box;
   flex-direction: column;
+  padding-block: 4px 0;
   padding-inline: 0;
-  gap: 4px;
-  transition: gap var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  gap: 8px;
 }
 
 .md-navigation-rail-item[data-state="expanded"] .md-navigation-rail-item__content {
@@ -273,6 +340,7 @@
   justify-content: flex-start;
   height: 100%;
   flex-direction: row;
+  padding-block: 0;
   padding-inline: 16px;
   gap: 8px;
 }
@@ -323,8 +391,8 @@
   line-height: var(--md-sys-typescale-label-medium-line-height);
   font-weight: var(--md-sys-typescale-label-medium-weight);
   transition:
-    max-width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    max-width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   max-width: 12rem;
   opacity: 1;
 }
@@ -347,11 +415,45 @@
   top: auto;
   left: auto;
   transform: none;
+  /* A label too long for the 180dp pill shrinks and ends in an ellipsis inside
+     the pill's 16dp end padding. Without this it would run past the pill, and
+     because the items column now leaves 5dp of room for the focus ring, the
+     text would paint over the right side of that ring. */
+  flex: 0 1 auto;
+  text-overflow: ellipsis;
   font-family: var(--md-sys-typescale-label-large-font);
   font-size: var(--md-sys-typescale-label-large-size);
   line-height: var(--md-sys-typescale-label-large-line-height);
   font-weight: var(--md-sys-typescale-label-large-weight);
   letter-spacing: 0;
+}
+
+/* ── Hidden label (collapsed only) ──
+   Kit vertical nav item, Show label=False: pad 4/0/4/0 around a 56x56 round
+   icon container, with a matching 56x56 state layer. The label stays mounted
+   (the button keeps it as its aria-label) so expanding can fade it back in. */
+.md-navigation-rail-item[data-state="collapsed"][data-hide-label="true"] {
+  & .md-navigation-rail-item__indicator,
+  & .md-navigation-rail-item__state-layer,
+  & .md-navigation-rail-item__surface > .salty-ripple {
+    top: 4px;
+    height: 56px;
+    border-radius: 50%;
+  }
+
+  & .md-navigation-rail-item__content {
+    justify-content: center;
+    padding-block: 0;
+  }
+
+  & .md-navigation-rail-item__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    opacity: 0;
+  }
 }
 
 /* ── Icon toggle (stacked grid) ── */
@@ -367,14 +469,24 @@
 }
 
 .md-navigation-rail-item__icon-fade {
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
 /* ── Section ── */
 .md-navigation-rail-section {
   display: flex;
+  /* The items column aligns to flex-start, which would shrink a section to its
+     widest item (56dp) and pin it to the rail's leading edge. Stretching it
+     keeps collapsed items the full 96dp, centred under the menu button and FAB. */
+  align-self: stretch;
   flex-direction: column;
   gap: 0;
+}
+
+/* Kit collapsed "Segments" stack nav items 4dp apart (68dp pitch), like the
+   items column itself; expanded sections stay flush. */
+.md-navigation-rail[data-state="collapsed"] .md-navigation-rail-section {
+  gap: 4px;
 }
 
 .md-navigation-rail-section + .md-navigation-rail-section {
@@ -412,12 +524,18 @@
   outline: none;
   cursor: pointer;
   transition:
-    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
+  /* Kit Icon button - standard, State=Focused: an On Surface Variant layer at
+     the focus opacity under the ring. currentColor is on-surface-variant. */
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+    background-image: linear-gradient(
+      color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent),
+      color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent)
+    );
   }
 
   & svg {
@@ -441,8 +559,8 @@
   align-items: center;
   justify-content: center;
   transition:
-    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
 .md-navigation-rail-menu-button__icon-slot[data-icon-state="collapsed"] {

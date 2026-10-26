@@ -32,10 +32,33 @@ much separation the card needs from its background: `elevated` casts a shadow,
 
 ## Interactive cards
 
-Adding `onClick` makes the whole card a target. Set `ripple` so the press has
-Material feedback — without it, a clickable card feels inert.
+Adding `onClick` makes the whole card a target, with a Material ripple on press.
+The ripple is on by default for a clickable card; `ripple={false}` turns it off,
+and `ripple` on a card without `onClick` adds hover and press feedback alone.
 
 <Example name="card/interactive" title="A clickable card" />
+
+### Accessible name
+
+A clickable card puts a full-size native button under its content, so keyboard
+focus and screen readers treat the card as one button. Nested controls such as
+an icon button stay separate tab stops. The button's name comes from, in order:
+
+1. `interactiveLabel`
+2. `aria-labelledby`, for example the id of the card's title
+3. `aria-label`
+4. the card's content
+
+`aria-labelledby` and `aria-label` move from the card to its button unchanged,
+so `aria-labelledby` wins over `aria-label` as it does on any element.
+
+The fallback reads all of the content, including the names of nested controls
+and any supporting text. When a card holds more than a title, pass
+`interactiveLabel` or point `aria-labelledby` at the title.
+
+A card without `onClick` is a plain `<div>`, so `aria-label` and
+`aria-labelledby` stay on it. Give it a `role` (such as `region` or `group`) so
+assistive technology exposes the name.
 
 ## Props
 

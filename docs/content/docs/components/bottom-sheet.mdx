@@ -5,12 +5,52 @@ description: A swipeable surface anchored to the bottom of the screen.
 
 Bottom sheets hold supplementary content anchored to the bottom edge. They are
 built on Base UI's drawer primitive, so dragging, snap points and swipe-to-close
-behave the way a native sheet does.
+behave the way a native sheet does. The sheet spans the full width of compact
+windows and is capped at 640px, centred, on wider ones.
 
 <Example
   name="bottom-sheet/basic"
   title="Modal bottom sheet"
   description="Drag the handle down to dismiss, or press Escape."
+/>
+
+## Modal and standard
+
+A modal sheet (the default) dims the page with a 32% scrim, traps focus and
+locks page scroll; a press on the scrim dismisses it. Set `modal={false}` for a
+standard sheet: it has no scrim, lifts on an elevation-3 shadow, and only the
+sheet surface catches pointer events, so the page behind stays usable. A press
+on the page still dismisses a standard sheet by default — add
+`disablePointerDismissal` to keep it open while the page is in use.
+
+`modal="trap-focus"` keeps the modal scrim and look and traps focus, but does
+not lock page scroll.
+
+<Example
+  name="bottom-sheet/standard"
+  title="Standard bottom sheet"
+  description="The page button keeps working while the sheet is open."
+/>
+
+## Snap points and motion
+
+Pass `snapPoints` to let the sheet rest part-way open. A number from 0 to 1 is
+a fraction of the screen height; a larger number, or a `px` or `rem` string, is
+a fixed height. `defaultSnapPoint` (or a controlled `snapPoint` with
+`onSnapPointChange`) picks where it opens. Dragging the handle moves between
+points, and dragging below the lowest point dismisses the sheet.
+
+The sheet slides up through the bottom edge to open, glides between snap
+points, and slides back down to close; after a swipe the exit continues from
+where the finger let go. With `prefers-reduced-motion: reduce` it does not
+travel: it opens in place at its snap point and fades with the scrim, closes by
+fading where it is (even from a higher snap point, or from where a swipe let
+go), and snap changes jump instead of gliding.
+
+<Example
+  name="bottom-sheet/snap-points"
+  title="Snap points"
+  description="Opens at 30%; drag up to 60% or full height."
 />
 
 ## Props

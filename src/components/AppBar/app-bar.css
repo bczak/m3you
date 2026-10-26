@@ -2,8 +2,8 @@
    App Bar — M3 top app bar variants
    Search: 64px container with 56px search field
    Small: 64px
-   Medium flexible: 112px
-   Large flexible: 120px
+   Medium flexible: 112px with a headline, growing to 136px with supporting text
+   Large flexible: 120px with a headline, growing to 152px with supporting text
    ============================================================================= */
 
 .md-app-bar {
@@ -19,23 +19,26 @@
   background-color: var(--md-sys-color-surface-container);
 }
 
+/* The flexible bars are a hug column (56 icon row + 8 gap + text + 12 bottom
+   padding). The kit's headline-only heights are kept as a floor so a bar
+   without a headline does not collapse, but supporting text grows the bar
+   instead of being painted over the icon row. */
 .md-app-bar[data-variant="medium"] {
-  height: 112px;
+  min-height: 112px;
 }
 
 .md-app-bar[data-variant="large"] {
-  height: 120px;
+  min-height: 120px;
 }
 
-.md-app-bar__leading,
-.md-app-bar__trailing,
-.md-app-bar__search-trailing {
-  display: flex;
-  align-items: center;
-}
-
+/* Every leading icon and trailing action owns a 48dp cell with its visible
+   content centred in it, so 40dp icon buttons sit on the kit's 48dp pitch. */
 .md-app-bar__leading,
 .md-app-bar__trailing {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(48px, max-content);
+  place-items: center;
   min-width: 48px;
   min-height: 48px;
   color: var(--md-sys-color-on-surface);
@@ -48,10 +51,6 @@
     visibility: hidden;
     pointer-events: none;
   }
-
-  & > * {
-    flex-shrink: 0;
-  }
 }
 
 .md-app-bar__label-block {
@@ -60,7 +59,6 @@
   flex-direction: column;
   justify-content: center;
   gap: 0;
-  padding-inline: 24px;
 
   &[data-center-aligned] {
     text-align: center;
@@ -92,17 +90,21 @@
   color: var(--md-sys-color-on-surface-variant);
 }
 
+/* Search bar container: 48dp icon cells with an 8dp gap to a 292dp field at
+   the 412dp reference width, in both alignments. */
 .md-app-bar__search-row {
   box-sizing: border-box;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) 48px;
   min-height: 64px;
   align-items: center;
-  column-gap: 16px;
+  column-gap: 8px;
   padding: 4px;
 }
 
 .md-app-bar__search-field {
+  box-sizing: border-box;
+  position: relative;
   grid-column: 2;
   justify-self: center;
   display: flex;
@@ -112,7 +114,8 @@
   max-width: 380px;
   align-items: center;
   gap: 4px;
-  padding: 0 4px 0 16px;
+  padding-block: 0;
+  padding-inline: 16px 4px;
   border-radius: calc(56px / 2);
   background-color: var(--md-sys-color-surface-container-high);
 
@@ -121,6 +124,30 @@
     grid-template-columns: 48px minmax(0, 1fr) 48px;
     gap: 0;
     padding-inline: 16px;
+  }
+}
+
+/* The interactive surface of the search field. It covers the whole pill so the
+   state layer and ripple fill it, while the label paints above it and the
+   trailing content stays a separate, clickable sibling on top. */
+.md-app-bar__search-button {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: inherit;
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  font: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
   }
 }
 
@@ -137,6 +164,7 @@
 }
 
 .md-app-bar__search-label {
+  position: relative;
   flex: 1;
   min-width: 0;
   font-family: var(--md-sys-typescale-body-large-font);
@@ -145,6 +173,7 @@
   font-weight: var(--md-sys-typescale-body-large-weight);
   letter-spacing: var(--md-sys-typescale-body-large-tracking);
   color: var(--md-sys-color-on-surface-variant);
+  pointer-events: none;
 }
 
 .md-app-bar__search-field[data-center-aligned] .md-app-bar__search-label {
@@ -155,13 +184,16 @@
 }
 
 .md-app-bar__search-trailing {
-  margin-right: 2px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-inline-end: 2px;
 }
 
 .md-app-bar__search-field[data-center-aligned] .md-app-bar__search-trailing {
   grid-column: 3;
   justify-self: center;
-  margin-right: 0;
+  margin-inline-end: 0;
 }
 
 .md-app-bar__small-row {
@@ -172,8 +204,11 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   column-gap: 4px;
 
+  /* Equal side tracks centre a short headline; each side still keeps at least
+     its actions' width, so a long headline is bounded between them and
+     ellipsized instead of being painted under the icons. */
   &[data-center-aligned] {
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
   }
 }
 
@@ -213,26 +248,18 @@
   flex: 1;
 }
 
+/* Text content sits 8dp below the 56dp icon row with 12dp below it. It takes
+   any space left by the bar's minimum height so the text stays bottom-anchored. */
 .md-app-bar__flex-content {
   box-sizing: border-box;
   display: flex;
   min-width: 0;
+  flex: 1 0 auto;
   flex-direction: column;
   justify-content: flex-end;
+  margin-top: 8px;
   padding-inline: 16px;
   padding-bottom: 12px;
-
-  &[data-variant="medium"] {
-    min-height: 56px;
-  }
-
-  &[data-variant="large"] {
-    min-height: 64px;
-  }
-}
-
-.md-app-bar__flex-content .md-app-bar__label-block {
-  padding-inline: 0;
 }
 
 .md-app-bar__flex-content[data-center-aligned] {
@@ -246,11 +273,13 @@
   font-weight: var(--md-sys-typescale-title-large-weight);
 }
 
+/* Kit Text Small: 12/16, Medium weight, 0.1 tracking (not body-small's 0.4). */
 .md-app-bar__label-block[data-variant="small"] .md-app-bar__supporting-text {
   font-family: var(--md-sys-typescale-body-small-font);
   font-size: var(--md-sys-typescale-body-small-size);
   line-height: var(--md-sys-typescale-body-small-line-height);
-  font-weight: var(--md-sys-typescale-body-small-weight);
+  font-weight: var(--md-sys-typescale-body-small-emphasized-weight);
+  letter-spacing: 0.1px;
 }
 
 .md-app-bar__label-block[data-variant="medium"] .md-app-bar__headline {
@@ -264,7 +293,7 @@
   font-family: var(--md-sys-typescale-body-medium-font);
   font-size: var(--md-sys-typescale-body-medium-size);
   line-height: var(--md-sys-typescale-body-medium-line-height);
-  font-weight: 500;
+  font-weight: var(--md-sys-typescale-body-medium-emphasized-weight);
 }
 
 .md-app-bar__label-block[data-variant="large"] .md-app-bar__headline {
@@ -274,10 +303,11 @@
   font-weight: var(--md-sys-typescale-display-small-weight);
 }
 
+/* Kit Text Large: 16/24, Medium weight, 0 tracking (not body-large's 0.5). */
 .md-app-bar__label-block[data-variant="large"] .md-app-bar__supporting-text {
   font-family: var(--md-sys-typescale-body-large-font);
   font-size: var(--md-sys-typescale-body-large-size);
   line-height: var(--md-sys-typescale-body-large-line-height);
-  font-weight: 500;
-  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  font-weight: var(--md-sys-typescale-body-large-emphasized-weight);
+  letter-spacing: 0;
 }

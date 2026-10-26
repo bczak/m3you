@@ -11,7 +11,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['variant', 'size', 'shape', 'morph', 'selected'],
+      include: ['variant', 'size', 'shape', 'morph', 'selected', 'disabled'],
     },
   },
   tags: ['autodocs'],
@@ -159,6 +159,45 @@ export const Morph: Story = {
   ),
 };
 
+/** Hover or press either half to grow its inner corners; `morph={false}` keeps them still. */
+export const MorphOnOff: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 48 }}>
+      {([true, false] as const).map((morph) => (
+        <SplitButton key={String(morph)} variant="filled" size="md" shape="round" morph={morph}>
+          <SplitButtonAction>
+            <CircleStarIcon aria-hidden="true" />
+            {morph ? 'Morph' : 'No morph'}
+          </SplitButtonAction>
+          <SplitButtonMenu>
+            <MenuItem>Option 1</MenuItem>
+            <MenuItem>Option 2</MenuItem>
+          </SplitButtonMenu>
+        </SplitButton>
+      ))}
+    </div>
+  ),
+};
+
+export const Disabled: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 48 }}>
+      {(['filled', 'tonal', 'elevated', 'outlined'] as const).map((variant) => (
+        <SplitButton key={variant} variant={variant} size="sm" shape="round" disabled>
+          <SplitButtonAction>
+            <CircleStarIcon aria-hidden="true" />
+            Label
+          </SplitButtonAction>
+          <SplitButtonMenu>
+            <MenuItem>Option 1</MenuItem>
+            <MenuItem>Option 2</MenuItem>
+          </SplitButtonMenu>
+        </SplitButton>
+      ))}
+    </div>
+  ),
+};
+
 export const Selected: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 48 }}>
@@ -181,7 +220,7 @@ export const Selected: Story = {
 export const AllVariantsAllSizes: Story = {
   render: () => {
     const variants = ['filled', 'tonal', 'elevated', 'outlined'] as const;
-    const sizes = ['xs', 'sm', 'md'] as const;
+    const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 48 }}>
         {variants.map((variant) => (

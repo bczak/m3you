@@ -59,6 +59,35 @@
   box-shadow: none;
 }
 
+/* The focus ring sits 2px outside the half, across the 2px gap. The trigger
+   paints after the action and would cover the action ring's inner side, so
+   the focused half is lifted above its partner. */
+.md-split-button > :is(.md-split-button__action, .md-split-button__trigger).md-button:focus-visible {
+  z-index: 1;
+}
+
+/* ── Outlined: 1dp stroke at every size ──
+   The split kit strokes both halves at 1dp from XSmall to XLarge; only the
+   standalone Button goes to 2dp at lg / xl. Button draws the border from
+   --_outline-width and subtracts it from the inline padding. */
+
+.md-split-button > .md-button[data-variant="outlined"]:is([data-size="lg"], [data-size="xl"]) {
+  --_outline-width: 1px;
+}
+
+/* Disabled outlined halves: the split kit keeps the container empty and
+   draws the stroke in On Surface at 10% (the standalone Button fills the
+   container and keeps Outline Variant). A selected half has no stroke. */
+
+.md-split-button > .md-button[data-variant="outlined"]:is(:disabled, [data-disabled]):not([data-selected="true"]) {
+  background-color: transparent;
+  border-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+    transparent
+  );
+}
+
 /* ── Outer radius: round = pill, square = shape corner ── */
 
 .md-split-button[data-shape="round"] {
@@ -83,25 +112,45 @@
   border-radius: var(--_split-outer);
 }
 
+/* ── Inner corners: hover / press morph ──
+   Each half reads its two inner corners from --_split-half-inner. In the kit
+   a hovered or pressed half grows them (XS 4→8, S/M 4→12, L 8→20, XL 12→20)
+   while its outer corners stay put; focus does not morph. Only the custom
+   property changes here, so these rules never have to outrank the resting
+   border-radius rules below (or Button's own :active morph), and Button's
+   border-radius spring animates the change. `morph={false}` opts out. */
+
+.md-split-button > :is(.md-split-button__action, .md-split-button__trigger).md-button {
+  --_split-half-inner: var(--_split-inner);
+}
+
+.md-split-button
+  > :is(.md-split-button__action, .md-split-button__trigger).md-button[data-morph]:not(:disabled):active {
+  --_split-half-inner: var(--_split-interactive-inner);
+}
+
+@media (hover: hover) {
+  .md-split-button
+    > :is(.md-split-button__action, .md-split-button__trigger).md-button[data-morph]:not(:disabled):hover {
+    --_split-half-inner: var(--_split-interactive-inner);
+  }
+}
+
 /* ── Action: border-radius — outer-left, inner-right ── */
 
 .md-split-button > .md-split-button__action.md-button[data-shape][data-size] {
-  border-radius: var(--_split-outer) var(--_split-inner) var(--_split-inner) var(--_split-outer);
-}
-
-.md-split-button > .md-split-button__action.md-button:is(:hover, :active) {
-  border-radius: var(--_split-outer) var(--_split-interactive-inner) var(--_split-interactive-inner) var(--_split-outer);
+  border-radius: var(--_split-outer) var(--_split-half-inner) var(--_split-half-inner) var(--_split-outer);
 }
 
 /* ── Action: xs-specific spacing (tighter gap + asymmetric padding) ── */
 
 .md-split-button[data-size="xs"] > .md-split-button__action.md-button {
   gap: 4px;
-  padding-inline: 12px 10px;
+  padding-inline: calc(12px - var(--_outline-width)) calc(10px - var(--_outline-width));
 }
 
 .md-split-button[data-size="sm"] > .md-split-button__action.md-button {
-  padding-inline: 16px 12px;
+  padding-inline: calc(16px - var(--_outline-width)) calc(12px - var(--_outline-width));
 }
 
 /* ── Trigger: base overrides ── */
@@ -188,11 +237,7 @@
 /* ── Trigger: border-radius — inner-left, outer-right ── */
 
 .md-split-button > .md-split-button__trigger.md-button[data-shape][data-size] {
-  border-radius: var(--_split-inner) var(--_split-outer) var(--_split-outer) var(--_split-inner);
-}
-
-.md-split-button > .md-split-button__trigger.md-button:is(:hover, :active) {
-  border-radius: var(--_split-interactive-inner) var(--_split-outer) var(--_split-outer) var(--_split-interactive-inner);
+  border-radius: var(--_split-half-inner) var(--_split-outer) var(--_split-outer) var(--_split-half-inner);
 }
 
 /* ── Open state: trigger becomes fully rounded ── */
@@ -208,7 +253,7 @@
 /* ── Chevron rotation ── */
 
 .md-split-button__trigger svg {
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
 .md-split-button[data-open] .md-split-button__trigger svg {

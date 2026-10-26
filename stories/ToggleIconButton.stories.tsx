@@ -8,7 +8,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     controls: {
-      include: ['variant', 'shape', 'size', 'width', 'morph', 'defaultSelected', 'disabled'],
+      include: ['variant', 'color', 'shape', 'size', 'width', 'morph', 'defaultSelected', 'disabled'],
     },
   },
   tags: ['autodocs'],
@@ -54,7 +54,6 @@ const VariantStory = ({ variant }: { variant: 'standard' | 'filled' | 'elevated'
                   shape={shape}
                   size={size}
                   width={width}
-                  morph
                 >
                   <StarIcon />
                 </ToggleIconButton>
@@ -67,7 +66,6 @@ const VariantStory = ({ variant }: { variant: 'standard' | 'filled' | 'elevated'
                   shape={shape}
                   size={size}
                   width={width}
-                  morph
                   defaultSelected
                   disabled
                 >
@@ -100,4 +98,41 @@ export const Tonal: Story = {
 
 export const Outlined: Story = {
   render: () => <VariantStory variant="outlined" />,
+};
+
+export const Coloured: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Each row pairs an unselected toggle with a selected one. A coloured standard toggle keeps the neutral on-surface-variant icon until it is selected, because it has no container to show the state. A coloured outlined toggle keeps the colour-role icon in its outline and fills a colour-role container when selected.',
+      },
+    },
+  },
+  render: () => {
+    const variants = ['standard', 'outlined'] as const;
+    const colors = ['primary', 'secondary', 'tertiary', 'error'] as const;
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {variants.map((variant) => (
+          <div key={variant} style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <span style={{ fontSize: '12px', width: '64px', color: 'var(--md-sys-color-on-surface-variant)' }}>
+              {variant}
+            </span>
+            {colors.map((color) => (
+              <div key={color} style={{ display: 'flex', gap: '8px' }}>
+                <ToggleIconButton aria-label={`Favorite (${color})`} variant={variant} color={color}>
+                  <StarIcon />
+                </ToggleIconButton>
+                <ToggleIconButton aria-label={`Favorite (${color})`} variant={variant} color={color} defaultSelected>
+                  <StarIcon />
+                </ToggleIconButton>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  },
 };

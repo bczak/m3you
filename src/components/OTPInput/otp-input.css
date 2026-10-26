@@ -39,7 +39,7 @@
   font-weight: var(--md-sys-typescale-body-small-weight);
   letter-spacing: var(--md-sys-typescale-body-small-tracking);
   color: var(--md-sys-color-on-surface-variant);
-  transition: color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+  transition: color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 
   &[data-focused]:not([data-error]) {
     color: var(--md-sys-color-primary);
@@ -71,13 +71,18 @@
   font-variant-numeric: tabular-nums;
   letter-spacing: var(--md-sys-typescale-headline-small-tracking);
   color: var(--md-sys-color-on-surface);
+  /* The medium → small corner change on focus is an in-place morph, so it rides
+     the effects spring like Button and IconButton: the spatial springs overshoot
+     and would wobble the corner past its target on every focus and blur. */
   transition:
-    border-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
-    border-width var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
-    background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
-    border-radius var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-fast-spatial);
+    border-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    border-width var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-duration-spring-default-effects)
+    var(--md-sys-motion-easing-spring-default-effects);
 
-  .md-otp-input__slots[data-hovered]:not([data-disabled]) &:not([data-active]) {
+  /* Hover darkens the stroke of unfocused slots — but never over the error role. */
+  .md-otp-input__slots[data-hovered]:not([data-disabled]):not([data-error]) &:not([data-active]) {
     border-color: var(--md-sys-color-on-surface);
     background-color: color-mix(
       in srgb,
@@ -86,17 +91,20 @@
     );
   }
 
-  &[data-active]:not([data-error]) {
-    border: 3px solid var(--md-sys-color-primary);
+  /* The active slot's geometry (3dp stroke, small corner) is the same with or
+     without an error; only its colour changes, as the kit's focused and error
+     text fields share one shape. */
+  &[data-active] {
+    border-width: 3px;
     border-radius: var(--md-sys-shape-corner-small);
+  }
+
+  &[data-active]:not([data-error]) {
+    border-color: var(--md-sys-color-primary);
   }
 
   &[data-error] {
     border-color: var(--md-sys-color-error);
-  }
-
-  &[data-active][data-error] {
-    border-width: 3px;
   }
 
   &[data-disabled] {

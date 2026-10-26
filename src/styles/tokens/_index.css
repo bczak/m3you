@@ -1,10 +1,11 @@
 /* =============================================================================
    M3 Design Token Index
-   Import order matters: shape/type/elevation/motion/state are independent,
+   Import order matters: shape/space/type/elevation/motion/state are independent,
    colors reference nothing, dark overrides light.
    ============================================================================= */
 
 @import "./sys.shape.css";
+@import "./sys.space.css";
 @import "./sys.typescale.css";
 @import "./sys.elevation.css";
 @import "./sys.motion.css";

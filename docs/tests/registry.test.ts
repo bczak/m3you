@@ -80,6 +80,23 @@ describe('component registry', () => {
     const slugs = COMPONENTS.map((entry) => entry.slug);
     expect(slugs.length).toBe(new Set(slugs).size);
   });
+
+  // The gallery card and the page header describe the same component. Updating
+  // one without the other leaves a card that says the component cannot do what
+  // its own page documents.
+  it('keeps each summary identical to its page description, minus the period', () => {
+    const drifted = COMPONENTS.flatMap((entry) => {
+      const page = readFileSync(resolve(componentPagesDir, `${entry.slug}.mdx`), 'utf8');
+      const description = page.match(/^---\n[\s\S]*?^description:\s*(.+)$[\s\S]*?^---$/m)?.[1].trim();
+      const expected = description?.replace(/\.$/, '');
+      return expected === entry.summary ? [] : [`${entry.slug}: "${entry.summary}" ≠ "${description}"`];
+    });
+    expect(drifted).toEqual([]);
+  });
+
+  it('writes summaries without a trailing period', () => {
+    expect(COMPONENTS.filter((entry) => entry.summary.endsWith('.')).map((entry) => entry.slug)).toEqual([]);
+  });
 });
 
 describe('generated props tables', () => {

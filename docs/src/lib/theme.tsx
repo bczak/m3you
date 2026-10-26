@@ -1,5 +1,6 @@
 import { generateM3Theme } from 'm3you';
 import { createContext, type ReactNode, use, useCallback, useEffect, useMemo, useState } from 'react';
+import { seedStylesheet } from './seed-css';
 
 /**
  * Seed colours offered in the header picker. The first entry is the library
@@ -26,17 +27,13 @@ const STYLE_ID = 'm3you-seed-tokens';
  * Inline styles would win over the `[data-theme="dark"]` rules in the library's
  * own token files, pinning the page to one palette. Emitting
  * `:root[data-theme="…"]` rules keeps light/dark switching in CSS where it
- * belongs — and `(0,2,0)` outranks both the base `:root` and `[data-theme]`
- * blocks it needs to override.
+ * belongs. The stylesheet also publishes the seed variables nested
+ * `data-theme` scopes read; see `seedStylesheet`.
  */
 function writeSeedStylesheet(seed: string) {
   if (typeof document === 'undefined') return;
 
   const { light, dark } = generateM3Theme(seed);
-  const block = (selector: string, tokens: Record<string, string>) =>
-    `${selector}{${Object.entries(tokens)
-      .map(([name, value]) => `${name}:${value};`)
-      .join('')}}`;
 
   let style = document.getElementById(STYLE_ID) as HTMLStyleElement | null;
   if (!style) {
@@ -45,12 +42,7 @@ function writeSeedStylesheet(seed: string) {
     document.head.append(style);
   }
 
-  style.textContent =
-    block(':root[data-theme="light"]', light) +
-    block(':root[data-theme="dark"]', dark) +
-    // Before next-themes resolves, no `data-theme` is set. Falling back to the
-    // light palette avoids a flash of the compiled-in default seed.
-    block(':root:not([data-theme])', light);
+  style.textContent = seedStylesheet(light, dark);
 }
 
 type SeedContextValue = {

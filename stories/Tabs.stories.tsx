@@ -20,12 +20,13 @@ const meta = {
       control: 'inline-radio',
       options: ['primary', 'secondary'],
       description:
-        'M3 tab hierarchy style. Primary tabs show the icon above the label; secondary tabs render a single-line label (icon-only supported).',
+        'M3 tab hierarchy style. Primary tabs show the icon above the label; secondary tabs put the icon and label in one row (icon-only supported).',
       table: { category: 'Appearance', defaultValue: { summary: 'primary' } },
     },
     fullWidth: {
       control: 'boolean',
-      description: 'When true, tabs stretch to fill the available width; when false, they size to content and scroll.',
+      description:
+        'When true, tabs stretch to fill the available width; when false, they size to content (at least 90px), start 52px in from the leading edge, and scroll.',
       table: { category: 'Layout', defaultValue: { summary: 'true' } },
     },
   },
@@ -140,6 +141,29 @@ function ScrollableTabsPreview({ variant }: { variant: ComponentProps<typeof Tab
   );
 }
 
+const shortSections = ['All', 'New', 'Top', 'Music', 'Live', 'Radio', 'Kids', 'News', 'Jazz', 'Rock', 'Pop', 'Folk'];
+
+/** Short labels hug to less than 90px, so every tab shows the scrollable configuration's 90px minimum width. */
+function ShortScrollableTabs({ variant }: { variant: ComponentProps<typeof Tabs>['variant'] }) {
+  const [value, setValue] = useState(shortSections[0]);
+
+  return (
+    <Tabs
+      variant={variant}
+      fullWidth={false}
+      value={value}
+      onValueChange={setValue}
+      aria-label={`${variant} short scrollable sections`}
+    >
+      {shortSections.map((section) => (
+        <Tab key={section} value={section}>
+          {section}
+        </Tab>
+      ))}
+    </Tabs>
+  );
+}
+
 export const Playground: Story = {
   args: {
     variant: 'primary',
@@ -194,6 +218,8 @@ export const Scrollable: Story = {
       >
         <ScrollableTabsPreview variant="primary" />
         <ScrollableTabsPreview variant="secondary" />
+        <ShortScrollableTabs variant="primary" />
+        <ShortScrollableTabs variant="secondary" />
       </div>
     </div>
   ),

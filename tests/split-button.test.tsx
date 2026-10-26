@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
@@ -6,6 +7,28 @@ import { SplitButtonAction } from '../src/components/SplitButton/split-button-ac
 import { SplitButtonMenu } from '../src/components/SplitButton/split-button-menu';
 
 afterEach(cleanup);
+
+// Comments stripped and whitespace collapsed, so selectors match however the
+// formatter wraps them.
+const splitCss = readFileSync('src/components/SplitButton/split-button.css', 'utf8')
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .replace(/\s+/g, ' ');
+
+/** Bodies of every rule whose whole selector list is exactly `selector`, joined. */
+function ruleBody(selector: string): string {
+  const bodies: string[] = [];
+  const head = `${selector} {`;
+  for (let at = splitCss.indexOf(head); at > -1; at = splitCss.indexOf(head, at + 1)) {
+    const before = splitCss.slice(0, at).trimEnd();
+    if (before !== '' && !before.endsWith('}') && !before.endsWith('{')) continue;
+    const open = at + head.length;
+    bodies.push(splitCss.slice(open, splitCss.indexOf('}', open)).trim());
+  }
+  expect(bodies, `missing rule: ${selector}`).not.toHaveLength(0);
+  return bodies.join(' ');
+}
+
+const HALVES = '.md-split-button > :is(.md-split-button__action, .md-split-button__trigger).md-button';
 
 // =============================================================================
 // SplitButton (Root)
@@ -329,4 +352,118 @@ test('morph=false drops data-morph from the group, action and menu trigger', () 
   expect(screen.getByTestId('group')).not.toHaveAttribute('data-morph');
   expect(screen.getByRole('button', { name: 'Save' })).not.toHaveAttribute('data-morph');
   expect(container.querySelector('.md-split-button__trigger')).not.toHaveAttribute('data-morph');
+});
+
+// =============================================================================
+// Styles (happy-dom loads no CSS, so these read the stylesheet text)
+// =============================================================================
+
+// Kit: a hovered or pressed half grows its two inner corners (XS 4→8, S/M 4→12,
+// L 8→20, XL 12→20). The old :hover/:active rules set border-radius at (0,4,0)
+// and always lost to the (0,5,0) resting rules; now the resting rules read a
+// custom property and the interaction rules only swap that property.
+test('per-size rest and interactive inner radii match the kit', () => {
+  const expected = {
+    xs: ['extra-small', 'small'],
+    sm: ['extra-small', 'medium'],
+    md: ['extra-small', 'medium'],
+    lg: ['small', 'large-increased'],
+    xl: ['medium', 'large-increased'],
+  } as const;
+  for (const [size, [rest, interactive]] of Object.entries(expected)) {
+    const body = ruleBody(`.md-split-button[data-size="${size}"]`);
+    expect(body).toContain(`--_split-inner: var(--md-sys-shape-corner-${rest});`);
+    expect(body).toContain(`--_split-interactive-inner: var(--md-sys-shape-corner-${interactive});`);
+  }
+});
+
+test('both halves draw their inner corners from --_split-half-inner', () => {
+  expect(ruleBody(HALVES)).toContain('--_split-half-inner: var(--_split-inner);');
+  expect(ruleBody('.md-split-button > .md-split-button__action.md-button[data-shape][data-size]')).toContain(
+    'border-radius: var(--_split-outer) var(--_split-half-inner) var(--_split-half-inner) var(--_split-outer);',
+  );
+  expect(ruleBody('.md-split-button > .md-split-button__trigger.md-button[data-shape][data-size]')).toContain(
+    'border-radius: var(--_split-half-inner) var(--_split-outer) var(--_split-outer) var(--_split-half-inner);',
+  );
+});
+
+test('hover and press swap the inner radius on enabled, morphing halves only', () => {
+  const press = ruleBody(`${HALVES}[data-morph]:not(:disabled):active`);
+  expect(press).toBe('--_split-half-inner: var(--_split-interactive-inner);');
+
+  // Hover is gated on a hover-capable pointer so a tap does not leave a half
+  // stuck in its hovered shape.
+  const hover = ruleBody(`@media (hover: hover) { ${HALVES}[data-morph]:not(:disabled):hover`);
+  expect(hover).toBe('--_split-half-inner: var(--_split-interactive-inner);');
+
+  // Nothing keyed on :hover or :active may set border-radius directly — that is
+  // the specificity contest the resting rules kept winning.
+  for (const [, selector, body] of splitCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    if (/:(hover|active)\b/.test(selector)) expect(body).not.toContain('border-radius');
+  }
+});
+
+test('an open trigger stays fully round over the hover morph', () => {
+  const open = ruleBody('.md-split-button[data-open] > .md-split-button__trigger.md-button[data-shape][data-size]');
+  expect(open).toContain('border-radius: var(--_split-outer);');
+});
+
+// Kit: the focus ring is drawn whole around the focused half (r=18/6/6/18 at
+// XS). It sits 2dp outside the half, across the 2dp gap, so without lifting the
+// focused half the trigger (painted after the action) covers the ring's inner side.
+test('a focused half rises above its partner so its whole ring shows', () => {
+  expect(ruleBody(`${HALVES}:focus-visible`)).toBe('z-index: 1;');
+
+  const { container } = render(
+    <SplitButton>
+      <SplitButtonAction>Save</SplitButtonAction>
+      <SplitButtonMenu>
+        <div />
+      </SplitButtonMenu>
+    </SplitButton>,
+  );
+  expect(screen.getByRole('button', { name: 'Save' }).matches(HALVES)).toBe(true);
+  expect((container.querySelector('.md-split-button__trigger') as HTMLElement).matches(HALVES)).toBe(true);
+});
+
+// Kit: Split button, Color=Outlined strokes both halves at 1dp at every size;
+// Button's own outlined lg / xl stroke is 2dp.
+test('outlined lg and xl halves keep a 1dp stroke', () => {
+  expect(
+    ruleBody('.md-split-button > .md-button[data-variant="outlined"]:is([data-size="lg"], [data-size="xl"])'),
+  ).toBe('--_outline-width: 1px;');
+  // The xs / sm action padding subtracts the stroke like Button's size rules do,
+  // so an outlined half is the same width as a filled one.
+  expect(ruleBody('.md-split-button[data-size="xs"] > .md-split-button__action.md-button')).toContain(
+    'padding-inline: calc(12px - var(--_outline-width)) calc(10px - var(--_outline-width));',
+  );
+  expect(ruleBody('.md-split-button[data-size="sm"] > .md-split-button__action.md-button')).toContain(
+    'padding-inline: calc(16px - var(--_outline-width)) calc(12px - var(--_outline-width));',
+  );
+});
+
+// Kit: disabled outlined halves have no container fill and an On Surface @10%
+// stroke. Selected halves are excluded so they keep Button's strokeless fill.
+test('disabled outlined halves are unfilled with an on-surface 10% stroke', () => {
+  const body = ruleBody(
+    '.md-split-button > .md-button[data-variant="outlined"]:is(:disabled, [data-disabled]):not([data-selected="true"])',
+  );
+  expect(body).toContain('background-color: transparent;');
+  expect(body).toContain(
+    'border-color: color-mix( in srgb, var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%), transparent );',
+  );
+});
+
+test('disabled root disables both halves', () => {
+  const { container } = render(
+    <SplitButton variant="outlined" disabled data-testid="root">
+      <SplitButtonAction>Save</SplitButtonAction>
+      <SplitButtonMenu>
+        <div />
+      </SplitButtonMenu>
+    </SplitButton>,
+  );
+  expect(screen.getByTestId('root')).toHaveAttribute('data-disabled', 'true');
+  expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+  expect(container.querySelector('.md-split-button__trigger')).toBeDisabled();
 });

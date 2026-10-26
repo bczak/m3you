@@ -12,6 +12,8 @@ import { IconButton } from '../IconButton/icon-button';
 
 export interface SideSheetProps extends Omit<DrawerPrimitive.Root.Props, 'swipeDirection'> {
   /** Whether the side sheet is modal (with scrim) or standard (no scrim).
+   * `'trap-focus'` keeps the modal presentation (scrim, surface-container-low,
+   * rounded corners) and traps focus, but does not lock page scroll.
    * @default true
    */
   modal?: boolean | 'trap-focus';

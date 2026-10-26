@@ -1,6 +1,7 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
-import { afterEach, expect, test } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import {
   Dialog,
   DialogBody,
@@ -23,6 +24,27 @@ import {
 } from '../src/components/Dialog/dialog';
 
 afterEach(cleanup);
+
+// happy-dom loads no CSS and applies no layout, so the layout contract is read
+// from the stylesheet text.
+const dialogCss = readFileSync('src/components/Dialog/dialog.css', 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+
+/** The declarations of the first rule whose selector is exactly `selector`, nested rules excluded. */
+function ruleBody(selector: string): string {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const start = dialogCss.search(new RegExp(`(?:^|\\n)[ \\t]*${escaped} \\{`));
+  if (start < 0) throw new Error(`no rule for ${selector}`);
+  let depth = 0;
+  let body = '';
+  for (let i = dialogCss.indexOf('{', start); i < dialogCss.length; i++) {
+    const char = dialogCss[i];
+    if (char === '{') depth++;
+    else if (char === '}') depth--;
+    if (depth === 0) break;
+    if (depth === 1 && char !== '{') body += char;
+  }
+  return body;
+}
 
 // =============================================================================
 // Dialog (Root) + Trigger
@@ -283,6 +305,84 @@ test('DialogBody renders with class and slot', () => {
   expect(body).toHaveClass('custom-body');
 });
 
+test('DialogBody has no data-bleed by default', () => {
+  render(
+    <Dialog defaultOpen>
+      <DialogContent>
+        <DialogBody data-testid="body">Body content</DialogBody>
+      </DialogContent>
+    </Dialog>,
+  );
+  expect(screen.getByTestId('body')).not.toHaveAttribute('data-bleed');
+});
+
+test('DialogBody bleed sets data-bleed and forwards its ref', () => {
+  const ref = createRef<HTMLDivElement>();
+  render(
+    <Dialog defaultOpen>
+      <DialogContent>
+        <DialogBody data-testid="body" ref={ref} bleed>
+          List
+        </DialogBody>
+      </DialogContent>
+    </Dialog>,
+  );
+  const body = screen.getByTestId('body');
+  expect(body).toHaveAttribute('data-bleed', 'true');
+  expect(ref.current).toBe(body);
+});
+
+test('a plain DialogBody stays a direct child of DialogContent, with no frame', () => {
+  // Consumers' `.md-dialog-content > .md-dialog-body` selectors and their flex
+  // styles on the body rely on the body being the popup's own child.
+  const ref = createRef<HTMLDivElement>();
+  render(
+    <Dialog defaultOpen>
+      <DialogContent data-testid="content">
+        <DialogDescription>Text</DialogDescription>
+        <DialogBody data-testid="body" ref={ref}>
+          Body content
+        </DialogBody>
+      </DialogContent>
+    </Dialog>,
+  );
+  const content = screen.getByTestId('content');
+  const body = screen.getByTestId('body');
+  expect(body.parentElement).toBe(content);
+  expect(content.querySelector(':scope > .md-dialog-body')).toBe(body);
+  expect(content.querySelector('.md-dialog-description + .md-dialog-body')).toBe(body);
+  expect(content.querySelector('.md-dialog-body__frame')).toBeNull();
+  expect(ref.current).toBe(body);
+});
+
+test('a bleeding DialogBody sits in a frame, but its ref, props and slot stay on the element that scrolls', () => {
+  const ref = createRef<HTMLDivElement>();
+  const onScroll = vi.fn();
+  render(
+    <Dialog defaultOpen>
+      <DialogContent data-testid="content">
+        <DialogBody data-testid="body" ref={ref} className="custom-body" onScroll={onScroll} bleed>
+          Body content
+        </DialogBody>
+      </DialogContent>
+    </Dialog>,
+  );
+  const body = screen.getByTestId('body');
+  const frame = body.parentElement as HTMLElement;
+  // The frame is the popup's direct child, which the floor rule selects on…
+  expect(frame).toHaveClass('md-dialog-body__frame');
+  expect(frame.parentElement).toBe(screen.getByTestId('content'));
+  expect(frame.children).toHaveLength(1);
+  expect(frame).not.toHaveAttribute('data-slot');
+  // …while everything the consumer passes lands on the scroll box itself.
+  expect(ref.current).toBe(body);
+  expect(body).toHaveAttribute('data-slot', 'dialog-body');
+  expect(body).toHaveClass('md-dialog-body', 'custom-body');
+  expect(frame).not.toHaveClass('custom-body');
+  fireEvent.scroll(body);
+  expect(onScroll).toHaveBeenCalledTimes(1);
+});
+
 test('DialogDivider renders as hr with class', () => {
   render(
     <Dialog defaultOpen>
@@ -312,6 +412,148 @@ test('DialogFooter renders with class and slot', () => {
   expect(footer).toHaveAttribute('data-slot', 'dialog-footer');
   expect(footer).toHaveClass('md-dialog-footer');
   expect(footer).toHaveClass('custom-footer');
+});
+
+// =============================================================================
+// Layout contract (kit: Dialogs / Basic, List and Scrollable list dialog)
+// =============================================================================
+
+test('the container is a column, so the body scrolls instead of overflowing the popup', () => {
+  const content = ruleBody('.md-dialog-content');
+  expect(content).toContain('display: flex;');
+  expect(content).toContain('flex-direction: column;');
+  expect(content).not.toContain('display: grid');
+  expect(content).toContain('max-height: calc(100dvh - 48px);');
+});
+
+test('the container scrolls as a last resort rather than clipping pinned parts out of reach', () => {
+  // When the pinned header, description and actions alone outgrow max-height,
+  // a clipped (overflow: hidden) popup hid them for good; it must scroll
+  // vertically instead, while still clipping the full-width parts sideways.
+  const content = ruleBody('.md-dialog-content');
+  expect(content).toContain('overflow: hidden auto;');
+  expect(content).not.toMatch(/overflow: hidden;/);
+});
+
+test('forced colours keep the divider and the container edge visible', () => {
+  const start = dialogCss.indexOf('@media (forced-colors: active)');
+  expect(start).toBeGreaterThan(-1);
+  const forced = dialogCss.slice(start);
+  expect(forced).toMatch(/\.md-dialog-content \{\s*outline: 1px solid CanvasText;/);
+  expect(forced).toMatch(/\.md-dialog-divider \{\s*background-color: CanvasText;/);
+});
+
+test('the header, dividers and actions stay pinned while the description and body scroll', () => {
+  for (const selector of ['.md-dialog-header', '.md-dialog-divider', '.md-dialog-footer']) {
+    expect(ruleBody(selector), selector).toContain('flex-shrink: 0;');
+  }
+  const scrolling = ruleBody('.md-dialog-description,\n.md-dialog-body');
+  expect(scrolling).toContain('min-height: 0;');
+  expect(scrolling).toContain('overflow-y: auto;');
+  expect(scrolling).not.toContain('flex-shrink: 0');
+  // …but with a body beside it, plain or in its frame, the description stays
+  // pinned and the body alone scrolls.
+  expect(ruleBody('&:has(> .md-dialog-body, > .md-dialog-body__frame) > .md-dialog-description')).toContain(
+    'flex-shrink: 0;',
+  );
+});
+
+test('a bleeding body keeps a floor of two list rows instead of collapsing to 0px when the pinned parts fill the dialog', () => {
+  // The body is a scroll container, whose automatic minimum height in a flex
+  // column is 0: with a header, text and actions taller than max-height (a
+  // short landscape phone, 400% zoom), it shrank to nothing and its list could
+  // not be seen. Its frame is not a scroll container, so its automatic minimum
+  // is min(content, height): the floor holds a long list without padding a
+  // short one, and flex-basis: content keeps the content height otherwise.
+  expect(ruleBody('.md-dialog-body__frame')).toContain('display: contents;');
+  const supports = dialogCss.indexOf('@supports (flex-basis: content)');
+  expect(supports).toBeGreaterThan(-1);
+  const frameRule = dialogCss.indexOf('.md-dialog-content > .md-dialog-body__frame {');
+  expect(frameRule).toBeGreaterThan(supports);
+  const frame = ruleBody('.md-dialog-content > .md-dialog-body__frame');
+  expect(frame).toContain('--_floor: 112px;');
+  expect(frame).toContain('display: flex;');
+  expect(frame).toContain('flex-direction: column;');
+  expect(frame).toContain('flex-basis: content;');
+  // The floor sits below the bleeding body's 24px top margin.
+  expect(frame).toContain('height: calc(24px + var(--_floor));');
+  expect(frame).not.toContain('overflow');
+  // A min-height on the body itself would pad a one-line body out to the floor.
+  const scrolling = ruleBody('.md-dialog-description,\n.md-dialog-body');
+  expect(scrolling).toContain('min-height: 0;');
+  expect(ruleBody('.md-dialog-body[data-bleed]')).not.toContain('min-height');
+});
+
+test("the body's frame takes a fixed-height dialog's spare space, so a body styled flex: 1 still fills it", () => {
+  // The frame, not the body, is the popup's flex item: without growing, a
+  // consumer's `flex: 1` on DialogBody grew only within a content-sized frame,
+  // and in a dialog given a height the body stayed short with the actions
+  // floating above empty space. An auto-height dialog has no spare space.
+  const frame = ruleBody('.md-dialog-content > .md-dialog-body__frame');
+  expect(frame).toContain('flex-grow: 1;');
+  expect(frame).toContain('flex-basis: content;');
+  expect(frame).not.toMatch(/flex-shrink: 0|flex: none/);
+});
+
+test('the description and body reset their whole margin, not just the top', () => {
+  // The description is a <p>: a top-only override left its 1em bottom margin
+  // on top of the actions' 24px.
+  expect(ruleBody('.md-dialog-description,\n.md-dialog-body')).toContain('margin: 16px 0 0;');
+  expect(ruleBody('.md-dialog-footer')).toContain('margin-top: 24px;');
+});
+
+test('a bleeding body spans the container 24px below the text', () => {
+  expect(ruleBody('.md-dialog-content')).toContain('--_padding: 24px;');
+  expect(ruleBody('.md-dialog-content')).toContain('padding: var(--_padding);');
+  expect(ruleBody('.md-dialog-body[data-bleed]')).toContain('margin: 24px calc(-1 * var(--_padding)) 0;');
+});
+
+test('a divider directly in the content runs edge to edge; one in the body stays inset', () => {
+  const fullWidth = ruleBody('& > .md-dialog-divider');
+  expect(fullWidth).toContain('width: auto;');
+  expect(fullWidth).toContain('margin-inline: calc(-1 * var(--_padding));');
+  expect(ruleBody('.md-dialog-divider')).toContain('width: 100%;');
+  expect(ruleBody('.md-dialog-divider')).toContain('margin: 16px 0 0;');
+});
+
+test('the icon slot is a flex box, so it is exactly the 24px icon', () => {
+  expect(ruleBody('.md-dialog-icon')).toContain('display: flex;');
+  expect(ruleBody('& svg')).toContain('width: 24px;');
+});
+
+test('the parts render as direct children of the popup, which the full-width rules select on', () => {
+  render(
+    <Dialog defaultOpen>
+      <DialogContent data-testid="content">
+        <DialogHeader>
+          <DialogTitle>Title</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>Text</DialogDescription>
+        <DialogDivider />
+        <DialogBody bleed>List</DialogBody>
+        <DialogDivider />
+        <DialogFooter>Actions</DialogFooter>
+      </DialogContent>
+    </Dialog>,
+  );
+  // A bleeding body is the one part wrapped in a frame; the frame is the direct child.
+  const slots = [...screen.getByTestId('content').children].map(
+    (child) =>
+      child.getAttribute('data-slot') ?? `${child.className} > ${child.firstElementChild?.getAttribute('data-slot')}`,
+  );
+  expect(slots).toEqual([
+    'dialog-header',
+    'dialog-description',
+    'dialog-divider',
+    'md-dialog-body__frame > dialog-body',
+    'dialog-divider',
+    'dialog-footer',
+  ]);
+});
+
+test('the dialog draws no drop shadow, like every kit dialog variant', () => {
+  expect(dialogCss).not.toContain('box-shadow');
+  expect(ruleBody('.md-dialog-content')).toContain('background-color: var(--md-sys-color-surface-container-high);');
 });
 
 // =============================================================================

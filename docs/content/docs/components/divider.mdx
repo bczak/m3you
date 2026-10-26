@@ -25,6 +25,13 @@ is not enough — Material 3 leans on spacing first.
 
 <Example name="divider/basic" title="Full width, inset and heavy" layout="stretch" />
 
+## Accessibility
+
+The divider renders as an `<hr>`, so assistive technology reads it as a
+separator; vertical dividers also set `aria-orientation="vertical"`. In
+forced-colors mode (Windows High Contrast) every variant draws its line in the
+`CanvasText` system colour, so it stays visible against the page.
+
 ## Props
 
 <PropsTable of="Divider" extends="<hr>" />

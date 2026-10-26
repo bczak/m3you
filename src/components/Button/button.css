@@ -7,6 +7,9 @@
    ============================================================================= */
 
 .md-button {
+  /* Outline stroke width. Non-zero only on outlined sizes; the inline padding
+     subtracts it so the stroke sits inside the same box as a filled button. */
+  --_outline-width: 0px;
   box-sizing: border-box;
   position: relative;
   display: inline-flex;
@@ -24,12 +27,16 @@
   line-height: var(--md-sys-typescale-label-large-line-height);
   font-weight: var(--md-sys-typescale-label-large-weight);
   letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  /* border-color rides with background-color: selecting an outlined toggle
+     swaps its stroke for the inverse-surface fill, and both must fade together
+     or the stroke snaps on/off over the still-animating fill. */
   transition:
-    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     border-radius var(--md-sys-motion-duration-spring-default-effects)
     var(--md-sys-motion-easing-spring-default-effects),
-    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     padding-inline var(--md-sys-motion-duration-spring-default-spatial)
     var(--md-sys-motion-easing-spring-default-spatial);
   outline: none;
@@ -51,8 +58,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
     background-image: linear-gradient(
       color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent),
       color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent)
@@ -72,7 +79,7 @@
   &[data-size="xs"] {
     --_height: 32px;
     height: var(--_height);
-    padding-inline: 12px;
+    padding-inline: calc(12px - var(--_outline-width));
     gap: 4px;
     & svg {
       width: 20px;
@@ -83,7 +90,7 @@
   &[data-size="sm"] {
     --_height: 40px;
     height: var(--_height);
-    padding-inline: 16px;
+    padding-inline: calc(16px - var(--_outline-width));
 
     & svg {
       width: 20px;
@@ -94,7 +101,7 @@
   &[data-size="md"] {
     --_height: 56px;
     height: var(--_height);
-    padding-inline: 24px;
+    padding-inline: calc(24px - var(--_outline-width));
     gap: 8px;
     font-family: var(--md-sys-typescale-title-medium-font);
     font-size: var(--md-sys-typescale-title-medium-size);
@@ -111,7 +118,7 @@
   &[data-size="lg"] {
     --_height: 96px;
     height: var(--_height);
-    padding-inline: 48px;
+    padding-inline: calc(48px - var(--_outline-width));
     gap: 12px;
     font-family: var(--md-sys-typescale-headline-small-font);
     font-size: var(--md-sys-typescale-headline-small-size);
@@ -128,7 +135,7 @@
   &[data-size="xl"] {
     --_height: 136px;
     height: var(--_height);
-    padding-inline: 64px;
+    padding-inline: calc(64px - var(--_outline-width));
     gap: 16px;
     font-family: var(--md-sys-typescale-headline-large-font);
     font-size: var(--md-sys-typescale-headline-large-size);
@@ -243,18 +250,20 @@
     color: var(--md-sys-color-on-surface-variant);
   }
 
+  /* The kit draws the stroke inside the container, so an outlined button is
+     the same size as a filled one: the size rules subtract --_outline-width
+     from their inline padding. */
   &[data-variant="outlined"][data-size="xs"],
   &[data-variant="outlined"][data-size="sm"],
   &[data-variant="outlined"][data-size="md"] {
-    border: 1px solid var(--md-sys-color-outline-variant);
+    --_outline-width: 1px;
+    border: var(--_outline-width) solid var(--md-sys-color-outline-variant);
   }
 
-  &[data-variant="outlined"][data-size="lg"] {
-    border: 2px solid var(--md-sys-color-outline-variant);
-  }
-
+  &[data-variant="outlined"][data-size="lg"],
   &[data-variant="outlined"][data-size="xl"] {
-    border: 2px solid var(--md-sys-color-outline-variant);
+    --_outline-width: 2px;
+    border: var(--_outline-width) solid var(--md-sys-color-outline-variant);
   }
 
   /* ── Variant: text ── */
@@ -303,10 +312,11 @@
     }
   }
 
+  /* Selection changes colour only: the per-size elevation (1 / 2 / 3) above
+     still applies, as in the kit's Selected=True and Selected=False variants. */
   &[data-selected="false"][data-variant="elevated"] {
     background-color: var(--md-sys-color-surface-container-low);
     color: var(--md-sys-color-primary);
-    box-shadow: var(--md-sys-elevation-1);
   }
 
   &[data-selected="false"][data-variant="tonal"] {
@@ -337,7 +347,6 @@
   &[data-selected="true"][data-variant="elevated"] {
     background-color: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
-    box-shadow: var(--md-sys-elevation-1);
   }
 
   &[data-selected="true"][data-variant="tonal"] {
@@ -434,10 +443,14 @@
     border-radius: calc(var(--_height) / 2);
   }
 
-  /* ── Disabled overrides (must come after selected rules to win cascade) ── */
+  /* ── Disabled overrides (must come after selected rules to win cascade) ──
+     Every variant, text and outlined included, gets the on-surface 10%
+     container in the kit; outlined keeps its stroke on top. */
   &:is([data-disabled], :disabled)[data-variant="filled"],
   &:is([data-disabled], :disabled)[data-variant="elevated"],
-  &:is([data-disabled], :disabled)[data-variant="tonal"] {
+  &:is([data-disabled], :disabled)[data-variant="tonal"],
+  &:is([data-disabled], :disabled)[data-variant="text"],
+  &:is([data-disabled], :disabled)[data-variant="outlined"] {
     background-color: color-mix(
       in srgb,
       var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
@@ -452,27 +465,8 @@
     background-image: none;
   }
 
-  &:is([data-disabled], :disabled)[data-variant="text"] {
-    background-color: transparent;
-    color: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
-      transparent
-    );
-    box-shadow: none;
-    background-image: none;
-  }
-
   &:is([data-disabled], :disabled)[data-variant="outlined"] {
-    background-color: transparent;
-    color: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
-      transparent
-    );
     border-color: var(--md-sys-color-outline-variant);
-    box-shadow: none;
-    background-image: none;
   }
 
   &:is([data-disabled], :disabled)[data-selected="true"][data-variant="outlined"] {

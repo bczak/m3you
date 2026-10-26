@@ -1,7 +1,10 @@
 /* =============================================================================
-   Search — M3 Spec
-   Bar: height 56px, shape full, bg surface-container-high, elevation level3
-   Avatar: 30px corner-full
+   Search — M3 Expressive Spec
+   Bar: height 56dp pill, 4dp inline padding, bg surface-container-high, flat
+   Trailing: 48dp icon slot + avatar target (8dp, 30dp avatar, 12dp)
+   View: contained (Expressive, the default) splits bar and results 2dp apart;
+         full-screen fills Surface Container Low and its bar widens from 24dp
+         to 12dp margins while focused. Divided (baseline) is the opt-in.
    Font: body-large
    Source: m3.material.io/components/search/specs
    ============================================================================= */
@@ -13,15 +16,18 @@
 }
 
 .md-search-bar {
+  --_height: 56px;
   position: relative;
   display: flex;
   box-sizing: border-box;
-  height: 56px;
+  height: var(--_height);
   width: 100%;
   align-items: center;
   margin: 0;
-  padding: 0;
-  border-radius: 28px;
+  /* The kit's state layer pads 4dp all round: the 48dp leading slot then
+     centres its glyph 28dp from the edge and the query starts at 56dp. */
+  padding: 0 4px;
+  border-radius: calc(var(--_height) / 2);
   background-color: var(--md-sys-color-surface-container-high);
   font-family: var(--md-sys-typescale-body-large-font);
   font-size: var(--md-sys-typescale-body-large-size);
@@ -33,10 +39,24 @@
   overflow: hidden;
   text-align: start;
   -webkit-appearance: none;
+  transition: background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+  }
+
+  /* The plain bar holds a text input instead of a Ripple, so its 8% hover
+     layer over the whole bar is painted here. The expandable bar (a button)
+     gets the same layer from its Ripple. */
+  @media (hover: hover) {
+    &:not(button):hover {
+      background-color: color-mix(
+        in srgb,
+        var(--md-sys-color-surface-container-high),
+        var(--md-sys-color-on-surface) calc(var(--md-sys-state-hover-opacity) * 100%)
+      );
+    }
   }
 }
 
@@ -99,17 +119,47 @@
   }
 }
 
-/* ── SearchBar trailing (icon button container) ── */
+/* ── SearchBar trailing slot ──
+   The kit's 48dp trailing-icon target. It holds the consumer's own content: an
+   IconButton (centred, keeping its 40dp circular state layer) or a plain icon. */
 .md-search-bar__trailing {
   display: inline-flex;
   flex: 0 0 48px;
   width: 48px;
   height: 48px;
-  margin: 0 4px 0 0;
-  padding: 0;
   align-items: center;
   justify-content: center;
-  pointer-events: auto;
+  color: var(--md-sys-color-on-surface-variant);
+
+  & > svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ── SearchBar clear button ──
+   A 40dp IconButton with 4dp either side fills the same 48dp slot, so its state
+   layer and focus ring stay a 40dp circle and its glyph stays centred 28dp
+   from the bar's edge. */
+.md-search-bar__clear {
+  flex-shrink: 0;
+  margin-inline: 4px;
+}
+
+/* ── SearchBar avatar target ──
+   8dp before and 12dp after a 30dp avatar, so the avatar ends 16dp from the
+   bar's edge. */
+.md-search-bar__avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 48px;
+  align-items: center;
+  padding-inline: 8px 12px;
+
+  & > .md-avatar {
+    width: 30px;
+    height: 30px;
+  }
 }
 
 /* ── SearchView ── */
@@ -121,28 +171,41 @@
   color: var(--md-sys-color-on-surface);
   overflow: hidden;
 
+  /* Full-screen covers the whole viewport. It outranks the expanded overlay's
+     wide-screen docked placement, including its max-height cap, so a
+     SearchBar with viewMode="fullScreen" also covers the screen on desktop. */
   &[data-mode="fullScreen"] {
     position: fixed;
     inset: 0;
+    max-height: none;
   }
 
+  /* Docked (baseline) is a flat card rounded 28dp on every corner: the kit
+     gives the docked layout no shadow. */
   &[data-mode="docked"] {
-    border-radius: 28px 28px 4px 4px;
-    box-shadow: var(--md-sys-elevation-5);
+    border-radius: var(--md-sys-shape-corner-extra-large);
   }
 
+  /* Expressive (contained, the default) splits the query bar and the results
+     into two surfaces 2dp apart, neither with a shadow. */
   &[data-appearance="expressive"] {
-    gap: 8px;
+    gap: 2px;
     overflow: visible;
     background-color: transparent;
-    box-shadow: none;
+  }
+
+  /* Full-screen contained covers the page with the search view's own
+     background, Surface Container Low, under its bar and unfilled results. */
+  &[data-mode="fullScreen"][data-appearance="expressive"] {
+    background-color: var(--md-sys-color-surface-container-low);
   }
 }
 
 /* ── SearchView header ── */
 .md-search-view__header {
+  --_height: 56px;
   display: flex;
-  height: 72px;
+  height: var(--_height);
   flex-shrink: 0;
   align-items: center;
   gap: 4px;
@@ -150,13 +213,38 @@
   box-sizing: border-box;
   background-color: var(--md-sys-color-surface-container-high);
 
-  .md-search-view[data-appearance="expressive"] & {
-    border-radius: 28px;
-    box-shadow: var(--md-sys-elevation-3);
+  /* The height follows the layout, not the viewport: full-screen (baseline)
+     is 72dp; docked, and the Expressive search bar in either layout, are 56dp. */
+  .md-search-view[data-mode="fullScreen"]:not([data-appearance="expressive"]) > & {
+    --_height: 72px;
   }
 
-  @media (min-width: 768px) {
-    height: 56px;
+  /* The contained bar is a pill. Its inline margins move it through space, so
+     they ride the spatial spring; only the full-screen layout changes them. */
+  .md-search-view[data-appearance="expressive"] > & {
+    border-radius: calc(var(--_height) / 2);
+    transition: margin-inline var(--md-sys-motion-duration-spring-fast-spatial)
+      var(--md-sys-motion-easing-spring-fast-spatial);
+  }
+
+  /* Full-screen contained insets the bar 24dp from each screen edge at rest
+     and widens it to 12dp while the search has focus. The margins shrink a
+     stretched flex item rather than adding to a 100% width, so nothing
+     overflows. The input takes focus a frame after mount, so an opening view
+     plays the widening. */
+  .md-search-view[data-mode="fullScreen"][data-appearance="expressive"] > & {
+    margin-inline: 24px;
+  }
+
+  .md-search-view[data-mode="fullScreen"][data-appearance="expressive"]:focus-within > & {
+    margin-inline: 12px;
+  }
+
+  /* Reduced motion: the bar snaps between its margins. */
+  @media (prefers-reduced-motion: reduce) {
+    .md-search-view[data-appearance="expressive"] > & {
+      transition: none;
+    }
   }
 }
 
@@ -164,6 +252,9 @@
 .md-search-view__input {
   flex: 1;
   min-width: 0;
+  /* Replaces the UA padding: 8dp + 40dp back button + 4dp gap + 4dp puts the
+     query at 56dp, where the kit starts it. */
+  padding: 0 4px;
   background-color: transparent;
   font-family: var(--md-sys-typescale-body-large-font);
   font-size: var(--md-sys-typescale-body-large-size);
@@ -199,12 +290,16 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  border-radius: 0 0 4px 4px;
 
-  .md-search-view[data-appearance="expressive"] & {
-    border-radius: 12px;
-    background-color: var(--md-sys-color-surface-container);
-    box-shadow: var(--md-sys-elevation-3);
+  /* Contained results are their own 12dp surface. Docked fills it with
+     Surface Container High, the bar's role; full-screen leaves it unfilled on
+     the view's Surface Container Low, as the kit does. */
+  .md-search-view[data-appearance="expressive"] > & {
+    border-radius: var(--md-sys-shape-corner-medium);
+  }
+
+  .md-search-view[data-mode="docked"][data-appearance="expressive"] > & {
+    background-color: var(--md-sys-color-surface-container-high);
   }
 }
 
@@ -240,6 +335,54 @@
   }
 }
 
+/* Below 768px the expanded overlay covers the screen whatever its mode, so it
+   takes the full-screen layout: square corners, the 72dp baseline header, and
+   for contained the Surface Container Low fill, the bar inset 24dp widening to
+   12dp while focused, and unfilled results. */
+@media (width < 768px) {
+  .md-search-view.md-search-view--expanded {
+    border-radius: 0;
+
+    &:not([data-appearance="expressive"]) > .md-search-view__header {
+      --_height: 72px;
+    }
+
+    &[data-appearance="expressive"] {
+      background-color: var(--md-sys-color-surface-container-low);
+
+      & > .md-search-view__header {
+        margin-inline: 24px;
+      }
+
+      &:focus-within > .md-search-view__header {
+        margin-inline: 12px;
+      }
+
+      & > .md-search-view__content {
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+/* Forced colors repaints every surface Canvas and drops shadows, which erases
+   the bar, the docked card, the contained surfaces and the divider's 1px fill.
+   Outline the surfaces and draw the divider in a system colour instead. The
+   bar's focus ring (higher specificity) still replaces its outline. */
+@media (forced-colors: active) {
+  .md-search-bar,
+  .md-search-view[data-mode="docked"]:not([data-appearance="expressive"]),
+  .md-search-view[data-appearance="expressive"] > .md-search-view__header,
+  .md-search-view[data-mode="docked"][data-appearance="expressive"] > .md-search-view__content {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+
+  .md-search-view__divider {
+    background-color: CanvasText;
+  }
+}
+
 /* ── SearchSuggestionItem ── */
 .md-search-suggestion-item {
   position: relative;
@@ -262,8 +405,14 @@
   -webkit-appearance: none;
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: -2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
+  }
+
+  /* Expressive search lists use Corner/Extra-small list items; the Ripple and
+     focus ring follow the radius. */
+  .md-search-view[data-appearance="expressive"] & {
+    border-radius: var(--md-sys-shape-corner-extra-small);
   }
 }
 

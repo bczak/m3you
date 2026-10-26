@@ -77,6 +77,35 @@ export const InputMode: Story = {
   render: () => <TimePicker defaultValue={{ hours: 9, minutes: 15 }} defaultMode="input" />,
 };
 
+// The 24-hour keyboard picker drops the period selector and narrows to 264px.
+export const InputModeTwentyFourHour: Story = {
+  render: () => <TimePicker defaultValue={{ hours: 21, minutes: 15 }} format="24h" defaultMode="input" />,
+};
+
+// Passing `open` turns on the built-in Cancel / OK actions: edits stay in a
+// draft until OK commits them. The dial is also a keyboard slider — Tab to it
+// and use the arrow keys, Page Up/Down, Home/End, and Enter to move to minutes.
+function WithActionsStory() {
+  const [open, setOpen] = useState(true);
+  const [value, setValue] = useState(DEFAULT_TIME);
+  return (
+    <div style={stackStyle}>
+      <span style={selectionStyle}>Committed: {formatStoryTime(value, '12h')}</span>
+      {open ? (
+        <TimePicker open={open} onOpenChange={setOpen} value={value} onChange={setValue} orientation="portrait" />
+      ) : (
+        <Button variant="filled" size="sm" shape="round" onClick={() => setOpen(true)}>
+          Reopen
+        </Button>
+      )}
+    </div>
+  );
+}
+
+export const WithActions: Story = {
+  render: () => <WithActionsStory />,
+};
+
 export const Landscape: Story = {
   render: () => <TimePicker defaultValue={{ hours: 16, minutes: 20 }} orientation="landscape" />,
 };
@@ -94,6 +123,10 @@ export const AutoOrientation: Story = {
 // =============================================================================
 // Wrapped in Dialog — consumer composes their own modal
 // =============================================================================
+
+// The inline picker takes no role, so the DialogContent is the one dialog and
+// carries the name. With `open`, a picker inside a DialogContent also leaves the
+// dialog role to it.
 
 function InsideDialogStory() {
   const [open, setOpen] = useState(false);

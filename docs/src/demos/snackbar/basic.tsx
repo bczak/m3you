@@ -11,6 +11,11 @@ export default function SnackbarBasic() {
         actionLabel="Retry"
         closable
       />
+      <Snackbar
+        layout="longerAction"
+        message="This item will be deleted in 5 days. Restore it from the bin before then."
+        actionLabel="Learn more"
+      />
     </div>
   );
 }
