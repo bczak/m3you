@@ -1,16 +1,165 @@
 ---
 title: Date picker
-description: A calendar for choosing a single date.
+description: A calendar or text field for choosing a date or a date range, inline or as a dialog.
 ---
 
 The date picker renders a month calendar with animated month transitions.
-Constrain the selectable range with `minDate` and `maxDate`.
+Constrain the selectable range with `minDate` and `maxDate`: days outside the
+range are disabled, months and years that lie entirely outside it are disabled
+in the month and year lists, and the prev/next arrows stop at the range edges.
 
 <Example
   name="date-picker/basic"
   title="Selecting a date"
   description="The selected date appears below the calendar."
 />
+
+## Variants
+
+`variant="docked"` (the default inline) has separate month and year menus, each
+between its own prev/next arrows, and both open a list. While a list is open
+the arrows are hidden and the other menu is dimmed.
+
+`variant="modal"` (the default when `open` is passed) has a single "Month Year"
+menu with the month arrows on the right; the menu opens a three-column grid of
+years.
+
+## Dialog
+
+Pass `open` and `onOpenChange` to get the modal date picker, the same way as the
+[time picker](/docs/components/time-picker). It shows a "Select date" header
+over the date being edited, a button that switches to keyboard input, and
+Cancel and OK text buttons. Picks stay in a draft until OK commits them through
+`onChange`. Cancel discards them, and every opening starts again from the
+committed value. `open={false}` renders nothing. `headerLabel` replaces the
+"Select date" text.
+
+The picker does not add a scrim or trap focus. For a true modal, place it in a
+`DialogContent` with the padding and fill removed, as below. The `Dialog`
+supplies the scrim, focus trap and Escape-to-close.
+
+On its own, the picker is the dialog surface (`role="dialog"`, named by its
+header). It is not marked `aria-modal`, because nothing behind it is made
+inert. Inside an element that is already a dialog, such as a `DialogContent` or
+a popover, the picker takes no role. The outer element is then the only dialog,
+so give it the name, for example `aria-label="Select date"` or the text you
+passed as `headerLabel`. The [time picker](/docs/components/time-picker)
+follows the same rules. Like `Dialog`, the dialog surface draws no shadow.
+
+<Example
+  name="date-picker/modal"
+  title="Modal date picker"
+  description="The built-in header and Cancel / OK actions, inside a Dialog."
+/>
+
+## Keyboard input
+
+The header's pencil button switches to a text field for typing the date as
+`mm/dd/yyyy`. One-digit months and days, and `-` or `.` separators, are also
+accepted, as are eight digits with no separators (`mmddyyyy`). The field asks
+for a numeric keypad, and a phone's keypad has no `/` key. `defaultMode="input"`
+starts there. `mode` and `onModeChange` control
+the mode from outside. The field shows an error for a date that does not exist,
+or one outside `minDate` and `maxDate`. A short entry is only flagged once the
+field loses focus. OK will not commit while the entry is invalid. Enter in the
+field works like OK.
+
+<Example
+  name="date-picker/keyboard-input"
+  title="Keyboard input"
+  description="Typing a date, limited to this year."
+/>
+
+Without `open`, `mode="input"` renders the text field on its own. It calls
+`onChange` whenever the typed date changes, with `null` while the entry is
+empty or invalid.
+
+## Range selection
+
+`selectionMode="range"` picks a start and an end date. `value`, `defaultValue`
+and `onChange` then carry a `[start, end]` tuple (the `DateRange` type) instead
+of a single date, and TypeScript checks each mode's value type. An end that has
+not been picked yet is `null`.
+
+The first pick sets the start. The next pick on or after it sets the end. A pick
+before the start, or after a complete range, starts a new range, and picking the
+start again gives a one-day range. The ends are filled circles, and the days
+between them sit on a secondary-container band. There is no hover preview,
+because the Material kit does not show one.
+
+Inline, `onChange` fires on every pick, so the first one arrives as
+`[start, null]`. As a dialog, the header shows the draft range as "Apr 10 –
+Apr 20", and OK commits it. OK also commits a range with no end yet, as
+`[start, null]`.
+
+In input mode the dialog shows a start date field and an end date field. Each
+field is checked on its own. An end before the start is flagged on the end
+field, left out of the value, and OK will not commit it.
+
+Range selection uses the same one-month calendar as single dates. The Material
+kit's full-screen range sheet, with its vertically scrolling list of months, is
+not built in.
+
+<Example
+  name="date-picker/range"
+  title="Date range"
+  description="Picking a start and an end date in the dialog. The pencil switches to the start and end fields."
+/>
+
+```tsx
+const [range, setRange] = useState<[Date | null, Date | null]>([null, null]);
+
+<DatePicker selectionMode="range" value={range} onChange={setRange} />;
+```
+
+### Typing a wrapper
+
+Since range selection was added, `DatePickerProps` is a union of
+`DatePickerSingleProps` and `DatePickerRangeProps`. An interface cannot extend a
+union. A plain `Omit` or `Pick` merges the two members, so the result no longer
+ties `value` and `onChange` to `selectionMode`. Code written against the earlier
+single-date `DatePickerProps` should extend `DatePickerSingleProps` instead. A
+wrapper that supports both modes can omit keys from each member in turn:
+
+```tsx
+import { DatePicker, type DatePickerProps, type DatePickerSingleProps } from 'm3you';
+
+interface DueDateProps extends DatePickerSingleProps {
+  label: string;
+}
+
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+function DockedPicker(props: DistributiveOmit<DatePickerProps, 'variant'>) {
+  return <DatePicker {...props} variant="docked" />;
+}
+```
+
+## Keyboard
+
+Only one day is in the tab order: the day that last had focus, otherwise the
+selected day (a range's start, else its end), otherwise today, otherwise the
+first selectable day of the month. The
+arrow keys move one day or one week and page to the neighbouring month when they
+cross its edge; they stop at `minDate` and `maxDate`. Enter or Space picks the
+focused day. In a range, the first press sets the start and the second sets the
+end.
+
+While a month or year list is open, Escape pressed anywhere in the picker
+closes the list and stops there. A surrounding `Dialog` or popover stays open
+and keeps the draft. If focus was in the list, it returns to the list's menu
+button. With no list open, the picker ignores Escape, so a surrounding `Dialog`
+closes on it and the draft is discarded.
+
+The month and year menu buttons are named by their visible text and then by
+what they pick, for example "Apr, select month" or "April 2026, select year".
+Voice-control users can say the text they see, and screen readers still say
+what the menu is for.
+
+The days are toggle buttons, so a range's ends are announced as pressed.
+`aria-selected` is only valid on grid cells and options, so the ends use
+`aria-describedby` instead. It points at hidden "Start date" and "End date"
+text, and the days between point at "In selected range".
 
 ## Props
 

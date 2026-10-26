@@ -1,28 +1,35 @@
 /* =============================================================================
-   TimePicker — M3 Spec
-   Container: shape extra-large (28px), surface-container-high bg.
-   Time boxes: 96x80 or 96x72 (input mode), rounded-lg.
-   Clock dial: 256px, surface-container-highest bg.
-   Period buttons: 52px wide, rounded-lg, outline border.
+   TimePicker — M3 Expressive Design Kit V1.25 (Dial picker, Keyboard picker)
+   Container: corner extra-large (28px), surface-container-high, no shadow
+   (the kit frames draw none, nor does Dialog), no root gap in landscape.
+   Header 40 (24 inset + label-medium), then 20 to the fields.
+   Dial portrait 328x520: fields 80, 36 to the 256px dial, 20 to a 48px action
+   row with a 20px bottom inset. Landscape 572x384: fields column 216 wide,
+   52 to the dial. Keyboard 328x243 (264 wide in 24h).
+   Time boxes: 96x80 (116 wide in portrait 24h) / 96x72 input, corner small.
+   Separator 24px wide with no gaps; 12px to the 52px period selector.
    Source: m3.material.io/components/time-pickers/specs
    ============================================================================= */
 
 /* ── Time display area ── */
 .md-time-picker__display {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
 
+  /* Landscape: the fields sit above a full-width horizontal period selector. */
   &[data-layout="column"] {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 16px;
   }
 }
 
+/* Hour, separator and minute sit flush: the kit's "Time picker inputs" row. */
 .md-time-picker__display-row {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
 }
 
 /* ── Time box (hour/minute selector button) ── */
@@ -31,21 +38,22 @@
   margin: 0;
   padding: 0;
   display: flex;
-  min-width: 96px;
+  width: 96px;
+  flex-shrink: 0;
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  border-radius: var(--md-sys-shape-corner-medium);
+  border-radius: var(--md-sys-shape-corner-small);
   border: 2px solid transparent;
   font-family: var(--md-sys-typescale-display-large-font);
   font-weight: var(--md-sys-typescale-display-large-weight);
-  font-size: 57px;
-  line-height: 64px;
+  font-size: var(--md-sys-typescale-display-large-size);
+  line-height: var(--md-sys-typescale-display-large-line-height);
   letter-spacing: var(--md-sys-typescale-display-large-tracking);
   transition:
-    background-color 150ms,
-    border-color 150ms,
-    color 150ms;
+    background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 
   &[data-mode="dial"] {
     height: 80px;
@@ -61,12 +69,15 @@
   }
 
   &[data-selected="false"] {
-    border-color: transparent;
     background-color: var(--md-sys-color-surface-container-highest);
     color: var(--md-sys-color-on-surface);
 
+    /* The hover layer is drawn over the container fill, not in place of it. */
     &:hover {
-      background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
+      background-image: linear-gradient(
+        color-mix(in srgb, var(--md-sys-color-on-surface) calc(var(--md-sys-state-hover-opacity) * 100%), transparent),
+        color-mix(in srgb, var(--md-sys-color-on-surface) calc(var(--md-sys-state-hover-opacity) * 100%), transparent)
+      );
     }
   }
 
@@ -76,41 +87,47 @@
   }
 }
 
+/* 24-hour portrait widens both boxes so the row spans the dial (116+24+116). */
+.md-time-picker[data-format="24h"][data-layout="portrait"] .md-time-picker__time-box[data-mode="dial"] {
+  width: 116px;
+}
+
 /* ── Time box as input ── */
 .md-time-picker__time-input {
-  width: 96px;
   text-align: center;
   caret-color: var(--md-sys-color-primary);
   outline: none;
-  border-width: 1px;
   font-family: var(--md-sys-typescale-display-medium-font);
-  font-size: 45px;
-  line-height: 52px;
+  font-size: var(--md-sys-typescale-display-medium-size);
+  line-height: var(--md-sys-typescale-display-medium-line-height);
   font-weight: var(--md-sys-typescale-display-medium-weight);
   letter-spacing: var(--md-sys-typescale-display-medium-tracking);
-  /* Inherits from .md-time-picker__time-box */
+  /* Inherits the 2px transparent border from .md-time-picker__time-box, so the
+     selected stroke only changes colour and the digits never shift. */
 
   &[data-selected="true"] {
-    border: 3px solid var(--md-sys-color-primary);
-  }
-
-  &:focus-visible {
-    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
-    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+    border-color: var(--md-sys-color-primary);
   }
 }
 
 /* ── Time separator colon ── */
 .md-time-picker__colon {
+  display: flex;
+  width: 24px;
+  height: 80px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
   font-family: var(--md-sys-typescale-display-large-font);
   font-weight: var(--md-sys-typescale-display-large-weight);
-  font-size: 57px;
-  line-height: 64px;
+  font-size: var(--md-sys-typescale-display-large-size);
+  line-height: var(--md-sys-typescale-display-large-line-height);
   color: var(--md-sys-color-on-surface);
-}
 
-.md-time-picker__colon[data-offset="true"] {
-  margin-top: -20px;
+  /* Keyboard mode: centred on the 72px field, not on the field and its label. */
+  &[data-mode="input"] {
+    height: 72px;
+  }
 }
 
 /* ── Input field label (below input) ── */
@@ -126,12 +143,13 @@
 .md-time-picker__field-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 7px;
 }
 
 /* ── Period selector (AM/PM) ── */
 .md-time-picker__period {
   display: flex;
+  flex-shrink: 0;
   overflow: hidden;
   border-radius: var(--md-sys-shape-corner-small);
   border: 1px solid var(--md-sys-color-outline);
@@ -183,14 +201,14 @@
   margin: 0;
   padding: 0;
   background: transparent;
-  font-family: var(--md-sys-typescale-label-large-font);
-  font-size: var(--md-sys-typescale-label-large-size);
-  line-height: var(--md-sys-typescale-label-large-line-height);
-  font-weight: var(--md-sys-typescale-label-large-weight);
-  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  font-family: var(--md-sys-typescale-title-medium-font);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
   transition:
-    background-color 150ms,
-    color 150ms;
+    background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 
   &[data-selected="true"] {
     background-color: var(--md-sys-color-tertiary-container);
@@ -209,7 +227,11 @@
     color: var(--md-sys-color-on-surface-variant);
 
     &:hover {
-      background-color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 8%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--md-sys-color-on-surface-variant) calc(var(--md-sys-state-hover-opacity) * 100%),
+        transparent
+      );
     }
   }
 
@@ -222,11 +244,19 @@
 /* ── Clock dial ── */
 .md-time-picker__dial {
   position: relative;
+  flex-shrink: 0;
   cursor: pointer;
   touch-action: none;
   user-select: none;
   border-radius: 50%;
   background-color: var(--md-sys-color-surface-container-highest);
+
+  /* The dial is a keyboard slider; the ring marks the face, and the selected
+     number takes the kit's focused state layer. */
+  &:focus-visible {
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+  }
 }
 
 /* ── Clock SVG overlay ── */
@@ -251,8 +281,8 @@
   font-weight: var(--md-sys-typescale-body-large-weight);
   letter-spacing: var(--md-sys-typescale-body-large-tracking);
   transition:
-    background-color 150ms,
-    color 150ms;
+    background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 
   &[data-selected="true"] {
     background-color: var(--md-sys-color-primary);
@@ -263,7 +293,11 @@
     color: var(--md-sys-color-on-surface);
 
     &:hover {
-      background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--md-sys-color-on-surface) calc(var(--md-sys-state-hover-opacity) * 100%),
+        transparent
+      );
     }
   }
 
@@ -276,6 +310,13 @@
   &[data-inner="false"] {
     font-size: var(--md-sys-typescale-body-large-size);
   }
+}
+
+.md-time-picker__dial:focus-visible .md-time-picker__number[data-selected="true"] {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--md-sys-color-on-primary) calc(var(--md-sys-state-focus-opacity) * 100%), transparent),
+    color-mix(in srgb, var(--md-sys-color-on-primary) calc(var(--md-sys-state-focus-opacity) * 100%), transparent)
+  );
 }
 
 /* ── Clock SVG elements ── */
@@ -294,122 +335,97 @@
 /* ── Landscape dial body ── */
 .md-time-picker__dial-body {
   display: flex;
-  align-items: center;
-  gap: 24px;
+  align-items: flex-start;
+  gap: 52px;
 }
 
+/* The kit's 216px "Input" column: 72 above the fields and the period below. */
 .md-time-picker__dial-body-left {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  width: 216px;
+  flex-shrink: 0;
 }
 
+.md-time-picker[data-format="12h"] .md-time-picker__dial-body-left {
+  padding-top: 72px;
+}
+
+/* 24h has no period below the fields, so the 80px row is centred on the 256px
+   dial. The kit records no cross-axis alignment for Dial picker 24h
+   Horizontal; Compose Material3's HorizontalTimePicker centres it the same way
+   (Row verticalAlignment = Alignment.CenterVertically). */
+.md-time-picker[data-format="24h"] .md-time-picker__dial-body-left {
+  align-self: center;
+}
+
+/* Portrait: 36px between the fields and the dial (20 from the root gap). */
 .md-time-picker__dial-center {
   display: flex;
+  margin-top: 16px;
   align-items: center;
   justify-content: center;
 }
 
 /* ── Header text ── */
 .md-time-picker__header-text {
-  font-family: var(--md-sys-typescale-body-small-font);
-  font-weight: var(--md-sys-typescale-body-small-weight);
-  font-size: var(--md-sys-typescale-body-small-size);
-  line-height: var(--md-sys-typescale-body-small-line-height);
+  font-family: var(--md-sys-typescale-label-medium-font);
+  font-weight: var(--md-sys-typescale-label-medium-weight);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  line-height: var(--md-sys-typescale-label-medium-line-height);
   color: var(--md-sys-color-on-surface-variant);
-  text-transform: uppercase;
-  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+  letter-spacing: var(--md-sys-typescale-label-medium-tracking);
 }
 
 /* ── Footer ── */
 .md-time-picker__footer {
   display: flex;
+  min-height: 48px;
   align-items: center;
   justify-content: space-between;
 }
 
-/* ── Mode toggle button (clock/keyboard icon) ── */
-.md-time-picker__mode-btn {
-  position: relative;
-  display: flex;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  margin: 0;
-  padding: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--md-sys-color-on-surface-variant);
-  cursor: pointer;
-  transition: background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
-  }
-
-  & svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  &:focus-visible {
-    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
-    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
-  }
+/* ── Mode toggle (standard IconButton) ──
+   The kit's action row has a 12px start inset to the 48px target, which puts
+   the visible 40px button 16px from the edge — 8px left of the content box. */
+.md-time-picker__footer > .md-time-picker__mode-btn {
+  margin-inline-start: -8px;
 }
 
-/* ── Footer action buttons ── */
+/* ── Footer action buttons (text Buttons, size sm) ── */
 .md-time-picker__footer-actions {
   display: flex;
   gap: 8px;
-}
-
-.md-time-picker__action-btn {
-  position: relative;
-  border: none;
-  margin: 0;
-  border-radius: 16px;
-  background: transparent;
-  padding: 6px 12px;
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--md-sys-color-primary);
-  cursor: pointer;
-  transition: background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
-  }
-
-  &:focus-visible {
-    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
-    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
-  }
 }
 
 /* ── Root container ── */
 .md-time-picker {
   display: flex;
   width: 328px;
-  min-height: 520px;
   box-sizing: border-box;
   flex-direction: column;
   gap: 20px;
-  padding: 24px;
-  border-radius: 28px;
+  padding: 24px 24px 20px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
   background-color: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-on-surface);
-  box-shadow: var(--md-sys-elevation-3);
 }
 
+/* Only the dial needs the tall surface; keyboard input sizes to its content. */
+.md-time-picker[data-mode="dial"][data-layout="portrait"] {
+  min-height: 520px;
+}
+
+.md-time-picker[data-mode="input"][data-format="24h"] {
+  width: 264px;
+}
+
+/* Landscape stacks header, fields + dial and actions with no gap; the action
+   row carries its own 20px top inset. */
 .md-time-picker[data-layout="landscape"] {
   width: 572px;
   height: 384px;
-  min-height: 384px;
-}
+  gap: 0;
 
-.md-time-picker[data-layout="portrait"] {
-  width: 328px;
+  & > .md-time-picker__footer {
+    margin-top: 20px;
+  }
 }

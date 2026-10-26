@@ -9,6 +9,49 @@ form regardless of the display `format`.
 
 <Example name="time-picker/basic" title="12-hour dial" />
 
+## Keyboard input
+
+`defaultMode="input"` starts on the numeric fields. The surface is only as tall
+as its content; in 24-hour format there is no AM/PM selector and the picker
+narrows to 264px.
+
+<Example name="time-picker/keyboard-input" title="24-hour keyboard input" />
+
+## Dialog actions
+
+Pass `open` and `onOpenChange` to use the picker as a dialog. It then shows
+Cancel and OK text buttons: edits stay in a draft until OK commits them through
+`onChange`, and Cancel discards them. `open={false}` renders nothing.
+
+The picker does not add a scrim or trap focus. For a true modal, place it in a
+`DialogContent`; the `Dialog` supplies the scrim, focus trap and Escape-to-close.
+
+With `open` and on its own, the picker is the dialog (`role="dialog"`, named by
+its header). It is not marked `aria-modal`, because nothing behind it is made
+inert. Inside an element that is already a dialog, such as a `DialogContent` or
+a popover, the picker takes no role. The outer element is then the only dialog,
+so give it the name, for example `aria-label="Select time"`. Without `open` the
+picker is inline content and takes no role. The
+[date picker](/docs/components/date-picker) follows the same rules.
+
+The surface is a surface-container-high fill with no shadow, as in the Material
+kit and the same as `Dialog`.
+
+## Accessibility
+
+The clock dial is a slider (`role="slider"`) in the Tab order, labelled Hour or
+Minute to match the active field.
+
+| Key                       | Action                                                      |
+| ------------------------- | ----------------------------------------------------------- |
+| Arrow Up / Arrow Right    | Next hour or minute, wrapping around the face               |
+| Arrow Down / Arrow Left   | Previous hour or minute, wrapping around the face           |
+| Page Up / Page Down       | Five minutes forward or back (one hour on the hour dial)    |
+| Home / End                | First or last value: 1–12, 0–23 or 0–59                     |
+| Enter                     | Confirm the hour and move on to the minutes                 |
+
+In 12-hour format the AM/PM selection stays fixed while the dial turns.
+
 ## Props
 
 <PropsTable of="TimePicker" />

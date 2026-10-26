@@ -45,7 +45,15 @@ export type {
   CircularProgressVariant,
 } from './components/CircularProgress/circular-progress';
 export { CircularProgress } from './components/CircularProgress/circular-progress';
-export type { DatePickerProps } from './components/DatePicker/date-picker';
+export type {
+  DatePickerMode,
+  DatePickerProps,
+  DatePickerRangeProps,
+  DatePickerSelectionMode,
+  DatePickerSingleProps,
+  DatePickerVariant,
+  DateRange,
+} from './components/DatePicker/date-picker';
 export { DatePicker } from './components/DatePicker/date-picker';
 export type { DialogContentProps, DialogHeaderProps, FullScreenDialogHeaderProps } from './components/Dialog/dialog';
 export {
@@ -199,7 +207,7 @@ export type { TabProps, TabsProps } from './components/Tabs/tabs';
 export { Tab, Tabs } from './components/Tabs/tabs';
 export type { TextFieldElement, TextFieldProps } from './components/TextField/text-field';
 export { TextField } from './components/TextField/text-field';
-export type { TimePickerProps } from './components/TimePicker/time-picker';
+export type { ClockFormat, TimePickerMode, TimePickerProps, TimeValue } from './components/TimePicker/time-picker';
 export { TimePicker } from './components/TimePicker/time-picker';
 export type { ToggleButtonProps } from './components/ToggleButton/toggle-button';
 export { ToggleButton } from './components/ToggleButton/toggle-button';
