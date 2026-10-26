@@ -9,6 +9,11 @@ Checkboxes let people select any number of options from a set. Use
 `indeterminate` for a parent whose children are partly selected — it is a visual
 state only, so you still control `checked` yourself.
 
+Inside a `<form>`, a form reset (`form.reset()` or a `<button type="reset">`)
+puts an uncontrolled checkbox back to `defaultChecked`. As with a native reset,
+`onCheckedChange` is not called. A controlled checkbox keeps showing your
+`checked` value, so reset that state yourself.
+
 <Playground
   name="Checkbox"
   controls={{

@@ -1,55 +1,103 @@
 /* =============================================================================
-   Switch — M3 Spec
-   Track: 52x32px, corner-full, 2px outline
-   Handle off: 16px, Handle on: 24px
-   State layer: 40px, touch target: 48x68px
+   Switch — M3 Expressive spec (Design Kit V1.25, Switch / Switch)
+   Component frame = track: 52x32px, pill, 2px outline
+   Handle: 16px unselected, 24px selected or with icons, 28px pressed;
+   measured from the track's outer edge: 8..24, 4..28, 24..48, 2..30 / 22..50
+   State layer: 40px, centred on the handle (x = 16 / 36), painted under it
+   Touch target: 68x48px, overflows the frame instead of enlarging it
+   Focus indicator: pill drawn 2px outside the track
+   Right-to-left: the handle starts at the right edge and travels left
+   Forced colors: system-colour track and handle (see the end of the file)
    Source: m3.material.io/components/switch/specs
    ============================================================================= */
 
-/* ── Label / touch target ── */
+/* ── Label / component frame (the 52x32 track box) ── */
 .md-switch {
   position: relative;
+  /* Keeps the state layer / handle z-indexes inside the switch. */
+  isolation: isolate;
   display: inline-flex;
-  height: 48px;
-  width: 68px;
+  height: 32px;
+  width: 52px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
 
+  /* The kit's 48dp Target overflows the frame rather than growing it, so the
+     hit area is a transparent pseudo-element 8px beyond the track on every
+     side (68x48). It belongs to the label, so a click on it toggles the input.
+     The state layer's press surface (below) covers the same box above it, so
+     the Ripple sees presses there too. */
+  &::before {
+    position: absolute;
+    inset: calc((32px - 48px) / 2);
+    content: "";
+  }
+
+  /* Disables every descendant too — the state layer inherits this, so a
+     disabled switch can neither hover nor press its handle. */
   &[data-disabled] {
     pointer-events: none;
   }
-
-  &:has(input:focus-visible) {
-    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
-    outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
-    border-radius: calc(32px / 2);
-  }
 }
 
-/* ── State layer (40px, follows the thumb and receives ripple events) ── */
+/* Focus indicator: a pill 2px outside the 52x32 track (kit "Focus indicator"
+   56x36, r=100). The track's 16px radius makes the outline a pill. */
+.md-switch:has(input:focus-visible) .md-switch__track {
+  outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+  outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+}
+
+/* ── State layer (40px, follows the thumb and receives ripple events) ──
+   Above the track fill, below the handle: in the kit the State-layer is the
+   handle shape's parent, so the overlay only shows around the handle.
+   No overflow clip: the Ripple's own layers clip themselves to this circle
+   (border-radius: inherit, overflow: hidden), and a clip here would also cut
+   the press surface below back down to the circle. */
 .md-switch__state-layer {
-  pointer-events: auto;
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   display: flex;
   width: 40px;
   height: 40px;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  overflow: hidden;
   color: var(--md-sys-color-on-surface);
+  /* Centred on the handle (centre 16 / 36 from the track's inline-start
+     edge): --_state-layer-start is its own inline-start offset. Vertically it
+     keeps the label's centring.
+     Right-to-left text mirrors it because the offset is a logical inset. Do
+     not switch to a physical translateX flipped by a :dir(rtl) rule: the
+     library build (Lightning CSS, baseline browser targets) compiles :dir()
+     into a list of :lang() matches, so a dir="rtl" page would not flip it. */
+  inset-inline-start: var(--_state-layer-start);
   transition:
-    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
+    inset-inline-start var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
     background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-checked="false"] {
-    transform: translateX(-10px);
+    --_state-layer-start: calc(16px - 40px / 2);
   }
 
   &[data-checked="true"] {
-    transform: translateX(10px);
+    --_state-layer-start: calc(36px - 40px / 2);
+  }
+
+  /* Press surface: the Ripple listens on this element, so a press anywhere in
+     the switch's 68x48 hit area (the far end of the track included) has to
+     land here to start the press ripple. A transparent box covering exactly
+     that area: it starts 8px before the track, so it undoes the state layer's
+     own offset, with the same timing as the layer moves, and stays still. It
+     sits under the handle and over the label's own hit area, and a click on
+     it still reaches the label and toggles. */
+  &::before {
+    position: absolute;
+    inset-block: calc((40px - 48px) / 2);
+    inset-inline-start: calc((52px - 68px) / 2 - var(--_state-layer-start));
+    width: 68px;
+    content: "";
+    transition: inset-inline-start var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
   }
 }
 
@@ -63,6 +111,18 @@
 
 .md-switch:has(input:focus-visible) .md-switch__state-layer {
   background-color: color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent);
+}
+
+/* Hovered is a state of the whole switch: the handle takes its hovered role
+   anywhere over the 68x48 target (below), so the 8% halo follows the same
+   boundary instead of only the 40px circle the Ripple sits in. */
+@media (hover: hover) {
+  .md-switch:not([data-disabled]):hover
+    .md-switch__state-layer
+    > .md-ripple-hover-layer
+    > .md-ripple-hover-layer__surface {
+    opacity: var(--md-ripple-hover-opacity, 0.08);
+  }
 }
 
 /* ── Track (52x32px) ── */
@@ -108,7 +168,15 @@
 .md-switch__thumb {
   pointer-events: none;
   position: absolute;
-  left: 0;
+  /* Paints over the state layer (z-index 1). */
+  z-index: 2;
+  /* An absolute box is placed from inside the track's 2px border; take the
+     border back off so the --_handle-x offsets below are measured from the
+     track's outer edge — the left edge, or the right one in right-to-left
+     text: a logical inset mirrors with no direction query (see the state
+     layer above for why there is no :dir() rule). Vertically the handle keeps
+     the track's centring. */
+  inset-inline-start: calc(var(--_handle-x) - 2px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,7 +184,7 @@
   transition:
     width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     height var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
-    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
+    inset-inline-start var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
     background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   & svg {
@@ -130,7 +198,7 @@
   &[data-checked="false"][data-with-icon="false"] {
     width: 16px;
     height: 16px;
-    transform: translateX(8px);
+    --_handle-x: 8px;
     background-color: var(--md-sys-color-outline);
   }
 
@@ -138,7 +206,7 @@
   &[data-checked="false"][data-with-icon="true"] {
     width: 24px;
     height: 24px;
-    transform: translateX(4px);
+    --_handle-x: 4px;
     background-color: var(--md-sys-color-outline);
   }
 
@@ -146,14 +214,14 @@
   &[data-checked="true"][data-with-icon="false"][data-variant="primary"] {
     width: 24px;
     height: 24px;
-    transform: translateX(24px);
+    --_handle-x: 24px;
     background-color: var(--md-sys-color-on-primary);
   }
 
   &[data-checked="true"][data-with-icon="false"][data-variant="error"] {
     width: 24px;
     height: 24px;
-    transform: translateX(24px);
+    --_handle-x: 24px;
     background-color: var(--md-sys-color-on-error);
   }
 
@@ -161,52 +229,64 @@
   &[data-checked="true"][data-with-icon="true"][data-variant="primary"] {
     width: 24px;
     height: 24px;
-    transform: translateX(24px);
+    --_handle-x: 24px;
     background-color: var(--md-sys-color-on-primary);
   }
 
   &[data-checked="true"][data-with-icon="true"][data-variant="error"] {
     width: 24px;
     height: 24px;
-    transform: translateX(24px);
+    --_handle-x: 24px;
     background-color: var(--md-sys-color-on-error);
   }
 }
 
-/* Hover changes the handle role; the Ripple paints the 8% state layer. */
-.md-switch[data-variant="primary"][data-checked="true"]:hover .md-switch__thumb {
-  background-color: var(--md-sys-color-primary-container);
+/* Hovered, focused and pressed all change the handle role (kit: Primary
+   Container selected, On Surface Variant unselected); the Ripple paints the
+   state layer. Keyboard focus has no :hover, so it is listed explicitly — and
+   it also covers a keyboard press, which is never :hover and (in Chromium)
+   never puts :active on the label. Specificity (0,5,1) / (0,4,1) outranks the
+   enabled handle rules above. */
+.md-switch:is(:hover, :active, :has(input:focus-visible)) .md-switch__thumb {
+  &[data-checked="true"][data-variant="primary"] {
+    background-color: var(--md-sys-color-primary-container);
+  }
+
+  &[data-checked="true"][data-variant="error"] {
+    background-color: var(--md-sys-color-error-container);
+  }
+
+  &[data-checked="false"] {
+    background-color: var(--md-sys-color-on-surface-variant);
+  }
 }
 
-.md-switch[data-variant="primary"][data-checked="false"]:hover .md-switch__thumb {
-  background-color: var(--md-sys-color-on-surface-variant);
-}
-
-.md-switch[data-variant="error"][data-checked="true"]:hover .md-switch__thumb {
-  background-color: var(--md-sys-color-error-container);
-}
-
-.md-switch[data-variant="error"][data-checked="false"]:hover .md-switch__thumb {
-  background-color: var(--md-sys-color-on-surface-variant);
-}
-
-/* The pressed thumb grows around the same center point. */
-.md-switch:active .md-switch__thumb {
+/* The pressed thumb grows to 28px around the same center point (kit Pressed:
+   2..30 / 22..50). A pointer press puts :active on the label; a keyboard press
+   (Space on the focused input) puts it on the input only, so that case is
+   matched through :has(). :focus-visible keeps a mouse press on a separate
+   <label for> — which Chromium forwards to the input as :active — out of it.
+   Specificity (0,5,1) outranks the checked size and offset rules above,
+   which are (0,4,0). */
+.md-switch:is(:active, :has(input:focus-visible:active)) .md-switch__thumb[data-checked] {
   width: 28px;
   height: 28px;
 }
 
-.md-switch[data-checked="false"]:active .md-switch__thumb {
-  transform: translateX(2px);
+.md-switch[data-checked="false"]:is(:active, :has(input:focus-visible:active)) .md-switch__thumb {
+  --_handle-x: 2px;
 }
 
-.md-switch[data-checked="true"]:active .md-switch__thumb {
-  transform: translateX(22px);
+.md-switch[data-checked="true"]:is(:active, :has(input:focus-visible:active)) .md-switch__thumb {
+  --_handle-x: 22px;
 }
 
+/* ── Disabled ──
+   Unselected track: the enabled fill (surface-container-highest) at 12% with
+   an on-surface 12% outline, so it reads as a near-empty outlined pill. */
 .md-switch[data-disabled][data-checked="false"] .md-switch__track {
   border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
-  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 12%, transparent);
 }
 
 .md-switch[data-disabled][data-checked="true"] .md-switch__track {
@@ -214,12 +294,11 @@
   background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
 }
 
+/* The kit sets opacity 0.38 on the unselected handle shape itself, so the icon
+   inside it (0.38 again, below) composites to roughly 0.14. */
 .md-switch[data-disabled][data-checked="false"] .md-switch__thumb {
-  background-color: color-mix(
-    in srgb,
-    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
-    transparent
-  );
+  opacity: var(--md-sys-state-disabled-opacity);
+  background-color: var(--md-sys-color-on-surface);
 }
 
 .md-switch[data-disabled][data-checked="true"] .md-switch__thumb {
@@ -241,6 +320,16 @@
 
 .md-switch__thumb[data-checked="true"][data-variant="error"] svg {
   color: var(--md-sys-color-error);
+}
+
+/* Disabled icons: kit Icon opacity 0.38. The selected icon also drops its
+   primary/error tint for on-surface (M3 disabled-selected-icon-color). */
+.md-switch[data-disabled] .md-switch__thumb svg {
+  opacity: var(--md-sys-state-disabled-opacity);
+}
+
+.md-switch[data-disabled][data-checked="true"] .md-switch__thumb svg {
+  color: var(--md-sys-color-on-surface);
 }
 
 /* ── Icon crossfade ── */
@@ -282,4 +371,72 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* ── Forced colors (Windows High Contrast) ──
+   Forced colors repaints every author background as Canvas, so the handle
+   vanished into the track and a selected track looked like an unselected one.
+   Paint both with system colours: a CanvasText handle on a Canvas track when
+   unselected, a HighlightText handle on a Highlight track when selected, and
+   GrayText when disabled. System colours are kept as authored, so no
+   forced-color-adjust is needed; the ripple layers hide themselves here. */
+@media (forced-colors: active) {
+  /* (0,3,0): ties the enabled track rules above and wins by coming later. */
+  .md-switch__track[data-checked="false"][data-variant] {
+    border-color: CanvasText;
+    background-color: Canvas;
+  }
+
+  .md-switch__track[data-checked="true"][data-variant] {
+    border-color: Highlight;
+    background-color: Highlight;
+  }
+
+  /* (0,5,0) outranks the (0,4,0) disabled tracks. */
+  .md-switch[data-disabled] .md-switch__track[data-checked][data-variant] {
+    border-color: GrayText;
+    background-color: Canvas;
+  }
+
+  .md-switch[data-disabled] .md-switch__track[data-checked="true"][data-variant] {
+    background-color: GrayText;
+  }
+
+  /* (0,6,0) outranks every handle rule above, including the (0,5,1) hovered /
+     focused / pressed roles, which forced colors would turn to Canvas again. */
+  .md-switch:not([data-disabled]) .md-switch__track .md-switch__thumb[data-checked="false"][data-variant] {
+    background-color: CanvasText;
+  }
+
+  .md-switch:not([data-disabled]) .md-switch__track .md-switch__thumb[data-checked="true"][data-variant] {
+    background-color: HighlightText;
+  }
+
+  .md-switch[data-disabled] .md-switch__track .md-switch__thumb[data-checked][data-variant] {
+    opacity: 1;
+    background-color: GrayText;
+  }
+
+  .md-switch[data-disabled] .md-switch__track .md-switch__thumb[data-checked="true"][data-variant] {
+    background-color: Canvas;
+  }
+
+  /* Icons take the colour of the surface around the handle. */
+  .md-switch .md-switch__thumb[data-checked="false"][data-variant] svg {
+    color: Canvas;
+  }
+
+  .md-switch .md-switch__thumb[data-checked="true"][data-variant] svg {
+    color: Highlight;
+  }
+
+  /* (0,5,1) outranks the (0,4,1) disabled icon colour. */
+  .md-switch[data-disabled] .md-switch__thumb[data-checked][data-variant] svg {
+    opacity: 1;
+    color: Canvas;
+  }
+
+  .md-switch[data-disabled] .md-switch__thumb[data-checked="true"][data-variant] svg {
+    color: GrayText;
+  }
 }

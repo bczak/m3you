@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeAll, expect, test, vi } from 'vitest';
 import { RadioButton } from '../src/components/RadioButton/radio-button';
@@ -218,6 +218,93 @@ test('uses defaultChecked for initial uncontrolled state', async () => {
   expect(input).toBeChecked();
 });
 
+test('uncontrolled radios sharing a name deselect visually when a sibling takes the selection', () => {
+  render(
+    <>
+      <RadioButton name="x" value="a" aria-label="A" />
+      <RadioButton name="x" value="b" aria-label="B" />
+    </>,
+  );
+  const [a, b] = screen.getAllByRole('radio');
+  const labelOf = (input: HTMLElement) => input.closest('label') as HTMLElement;
+
+  fireEvent.click(a);
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'true');
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'false');
+
+  fireEvent.click(b);
+  expect(a).not.toBeChecked();
+  expect(b).toBeChecked();
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'false');
+  expect(labelOf(a).querySelector('[data-outer]')).toHaveAttribute('data-selected', 'false');
+  expect(labelOf(a).querySelector('[data-inner]')).toHaveAttribute('data-selected', 'false');
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'true');
+});
+
+test('a selection move made outside React (arrow keys) re-syncs the uncontrolled sibling', () => {
+  render(
+    <>
+      <RadioButton name="x" value="a" aria-label="A" defaultChecked />
+      <RadioButton name="x" value="b" aria-label="B" />
+    </>,
+  );
+  const [a, b] = screen.getAllByRole('radio') as HTMLInputElement[];
+  // What the browser does on ArrowDown inside a native radio group.
+  b.checked = true;
+  fireEvent(b, new Event('change', { bubbles: true }));
+  expect(a).not.toBeChecked();
+  expect(a.closest('label')).toHaveAttribute('data-selected', 'false');
+});
+
+test('a change in a differently named group leaves an uncontrolled radio alone', () => {
+  render(
+    <>
+      <RadioButton name="x" value="a" aria-label="A" defaultChecked />
+      <RadioButton name="y" value="b" aria-label="B" />
+    </>,
+  );
+  const [a, b] = screen.getAllByRole('radio');
+  fireEvent.click(b);
+  expect(a).toBeChecked();
+  expect(a.closest('label')).toHaveAttribute('data-selected', 'true');
+  expect(b.closest('label')).toHaveAttribute('data-selected', 'true');
+});
+
+test('the sibling re-sync survives an ancestor that stops the change event from bubbling', () => {
+  render(
+    <div data-testid="stopper">
+      <RadioButton name="x" value="a" aria-label="A" defaultChecked />
+      <RadioButton name="x" value="b" aria-label="B" />
+    </div>,
+  );
+  screen.getByTestId('stopper').addEventListener('change', (event) => event.stopPropagation());
+  const [a, b] = screen.getAllByRole('radio') as HTMLInputElement[];
+  b.checked = true;
+  fireEvent(b, new Event('change', { bubbles: true }));
+  expect(a.closest('label')).toHaveAttribute('data-selected', 'false');
+  expect(b.closest('label')).toHaveAttribute('data-selected', 'true');
+});
+
+test('the sibling listener is removed on unmount', () => {
+  const add = vi.spyOn(document, 'addEventListener');
+  const remove = vi.spyOn(document, 'removeEventListener');
+  const { unmount } = render(<RadioButton name="x" />);
+  const added = add.mock.calls.find(([type]) => type === 'change');
+  expect(added).toBeDefined();
+  unmount();
+  // The exact listener that was registered is the one taken off again.
+  expect(remove).toHaveBeenCalledWith('change', added?.[1], true);
+  add.mockRestore();
+  remove.mockRestore();
+});
+
+test('controlled radios do not register the sibling listener', () => {
+  const add = vi.spyOn(document, 'addEventListener');
+  render(<RadioButton name="x" checked={false} readOnly />);
+  expect(add.mock.calls.some(([type]) => type === 'change')).toBe(false);
+  add.mockRestore();
+});
+
 // =============================================================================
 // RadioButton — Ref forwarding
 // =============================================================================
@@ -238,6 +325,46 @@ test('merges custom className', async () => {
   const label = screen.getByRole('radio').closest('label');
   expect(label).toHaveClass('custom-class');
   expect(label).toHaveClass('md-radio');
+});
+
+test('style lands on the visible root, not the hidden input', () => {
+  render(<RadioButton id="pick" style={{ marginTop: '2px' }} />);
+  const input = screen.getByRole('radio');
+  const label = input.closest('label');
+  expect(label).toHaveClass('md-radio');
+  expect(label).toHaveStyle({ marginTop: '2px' });
+  expect(input).not.toHaveAttribute('style');
+  // id stays on the input so an external <label htmlFor> still targets it.
+  expect(input).toHaveAttribute('id', 'pick');
+});
+
+test('RadioGroupItem forwards style to the visible root', () => {
+  render(
+    <RadioGroup>
+      <RadioGroupItem value="a" style={{ marginTop: '2px' }} />
+    </RadioGroup>,
+  );
+  const input = screen.getByRole('radio');
+  expect(input.closest('label')).toHaveStyle({ marginTop: '2px' });
+  expect(input).not.toHaveAttribute('style');
+});
+
+// =============================================================================
+// RadioButton — Focus indicator
+// =============================================================================
+
+test('focus indicator is the shared 3dp Secondary ring, 2dp outside the 40dp state layer', () => {
+  const rule = radioCss.match(
+    /\.md-radio:has\(> \.md-radio__input:focus-visible\) \.md-radio__state-layer \{([^}]*)\}/,
+  )?.[1];
+  expect(rule).toBeDefined();
+  expect(rule).toContain(
+    'outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);',
+  );
+  // 40dp state layer + 2 * 2dp offset = 44dp inner edge; + 2 * 3dp stroke = 50dp outer edge (kit).
+  expect(rule).toContain('outline-offset: var(--md-sys-state-focus-indicator-outer-offset);');
+  // The ring is no longer drawn on the 48dp touch target.
+  expect(radioCss).not.toContain('&:has(input:focus-visible)');
 });
 
 // =============================================================================
@@ -597,4 +724,326 @@ test('the interactive form is unaffected: it still selects and reports', () => {
   fireEvent.click(input);
   expect(onValueChange).toHaveBeenCalledWith('pro');
   expect(input).toBeChecked();
+});
+
+// =============================================================================
+// Form reset
+// =============================================================================
+
+/**
+ * `reset` is dispatched before the form restores its controls (a browser runs a
+ * microtask checkpoint in between when a reset button is pressed), so the
+ * components re-read the controls on the next task. Wait that task out.
+ */
+const settleReset = () => act(() => new Promise<void>((resolve) => setTimeout(resolve)));
+const labelOf = (input: HTMLElement) => input.closest('label') as HTMLElement;
+
+test('a form reset redraws uncontrolled radios from their defaults', async () => {
+  render(
+    <form data-testid="form">
+      <RadioButton name="x" value="a" aria-label="A" defaultChecked />
+      <RadioButton name="x" value="b" aria-label="B" />
+    </form>,
+  );
+  const [a, b] = screen.getAllByRole('radio') as HTMLInputElement[];
+  fireEvent.click(b);
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'true');
+
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+
+  expect(a).toBeChecked();
+  expect(b).not.toBeChecked();
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'true');
+  expect(labelOf(a).querySelector('[data-inner]')).toHaveAttribute('data-selected', 'true');
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'false');
+});
+
+// The reset bypasses the `checked` setter React tracks changes through; without a re-sync React would see
+// "true -> true" on the next click of the same radio and swallow its change event.
+test('after a form reset, selecting the same radio again is still reported', async () => {
+  const onValueChange = vi.fn();
+  render(
+    <form data-testid="form">
+      <RadioButton name="x" value="a" aria-label="A" defaultChecked />
+      <RadioButton name="x" value="b" aria-label="B" onValueChange={onValueChange} />
+    </form>,
+  );
+  const b = screen.getByRole('radio', { name: 'B' });
+  fireEvent.click(b);
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+
+  fireEvent.click(b);
+  expect(onValueChange).toHaveBeenCalledTimes(2);
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'true');
+});
+
+test('a form reset reaches a radio associated through the form attribute', async () => {
+  render(
+    <>
+      <form id="remote" data-testid="form" />
+      <RadioButton form="remote" name="x" value="a" aria-label="A" />
+    </>,
+  );
+  const a = screen.getByRole('radio');
+  fireEvent.click(a);
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(a).not.toBeChecked();
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'false');
+});
+
+test('resetting a different form leaves a radio alone', async () => {
+  render(
+    <>
+      <form>
+        <RadioButton name="x" value="a" aria-label="A" />
+      </form>
+      <form data-testid="other" />
+    </>,
+  );
+  const a = screen.getByRole('radio');
+  fireEvent.click(a);
+  (screen.getByTestId('other') as HTMLFormElement).reset();
+  await settleReset();
+  expect(a).toBeChecked();
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'true');
+});
+
+test('a reset pending when the radio unmounts is dropped with its listener', async () => {
+  const remove = vi.spyOn(document, 'removeEventListener');
+  const onValueChange = vi.fn();
+  const { unmount } = render(
+    <form data-testid="form">
+      <RadioButton name="x" value="a" aria-label="A" onValueChange={onValueChange} />
+    </form>,
+  );
+  const form = screen.getByTestId('form') as HTMLFormElement;
+  fireEvent.click(screen.getByRole('radio'));
+  form.reset();
+  unmount();
+  expect(remove).toHaveBeenCalledWith('reset', expect.any(Function), true);
+  await expect(settleReset()).resolves.toBeUndefined();
+  remove.mockRestore();
+});
+
+// Both listeners are registered against the input, which a decorative radio does not render.
+test('a radio that stops being decorative still follows its siblings and a form reset', async () => {
+  const radios = (decorative: boolean) => (
+    <form data-testid="form">
+      <RadioButton name="x" value="a" aria-label="A" decorative={decorative} defaultChecked />
+      <RadioButton name="x" value="b" aria-label="B" />
+    </form>
+  );
+  const { rerender } = render(radios(true));
+  rerender(radios(false));
+  const [a, b] = screen.getAllByRole('radio');
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'true');
+
+  fireEvent.click(b);
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'false');
+
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(a).toBeChecked();
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'true');
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'false');
+});
+
+test('controlled radios leave a form reset to their owner', async () => {
+  const add = vi.spyOn(document, 'addEventListener');
+  const { rerender } = render(
+    <form data-testid="form">
+      <RadioButton name="x" value="a" aria-label="A" checked={false} readOnly />
+    </form>,
+  );
+  expect(add.mock.calls.some(([type]) => type === 'reset')).toBe(false);
+  add.mockRestore();
+
+  rerender(
+    <form data-testid="form">
+      <RadioButton name="x" value="a" aria-label="A" checked readOnly />
+    </form>,
+  );
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(labelOf(screen.getByRole('radio'))).toHaveAttribute('data-selected', 'true');
+});
+
+test('a form reset returns an uncontrolled RadioGroup to the default selection', async () => {
+  const onValueChange = vi.fn();
+  render(
+    <form data-testid="form">
+      <RadioGroup defaultValue="a" onValueChange={onValueChange}>
+        <RadioGroupItem value="a" />
+        <RadioGroupItem value="b" />
+      </RadioGroup>
+    </form>,
+  );
+  const [a, b] = screen.getAllByRole('radio') as HTMLInputElement[];
+  fireEvent.click(b);
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'true');
+
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(a).toBeChecked();
+  expect(labelOf(a)).toHaveAttribute('data-selected', 'true');
+  expect(b).not.toBeChecked();
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'false');
+  // Like a native reset, it is not reported as a change.
+  expect(onValueChange).toHaveBeenCalledTimes(1);
+
+  // ...and the next pick of the same item is.
+  fireEvent.click(b);
+  expect(onValueChange).toHaveBeenCalledTimes(2);
+  expect(labelOf(b)).toHaveAttribute('data-selected', 'true');
+});
+
+test('a form reset clears an uncontrolled RadioGroup that started with no selection', async () => {
+  render(
+    <form data-testid="form">
+      <RadioGroup name="size">
+        <RadioGroupItem value="s" />
+        <RadioGroupItem value="m" />
+      </RadioGroup>
+      <input type="radio" name="other" aria-label="other" defaultChecked />
+    </form>,
+  );
+  const [s, m] = screen.getAllByRole('radio', { name: /^[sm]$/ });
+  fireEvent.click(m);
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(s).not.toBeChecked();
+  expect(m).not.toBeChecked();
+  expect(labelOf(m)).toHaveAttribute('data-selected', 'false');
+});
+
+test('a RadioGroup only adopts radios of its own name after a reset', async () => {
+  render(
+    <form data-testid="form">
+      <RadioGroup name="size" defaultValue="s">
+        <RadioGroupItem value="s" />
+        <RadioGroupItem value="m" />
+        {/* A stray radio of another group inside the container. */}
+        <input type="radio" name="other" value="x" aria-label="x" defaultChecked />
+      </RadioGroup>
+    </form>,
+  );
+  const m = screen.getByRole('radio', { name: 'm' });
+  fireEvent.click(m);
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(labelOf(screen.getByRole('radio', { name: 's' }))).toHaveAttribute('data-selected', 'true');
+  expect(labelOf(m)).toHaveAttribute('data-selected', 'false');
+});
+
+test('a controlled RadioGroup leaves a form reset to its owner', () => {
+  const add = vi.spyOn(document, 'addEventListener');
+  render(
+    <form>
+      <RadioGroup value="a">
+        <RadioGroupItem value="a" />
+      </RadioGroup>
+    </form>,
+  );
+  expect(add.mock.calls.some(([type]) => type === 'reset')).toBe(false);
+  add.mockRestore();
+});
+
+// =============================================================================
+// RadioGroupItem — Accessible name
+// =============================================================================
+
+test('a bare RadioGroupItem is named by its value', () => {
+  render(
+    <RadioGroup>
+      <RadioGroupItem value="dark" id="dark" />
+    </RadioGroup>,
+  );
+  // An id alone (no label points at it) is no name source.
+  expect(screen.getByRole('radio', { name: 'dark' })).toHaveAttribute('aria-label', 'dark');
+});
+
+test('a <label htmlFor> names a RadioGroupItem instead of its value', () => {
+  render(
+    <RadioGroup>
+      <RadioGroupItem value="dark" id="theme-dark" />
+      <label htmlFor="theme-dark">Always dark</label>
+    </RadioGroup>,
+  );
+  const radio = screen.getByRole('radio', { name: 'Always dark' });
+  expect(radio).not.toHaveAttribute('aria-label');
+});
+
+test('a wrapping <label> with text names a RadioGroupItem instead of its value', () => {
+  render(
+    <RadioGroup>
+      {/* biome-ignore lint/a11y/noLabelWithoutControl: the control is the radio inside */}
+      <label>
+        <RadioGroupItem value="dark" />
+        Always dark
+      </label>
+    </RadioGroup>,
+  );
+  expect(screen.getByRole('radio')).not.toHaveAttribute('aria-label');
+});
+
+test('aria-labelledby names a RadioGroupItem instead of its value', () => {
+  render(
+    <RadioGroup>
+      <span id="dark-text">Always dark</span>
+      <RadioGroupItem value="dark" aria-labelledby="dark-text" />
+    </RadioGroup>,
+  );
+  const radio = screen.getByRole('radio', { name: 'Always dark' });
+  expect(radio).not.toHaveAttribute('aria-label');
+  expect(radio).toHaveAttribute('aria-labelledby', 'dark-text');
+});
+
+test('an explicit aria-label still wins over a label element', () => {
+  render(
+    <RadioGroup>
+      <RadioGroupItem value="dark" id="theme-dark" aria-label="Dark theme" />
+      <label htmlFor="theme-dark">Always dark</label>
+    </RadioGroup>,
+  );
+  expect(screen.getByRole('radio')).toHaveAttribute('aria-label', 'Dark theme');
+});
+
+test('a label with no text keeps the value fallback', () => {
+  render(
+    <RadioGroup>
+      <RadioGroupItem value="dark" id="theme-dark" />
+      {/* biome-ignore lint/a11y/noLabelWithoutControl: an empty label is the case under test */}
+      <label htmlFor="theme-dark" />
+    </RadioGroup>,
+  );
+  expect(screen.getByRole('radio')).toHaveAttribute('aria-label', 'dark');
+});
+
+test('a label added after mount takes over from the value once the item re-renders', () => {
+  const { rerender } = render(
+    <RadioGroup>
+      <RadioGroupItem value="dark" id="theme-dark" />
+    </RadioGroup>,
+  );
+  expect(screen.getByRole('radio')).toHaveAttribute('aria-label', 'dark');
+  rerender(
+    <RadioGroup>
+      <RadioGroupItem value="dark" id="theme-dark" />
+      <label htmlFor="theme-dark">Always dark</label>
+    </RadioGroup>,
+  );
+  expect(screen.getByRole('radio', { name: 'Always dark' })).not.toHaveAttribute('aria-label');
+});
+
+test('a decorative RadioGroupItem has no input to name', () => {
+  const { container } = render(
+    <RadioGroup value="dark">
+      <RadioGroupItem value="dark" decorative />
+    </RadioGroup>,
+  );
+  expect(container.querySelector('input')).toBeNull();
+  expect(container.querySelector('span.md-radio')).toHaveAttribute('data-selected', 'true');
 });

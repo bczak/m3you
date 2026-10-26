@@ -10,6 +10,26 @@ form state.
 
 <Example name="radio-button/group" title="A radio group" layout="stretch" />
 
+Bare, uncontrolled `RadioButton`s that share a `name` behave like a native
+radio group: when a click or an arrow key moves the selection, the radio that
+lost it redraws itself as unselected.
+
+Inside a `<form>`, a form reset (`form.reset()` or a `<button type="reset">`)
+puts an uncontrolled `RadioGroup` back on its `defaultValue`, and a bare
+uncontrolled `RadioButton` back on its `defaultChecked`. As with a native reset,
+`onValueChange` is not called. A controlled group or radio is left alone: its
+selection comes from your `value` or `checked`, so you reset that state yourself.
+
+On both `RadioButton` and `RadioGroupItem`, `className` and `style` apply to the
+visible 48dp root (`.md-radio`). Every other prop, including `id`, goes to the
+visually hidden native input, so `<label htmlFor>` still points at it.
+
+Name a `RadioGroupItem` with an `aria-label`, an `aria-labelledby`, or a
+`<label>` with text that points at its `id` or wraps it. Only when it has none of
+these does its `value` become its `aria-label`, so a bare
+`<RadioGroupItem value="dark" />` is still announced as "dark". A `<label>` added
+after the item mounts takes over the next time the item renders.
+
 ## Props
 
 <PropsTable of="RadioGroup" extends="<div>" />

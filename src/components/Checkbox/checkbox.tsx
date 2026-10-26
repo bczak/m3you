@@ -1,8 +1,41 @@
 import './checkbox.css';
-import { Check, Minus } from 'lucide-react';
 import * as React from 'react';
 import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
+import { useFormReset } from '../../lib/use-form-reset';
+
+/* The kit's marks are the 24dp Material Symbols `check_small` (≈12x9.4dp,
+   2dp strokes) and `check_indeterminate_small` (a 10x2dp bar), centred on the
+   18dp container. Filled glyphs keep that weight exactly at 24px. The
+   width/height attributes give the glyph its 24px size before the stylesheet
+   applies, as lucide's icons did. */
+const CheckMark = () => (
+  <svg
+    aria-hidden="true"
+    className="md-checkbox__icon"
+    data-mark="check"
+    width="24"
+    height="24"
+    viewBox="0 -960 960 960"
+    fill="currentColor"
+  >
+    <path d="M400-304 240-464l56-56 104 104 264-264 56 56-320 320Z" />
+  </svg>
+);
+
+const IndeterminateMark = () => (
+  <svg
+    aria-hidden="true"
+    className="md-checkbox__icon"
+    data-mark="indeterminate"
+    width="24"
+    height="24"
+    viewBox="0 -960 960 960"
+    fill="currentColor"
+  >
+    <path d="M280-440v-80h400v80H280Z" />
+  </svg>
+);
 
 export type CheckboxProps = Omit<React.ComponentProps<'input'>, 'type'> & {
   /** Checked state (controlled). Pair with `onCheckedChange`. */
@@ -55,6 +88,14 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Checkb
     // Merge refs
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
+    // A form reset restores the default without a `change` event, so the
+    // internal state (and the input React keeps in step with it) would hold on
+    // to the old value; adopt the restored one. A decorative checkbox has no
+    // input to reset, and the listener has to come back if it stops being one.
+    useFormReset(inputRef, !isControlled && !decorative, (input) =>
+      setInternalChecked((input as HTMLInputElement).checked),
+    );
+
     // Set indeterminate state via ref (not an HTML attribute)
     React.useEffect(() => {
       /* v8 ignore next -- inputRef is always mounted when this effect runs */
@@ -73,11 +114,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Checkb
 
     // Determine visual state: indeterminate takes precedence over checked
     const isVisuallyChecked = indeterminate || checked;
-    const mark = indeterminate ? (
-      <Minus className="md-checkbox__icon" />
-    ) : checked ? (
-      <Check className="md-checkbox__icon" />
-    ) : null;
+    const mark = indeterminate ? <IndeterminateMark /> : checked ? <CheckMark /> : null;
 
     if (decorative) {
       const { id, style } = props;

@@ -1,7 +1,12 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
 import { Checkbox } from '../src/components/Checkbox/checkbox';
+
+const checkboxCss = readFileSync('src/components/Checkbox/checkbox.css', 'utf8');
+/** CSS text with whitespace collapsed, so multi-line selectors compare as one line. */
+const flatCss = checkboxCss.replace(/\s+/g, ' ');
 
 afterEach(cleanup);
 
@@ -229,4 +234,255 @@ test('the interactive form is unaffected: it still toggles and reports', () => {
   fireEvent.click(input);
   expect(onCheckedChange).toHaveBeenCalledWith(true);
   expect(input).toBeChecked();
+});
+
+// =============================================================================
+// Checkbox — Marks (kit: 24dp check_small / check_indeterminate_small)
+// =============================================================================
+
+test('the check mark is the 24dp filled check_small glyph', () => {
+  const { container } = render(<Checkbox checked />);
+  const icon = container.querySelector('svg.md-checkbox__icon');
+  expect(icon).toHaveAttribute('data-mark', 'check');
+  expect(icon).toHaveAttribute('aria-hidden', 'true');
+  expect(icon).toHaveAttribute('viewBox', '0 -960 960 960');
+  expect(icon).toHaveAttribute('fill', 'currentColor');
+  // Intrinsic 24px size, so the glyph is not a 300x150 default before CSS loads
+  expect(icon).toHaveAttribute('width', '24');
+  expect(icon).toHaveAttribute('height', '24');
+  expect(icon?.querySelector('path')).toHaveAttribute('d', 'M400-304 240-464l56-56 104 104 264-264 56 56-320 320Z');
+  // Filled glyph, not a stroked icon
+  expect(icon).not.toHaveAttribute('stroke');
+});
+
+test('the indeterminate mark is the 24dp check_indeterminate_small bar', () => {
+  const { container } = render(<Checkbox indeterminate checked />);
+  const icons = container.querySelectorAll('svg.md-checkbox__icon');
+  expect(icons).toHaveLength(1);
+  expect(icons[0]).toHaveAttribute('data-mark', 'indeterminate');
+  expect(icons[0]).toHaveAttribute('aria-hidden', 'true');
+  expect(icons[0]).toHaveAttribute('viewBox', '0 -960 960 960');
+  expect(icons[0]).toHaveAttribute('fill', 'currentColor');
+  expect(icons[0]).toHaveAttribute('width', '24');
+  expect(icons[0]).toHaveAttribute('height', '24');
+  expect(icons[0]?.querySelector('path')).toHaveAttribute('d', 'M280-440v-80h400v80H280Z');
+});
+
+test('the decorative form draws the same marks', () => {
+  const { container, rerender } = render(<Checkbox decorative checked />);
+  expect(container.querySelector('.md-checkbox__icon')).toHaveAttribute('data-mark', 'check');
+  rerender(<Checkbox decorative indeterminate />);
+  expect(container.querySelector('.md-checkbox__icon')).toHaveAttribute('data-mark', 'indeterminate');
+});
+
+test('marks render at 24px, unshrunk, over the 18px box', () => {
+  expect(flatCss).toContain('& svg { width: 24px; height: 24px; flex-shrink: 0; }');
+  expect(checkboxCss).not.toContain('stroke-width');
+});
+
+// =============================================================================
+// Checkbox — Focus indicator (kit: 3dp Secondary ring, 44→50dp)
+// =============================================================================
+
+test('the focus ring sits 2dp outside the 40dp state layer', () => {
+  expect(flatCss).toContain(
+    '.md-checkbox:has(input:focus-visible) .md-checkbox__state-layer { background-color: color-mix(in srgb, currentColor 12%, transparent);',
+  );
+  const rule = flatCss.slice(flatCss.indexOf('.md-checkbox:has(input:focus-visible) .md-checkbox__state-layer {'));
+  const body = rule.slice(0, rule.indexOf('}'));
+  expect(body).toContain(
+    'outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);',
+  );
+  expect(body).toContain('outline-offset: var(--md-sys-state-focus-indicator-outer-offset);');
+  // No longer drawn on the 48dp label with an inset offset
+  expect(checkboxCss).not.toContain('focus-indicator-inner-offset');
+});
+
+// =============================================================================
+// Checkbox — Press ripple role (kit: opposite of the hover layer)
+// =============================================================================
+
+test('the press ripple is Primary when unselected and On Surface when selected', () => {
+  expect(flatCss).toContain(
+    '.md-checkbox[data-variant="primary"][data-checked="false"] .md-checkbox__state-layer > .salty-ripple:not(.md-ripple-hover-layer) { --ripple-color: var(--md-sys-color-primary); }',
+  );
+  expect(flatCss).toContain(
+    '.md-checkbox[data-variant="primary"][data-checked="true"] .md-checkbox__state-layer > .salty-ripple:not(.md-ripple-hover-layer) { --ripple-color: var(--md-sys-color-on-surface); }',
+  );
+});
+
+test('the ripple selector reaches the press ripple but not the hover layer', () => {
+  const pressRipple = '.md-checkbox__state-layer > .salty-ripple:not(.md-ripple-hover-layer)';
+  const { container, rerender } = render(<Checkbox />);
+  const unchecked = container.querySelectorAll(
+    `.md-checkbox[data-variant="primary"][data-checked="false"] ${pressRipple}`,
+  );
+  expect(unchecked).toHaveLength(1);
+  expect(unchecked[0]).not.toHaveClass('md-ripple-hover-layer');
+
+  rerender(<Checkbox indeterminate />);
+  expect(
+    container.querySelectorAll(`.md-checkbox[data-variant="primary"][data-checked="true"] ${pressRipple}`),
+  ).toHaveLength(1);
+
+  rerender(<Checkbox variant="error" checked />);
+  expect(container.querySelector(`.md-checkbox[data-variant="primary"] ${pressRipple}`)).toBeNull();
+});
+
+// =============================================================================
+// Checkbox — Unselected outline (kit: On Surface when hovered/focused/pressed)
+// =============================================================================
+
+test('the unselected outline darkens to On Surface on hover, focus and press', () => {
+  expect(flatCss).toContain(
+    '.md-checkbox:not([data-disabled], [data-decorative]):is(:active, :has(input:focus-visible)) .md-checkbox__box[data-checked="false"][data-variant="primary"] { border-color: var(--md-sys-color-on-surface); }',
+  );
+  expect(flatCss).toContain(
+    '@media (hover: hover) { .md-checkbox:not([data-disabled], [data-decorative]) > .md-checkbox__state-layer:hover ~ .md-checkbox__box[data-checked="false"][data-variant="primary"] { border-color: var(--md-sys-color-on-surface); } }',
+  );
+});
+
+test('the hover selector pairs the state layer with the box that follows it', () => {
+  const { container } = render(<Checkbox />);
+  const stateLayer = container.querySelector('.md-checkbox > .md-checkbox__state-layer');
+  expect(stateLayer?.nextElementSibling).toHaveClass('md-checkbox__box');
+});
+
+test('only an enabled, interactive, unselected primary box takes the darker outline', () => {
+  // The CSS selectors minus their :hover / :active / :focus-visible gates,
+  // which happy-dom cannot drive — what is left decides which boxes qualify.
+  const viaHover =
+    '.md-checkbox:not([data-disabled], [data-decorative]) > .md-checkbox__state-layer ~ .md-checkbox__box[data-checked="false"][data-variant="primary"]';
+  const viaPressOrFocus =
+    '.md-checkbox:not([data-disabled], [data-decorative]) .md-checkbox__box[data-checked="false"][data-variant="primary"]';
+  const qualifies = (ui: React.ReactElement) => {
+    const { container, unmount } = render(ui);
+    const result = [container.querySelector(viaHover) !== null, container.querySelector(viaPressOrFocus) !== null];
+    unmount();
+    return result;
+  };
+
+  expect(qualifies(<Checkbox />)).toEqual([true, true]);
+  // Error unselected keeps its Error outline in every state
+  expect(qualifies(<Checkbox variant="error" />)).toEqual([false, false]);
+  // Selected and indeterminate are filled, not outlined
+  expect(qualifies(<Checkbox checked />)).toEqual([false, false]);
+  expect(qualifies(<Checkbox indeterminate />)).toEqual([false, false]);
+  // Disabled is non-interactive; decorative defers to its enclosing control
+  expect(qualifies(<Checkbox disabled />)).toEqual([false, false]);
+  expect(qualifies(<Checkbox decorative />)).toEqual([false, false]);
+});
+
+// =============================================================================
+// Checkbox — Disabled is non-interactive
+// =============================================================================
+
+test('a disabled checkbox drops the hand cursor and the state layer hit area', () => {
+  expect(flatCss).toContain('&[data-disabled] { pointer-events: none; cursor: default; }');
+  expect(flatCss).toContain('.md-checkbox[data-disabled] .md-checkbox__state-layer { pointer-events: none; }');
+});
+
+// =============================================================================
+// Form reset
+// =============================================================================
+
+/**
+ * `reset` is dispatched before the form restores its controls (a browser runs a
+ * microtask checkpoint in between when a reset button is pressed), so the
+ * component re-reads its input on the next task. Wait that task out.
+ */
+const settleReset = () => act(() => new Promise<void>((resolve) => setTimeout(resolve)));
+
+test('a form reset redraws an uncontrolled checkbox from its default', async () => {
+  const onCheckedChange = vi.fn();
+  render(
+    <form data-testid="form">
+      <Checkbox aria-label="Option" onCheckedChange={onCheckedChange} />
+    </form>,
+  );
+  const input = screen.getByRole('checkbox');
+  const root = input.closest('label') as HTMLElement;
+  fireEvent.click(input);
+  expect(root).toHaveAttribute('data-checked', 'true');
+
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(input).not.toBeChecked();
+  expect(root).toHaveAttribute('data-checked', 'false');
+  // Like a native reset, it is not reported as a change...
+  expect(onCheckedChange).toHaveBeenCalledTimes(1);
+
+  // ...and the next change, back to the pre-reset state, still is.
+  fireEvent.click(input);
+  expect(onCheckedChange).toHaveBeenCalledTimes(2);
+  expect(onCheckedChange).toHaveBeenLastCalledWith(true);
+  expect(root).toHaveAttribute('data-checked', 'true');
+});
+
+test('a form reset restores a defaultChecked checkbox to checked', async () => {
+  render(
+    <form data-testid="form">
+      <Checkbox aria-label="Option" defaultChecked />
+    </form>,
+  );
+  const input = screen.getByRole('checkbox');
+  fireEvent.click(input);
+  expect(input).not.toBeChecked();
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(input).toBeChecked();
+  expect(input.closest('label')).toHaveAttribute('data-checked', 'true');
+});
+
+test('resetting a different form leaves the checkbox alone', async () => {
+  render(
+    <>
+      <form>
+        <Checkbox aria-label="Option" />
+      </form>
+      <form data-testid="other" />
+    </>,
+  );
+  const input = screen.getByRole('checkbox');
+  fireEvent.click(input);
+  (screen.getByTestId('other') as HTMLFormElement).reset();
+  await settleReset();
+  expect(input).toBeChecked();
+  expect(input.closest('label')).toHaveAttribute('data-checked', 'true');
+});
+
+// The listener is registered against the input, which a decorative checkbox does not render.
+test('a checkbox that stops being decorative still follows a form reset', async () => {
+  const add = vi.spyOn(document, 'addEventListener');
+  const { rerender } = render(
+    <form data-testid="form">
+      <Checkbox aria-label="Option" decorative />
+    </form>,
+  );
+  expect(add.mock.calls.some(([type]) => type === 'reset')).toBe(false);
+  add.mockRestore();
+
+  rerender(
+    <form data-testid="form">
+      <Checkbox aria-label="Option" />
+    </form>,
+  );
+  const input = screen.getByRole('checkbox');
+  fireEvent.click(input);
+  expect(input.closest('label')).toHaveAttribute('data-checked', 'true');
+  (screen.getByTestId('form') as HTMLFormElement).reset();
+  await settleReset();
+  expect(input).not.toBeChecked();
+  expect(input.closest('label')).toHaveAttribute('data-checked', 'false');
+});
+
+test('a controlled checkbox leaves a form reset to its owner', () => {
+  const add = vi.spyOn(document, 'addEventListener');
+  render(
+    <form>
+      <Checkbox aria-label="Option" checked readOnly />
+    </form>,
+  );
+  expect(add.mock.calls.some(([type]) => type === 'reset')).toBe(false);
+  add.mockRestore();
 });
