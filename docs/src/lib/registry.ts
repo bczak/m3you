@@ -20,7 +20,11 @@ export type ComponentEntry = {
   /** Display name used in navigation and headings. */
   name: string;
   category: ComponentCategory;
-  /** One line, sentence case, no trailing period — used in cards and search. */
+  /**
+   * One line, sentence case, no trailing period — shown on the /components
+   * gallery cards. It is the page's frontmatter `description` minus its period;
+   * a test in `tests/` keeps the two identical.
+   */
   summary: string;
   /** Keys into docgen.json. The first is the primary component. */
   docgen: string[];
@@ -81,7 +85,7 @@ export const COMPONENTS: ComponentEntry[] = [
     slug: 'connected-button-group',
     name: 'Connected button group',
     category: 'Actions',
-    summary: 'Flush segments whose corners round as selection moves',
+    summary: 'Tightly spaced segments whose corners round as selection moves',
     docgen: ['ConnectedButtonGroup'],
     exports: ['ConnectedButtonGroup'],
     spec: 'components/button-groups',
@@ -432,7 +436,7 @@ export const COMPONENTS: ComponentEntry[] = [
     slug: 'date-picker',
     name: 'Date picker',
     category: 'Selection',
-    summary: 'A calendar for choosing a single date',
+    summary: 'A calendar or text field for choosing a date or a date range, inline or as a dialog',
     docgen: ['DatePicker'],
     exports: ['DatePicker'],
     spec: 'components/date-pickers',
@@ -460,7 +464,7 @@ export const COMPONENTS: ComponentEntry[] = [
     slug: 'text-field',
     name: 'Text field',
     category: 'Text inputs',
-    summary: 'Filled and outlined fields with labels and supporting text',
+    summary: 'Filled, outlined and tonal fields with labels and supporting text',
     docgen: ['TextField'],
     exports: ['TextField'],
     spec: 'components/text-fields',

@@ -29,7 +29,7 @@ Component **variants come from props** (they compile to `data-*` attributes — 
 `data-size`, `data-shape`, `data-selected`, `data-disabled`). Common values:
 
 - `Button.variant`: `text` · `filled` · `elevated` · `tonal` · `outlined`
-- `Card.variant`: `filled` · `elevated` · `outlined`; `TextField.variant`: `filled` · `outlined`
+- `Card.variant`: `filled` · `elevated` · `outlined`; `TextField.variant`: `filled` · `outlined` · `tonal`
 - `size`: `xs` · `sm` · `md` · `lg` · `xl` · `shape`: `round` · `square`
 
 Variant prop names are **per component** — check the `.d.ts` rather than assuming. Chip is the
@@ -38,7 +38,15 @@ classic trap: its kind is `type` (`assist` · `filter` · `input` · `suggestion
 
 For **your own layout glue**, style with the M3 system tokens — never invent hex colours,
 and never hand-write the internal `md-*` classes (`md-button`, `md-card`, … are component
-internals, not a consumer API):
+internals, not a consumer API). The one exception is **`md-scrollbar`**, an opt-in utility
+for your own scroll containers. It gives the thumb Material's colour (Outline at 70%) on no
+track fill, at the browser's thin scrollbar width:
+
+```jsx
+<div className="md-scrollbar" style={{ overflowY: 'auto', maxHeight: 320 }}>…</div>
+```
+
+Tokens to style with:
 
 - Colour — `--md-sys-color-primary`, `-on-primary`, `-secondary`, `-tertiary`, `-surface`,
   `-surface-container`, `-on-surface`, `-on-surface-variant`, `-outline`, `-outline-variant`,
@@ -47,7 +55,11 @@ internals, not a consumer API):
 - Elevation — `--md-sys-elevation-0` … `--md-sys-elevation-5`
 - Type — `--md-sys-typescale-body-large-font|-size|-weight|-line-height`, and the same
   suffixes for `headline-small`, `title-medium`, `label-large`, `display-large`, …
+- Spacing — `--md-sys-space-0` … `--md-sys-space-900` (an 8px scale named in hundredths of
+  the unit: `--md-sys-space-150` is 12px, `--md-sys-space-300` is 24px)
 - Motion — `--md-sys-motion-*`; state opacities — `--md-sys-state-hover-opacity`
+- Layering — `--md-sys-z-index-backdrop|navigation|dialog|popup|snackbar` for anything that
+  leaves the page flow, instead of a hand-picked `z-index`
 
 **Gotcha worth knowing:** the npm library defines typescale *tokens* but does not set a base
 `font-family` on `body`. This synced `styles.css` adds one safety-net rule
