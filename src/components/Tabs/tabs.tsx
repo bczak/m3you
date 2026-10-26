@@ -83,7 +83,9 @@ const Tab = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<TabProps>>
   ({ className, value, icon, badge, disabled, children, onClick, onKeyDown, ...props }, ref) => {
     const { value: selectedValue, onValueChange, variant, fullWidth } = useTabs();
     const isActive = selectedValue === value;
-    const hasLabel = React.Children.count(children) > 0;
+    // `Children.count` counts `false`/`null` from a conditional label (`{showLabel && 'Home'}`); `toArray` drops
+    // them, and an empty string is no label either.
+    const hasLabel = React.Children.toArray(children).some((child) => child !== '');
     const hasIcon = !!icon;
     const hasBadge = !!badge;
     // Primary tabs stack the icon over the label, so the badge sits on the icon. Secondary tabs lay the icon and

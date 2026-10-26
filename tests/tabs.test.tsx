@@ -219,6 +219,25 @@ test('secondary icon-only tab overlays the badge on the icon', async () => {
   expect(container.querySelector('.md-tab__label')).toBeNull();
 });
 
+test.each([
+  ['false', false],
+  ['null', null],
+  ['an empty string', ''],
+])('a secondary tab whose conditional label is %s overlays the badge on the icon', async (_, label) => {
+  const { container } = render(
+    <Tabs variant="secondary">
+      <Tab value="a" icon={<span>i</span>} badge="2" aria-label="Home">
+        {label}
+      </Tab>
+    </Tabs>,
+  );
+
+  expect(screen.getByRole('tab')).toHaveAttribute('data-has-label', 'false');
+  expect(container.querySelector('.md-tab__icon .md-tab__badge')).toHaveTextContent('2');
+  expect(container.querySelector('.md-tab__badge--label')).toBeNull();
+  expect(container.querySelector('.md-tab__label')).toBeNull();
+});
+
 test('a falsy badge such as 0 renders nothing', async () => {
   const { container } = render(
     <Tabs>
