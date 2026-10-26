@@ -327,11 +327,20 @@ test('the wave flows where matchMedia is unavailable', () => {
   }
 });
 
-test('the wave is drawn in the box’s own pixels when an ancestor is scaled', () => {
-  // A scale(0.5) ancestor halves every client rect, but not the row's layout width or the SVG's coordinates.
+/** Untransformed layout size of the determinate row: 400 × 10 px. */
+const stubRowLayout = () => {
+  const isRow = (element: HTMLElement) => element.classList.contains('md-linear-progress__row');
   vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
-    return this.classList.contains('md-linear-progress__row') ? 400 : 0;
+    return isRow(this) ? 400 : 0;
   });
+  vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
+    return isRow(this) ? 10 : 0;
+  });
+};
+
+test('the wave is drawn in the box’s own pixels when an ancestor is scaled', () => {
+  // A scale(0.5) ancestor halves every client rect, but not the row's layout size or the SVG's coordinates.
+  stubRowLayout();
   rects = {
     'md-linear-progress__row': { left: 10, width: 200, height: 5 },
     'md-linear-progress__active': { left: 10, width: 100, height: 5 },
@@ -344,6 +353,27 @@ test('the wave is drawn in the box’s own pixels when an ancestor is scaled', (
   expect(pieces[0].to.x).toBe(20);
   expect(pieces.at(-1)?.to.x).toBe(198);
   expect(pieces[1].from.y).toBe(5);
+});
+
+test.each([
+  ['scaleX(0.5)', { width: 200, height: 10 }, { width: 100, height: 10 }],
+  ['scaleY(2)', { width: 400, height: 20 }, { width: 200, height: 20 }],
+])('a %s ancestor undoes the scale on each axis separately', (_, row, active) => {
+  stubRowLayout();
+  rects = {
+    'md-linear-progress__row': { left: 10, ...row },
+    'md-linear-progress__active': { left: 10, ...active },
+  };
+  const { container } = render(<LinearProgress variant="wavy" value={50} />);
+  const pieces = piecesOf(waveOf(container));
+
+  // Cap to cap across the unscaled 200px box, swinging 3px either side of its unscaled 5px centre line, so the
+  // crests stay inside the root's overflow.
+  expect(pieces[0].from.x).toBe(2);
+  expect(pieces.at(-1)?.to.x).toBe(198);
+  const ys = pieces.flatMap((piece) => [0, 0.25, 0.5, 0.75, 1].map((t) => bezierAt(piece, t).y));
+  expect(Math.min(...ys)).toBeCloseTo(2, 3);
+  expect(Math.max(...ys)).toBeCloseTo(8, 3);
 });
 
 test('flat indicators and low or complete wavy values draw no wave and run no frame loop', () => {

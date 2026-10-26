@@ -62,9 +62,11 @@ const useFlowingWave = (
       const track = parent.getBoundingClientRect();
       const rect = box.getBoundingClientRect();
       // Client rects include ancestor transforms (a dialog scaling in, a scaled preview), but the SVG draws in the
-      // box's own CSS pixels: undo the scale, measured against the parent's untransformed layout width.
-      const scale = track.width > 0 && parent.offsetWidth > 0 ? track.width / parent.offsetWidth : 1;
-      const width = rect.width / scale;
+      // box's own CSS pixels: undo the scale, measured against the parent's untransformed layout size. Each axis is
+      // measured on its own, as a `scaleX()` leaves the height alone.
+      const scaleX = track.width > 0 && parent.offsetWidth > 0 ? track.width / parent.offsetWidth : 1;
+      const scaleY = track.height > 0 && parent.offsetHeight > 0 ? track.height / parent.offsetHeight : 1;
+      const width = rect.width / scaleX;
       const flow = reducedMotion?.matches ? 0 : (((now - startTime) / WAVE_PERIOD_MS) % 1) * wavelength;
       const half = thickness / 2;
       path.setAttribute(
@@ -73,10 +75,10 @@ const useFlowingWave = (
           ? drawLinearWaveSegment({
               start: half,
               end: width - half,
-              centerY: rect.height / scale / 2,
+              centerY: rect.height / scaleY / 2,
               amplitude: WAVE_AMPLITUDE,
               wavelength,
-              offset: (rect.left - track.left) / scale + flow,
+              offset: (rect.left - track.left) / scaleX + flow,
             })
           : '',
       );
