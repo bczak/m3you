@@ -102,6 +102,37 @@ export const AllSizes: Story = {
   ),
 };
 
+// Kit-backed `fabSize` (56/80/96dp) and `color` roles. The legacy md and lg
+// sizes above render the same geometry as fabSize="small" and "large".
+export const KitSizesAndColors: Story = {
+  args: {
+    label: 'Create',
+  },
+  render: () => (
+    <div style={stackStyle}>
+      <div style={rowStyle}>
+        {(['small', 'medium', 'large'] as const).map((fabSize) => (
+          <ExtendedFAB key={fabSize} fabSize={fabSize} color="primary" icon={<EditIcon />} label="Label" />
+        ))}
+      </div>
+      <div style={{ ...rowStyle, gap: '16px', flexWrap: 'wrap' }}>
+        {(
+          [
+            'primary',
+            'secondary',
+            'tertiary',
+            'primary-container',
+            'secondary-container',
+            'tertiary-container',
+          ] as const
+        ).map((color) => (
+          <ExtendedFAB key={color} fabSize="small" color={color} icon={<EditIcon />} label={color} />
+        ))}
+      </div>
+    </div>
+  ),
+};
+
 const VariantStory = ({ variant }: { variant: 'filled' | 'elevated' | 'tonal' | 'outlined' | 'text' }) => {
   return (
     <SizeShowcase

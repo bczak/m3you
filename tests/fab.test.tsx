@@ -49,7 +49,7 @@ test('forwards refs through ExtendedFAB', async () => {
   expect(ref.current).toBeInstanceOf(HTMLButtonElement);
 });
 
-test('keeps ExtendableFAB collapsed and uses the label as aria-label', async () => {
+test('keeps ExtendableFAB collapsed and names it by its label', async () => {
   const { container } = render(
     <ExtendableFAB extended={false} icon={<span aria-hidden="true">+</span>} label="Compose" />,
   );

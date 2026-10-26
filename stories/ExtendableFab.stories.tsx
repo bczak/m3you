@@ -102,6 +102,42 @@ export const Lowered: Story = {
   ),
 };
 
+const disabledVariants = ['standard', 'filled', 'elevated', 'tonal', 'outlined', 'text'] as const;
+const disabledColors = [
+  'primary',
+  'secondary',
+  'tertiary',
+  'primary-container',
+  'secondary-container',
+  'tertiary-container',
+] as const;
+
+/** Every variant and every color role resolves to the same flat disabled look. */
+export const Disabled: Story = {
+  render: () => (
+    <div style={stackStyle}>
+      <div style={rowStyle}>
+        {disabledVariants.map((variant) => (
+          <ExtendableFAB
+            key={variant}
+            variant={variant}
+            size="sm"
+            disabled
+            extended
+            icon={<EditIcon />}
+            label={variant}
+          />
+        ))}
+      </div>
+      <div style={rowStyle}>
+        {disabledColors.map((color) => (
+          <ExtendableFAB key={color} color={color} size="sm" disabled lowered icon={<EditIcon />} label={color} />
+        ))}
+      </div>
+    </div>
+  ),
+};
+
 function TransformStory() {
   const [extended, setExtended] = useState(false);
 
