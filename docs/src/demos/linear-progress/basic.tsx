@@ -6,6 +6,7 @@ export default function LinearProgressBasic() {
       <LinearProgress value={35} />
       <LinearProgress value={35} variant="wavy" />
       <LinearProgress type="indeterminate" />
+      <LinearProgress type="indeterminate" variant="wavy" />
     </div>
   );
 }

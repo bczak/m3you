@@ -1,14 +1,16 @@
 /* =============================================================================
    Tabs — M3 Spec
-   Primary: 48px (72px with icon+text), 2px indicator, primary color
-   Secondary: 48px, 2px indicator, on-surface active color
-   Source: m3.material.io/components/tabs/specs
+   Primary: 48px (64px with icon+label), 3px indicator as wide as the content, primary color
+   Secondary: 48px, 2px full-width indicator, on-surface active color
+   Scrollable: row starts 52px in, tabs at least 90px wide
+   Source: m3.material.io/components/tabs/specs, M3 Expressive Design Kit (Tabs)
    ============================================================================= */
 
 /* ── Tabs container (tablist) ── */
 .md-tabs {
   --md-tabs-container-color: var(--md-sys-color-surface);
   position: relative;
+  box-sizing: border-box;
   display: flex;
   width: 100%;
   flex-wrap: nowrap;
@@ -22,25 +24,54 @@
   &::-webkit-scrollbar {
     display: none;
   }
+
+  /* Scrollable configuration: the kit's Tab group has a 52dp leading inset. */
+  &[data-full-width="false"] {
+    padding-inline-start: 52px;
+  }
 }
 
 /* ── Tab button ── */
 .md-tab {
   position: relative;
+  box-sizing: border-box;
   display: inline-flex;
   cursor: pointer;
   align-items: center;
   justify-content: center;
   border: none;
+  /* Zero the UA's 1px block padding so the content (and the primary indicator) fills the tab's full height. */
+  padding-block: 0;
+  padding-inline: 16px;
   background-color: transparent;
   color: var(--md-sys-color-on-surface-variant);
   outline: none;
   overflow: hidden;
   transition: color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
-  &:focus-visible {
+  /* Focus ring drawn inside the tab: the tablist scrolls (overflow-x: auto, overflow-y: hidden) and is exactly
+     as tall as its tabs, so an outer ring would be clipped. Like the kit's Focus indicator, a 3dp stroke sits
+     outside a 12dp-corner frame inset by the stroke width, so the ring's outer edge lands on the tab bounds.
+     A pseudo-element keeps the 12dp corners off the tab's state layer and ripple, which inherit the radius. */
+  &:focus-visible::after {
+    position: absolute;
+    inset: var(--md-sys-state-focus-indicator-thickness);
+    border-radius: var(--md-sys-shape-corner-medium);
     outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
-    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+    pointer-events: none;
+    content: "";
+  }
+
+  /* Kit: on the selected tab the ring's frame is shorter (primary 42 → 37, secondary 42 → 38), so its outer edge
+     stops 2dp above the active indicator and the indicator stays visible while the tab has focus. */
+  &[data-active="true"]:focus-visible::after {
+    bottom: calc(var(--md-sys-state-focus-indicator-thickness) + var(--_indicator-height) + 2px);
+  }
+
+  /* Focus state layer, tinted with the tab's current color like the hover layer. The :not(:disabled) mirrors the
+     shared hover rule and outranks it, so focus wins when the tab is also hovered. */
+  &:focus-visible:not(:disabled) > .md-ripple-hover-layer > .md-ripple-hover-layer__surface {
+    opacity: var(--md-sys-state-focus-opacity);
   }
 
   &:disabled {
@@ -60,42 +91,52 @@
     flex: 1;
   }
 
-  /* Content-sized tabs that can overflow horizontally */
+  /* Content-sized tabs that can overflow horizontally. The kit's scrollable tabs are 90dp even when the
+     content would hug to less. */
   &[data-full-width="false"] {
     flex: 0 0 auto;
+    min-width: 90px;
   }
 
   /* ── Primary variant ── */
   &[data-variant="primary"] {
-    flex-direction: column;
-    gap: 0;
-    padding-inline: 16px;
+    --_indicator-height: 3px;
 
     &[data-has-icon="false"],
     &[data-has-icon="true"][data-has-label="false"] {
       height: 48px;
     }
 
+    & > .md-tab__content {
+      flex-direction: column;
+    }
+
+    /* Kit: Tab Contents pad 10 top / 8 bottom, gap 2 — the 24 + 2 + 20 stack fills the 46px between them. */
     &[data-has-icon="true"][data-has-label="true"] {
       height: 64px;
-      gap: 2px;
+
+      & > .md-tab__content {
+        gap: 2px;
+        padding-block: 10px 8px;
+      }
     }
 
     &[data-active="true"] {
       color: var(--md-sys-color-primary);
     }
 
-    &[data-active="false"]:hover {
+    /* Kit: unselected tabs use on-surface for Hovered, Focused and Pressed; only Enabled is on-surface-variant. */
+    &[data-active="false"]:is(:hover, :focus-visible, :active) {
       color: var(--md-sys-color-on-surface);
     }
   }
 
   /* ── Secondary variant ── */
   &[data-variant="secondary"] {
-    padding-inline: 16px;
+    --_indicator-height: 2px;
     height: 48px;
 
-    &[data-has-icon="true"][data-has-label="true"] {
+    &[data-has-icon="true"][data-has-label="true"] > .md-tab__content {
       gap: 8px;
     }
 
@@ -103,37 +144,55 @@
       color: var(--md-sys-color-on-surface);
     }
 
-    &[data-active="false"]:hover {
+    &[data-active="false"]:is(:hover, :focus-visible, :active) {
       color: var(--md-sys-color-on-surface);
     }
   }
 }
 
-/* ── Tab icon wrapper (primary) ── */
+/* ── Tab content (icon, label and the primary indicator) ──
+   Hugs its width and stretches to the tab's height, so the primary indicator inside it matches the content
+   width and sits on the tab's bottom edge (kit: the primary Indicator is a child of the hugging Tab Contents). */
+.md-tab__content {
+  position: relative;
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Tab icon wrapper ── */
 .md-tab__icon {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
 }
 
-/* ── Tab badge on icon ── */
+/* ── Tab badge on icon ──
+   Kit: "Icon & badge" is a 24dp frame with no auto-layout, so the badge overlays the icon's top-right corner and
+   the icon stays centred. Same recipe as BadgeAnchor's top-right position; flex so the wrapper shrink-wraps the
+   badge and the translate centres the badge itself on the corner. */
 .md-tab__badge {
+  position: absolute;
+  top: 0;
+  right: 0;
   display: flex;
-  min-width: 16px;
-  align-items: center;
-  justify-content: center;
+  transform: translate(50%, -50%);
 }
 
-/* ── Tab badge on label ── */
+/* ── Tab badge after the label (kit: gap 4) ── */
 .md-tab__badge--label {
   display: flex;
-  min-width: 16px;
   align-items: center;
   justify-content: center;
 }
 
-/* ── Tab label ── */
+/* ── Tab label ──
+   The badge after the label is centred on the 20px line on purpose. The kit's Tab Contents row
+   ([Label] gap 4 [Badges]) does not tell us how the badge is aligned vertically: the decoded kit has no alignment
+   data for any auto-layout frame, so its "MIN" (top) is a default, not a reading. The kit's badge layer is also
+   hidden. Revisit this if a kit reading or spec shows the badge top-aligned. */
 .md-tab__label {
   display: inline-flex;
   align-items: center;
@@ -146,19 +205,28 @@
   letter-spacing: var(--md-sys-typescale-title-small-tracking);
 }
 
-/* ── Active indicator ── */
+/* ── Active indicator ──
+   Height comes from the tab's --_indicator-height (primary 3px, secondary 2px), which the selected tab's focus
+   ring also clears. */
 .md-tab__indicator {
   position: absolute;
   bottom: 0;
+  height: var(--_indicator-height);
   transition:
     width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    min-width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     left var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
-  /* Primary indicator: the tab's padded content width, 3px tall. */
+  /* Primary indicator: lives in .md-tab__content, so 100% is the content width. It never drops below 24px, so a
+     one- or two-letter label still gets a visible bar. The kit only draws 24-wide content, so it cannot settle a
+     minimum; Compose (PrimaryTabRow, PrimaryScrollableTabRow) and MDC Android (TabIndicatorInterpolator's
+     MIN_INDICATOR_WIDTH) both floor the content-width indicator at 24dp. Centred on the content, the extra width
+     spills into the tab's 16px inline padding. min-width transitions with width (from an explicit 0, since auto
+     cannot interpolate) so the bar still grows from zero. */
   &[data-variant="primary"][data-active="true"] {
-    height: 3px;
-    width: calc(100% - 32px);
+    width: 100%;
+    min-width: 24px;
     left: 50%;
     transform: translateX(-50%);
     border-radius: 3px 3px 0 0;
@@ -166,16 +234,15 @@
   }
 
   &[data-variant="primary"][data-active="false"] {
-    height: 3px;
     width: 0;
+    min-width: 0;
     left: 50%;
     transform: translateX(-50%);
     background-color: transparent;
   }
 
-  /* Secondary indicator: full width, 2px tall */
+  /* Secondary indicator: full width */
   &[data-variant="secondary"][data-active="true"] {
-    height: 2px;
     left: 0;
     right: 0;
     background-color: var(--md-sys-color-primary);
@@ -183,9 +250,17 @@
   }
 
   &[data-variant="secondary"][data-active="false"] {
-    height: 2px;
     left: 0;
     right: 0;
     background-color: transparent;
+  }
+}
+
+/* Forced colors replaces the indicator's fill with Canvas (and drops the divider's box-shadow), which leaves the
+   selected tab indistinguishable from the rest; paint the active indicator with a system colour instead. The
+   [data-variant] attribute matches the variant rules' specificity so this later rule wins. */
+@media (forced-colors: active) {
+  .md-tab__indicator[data-variant][data-active="true"] {
+    background-color: CanvasText;
   }
 }

@@ -118,7 +118,8 @@ NavigationRail.displayName = 'NavigationRail';
 /* =============================================================================
    NavigationRailItem - Individual navigation item
    Uses a single animated surface in both rail states
-   Collapsed: active surface hugs the icon, label is hidden
+   Collapsed: a 56x32 indicator over the icon, label underneath
+              (or, with hideLabel, a 56x56 round indicator and no visible label)
    Expanded: same surface grows to fit icon + label
    ============================================================================= */
 
@@ -129,8 +130,14 @@ export type NavigationRailItemProps = Omit<React.ComponentProps<'button'>, 'valu
   icon: React.ReactNode;
   /** Active icon variant (filled style for active state) */
   activeIcon?: React.ReactNode;
-  /** Label text */
+  /** Label text. Always the item's accessible name, even when `hideLabel` hides it visually. */
   label: string;
+  /**
+   * Hide the label in the collapsed rail and use the 56x56 round indicator instead of the 56x32 pill.
+   * The expanded rail always shows labels.
+   * @default false
+   */
+  hideLabel?: boolean;
   /** Optional badge content */
   badge?: React.ReactNode;
 };
@@ -161,7 +168,10 @@ const NavigationRailItemIcon = ({ icon, activeIcon, isActive }: NavigationRailIt
 };
 
 const NavigationRailItem = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<NavigationRailItemProps>>(
-  ({ className, value, icon, activeIcon, label, badge, disabled, onClick, onKeyDown, ...props }, ref) => {
+  (
+    { className, value, icon, activeIcon, label, hideLabel = false, badge, disabled, onClick, onKeyDown, ...props },
+    ref,
+  ) => {
     const { value: selectedValue, onValueChange, state } = useNavigationRail();
     const isActive = selectedValue === value;
 
@@ -182,6 +192,7 @@ const NavigationRailItem = React.forwardRef<HTMLButtonElement, React.PropsWithou
         disabled={disabled}
         data-active={isActive ? 'true' : undefined}
         data-state={state}
+        data-hide-label={hideLabel ? 'true' : undefined}
         className={cx('md-navigation-rail-item', className)}
         onClick={selectRailItem}
         onKeyDown={onKeyDown}

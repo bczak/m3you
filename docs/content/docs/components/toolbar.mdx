@@ -36,6 +36,19 @@ above content with a shadow; `docked` toolbars sit flush against an edge.
 
 <Example name="toolbar/basic" title="A floating text toolbar" />
 
+A floating toolbar lays its actions into 48px slots, 4px apart, with 8px of
+padding at the ends and 12px across. A 40px icon button sits 4px inside its
+slot, so 12px shows between icons and around them, and three icon buttons make
+a 168 × 64 pill. A text button fills its slot's width, so it sits 8px from the
+ends and 4px from another text button. `gap` and `padding` set the slot gap
+and the container padding.
+
+<Example
+  name="toolbar/toggles"
+  title="Toggle actions"
+  description="Toolbar toggles stay round when selected. Disabled toggles, selected or not, show a faint container with 38% content in both colours."
+/>
+
 ## Props
 
 <PropsTable of="Toolbar" extends="<div>" />

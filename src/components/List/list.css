@@ -17,6 +17,27 @@
   --md-list-max-width: 60ch;
   --md-list-item-text-measure: 60ch;
 
+  /* Row geometry — the baseline list item (kit "List Item: 0 Density"):
+     56/72/88 rows, 8px block padding (12px for three lines) and 16px between
+     slots. Declared on every list so a nested list resets them. */
+  --md-list-item-one-line-height: 56px;
+  --md-list-item-two-line-height: 72px;
+  --md-list-item-three-line-height: 88px;
+  --md-list-item-padding-block: 8px;
+  --md-list-item-three-line-padding-block: 12px;
+  --md-list-item-padding-inline: 16px;
+  --md-list-item-slot-gap: 16px;
+  /* A row with a leading video thumbnail pads 12px above and below it at
+     every line count, in either appearance (kit "List Item: 0 Density"
+     Leading=Video: an 88dp one-line row). */
+  --md-list-item-video-padding-block: 12px;
+  /* A leading or trailing icon, and the narrowest an icon slot gets: 24dp in
+     the baseline row (kit "List Item: 0 Density" Leading/Trailing element). */
+  --md-list-item-icon-size: 24px;
+  /* M3 density: each step removes 4px of row height and 2px of block padding
+     (kit "List Item: -2 / -4 Density" — 48/64/80 and 40/56/72). */
+  --_density: 0;
+
   display: flex;
   flex-direction: column;
   inline-size: 100%;
@@ -48,6 +69,28 @@
        text. Still overridable — set `--md-list-item-container-color` on the
        list. */
     --md-list-item-container-color: var(--md-sys-color-surface-container);
+
+    /* The Expressive list item (kit "Lists / List item"): 10px block padding
+       at every line count, 12px between slots, and 52/64/80 rows (kit
+       "Lists / List" Type=Segmented, Multi-line=False/True). */
+    --md-list-item-one-line-height: 52px;
+    --md-list-item-two-line-height: 64px;
+    --md-list-item-three-line-height: 80px;
+    --md-list-item-padding-block: 10px;
+    --md-list-item-three-line-padding-block: 10px;
+    --md-list-item-slot-gap: 12px;
+    /* Kit "Lists / Building blocks/Leading element" and "Trailing element"
+       Type=Icon: a 20dp icon in a 20-wide slot, which puts the text 48dp in
+       (16 + 20 + 12) rather than 52. */
+    --md-list-item-icon-size: 20px;
+  }
+
+  &[data-density="-2"] {
+    --_density: -2;
+  }
+
+  &[data-density="-4"] {
+    --_density: -4;
   }
 }
 
@@ -55,7 +98,7 @@
   position: relative;
   display: block;
   min-inline-size: 0;
-  min-block-size: 56px;
+  min-block-size: calc(var(--md-list-item-one-line-height, 56px) + var(--_density, 0) * 4px);
   box-sizing: border-box;
   overflow: hidden;
   background: var(--md-list-item-container-color);
@@ -64,16 +107,16 @@
   transition:
     background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
-    border-radius var(--md-sys-motion-duration-spring-default-spatial)
-    var(--md-sys-motion-easing-spring-default-spatial),
+    border-radius var(--md-sys-motion-duration-spring-default-effects)
+    var(--md-sys-motion-easing-spring-default-effects),
     box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-lines="2"] {
-    min-block-size: 72px;
+    min-block-size: calc(var(--md-list-item-two-line-height, 72px) + var(--_density, 0) * 4px);
   }
 
   &[data-lines="3"] {
-    min-block-size: 88px;
+    min-block-size: calc(var(--md-list-item-three-line-height, 88px) + var(--_density, 0) * 4px);
   }
 
   &[data-selected] {
@@ -81,6 +124,8 @@
     background: var(--md-list-item-selected-container-color);
   }
 
+  /* Kit "State=Dragged": a Tertiary Container row under an On Tertiary
+     Container @16% state layer, lifted to level 5. */
   &[data-dragged] {
     --md-list-item-supporting-color: var(--md-sys-color-on-tertiary-container);
 
@@ -88,32 +133,59 @@
     background: color-mix(
       in srgb,
       var(--md-sys-color-tertiary-container),
-      var(--md-sys-color-tertiary) calc(var(--md-sys-state-dragged-opacity) * 100%)
+      var(--md-sys-color-on-tertiary-container) calc(var(--md-sys-state-dragged-opacity) * 100%)
     );
     box-shadow: var(--md-sys-elevation-5);
     z-index: 1;
   }
 
+  /* Kit "State=Disabled": the leading element, content and trailing element
+     each fade to the disabled opacity — so an avatar, an image or a
+     custom-coloured node dims with the text — and a selected row trades its
+     Secondary Container fill for an On Surface @10% container. */
   &[data-disabled] {
-    color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+    color: var(--md-list-item-color);
     cursor: default;
 
     & .md-list-item__leading,
+    & .md-list-item__content,
     & .md-list-item__trailing,
     & .md-list-item__selection,
-    & .md-list-item__supporting-text,
-    & .md-list-item__overline {
-      color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+    & .md-list-item-accordion__indicator {
+      opacity: var(--md-sys-state-disabled-opacity);
     }
   }
 
+  &[data-disabled][data-selected] {
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
+  }
+
+  /* The row's own action or trailing control only — child combinators, so a
+     row whose accordion panel holds a nested list does not light up when a
+     nested row takes focus. */
   &:focus-visible,
-  &:has(.md-list-item__action:focus-visible),
-  &:has(.md-list-item__trailing :focus-visible) {
+  &:has(> .md-list-item__action:focus-visible, > .md-list-item__multi-layout > .md-list-item__action:focus-visible),
+  &:has(> * > .md-list-item__trailing :focus-visible) {
     outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
-    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+    /* A scroll container that rows reach the edges of (a dialog body) would
+       clip an outer ring; it sets this to the inner offset. */
+    outline-offset: var(--md-list-item-focus-indicator-offset, var(--md-sys-state-focus-indicator-outer-offset));
     z-index: 2;
   }
+}
+
+/* Kit "State=Focused": the focused row also carries a 10% state layer —
+   On Surface, or On Secondary Container when selected, which is the row's
+   own currentColor. Specific enough to win over the 8% hover layer. */
+.md-list-item:focus-visible:not([data-disabled]) > .md-ripple-hover-layer > .md-ripple-hover-layer__surface,
+.md-list-item__action:focus-visible:not(:disabled, [aria-disabled="true"])
+  > .md-ripple-hover-layer
+  > .md-ripple-hover-layer__surface {
+  opacity: var(--md-sys-state-focus-opacity);
 }
 
 .md-list[data-appearance="standard"] .md-list-item {
@@ -138,34 +210,28 @@
   border-end-end-radius: var(--md-list-item-outer-shape);
 }
 
-.md-list[data-appearance="segmented"]
-  .md-list-item:is([data-selected], [data-dragged], [data-expanded], :focus-visible),
-.md-list[data-appearance="segmented"] .md-list-item:has(.md-list-item__action:focus-visible) {
+/* Kit "Lists / List item": selected, focused, pressed and dragged rows take
+   Corner/Large in either appearance (a dragged row in the standard Draggable
+   list is r=16 too). An expanded accordion row stays at rest (kit "List item -
+   Accordion" Accordion=Expanded is r=4). Written after the appearance and
+   outer-corner rules, at equal or higher specificity, so the state shape
+   wins — on a group's first or last row too, whatever the outer corner is set
+   to. The :has() forms look only at the row's own action (child combinators),
+   so pressing or focusing a row in a nested list inside an accordion panel
+   does not reshape the accordion row around it. */
+.md-list[data-appearance] .md-list-item:is([data-selected], [data-dragged], :focus-visible),
+.md-list
+  .md-list-item:has(
+    > .md-list-item__action:focus-visible,
+    > .md-list-item__multi-layout > .md-list-item__action:focus-visible
+  ),
+.md-list .md-list-item[role="option"]:not([data-disabled]):active,
+.md-list
+  .md-list-item:has(
+    > .md-list-item__action:active:not(:disabled, [aria-disabled="true"]),
+    > .md-list-item__multi-layout > .md-list-item__action:active:not(:disabled, [aria-disabled="true"])
+  ) {
   border-radius: var(--md-sys-shape-corner-large);
-}
-
-.md-list[data-density="-2"] .md-list-item {
-  min-block-size: 52px;
-
-  &[data-lines="2"] {
-    min-block-size: 68px;
-  }
-
-  &[data-lines="3"] {
-    min-block-size: 84px;
-  }
-}
-
-.md-list[data-density="-4"] .md-list-item {
-  min-block-size: 48px;
-
-  &[data-lines="2"] {
-    min-block-size: 64px;
-  }
-
-  &[data-lines="3"] {
-    min-block-size: 80px;
-  }
 }
 
 /* A flex line, not a four-track grid. The row's slots are optional, and grid
@@ -179,12 +245,12 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--md-list-item-slot-gap, 16px);
   inline-size: 100%;
   min-block-size: inherit;
   box-sizing: border-box;
-  padding-block: 8px;
-  padding-inline: 16px;
+  padding-block: max(0px, var(--md-list-item-padding-block, 8px) + var(--_density, 0) * 2px);
+  padding-inline: var(--md-list-item-padding-inline, 16px);
 }
 
 .md-list-item__action {
@@ -230,8 +296,7 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  min-inline-size: 24px;
-  min-block-size: 48px;
+  min-inline-size: var(--md-list-item-icon-size, 24px);
   color: var(--md-list-item-supporting-color);
 
   & > svg,
@@ -240,17 +305,71 @@
   }
 }
 
-.md-list-item__leading {
-  & > img {
-    inline-size: 40px;
-    block-size: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
+/* An icon handed to the row — a direct <svg>, such as a lucide icon with its
+   own width="24" — takes the appearance's icon size: 24dp in a standard row,
+   20dp in a segmented one. A control, an avatar or a thumbnail keeps its own
+   size; only a bare icon is resized. A leading slot with a `leadingType` holds
+   media, not an icon, so an avatar drawn as an <svg> keeps its size there. */
+:is(.md-list-item__leading:not([data-leading]), .md-list-item__trailing) > svg {
+  inline-size: var(--md-list-item-icon-size, 24px);
+  block-size: var(--md-list-item-icon-size, 24px);
 }
 
+/* A slot is as tall as what it holds (kit: Icon 20x28, Trailing text 21x28),
+   so a row with an icon or a line of trailing text keeps its line height. A
+   48px target is the exception: it keeps its full target but bleeds into the
+   row's block padding instead of growing the row — the kit's one-line row is
+   56dp with a 48dp checkbox in an 8dp-padded slot. 8px covers the tightest
+   content box (32px: a 52px Expressive row less 2 × 10px). That holds in
+   either slot (kit Leading and Trailing element Type=Checkbox/Radio/Icon
+   button are all 48dp), and for a Checkbox or RadioButton, whose 48px root is
+   a <label>. Three-line rows are top-aligned and tall enough to hold the
+   target, so it sits on the padding edge there. */
+.md-list-item__selection > *,
+:is(.md-list-item__leading, .md-list-item__trailing) > :is(button, a, input, select, textarea, label, [tabindex]) {
+  margin-block: -8px;
+}
+
+.md-list-item[data-lines="3"] :is(.md-list-item__leading, .md-list-item__selection, .md-list-item__trailing) > *,
+.md-list-item[data-lines="3"] .md-list-item-accordion__indicator {
+  margin-block: 0;
+}
+
+/* A bare <img> is an avatar (kit Leading element Type=Avatar, 40dp round).
+   `leadingType="image"` and `"video"` opt into the kit's thumbnails: 56x56 and
+   114x64, Corner/Extra-small with a 1px Outline Variant stroke. */
+.md-list-item__leading:is(:not([data-leading]), [data-leading="avatar"]) > img {
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.md-list-item__leading:is([data-leading="image"], [data-leading="video"]) > :is(img, video) {
+  inline-size: 56px;
+  block-size: 56px;
+  box-sizing: border-box;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  outline: 1px solid var(--md-sys-color-outline-variant);
+  outline-offset: -1px;
+  background: var(--md-sys-color-surface-container-high);
+  object-fit: cover;
+}
+
+.md-list-item__leading[data-leading="video"] > :is(img, video) {
+  inline-size: 114px;
+  block-size: 64px;
+}
+
+/* Kit "Trailing text": Label Large (14/20, 0.1 tracking, Medium) in On Surface
+   Variant — "2m", "56dp", "1,200.00" — rather than whatever the page sets. */
 .md-list-item__trailing {
   gap: 4px;
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
 
   & > button,
   & > a,
@@ -320,7 +439,9 @@
   letter-spacing: var(--md-sys-typescale-label-medium-tracking);
 }
 
-.md-list-item[data-lines="2"] .md-list-item__supporting-text {
+/* Kit: a two-line row's supporting text is one 20px line (row 72); a three-line
+   row gives it two lines (40px — row 88, or 104 with an overline). */
+.md-list-item[data-lines="3"] .md-list-item__supporting-text {
   -webkit-line-clamp: 2;
 }
 
@@ -328,7 +449,7 @@
   & .md-list-item__layout,
   & .md-list-item__action {
     align-items: start;
-    padding-block: 12px;
+    padding-block: max(0px, var(--md-list-item-three-line-padding-block, 12px) + var(--_density, 0) * 2px);
   }
 
   & .md-list-item__leading,
@@ -336,6 +457,14 @@
   & .md-list-item__selection {
     align-items: flex-start;
   }
+}
+
+/* The kit's video rows pad 12dp above and below the 64dp thumbnail at every
+   line count, so a one-line video row is 88dp rather than 80. Its own token,
+   not the three-line padding, which a segmented row sets to 10px. Written
+   after the three-line rule, at equal specificity, so it holds there too. */
+:is(.md-list-item__layout, .md-list-item__action):has(> .md-list-item__leading[data-leading="video"]) {
+  padding-block: max(0px, var(--md-list-item-video-padding-block, 12px) + var(--_density, 0) * 2px);
 }
 
 .md-list-item__selection-mark {
@@ -357,11 +486,14 @@
   }
 }
 
+/* Kit "Lists / List" Divider 01..09: 1px, inset 16dp on both edges. `inset`
+   further indents the start edge to the text column of an icon row. */
 .md-list-divider {
   display: block;
   block-size: 1px;
   margin: 0;
-  padding: 0;
+  padding-block: 0;
+  padding-inline: 16px;
 
   &[data-inset] {
     padding-inline-start: 56px;
@@ -374,13 +506,50 @@
   background: var(--md-sys-color-outline-variant);
 }
 
-.md-list-item-accordion__icon {
+/* Kit "Accordion button": a 32x40 vertical capsule — Surface while collapsed,
+   Surface Container once expanded — around a 20dp icon. It bleeds 4px into
+   the row's block padding, as the kit's 52dp Expandable rows do, rather than
+   growing the row. */
+.md-list-item-accordion__indicator {
+  --_width: 32px;
+
   position: relative;
   z-index: 1;
+  display: inline-flex;
   flex: none;
-  inline-size: 24px;
-  block-size: 24px;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--_width);
+  block-size: 40px;
+  margin-block: -4px;
+  border-radius: calc(var(--_width) / 2);
+  background: var(--md-sys-color-surface);
   color: var(--md-list-item-supporting-color);
+  transition: background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+
+.md-list-item-accordion[data-expanded] .md-list-item-accordion__indicator {
+  background: var(--md-sys-color-surface-container);
+}
+
+/* Kit "Accordion button" Hovered/Focused/Pressed: the capsule drops its fill
+   and a state layer shows through. The whole row is the disclosure target and
+   already paints that layer, so a filled capsule would sit on top of it as an
+   untinted patch. */
+@media (hover: hover) {
+  .md-list-item-accordion__trigger:hover:not(:disabled) > .md-list-item-accordion__indicator {
+    background: transparent;
+  }
+}
+
+.md-list-item-accordion__trigger:is(:focus-visible, :active):not(:disabled) > .md-list-item-accordion__indicator {
+  background: transparent;
+}
+
+.md-list-item-accordion__icon {
+  flex: none;
+  inline-size: 20px;
+  block-size: 20px;
   transition: transform var(--md-sys-motion-duration-spring-default-spatial)
     var(--md-sys-motion-easing-spring-default-spatial);
 }
@@ -400,6 +569,12 @@
 }
 
 .md-list-item-swipe {
+  /* The offset is logical: positive slides the surface toward the inline end
+     to uncover the start action. The surface applies it as inset-inline-start,
+     which the browser maps to left or right by the row's own direction, so an
+     RTL row uncovers each action on its own side with no direction rule. (A
+     direction pseudo-class would not survive the build: Lightning CSS lowers
+     it to a :lang() list for the baseline targets, missing most RTL pages.) */
   --md-list-swipe-offset: 0px;
 
   position: relative;
@@ -407,58 +582,93 @@
   min-inline-size: 0;
   overflow: hidden;
   border-radius: var(--md-sys-shape-corner-extra-small);
-  background: var(--md-sys-color-surface-container-high);
 }
 
+/* Kit "List Item - Swipe" Revealed: the action is a rounded reveal element
+   placed 2dp beside the row, not a pane under it. The 72px reveal distance
+   holds the 2px gap and an action of up to 70px. */
 .md-list-item-swipe__actions {
   position: absolute;
   inset-block: 0;
   display: flex;
+  align-items: center;
   inline-size: 72px;
+  box-sizing: border-box;
 }
 
 .md-list-item-swipe__actions--start {
   inset-inline-start: 0;
+  justify-content: flex-end;
+  padding-inline-end: 2px;
 }
 
 .md-list-item-swipe__actions--end {
   inset-inline-end: 0;
+  justify-content: flex-start;
+  padding-inline-start: 2px;
 }
 
+/* Kit "Reveal element 01": Primary, fully rounded, 48dp tall and at least
+   52dp wide. The component exposes one action per side, so each side's action
+   is that side's first reveal element; Secondary Container belongs to a second
+   or third action. */
 .md-list-item-swipe__action {
-  display: flex;
-  inline-size: 100%;
-  min-block-size: 48px;
+  --_height: 48px;
+
+  display: inline-flex;
+  flex: none;
+  min-inline-size: 52px;
+  max-inline-size: 100%;
+  block-size: var(--_height);
   box-sizing: border-box;
   margin: 0;
-  padding: 8px;
+  padding-block: 0;
+  padding-inline: 8px;
   align-items: center;
   justify-content: center;
   border: 0;
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
-  font: inherit;
+  border-radius: calc(var(--_height) / 2);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-family: var(--md-sys-typescale-label-large-font);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
   cursor: pointer;
 
-  &.md-list-item-swipe__action--end {
-    background: var(--md-sys-color-error-container);
-    color: var(--md-sys-color-on-error-container);
+  & > svg {
+    flex: none;
+    inline-size: 20px;
+    block-size: 20px;
   }
 
+  /* The focus indicator is drawn inside the pill. An outer ring does not fit:
+     the row clips everything outside its box (it leaves 2-4dp above and below
+     the 48dp pill, and the ring needs 5), and the sliding surface covers the
+     2dp beside it. Inside, the default Secondary ring would sit on Primary at
+     1.3:1 (light) and 1:1 (dark), so the ring takes the pill's own content
+     colour — On Primary, 7.7:1 or better — which also follows a recoloured
+     action. It keeps the shared 3dp stroke and the outer ring's 2dp gap,
+     mirrored inward. */
   &:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: -4px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid currentColor;
+    outline-offset: calc(
+      var(--md-sys-state-focus-indicator-inner-offset) -
+      var(--md-sys-state-focus-indicator-outer-offset)
+    );
   }
 }
 
 .md-list-item-swipe__surface {
   position: relative;
   z-index: 1;
-  min-block-size: 56px;
-  background: var(--md-sys-color-surface);
+  min-block-size: calc(var(--md-list-item-one-line-height, 56px) + var(--_density, 0) * 4px);
+  border-radius: inherit;
+  background: var(--md-list-item-container-color, var(--md-sys-color-surface));
   touch-action: pan-y;
-  transform: translateX(var(--md-list-swipe-offset));
-  transition: transform var(--md-sys-motion-duration-spring-default-spatial)
+  inset-inline-start: var(--md-list-swipe-offset);
+  transition: inset-inline-start var(--md-sys-motion-duration-spring-default-spatial)
     var(--md-sys-motion-easing-spring-default-spatial);
 }
 
@@ -475,7 +685,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .md-list-item {
+  .md-list-item,
+  .md-list-item-accordion__indicator,
+  .md-list-item-accordion__icon,
+  .md-list-item-swipe__surface {
     transition-duration: 0s;
   }
 }

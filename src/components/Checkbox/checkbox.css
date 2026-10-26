@@ -16,14 +16,11 @@
   align-items: center;
   justify-content: center;
 
+  /* Disabled is non-interactive: no hand cursor, and (below) no hit area on
+     the state layer either. */
   &[data-disabled] {
     pointer-events: none;
-  }
-
-  &:has(input:focus-visible) {
-    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
-    outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
-    border-radius: 50%;
+    cursor: default;
   }
 }
 
@@ -42,6 +39,10 @@
   transition: background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
+.md-checkbox[data-disabled] .md-checkbox__state-layer {
+  pointer-events: none;
+}
+
 .md-checkbox[data-variant="primary"][data-checked="true"] .md-checkbox__state-layer {
   color: var(--md-sys-color-primary);
 }
@@ -52,6 +53,26 @@
 
 .md-checkbox:has(input:focus-visible) .md-checkbox__state-layer {
   background-color: color-mix(in srgb, currentColor 12%, transparent);
+  /* Kit "Focus indicator": a 44dp ring stroked 3dp outside, so 2dp clear of
+     the 40dp state layer — a 44→50dp Secondary ring. The state layer's own
+     overflow clips its children, not its outline. */
+  outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+  outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+}
+
+/* Press ripple takes the opposite role to the hover layer (kit "Ripple"):
+   Primary on an unselected box, On Surface on a selected or indeterminate
+   one. Error keeps Error from the state layer's colour. The hover layer also
+   reads --ripple-color, so only the press ripple is targeted. */
+.md-checkbox[data-variant="primary"][data-checked="false"] .md-checkbox__state-layer
+  > .salty-ripple:not(.md-ripple-hover-layer) {
+  --ripple-color: var(--md-sys-color-primary);
+}
+
+.md-checkbox[data-variant="primary"][data-checked="true"]
+  .md-checkbox__state-layer
+  > .salty-ripple:not(.md-ripple-hover-layer) {
+  --ripple-color: var(--md-sys-color-on-surface);
 }
 
 /* ── Visual box (18px) ── */
@@ -72,10 +93,12 @@
     background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
+  /* 24px Material Symbols glyph centred on the 18px box; it overflows the
+     14px content box evenly, so it must not shrink. */
   & svg {
-    width: 15px;
-    height: 15px;
-    stroke-width: 2px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
   }
 
   /* Unchecked */
@@ -98,6 +121,22 @@
     border-color: var(--md-sys-color-error);
     background-color: var(--md-sys-color-error);
     color: var(--md-sys-color-on-error);
+  }
+}
+
+/* The unselected outline darkens from On Surface Variant to On Surface while
+   hovered, focused or pressed (Error keeps Error). Hover follows the 40dp
+   state layer, like the hover layer does. */
+.md-checkbox:not([data-disabled], [data-decorative]):is(:active, :has(input:focus-visible))
+.md-checkbox__box[data-checked="false"][data-variant="primary"] {
+  border-color: var(--md-sys-color-on-surface);
+}
+
+@media (hover: hover) {
+  .md-checkbox:not([data-disabled], [data-decorative])
+    > .md-checkbox__state-layer:hover
+    ~ .md-checkbox__box[data-checked="false"][data-variant="primary"] {
+    border-color: var(--md-sys-color-on-surface);
   }
 }
 

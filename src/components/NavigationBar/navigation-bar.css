@@ -1,9 +1,10 @@
 /* =============================================================================
-   NavigationBar — M3 Spec
-   Container: 64px cross-axis, bg surface-container
-   Active indicator: 56x32 secondary-container, corner-full
-   Icons: 24px, Label: title-small, Active weight bold (700)
-   Inactive: on-surface-variant
+   NavigationBar — M3 Expressive spec (Design Kit v1.25)
+   Container: 64px tall, bg surface-container
+   Vertical item: full bar height, padding-block 6px; 56x32 indicator (r=16)
+   Horizontal item: 40px pill (r=20) centred in the 64px bar
+   Icons: 24px, Label: label-medium tracked at 0.1px
+   Inactive content: on-surface-variant
    Source: m3.material.io/components/navigation-bar/specs
    ============================================================================= */
 
@@ -23,13 +24,16 @@
 
   &[data-orientation="vertical"] {
     /* min-height (not a fixed height) so the device safe area extends the bar
-       downward instead of being absorbed into the 80px content box under
+       downward instead of being absorbed into the 64px content box under
        box-sizing: border-box (which would squish/clip the labels). */
     min-height: 64px;
-    padding-block: 4px;
-    /* Reserve the bottom safe area (e.g. iOS home indicator) below the items.
+    /* Kit: the bar itself has no block padding — each item spans the full
+       64dp and carries its own 6dp padding-block, so the whole bar height is
+       clickable and the focus ring can sit inside the item. Only the bottom
+       safe area (e.g. iOS home indicator) is reserved below the items.
        Requires viewport-fit=cover on the host page for env() to be non-zero. */
-    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
+    padding-block: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   &[data-orientation="horizontal"] {
@@ -45,7 +49,9 @@
 /* ── Item ── */
 .md-navigation-bar-item {
   --md-navigation-bar-indicator-color: var(--md-sys-color-secondary-container);
-  --md-navigation-bar-state-layer-color: var(--md-sys-color-on-surface-variant);
+  /* Kit: unselected vertical items tint hover/focus/pressed with On Surface;
+     horizontal items and selected items use On Secondary Container (below). */
+  --md-navigation-bar-state-layer-color: var(--md-sys-color-on-surface);
   position: relative;
   display: flex;
   min-width: 64px;
@@ -62,8 +68,23 @@
 
   &:focus-visible {
     outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+  }
+
+  /* Vertical — kit: a 3dp ring drawn INSIDE the 64dp item. Its inner edge is
+     the item inset by 3dp with r=12 (corner-medium) and its outer edge lies on
+     the item bounds, so neighbouring rings never overlap. The inner offset
+     pulls the ring inside; the corner is grown by the same amount so the
+     outline's inner edge lands on corner-medium. */
+  &[data-orientation="vertical"]:focus-visible {
+    outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
+    border-radius: calc(var(--md-sys-shape-corner-medium) - var(--md-sys-state-focus-indicator-inner-offset));
+  }
+
+  /* Horizontal — kit: a fully round 96x44 ring hugging the 92x40 pill 2dp
+     outside it. Rounding the item to the pill makes the outline follow it. */
+  &[data-orientation="horizontal"]:focus-visible {
     outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
-    border-radius: var(--md-sys-shape-corner-medium);
+    border-radius: calc(var(--_height) / 2);
   }
 
   &:disabled {
@@ -98,15 +119,29 @@
     flex: 1 1 0;
     min-width: 0;
     flex-direction: column;
+    /* Kit: 104x64 item, pad 6/0/6/0 around icon container + label. */
+    padding-block: 6px;
   }
 
   &[data-orientation="horizontal"] {
+    --_height: 40px;
+    --md-navigation-bar-state-layer-color: var(--md-sys-color-on-secondary-container);
     flex: 0 0 auto;
-    height: 40px;
+    height: var(--_height);
     flex-direction: row;
     gap: 4px;
     padding-inline: 16px;
     white-space: nowrap;
+  }
+
+  /* Touch target — kit: the horizontal item frame is the full 64dp bar height
+     with the 40dp pill centred in it. This transparent box grows only the hit
+     area across the bar's 12px padding-block, never the visual pill, so taps
+     above or below the pill still select the item (48dp minimum). */
+  &[data-orientation="horizontal"]::after {
+    position: absolute;
+    inset: -12px 0;
+    content: "";
   }
 }
 
@@ -202,7 +237,9 @@
   font-size: var(--md-sys-typescale-label-medium-size);
   line-height: var(--md-sys-typescale-label-medium-line-height);
   font-weight: var(--md-sys-typescale-label-medium-weight);
-  letter-spacing: var(--md-sys-typescale-label-medium-tracking);
+  /* Kit: every nav bar label is 12/16 Medium tracked at 0.1 — tighter than the
+     Label Medium system token (0.5), so it is set at component level. */
+  letter-spacing: 0.1px;
   transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-hidden="true"] {
@@ -217,7 +254,7 @@
   font-size: var(--md-sys-typescale-label-medium-size);
   line-height: var(--md-sys-typescale-label-medium-line-height);
   font-weight: var(--md-sys-typescale-label-medium-weight);
-  letter-spacing: var(--md-sys-typescale-label-medium-tracking);
+  letter-spacing: 0.1px;
   transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-hidden="true"] {
@@ -230,7 +267,7 @@
 .md-navigation-bar-item__indicator--horizontal {
   position: absolute;
   inset: 0;
-  border-radius: 20px;
+  border-radius: calc(var(--_height) / 2);
   background-color: var(--md-navigation-bar-indicator-color);
   transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
   transform: scaleX(0);
@@ -246,7 +283,7 @@
 .md-navigation-bar-item__state-layer--horizontal {
   position: absolute;
   inset: 0;
-  border-radius: 20px;
+  border-radius: calc(var(--_height) / 2);
   background-color: var(--md-navigation-bar-state-layer-color);
   opacity: 0;
   transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);

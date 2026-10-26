@@ -2,6 +2,7 @@ import './radio-button.css';
 import * as React from 'react';
 import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
+import { useFormReset } from '../../lib/use-form-reset';
 
 /**
  * Material Design 3 Radio Button Component
@@ -12,6 +13,10 @@ import { M3Ripple as Ripple } from '../../lib/m3-ripple';
  * - State layer: 40dp circular for hover/ripple
  * - Target size: 48dp touch target
  * - Selected: primary color, Unselected: on-surface-variant (outline)
+ *
+ * `className` and `style` land on the visible 48dp root (`.md-radio`); every
+ * other prop (including `id`, `name`, `value` and the ARIA attributes) goes to
+ * the visually hidden native input.
  */
 
 export type RadioButtonProps = Omit<React.ComponentProps<'input'>, 'type'> & {
@@ -41,6 +46,7 @@ const RadioButton = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Rad
   (
     {
       className,
+      style,
       variant = 'primary',
       disabled,
       decorative = false,
@@ -60,6 +66,37 @@ const RadioButton = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Rad
 
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
+    // React fires onChange only on the radio that becomes checked, never on the
+    // same-name sibling it unchecks, so an uncontrolled radio would keep drawing
+    // itself selected after a click or arrow key moved the selection away. Re-read
+    // the native state whenever a radio of the same name changes in this tree.
+    // Capture phase, so an ancestor that stops the change event's propagation (or
+    // a change dispatched without `bubbles`) cannot leave this radio stale; the
+    // native checkedness is already settled by the time `change` is dispatched.
+    React.useEffect(() => {
+      // A decorative radio has no input to keep in step; `decorative` can
+      // swap the input in or out, so the listener follows it.
+      const input = decorative ? null : inputRef.current;
+      if (isControlled || !input) return;
+      const root = input.getRootNode();
+      const sync = (event: Event) => {
+        if ((event.target as HTMLInputElement).name === input.name) {
+          setInternalChecked(input.checked);
+        }
+      };
+      root.addEventListener('change', sync, true);
+      return () => root.removeEventListener('change', sync, true);
+    }, [isControlled, decorative]);
+
+    // A form reset restores `defaultChecked` without a `change` event; redraw from it.
+    // The reset also bypasses the `checked` setter React tracks the input through,
+    // so React would still hold the pre-reset value and swallow the next change
+    // back to it; writing the default back through the setter re-arms it.
+    useFormReset(inputRef, !isControlled && !decorative, (input) => {
+      (input as HTMLInputElement).checked = defaultChecked;
+      setInternalChecked(defaultChecked);
+    });
+
     const updateRadioChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!isControlled) {
         setInternalChecked(e.target.checked);
@@ -72,7 +109,7 @@ const RadioButton = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Rad
     };
 
     if (decorative) {
-      const { id, style } = props;
+      const { id } = props;
       return (
         <span
           id={id}
@@ -104,6 +141,7 @@ const RadioButton = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<Rad
     return (
       <label
         className={cx('md-radio', className)}
+        style={style}
         data-variant={variant}
         data-selected={String(checked)}
         data-disabled={disabled || undefined}

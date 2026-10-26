@@ -51,10 +51,12 @@ function ControlledRail({
   state: initialState = 'collapsed',
   modality = 'standard',
   itemsAlignment = 'start',
+  hideLabel = false,
 }: {
   state?: ComponentProps<typeof NavigationRail>['state'];
   modality?: ComponentProps<typeof NavigationRail>['modality'];
   itemsAlignment?: ComponentProps<typeof NavigationRail>['itemsAlignment'];
+  hideLabel?: boolean;
 }) {
   const [state, setState] = useState(initialState);
   const [value, setValue] = useState('home');
@@ -85,10 +87,16 @@ function ControlledRail({
         }
       >
         <NavigationRailSection title="Workspace">
-          <NavigationRailItem value="home" icon={<HouseIcon />} label="Home" />
-          <NavigationRailItem value="discover" icon={<CompassIcon />} label="Discover" />
-          <NavigationRailItem value="library" icon={<FolderIcon />} label="Library" />
-          <NavigationRailItem value="alerts" icon={<BellIcon />} label="Alerts" badge={<Badge size="small" />} />
+          <NavigationRailItem value="home" icon={<HouseIcon />} label="Home" hideLabel={hideLabel} />
+          <NavigationRailItem value="discover" icon={<CompassIcon />} label="Discover" hideLabel={hideLabel} />
+          <NavigationRailItem value="library" icon={<FolderIcon />} label="Library" hideLabel={hideLabel} />
+          <NavigationRailItem
+            value="alerts"
+            icon={<BellIcon />}
+            label="Alerts"
+            hideLabel={hideLabel}
+            badge={<Badge size="small" />}
+          />
         </NavigationRailSection>
       </NavigationRail>
 
@@ -134,7 +142,7 @@ export const Modal: Story = {
     docs: {
       description: {
         story:
-          'With `modality="modal"`, the expanded rail overlays page content and dims the background with a scrim. Click the scrim to collapse it.',
+          'With `modality="modal"`, the expanded rail floats over page content as a `surface-container` sheet with large corners (the kit\'s Floating type) and dims the background with a scrim. Click the scrim to collapse it.',
       },
     },
   },
@@ -150,4 +158,16 @@ export const ItemsCenterAligned: Story = {
     },
   },
   render: () => <ControlledRail itemsAlignment="center" />,
+};
+
+export const LabelsHidden: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'With `hideLabel` on each item, the collapsed rail drops the labels and uses a 56dp round indicator. The label stays the accessible name, and the expanded rail shows it again.',
+      },
+    },
+  },
+  render: () => <ControlledRail hideLabel />,
 };

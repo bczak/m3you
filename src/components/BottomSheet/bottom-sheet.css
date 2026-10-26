@@ -1,7 +1,8 @@
 /* =============================================================================
    BottomSheet — M3 Spec
    Shape: extra-large-top (28px top corners), BG: surface-container-low
-   Scrim: 32% opacity, drag handle: on-surface-variant / 40%
+   Scrim: 32% opacity (modal only), drag handle: 32x4 outline in a 36px header
+   Width: full width on compact windows, capped at 640px
    Source: m3.material.io/components/bottom-sheets/specs
    ============================================================================= */
 
@@ -26,6 +27,19 @@
   z-index: var(--md-sys-z-index-dialog);
 }
 
+/* A standard (non-modal) sheet sits alongside an interactive page: the
+   full-screen viewport must not hit-test, only the open sheet itself does.
+   Swipe handlers on the viewport still fire because events bubble up from the
+   popup. While closing, Base UI sets pointer-events: none on the viewport and
+   the popup (no data-open) inherits it, so the exit animation never blocks. */
+.md-bottom-sheet-viewport:not([data-modal]) {
+  pointer-events: none;
+}
+
+.md-bottom-sheet-content[data-open] {
+  pointer-events: auto;
+}
+
 /* ── Popup / Content ── */
 .md-bottom-sheet-content {
   box-sizing: border-box;
@@ -34,7 +48,7 @@
   bottom: 0;
   left: 0;
   display: flex;
-  width: min(640px, calc(100% - 32px));
+  width: min(640px, 100%);
   max-height: calc(100dvh - 72px);
   flex-direction: column;
   margin-inline: auto;
@@ -54,13 +68,63 @@
   box-shadow: none;
 }
 
-/* ── Drag Handle ── */
+/* ── Motion: snap points, drag, enter and exit ──
+   Base UI writes the active snap point's offset and the live drag distance onto
+   the popup as CSS variables (it leaves `transform` to the stylesheet once
+   snapPoints are set), so the sheet rests at their sum: 0 when fully open, the
+   hidden part of the sheet at a partial snap point. It enters and exits by
+   sliding its full height through the bottom edge.
+
+   No `[data-swiping] { transition: none }` here: Base UI already suspends the
+   transition inline while the sheet follows the finger, and on a swipe-dismiss
+   it clears that inline style and sets data-ending-style while data-swiping is
+   still present. A stylesheet rule keyed on data-swiping outlives that hand-off,
+   so the exit computes with no transition and the sheet jumps off-screen. */
+.md-bottom-sheet-content {
+  transform: translateY(calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px)));
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    transform: translateY(100%);
+  }
+}
+
+/* Reduced motion: no slide. The sheet opens in place at its snap point and
+   fades with the scrim; snap changes jump instead of gliding. A closing sheet
+   fades where it is: a swipe-dismissed one where the finger let go.
+
+   Closing resets the snap point to its default (Base UI does this as it sets
+   data-ending-style), which moves the resting transform: a sheet closed from a
+   higher snap point would drop to the default one at full opacity before it
+   fades. The ending style therefore holds the transform at its before-close
+   value with a zero-length transform transition delayed by the fade. */
+@media (prefers-reduced-motion: reduce) {
+  .md-bottom-sheet-content {
+    transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: translateY(calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px)));
+      opacity: 0;
+    }
+
+    &[data-ending-style] {
+      transition:
+        opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+        transform 0s linear var(--md-sys-motion-duration-medium2);
+    }
+  }
+}
+
+/* ── Drag Handle ──
+   Kit header: 16px padding around the 4px indicator = 36px band. */
 .md-bottom-sheet-drag-handle {
   position: relative;
   box-sizing: border-box;
   display: flex;
-  height: 48px;
-  flex: 0 0 48px;
+  height: 36px;
+  flex: 0 0 36px;
   align-items: center;
   justify-content: center;
   padding-block: 0;
@@ -79,4 +143,18 @@
   overflow-y: auto;
   padding-inline: 24px;
   padding-bottom: 24px;
+}
+
+/* Forced colours paints the surface as Canvas and drops the shadow, so the
+   sheet would lose its edge against the page (a standard sheet has no scrim
+   either), and the filled handle would vanish. Draw both with a system colour,
+   as Dialog and SideSheet do. */
+@media (forced-colors: active) {
+  .md-bottom-sheet-content {
+    outline: 1px solid CanvasText;
+  }
+
+  .md-bottom-sheet-drag-handle__indicator {
+    background-color: CanvasText;
+  }
 }

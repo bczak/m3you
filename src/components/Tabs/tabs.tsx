@@ -11,7 +11,10 @@ import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 export type TabsProps = React.ComponentProps<'div'> & {
   /** `primary` sits directly under an app bar; `secondary` sits inside a section that already has primary tabs. */
   variant?: 'primary' | 'secondary';
-  /** Whether tabs stretch to fill available width or size to content */
+  /**
+   * Whether tabs stretch to fill available width (fixed) or size to content and scroll. Scrollable tabs are at
+   * least 90px wide and the row starts 52px in from the leading edge.
+   */
   fullWidth?: boolean;
   /** Currently active tab value */
   value?: string;
@@ -48,6 +51,7 @@ const Tabs = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<TabsProps>>(
           ref={ref}
           role="tablist"
           aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Tabs')}
+          data-full-width={String(fullWidth)}
           className={cx('md-tabs', className)}
           {...props}
         >
@@ -66,9 +70,12 @@ Tabs.displayName = 'Tabs';
 export type TabProps = Omit<React.ComponentProps<'button'>, 'value'> & {
   /** Unique value for this tab */
   value: string;
-  /** Icon to display. Primary tabs show it above the label; secondary tabs support icon-only usage. */
+  /** Icon to display. Primary tabs show it above the label; secondary tabs show it before the label, or alone. */
   icon?: React.ReactNode;
-  /** Optional badge content (positioned on the icon) */
+  /**
+   * Optional badge content. Overlays the icon's top-right corner on primary tabs and icon-only tabs; otherwise it
+   * follows the label.
+   */
   badge?: React.ReactNode;
 };
 
@@ -76,8 +83,15 @@ const Tab = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<TabProps>>
   ({ className, value, icon, badge, disabled, children, onClick, onKeyDown, ...props }, ref) => {
     const { value: selectedValue, onValueChange, variant, fullWidth } = useTabs();
     const isActive = selectedValue === value;
-    const hasLabel = React.Children.count(children) > 0;
+    // `Children.count` counts `false`/`null` from a conditional label (`{showLabel && 'Home'}`); `toArray` drops
+    // them, and an empty string is no label either.
+    const hasLabel = React.Children.toArray(children).some((child) => child !== '');
     const hasIcon = !!icon;
+    const hasBadge = !!badge;
+    // Primary tabs stack the icon over the label, so the badge sits on the icon. Secondary tabs lay the icon and
+    // label out in a row, so the badge follows the label unless there is no label.
+    const badgeOnIcon = hasIcon && (variant === 'primary' || !hasLabel);
+    const indicator = <span className="md-tab__indicator" data-variant={variant} data-active={String(isActive)} />;
 
     const selectTab = (e: React.MouseEvent<HTMLButtonElement>) => {
       /* v8 ignore next -- React never fires onClick on a disabled button */
@@ -135,7 +149,7 @@ const Tab = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<TabProps>>
         data-value={value}
         data-variant={variant}
         data-active={String(isActive)}
-        data-has-badge={String(!!badge)}
+        data-has-badge={String(hasBadge)}
         data-has-icon={String(hasIcon)}
         data-has-label={String(hasLabel)}
         data-full-width={String(fullWidth)}
@@ -146,24 +160,28 @@ const Tab = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<TabProps>>
       >
         <Ripple />
 
-        {/* Icon is always shown for primary tabs and for secondary icon-only tabs. */}
-        {hasIcon && (
-          <span className="md-tab__icon">
-            {icon}
-            {badge && <span className="md-tab__badge">{badge}</span>}
-          </span>
-        )}
+        {/* Content hugs its width and fills the tab's height, so the primary indicator matches the content width
+            and sits on the tab's bottom edge. */}
+        <span className="md-tab__content">
+          {hasIcon && (
+            <span className="md-tab__icon">
+              {icon}
+              {badgeOnIcon && hasBadge && <span className="md-tab__badge">{badge}</span>}
+            </span>
+          )}
 
-        {/* Label */}
-        {(hasLabel || (!hasIcon && badge)) && (
-          <span className="md-tab__label">
-            {children}
-            {!hasIcon && badge && <span className="md-tab__badge--label">{badge}</span>}
-          </span>
-        )}
+          {(hasLabel || (!hasIcon && hasBadge)) && (
+            <span className="md-tab__label">
+              {children}
+              {!badgeOnIcon && hasBadge && <span className="md-tab__badge--label">{badge}</span>}
+            </span>
+          )}
 
-        {/* Active indicator */}
-        <span className="md-tab__indicator" data-variant={variant} data-active={String(isActive)} />
+          {variant === 'primary' && indicator}
+        </span>
+
+        {/* The secondary indicator spans the whole tab. */}
+        {variant === 'secondary' && indicator}
       </button>
     );
   },

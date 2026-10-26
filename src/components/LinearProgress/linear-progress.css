@@ -1,12 +1,19 @@
-/* M3 Expressive linear progress: physical SVG geometry, split tracks, and one
-   indeterminate segment. */
+/* M3 Expressive linear progress: a round-capped active indicator, a 4dp gap,
+   and a track that runs to the end of the bar with the stop on top of it. The
+   indeterminate track splits around one segment that grows as it travels. */
 
 .md-linear-progress {
   --_thickness: 4px;
-  --_amplitude: 4px;
-  --_wavelength: 20px;
+  --_amplitude: 3px;
+  --_gap: 4px;
   --_color: var(--md-linear-progress-color, var(--md-sys-color-primary));
   --_track-color: var(--md-linear-progress-track-color, var(--md-sys-color-secondary-container));
+  /* Indeterminate cycle: the head crosses the track in the first half, the tail
+     follows and catches up at 90%, so the segment widens from about 30% to about
+     60% of the track as it travels (kit Step=1 → Step=2). */
+  --_indeterminate-duration: 1.75s;
+  --_head-easing: cubic-bezier(0.4, 0, 0.6, 1);
+  --_tail-easing: cubic-bezier(0.4, 0, 1, 1);
 
   position: relative;
   display: block;
@@ -17,11 +24,14 @@
   overflow: hidden;
 }
 
-.md-linear-progress[data-variant="wavy"]:not([data-low-value]):not([data-complete]) {
+/* The wavy indicator keeps its height at every value — flat at the start and at
+   100% included — so finishing does not shift the layout. */
+.md-linear-progress[data-variant="wavy"] {
   height: calc(var(--_thickness) + var(--_amplitude) * 2);
 }
 
 .md-linear-progress__row {
+  position: relative;
   display: flex;
   width: 100%;
   height: 100%;
@@ -34,7 +44,6 @@
   width: var(--_value, 0%);
   height: var(--_thickness);
   flex: none;
-  overflow: hidden;
   border-radius: calc(var(--_thickness) / 2);
   background-color: var(--_color);
   color: var(--_color);
@@ -46,32 +55,20 @@
   background-color: transparent;
 }
 
+/* Drawn in CSS pixels, cap to cap inside its box, so nothing is clipped. */
 .md-linear-progress__wave {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   display: block;
-  width: 2048px;
-  max-width: none;
+  width: 100%;
   height: 100%;
   overflow: visible;
 }
 
-.md-linear-progress__wave--sliding {
-  animation: md-linear-progress-wave-slide 1.5s linear infinite;
-  will-change: transform;
-}
-
-@keyframes md-linear-progress-wave-slide {
-  to {
-    transform: translateX(calc(var(--_wavelength) * -1));
-  }
-}
-
 .md-linear-progress__gap {
-  width: 4px;
+  width: var(--_gap);
   height: 1px;
-  flex: 0 0 4px;
+  flex: 0 0 var(--_gap);
 }
 
 .md-linear-progress__track {
@@ -82,12 +79,16 @@
   background-color: var(--_track-color);
 }
 
+/* Overlays the rounded end of the track at the end of the bar. */
 .md-linear-progress__stop {
+  position: absolute;
+  inset-inline-end: 0;
+  top: 50%;
   width: var(--_thickness);
   height: var(--_thickness);
-  flex: 0 0 var(--_thickness);
   border-radius: 50%;
   background-color: var(--_color);
+  transform: translateY(-50%);
 }
 
 .md-linear-progress__complete {
@@ -100,42 +101,99 @@
   transform: translateY(-50%);
 }
 
-.md-linear-progress__indeterminate-track {
+/* Indeterminate: the segment spans [tail, head]; the start piece of the track
+   ends a gap before the tail and the end piece starts a gap after the head. Each
+   piece is driven by the head or tail keyframes with the same easing, so the
+   gaps hold through the whole cycle. The head starts a gap before the bar and
+   the tail ends a gap past it, so the track is whole between cycles. */
+.md-linear-progress__indeterminate-track,
+.md-linear-progress__indeterminate-segment {
   position: absolute;
-  inset-inline: 0;
   top: 50%;
   height: var(--_thickness);
   border-radius: calc(var(--_thickness) / 2);
-  background-color: var(--_track-color);
   transform: translateY(-50%);
+  animation-duration: var(--_indeterminate-duration);
+  animation-iteration-count: infinite;
+}
+
+.md-linear-progress__indeterminate-track {
+  background-color: var(--_track-color);
+}
+
+.md-linear-progress__indeterminate-track--start {
+  left: 0;
+  width: 0;
+  animation-name: md-linear-progress-track-start;
+  animation-timing-function: var(--_tail-easing);
+}
+
+.md-linear-progress__indeterminate-track--end {
+  left: 0;
+  right: 0;
+  animation-name: md-linear-progress-track-end;
+  animation-timing-function: var(--_head-easing);
 }
 
 .md-linear-progress__indeterminate-segment {
-  position: absolute;
-  top: 0;
-  left: 0;
   display: block;
-  width: 40%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: calc(var(--_thickness) / 2);
+  left: 0;
+  right: 100%;
   background-color: var(--_color);
   color: var(--_color);
-  animation: md-linear-progress-indeterminate 2.1s var(--md-sys-motion-easing-standard) infinite;
+  animation-name: md-linear-progress-tail, md-linear-progress-head;
+  animation-timing-function: var(--_tail-easing), var(--_head-easing);
 }
 
 .md-linear-progress[data-variant="wavy"] .md-linear-progress__indeterminate-segment {
+  top: 0;
+  height: 100%;
   border-radius: 0;
   background-color: transparent;
+  transform: none;
 }
 
-@keyframes md-linear-progress-indeterminate {
-  from {
-    transform: translateX(-100%);
+@keyframes md-linear-progress-tail {
+  0% {
+    left: 0%;
   }
 
-  to {
-    transform: translateX(350%);
+  90%,
+  100% {
+    left: calc(100% + var(--_gap));
+  }
+}
+
+@keyframes md-linear-progress-head {
+  0% {
+    right: calc(100% + var(--_gap));
+  }
+
+  50%,
+  100% {
+    right: 0%;
+  }
+}
+
+@keyframes md-linear-progress-track-start {
+  0% {
+    width: calc(0% - var(--_gap));
+  }
+
+  90%,
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes md-linear-progress-track-end {
+  0% {
+    left: 0%;
+  }
+
+  50%,
+  100% {
+    left: calc(100% + var(--_gap));
   }
 }
 

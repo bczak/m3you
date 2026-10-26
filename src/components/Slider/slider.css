@@ -1,65 +1,51 @@
 /* =============================================================================
    Slider — M3 Expressive
    Five sizes, horizontal/vertical, centered origin, and two-thumb ranges.
+
+   The tracks run edge to edge; the handle centre and the stop indicators travel
+   6px in from each end (slider.tsx positions them). Horizontal positions use
+   logical insets, so the minimum sits at the inline start and mirrors in RTL.
    ============================================================================= */
 
 .md-slider {
+  /* Visible handle height per size; the handle's 68x48 hit box is fixed. */
+  --_handle-height: 52px;
+  --_hit-width: 68px;
+  --_hit-height: 48px;
+
   position: relative;
   display: flex;
   box-sizing: border-box;
   touch-action: none;
   user-select: none;
 
+  &[data-size="xs"],
+  &[data-size="sm"] {
+    --_handle-height: 44px;
+  }
+
+  &[data-size="lg"] {
+    --_handle-height: 68px;
+  }
+
+  &[data-size="xl"] {
+    --_handle-height: 108px;
+  }
+
+  /* The cross axis hugs the handle (52/68/108), but never drops below the 48px
+     touch target, so xs and sm stay 48px rather than the 44px handle. */
   &[data-orientation="horizontal"] {
     width: 100%;
+    height: max(var(--_hit-height), var(--_handle-height));
     align-items: center;
   }
 
   &[data-orientation="vertical"] {
+    width: max(var(--_hit-height), var(--_handle-height));
     height: 100%;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
-  }
-
-  &[data-size="xs"],
-  &[data-size="sm"] {
-    &[data-orientation="horizontal"] {
-      height: 48px;
-    }
-
-    &[data-orientation="vertical"] {
-      width: 48px;
-    }
-  }
-
-  &[data-size="md"] {
-    &[data-orientation="horizontal"] {
-      height: 56px;
-    }
-
-    &[data-orientation="vertical"] {
-      width: 56px;
-    }
-  }
-
-  &[data-size="lg"] {
-    &[data-orientation="horizontal"] {
-      height: 72px;
-    }
-
-    &[data-orientation="vertical"] {
-      width: 72px;
-    }
-  }
-
-  &[data-size="xl"] {
-    &[data-orientation="horizontal"] {
-      height: 112px;
-    }
-
-    &[data-orientation="vertical"] {
-      width: 112px;
-    }
   }
 }
 
@@ -68,13 +54,11 @@
   flex: none;
 
   .md-slider[data-orientation="horizontal"] & {
-    width: calc(100% - 12px);
-    margin-inline: 6px;
+    width: 100%;
   }
 
   .md-slider[data-orientation="vertical"] & {
-    height: calc(100% - 12px);
-    margin-block: 6px;
+    height: 100%;
   }
 }
 
@@ -84,7 +68,10 @@
   overflow: hidden;
 }
 
+/* A size container, so the inset icon can drop out once the segment is too short to hold it. Its size comes
+   from its insets alone, so the containment changes nothing else. */
 .md-slider__track-active {
+  container: md-slider-active / size;
   background-color: var(--md-sys-color-primary);
 
   .md-slider[data-orientation="horizontal"] & {
@@ -108,20 +95,24 @@
   }
 }
 
+/* Points on the track (stops, handle) are centred on their inset with a
+   negative logical margin, not a translate, so the centring mirrors in RTL. */
 .md-slider__stop {
   position: absolute;
   z-index: 1;
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
 
   .md-slider[data-orientation="horizontal"] & {
     top: 50%;
+    margin-inline-start: -2px;
+    transform: translateY(-50%);
   }
 
   .md-slider[data-orientation="vertical"] & {
     left: 50%;
+    transform: translate(-50%, 50%);
   }
 
   &[data-active="true"] {
@@ -133,29 +124,30 @@
   }
 }
 
+/* An invisible hit box around the visible thumb. The kit's hovered and pressed
+   handles carry no state layer, so there is no ripple here. */
 .md-slider__handle {
   position: absolute;
   z-index: 2;
   display: flex;
-  width: 68px;
-  height: 48px;
+  width: var(--_hit-width);
+  height: var(--_hit-height);
   align-items: center;
   justify-content: center;
-  border-radius: 24px;
-  color: var(--md-sys-color-primary);
+  border-radius: calc(var(--_hit-height) / 2);
   cursor: grab;
   touch-action: none;
 
   .md-slider[data-orientation="horizontal"] & {
     top: 50%;
-    transform: translate(-50%, -50%);
+    margin-inline-start: calc(var(--_hit-width) / -2);
+    transform: translateY(-50%);
   }
 
   .md-slider[data-orientation="vertical"] & {
-    top: auto;
     left: 50%;
-    width: 48px;
-    height: 68px;
+    width: var(--_hit-height);
+    height: var(--_hit-width);
     transform: translate(-50%, 50%);
   }
 
@@ -179,9 +171,22 @@
   transition:
     width var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-fast-spatial),
     height var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-fast-spatial);
+
+  .md-slider[data-orientation="horizontal"] & {
+    height: var(--_handle-height);
+  }
+
+  .md-slider[data-orientation="vertical"] & {
+    width: var(--_handle-height);
+  }
 }
 
+/* The value indicator clears the visible handle, whose height varies by size,
+   rather than the fixed hit box. */
 .md-slider__tooltip {
+  --_tooltip-height: 44px;
+  --_tooltip-gap: 4px;
+
   pointer-events: none;
   position: absolute;
   z-index: 2;
@@ -190,11 +195,11 @@
   box-sizing: border-box;
   width: max-content;
   min-width: 48px;
-  height: 44px;
+  height: var(--_tooltip-height);
   padding-inline: 16px;
   align-items: center;
   justify-content: center;
-  border-radius: 22px;
+  border-radius: calc(var(--_tooltip-height) / 2);
   background-color: var(--md-sys-color-inverse-surface);
   color: var(--md-sys-color-inverse-on-surface);
   font-family: var(--md-sys-typescale-label-large-font);
@@ -205,19 +210,25 @@
   white-space: nowrap;
 
   .md-slider[data-orientation="horizontal"] & {
-    top: -48px;
+    top: calc(50% - var(--_handle-height) / 2 - var(--_tooltip-gap) - var(--_tooltip-height));
     transform: translateX(-50%);
   }
 
   .md-slider[data-orientation="vertical"] & {
     top: 50%;
     left: auto;
-    right: 52px;
+    right: calc(50% + var(--_handle-height) / 2 + var(--_tooltip-gap));
     transform: translateY(-50%);
   }
 }
 
+/* The inset icon sits 10px in from the start of the active track, which now
+   begins at the slider edge. The kit hides its Icon layer and gives no
+   position, so the value follows Material's own sliders: MDC Android's
+   m3_slider_track_icon_padding and the Compose track-icon sample both use 10dp. */
 .md-slider__icon {
+  --_icon-inset: 10px;
+
   position: absolute;
   z-index: 1;
   display: flex;
@@ -227,14 +238,42 @@
 
   .md-slider[data-orientation="horizontal"] & {
     top: 50%;
-    left: 4px;
+    inset-inline-start: var(--_icon-inset);
     transform: translateY(-50%);
   }
 
   .md-slider[data-orientation="vertical"] & {
-    bottom: 4px;
+    bottom: var(--_icon-inset);
     left: 50%;
     transform: translateX(-50%);
+  }
+}
+
+/* MDC Android draws a track icon only while the segment holds it with the padding on both sides
+   (BaseSlider.calculateTrackIconBounds: icon size + 2 x 10dp), so near the minimum the icon is hidden rather
+   than clipped against the handle. That is 44px for the 24px md/lg icon and 52px for the 32px xl one;
+   container conditions cannot read custom properties, so the sums are written out. */
+@container md-slider-active (width < 44px) {
+  .md-slider[data-orientation="horizontal"] .md-slider__icon {
+    visibility: hidden;
+  }
+}
+
+@container md-slider-active (width < 52px) {
+  .md-slider[data-orientation="horizontal"][data-size="xl"] .md-slider__icon {
+    visibility: hidden;
+  }
+}
+
+@container md-slider-active (height < 44px) {
+  .md-slider[data-orientation="vertical"] .md-slider__icon {
+    visibility: hidden;
+  }
+}
+
+@container md-slider-active (height < 52px) {
+  .md-slider[data-orientation="vertical"][data-size="xl"] .md-slider__icon {
+    visibility: hidden;
   }
 }
 
@@ -250,7 +289,11 @@
   white-space: nowrap;
 }
 
-.md-slider:has(.md-slider__input:focus-visible) .md-slider__handle {
+/* Only the handle whose input has focus gets the ring: in a range slider the
+   lower input (first) drives the first handle and the upper input the last. */
+.md-slider:not(.md-range-slider):has(.md-slider__input:focus-visible) .md-slider__handle,
+.md-range-slider:has(.md-slider__input:first-of-type:focus-visible) .md-slider__handle:first-of-type,
+.md-range-slider:has(.md-slider__input:last-of-type:focus-visible) .md-slider__handle:last-of-type {
   outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
   outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
 }
@@ -270,8 +313,14 @@
   }
 }
 
+/* The upper handle paints on top, and the handle being dragged above both, so
+   coinciding handles show the one that is actually moving. */
 .md-range-slider .md-slider__handle:last-of-type {
   z-index: 3;
+}
+
+.md-range-slider .md-slider__handle[data-dragging] {
+  z-index: 4;
 }
 
 @media (prefers-reduced-motion: reduce) {

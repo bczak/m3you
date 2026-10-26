@@ -22,6 +22,30 @@ Set `layout` to one of `multi-browse` (the default), `uncontained`,
 with `alignment` (`start` or `center`) and `scrollMode` (`auto`, `snap` or
 `free`).
 
+Every layout scrolls natively, so touch users swipe it along its own axis —
+horizontally, or vertically for `full-screen` — while the other axis keeps
+scrolling the page.
+
+## Multi-browse sizing
+
+A multi-browse row is some large items, then one medium (120px) and one small
+(56px) item, 8px apart, filling the width exactly. A phone-width carousel has
+one large item, two from 600px and three from 840px. Each large item is capped
+at `largeItemMaxWidth` (360px by default), so a carousel adds large items
+whenever capped ones would leave the row unfilled: four at 1440px, five at
+1920px. A smaller cap adds them sooner.
+
+The sizes are tokens — `--md-carousel-gap`, `--md-carousel-medium-item-width`
+and `--md-carousel-small-item-width` — and accept any CSS length. Overriding
+them keeps the row filled.
+
+When the active item changes, items morph to their new size on the
+`spring-default-spatial` motion tokens. Their real widths animate, so corners
+and content keep their shape. A snapping carousel stays snapped to the active
+item, and a `free` one keeps the active item where the scroll left it while the
+items before it shrink. Reduced motion turns morphing off and gives every item
+the same size.
+
 ## Props
 
 <PropsTable of="Carousel" extends="<section>" />

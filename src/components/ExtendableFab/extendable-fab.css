@@ -13,6 +13,10 @@
   --_extendable-fab-padding-extended-end: 16px;
   --_extendable-fab-gap: 8px;
   --_extendable-fab-radius: var(--md-sys-shape-corner-large);
+  /* Only the outlined variant draws a stroke. Its width is taken out of the
+     inline padding below, so the fixed border-box width keeps the kit's
+     symmetric padding and the collapsed icon stays centred. */
+  --_extendable-fab-border-width: 0px;
   --_extendable-fab-width-adjust: calc(
     var(--_extendable-fab-gap) +
     var(--_extendable-fab-padding-extended-start) +
@@ -33,11 +37,11 @@
     var(--_extendable-fab-visible-content-width, 0px) +
     var(--_extendable-fab-visible-extra-width, 0px)
   );
-  border: 0 solid transparent;
+  border: var(--_extendable-fab-border-width) solid transparent;
   border-radius: var(--_extendable-fab-radius);
   padding-block: 0;
-  padding-inline-start: var(--_extendable-fab-padding-collapsed-start);
-  padding-inline-end: var(--_extendable-fab-padding-collapsed-end);
+  padding-inline-start: calc(var(--_extendable-fab-padding-collapsed-start) - var(--_extendable-fab-border-width));
+  padding-inline-end: calc(var(--_extendable-fab-padding-collapsed-end) - var(--_extendable-fab-border-width));
   gap: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -58,29 +62,31 @@
     padding-inline-end var(--md-sys-motion-duration-spring-default-spatial)
     var(--md-sys-motion-easing-spring-default-spatial);
 
+  /* Kit Focused state: a 10% On-<role> layer over the container under the
+     ring. m3-ripple paints hover and press only, so focus is drawn here. */
   &:focus-visible {
     outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
     outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+    background-image: linear-gradient(
+      color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent),
+      color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent)
+    );
   }
 
   &:disabled,
   &[data-disabled] {
     pointer-events: none;
-    background-color: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
-      transparent
-    );
-    color: color-mix(
-      in srgb,
-      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
-      transparent
-    );
-    box-shadow: none;
   }
 
+  /* ── Elevation per state ──
+     Rest 3, hover 4, and a press drops back to 3 (the kit's Pressed state
+     matches Enabled), so :active follows :hover. Lowered: 1 / 2 / 1. */
   &:hover {
     box-shadow: var(--md-sys-elevation-4);
+  }
+
+  &:active {
+    box-shadow: var(--md-sys-elevation-3);
   }
 
   &[data-lowered] {
@@ -91,9 +97,13 @@
     box-shadow: var(--md-sys-elevation-2);
   }
 
+  &[data-lowered]:active {
+    box-shadow: var(--md-sys-elevation-1);
+  }
+
   &[data-extended] {
-    padding-inline-start: var(--_extendable-fab-padding-extended-start);
-    padding-inline-end: var(--_extendable-fab-padding-extended-end);
+    padding-inline-start: calc(var(--_extendable-fab-padding-extended-start) - var(--_extendable-fab-border-width));
+    padding-inline-end: calc(var(--_extendable-fab-padding-extended-end) - var(--_extendable-fab-border-width));
   }
 
   & svg {
@@ -172,9 +182,9 @@
   }
 
   &[data-variant="outlined"] {
+    --_extendable-fab-border-width: 1px;
     background-color: var(--md-sys-color-surface-container-low);
     color: var(--md-sys-color-primary);
-    border-width: 1px;
     border-color: var(--md-sys-color-outline-variant);
   }
 
@@ -214,12 +224,20 @@
   }
 }
 
-.md-extendable-fab:disabled[data-fab-color] {
+/* Disabled — one flat treatment for every variant and colour role: an
+   on-surface 10% container, on-surface 38% content and no shadow. At 0,3,0
+   (the trailing :is() only raises specificity; data-variant is always set)
+   it beats the variant, colour and lowered rules (0,2,0) and follows the
+   lowered :hover/:active rules (0,3,0), whatever order stylesheets load in.
+   Text and outlined take the container too, as in the kit's disabled text
+   and outlined Buttons; outlined keeps its outline-variant stroke. */
+.md-extendable-fab:is(:disabled, [data-disabled]):is([data-variant], [data-fab-color]) {
   background-color: color-mix(
     in srgb,
     var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
     transparent
   );
+  background-image: none;
   color: color-mix(
     in srgb,
     var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),

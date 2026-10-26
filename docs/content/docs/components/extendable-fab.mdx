@@ -3,9 +3,9 @@ title: Extendable FAB
 description: A FAB that expands to reveal its label, then collapses again.
 ---
 
-The extendable FAB starts as a circle and grows into a labelled pill. The
-typical trigger is scroll direction: extended at the top of a list, collapsed
-once the user scrolls down.
+The extendable FAB starts as an icon-only FAB and grows into an extended FAB
+with a label. The typical trigger is scroll direction: extended at the top of a
+list, collapsed once the user scrolls down.
 
 Both `icon` and `label` are required — the component needs them to measure the
 extended width before animating to it.
@@ -15,6 +15,22 @@ extended width before animating to it.
   title="Toggling extension"
   description="Use the outlined button to extend and collapse."
 />
+
+## States
+
+Every variant rests at elevation level 3, rises to level 4 on hover and drops
+back to level 3 while pressed; `lowered` uses levels 1, 2 and 1. Keyboard focus
+adds a 10% state layer under the focus ring. A disabled FAB looks the same
+whatever its `variant` or `color`: an on-surface 10% container, 38% content and
+no shadow. The outlined variant keeps its stroke.
+
+## Accessibility
+
+`label` names the button in both states, through `aria-labelledby`, so a
+collapsed FAB is still announced by its label. This also works when the label is
+an element rather than a string, such as a translated message. Pass
+`aria-label` (or your own `aria-labelledby`) when the name should differ from
+the label.
 
 ## Props
 

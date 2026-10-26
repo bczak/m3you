@@ -57,10 +57,38 @@ test('interactive cards reserve their css state layer for focus and dragged trea
 });
 
 test('elevated interactive card stays level 2 on hover and moves to level 1 on press', async () => {
-  expect(cardCss).toContain('&[data-interactive][data-ripple][data-variant="elevated"]:hover');
+  expect(cardCss).toContain('&[data-interactive][data-ripple][data-variant="elevated"]:not([data-dragged]):hover');
   expect(cardCss).toContain('&[data-interactive][data-variant="elevated"]:has(> .md-card__action:active)');
   expect(cardCss).toContain('box-shadow: var(--md-sys-elevation-2)');
   expect(cardCss).toContain('box-shadow: var(--md-sys-elevation-1)');
+});
+
+test('the focus ring is drawn on the card root, outside its edge, not on the inset action button', () => {
+  expect(cardCss).toContain(
+    '&[data-interactive]:has(> .md-card__action:focus-visible) {\n' +
+      '    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);\n' +
+      '    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);',
+  );
+  // The full-size action button keeps no ring of its own: inset by the card's
+  // overflow and painted under the content layer, it would be hidden.
+  const actionBlock = cardCss.slice(
+    cardCss.indexOf('& > .md-card__action {'),
+    cardCss.indexOf('& > .md-card__content {'),
+  );
+  expect(actionBlock).toContain('outline: none;');
+  expect(actionBlock).not.toContain('focus-visible');
+  expect(cardCss).not.toContain('--md-sys-state-focus-indicator-inner-offset');
+});
+
+test('dragged adds level 1 elevation to elevated and filled cards but not outlined', () => {
+  expect(cardCss).toContain(
+    '&[data-dragged]:not([data-variant="outlined"]) {\n    box-shadow: var(--md-sys-elevation-1);',
+  );
+  expect(cardCss).not.toContain('&[data-dragged] {\n    box-shadow');
+  // The 16% dragged state layer still applies to every variant.
+  expect(cardCss).toContain('&[data-dragged]::before {\n    opacity: var(--md-sys-state-dragged-opacity);');
+  // Hovering an elevated card mid-drag must not lift it back to level 2.
+  expect(cardCss).toContain('&[data-interactive][data-ripple][data-variant="elevated"]:not([data-dragged]):hover');
 });
 
 test('ripple={false} strips data-ripple so hover/active surface feedback is suppressed', async () => {
@@ -229,7 +257,7 @@ test('clicking the card surface itself invokes onClick', () => {
     </Card>,
   );
 
-  fireEvent.click(screen.getByRole('button', { name: 'Card action' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Surface' }));
   expect(handleCardClick).toHaveBeenCalledTimes(1);
 });
 
@@ -242,7 +270,7 @@ test('interactive Card exposes a native full-card button for keyboard activation
     </Card>,
   );
 
-  const action = screen.getByRole('button', { name: 'Card action' });
+  const action = screen.getByRole('button', { name: 'Surface' });
   expect(action.tagName).toBe('BUTTON');
   fireEvent.keyDown(action, { key: 'Enter' });
   fireEvent.keyDown(action, { key: ' ' });
@@ -277,7 +305,7 @@ test('disabled interactive cards ignore Enter activation but still forward onKey
 
   const card = screen.getByTestId('card');
   expect(card).toHaveAttribute('data-disabled');
-  expect(screen.getByRole('button', { name: 'Card action' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Surface' })).toBeDisabled();
 
   fireEvent.keyDown(card, { key: 'Enter' });
   expect(handleCardClick).not.toHaveBeenCalled();
@@ -340,6 +368,130 @@ test('pointer out to a node outside the card clears nested interactive state', (
   // relatedTarget outside the card hits the else branch in pointer-out capture.
   fireEvent.pointerOut(button, { relatedTarget: document.body, isPrimary: true, pointerId: 8, pointerType: 'mouse' });
   expect(card).not.toHaveAttribute('data-nested-interactive');
+});
+
+test('a non-interactive card keeps aria-label and aria-labelledby on its root', () => {
+  const { rerender } = render(
+    <Card data-testid="card" role="region" aria-label="Order summary">
+      Hi
+    </Card>,
+  );
+  expect(screen.getByRole('region', { name: 'Order summary' })).toBe(screen.getByTestId('card'));
+
+  rerender(
+    <>
+      <h2 id="order-title">Order</h2>
+      <Card data-testid="card" role="region" aria-labelledby="order-title">
+        Hi
+      </Card>
+    </>,
+  );
+  expect(screen.getByRole('region', { name: 'Order' })).toBe(screen.getByTestId('card'));
+});
+
+test('an interactive card moves aria-label from its root to the action button', () => {
+  render(
+    <Card data-testid="card" aria-label="Open order" onClick={() => {}}>
+      <span>Order 42</span>
+    </Card>,
+  );
+  const card = screen.getByTestId('card');
+  const action = screen.getByRole('button', { name: 'Open order' });
+
+  expect(card).not.toHaveAttribute('aria-label');
+  expect(action).not.toHaveAttribute('aria-labelledby');
+  expect(card.querySelector('.md-card__content')).not.toHaveAttribute('id');
+});
+
+test('interactiveLabel names the action button ahead of aria-label', () => {
+  render(
+    <Card aria-label="Fallback" interactiveLabel="Open article" onClick={() => {}}>
+      Article
+    </Card>,
+  );
+  expect(screen.getByRole('button', { name: 'Open article' })).toHaveAttribute('aria-label', 'Open article');
+});
+
+test('without a label the action button is named by the card content, not a placeholder', () => {
+  render(
+    <Card data-testid="card" onClick={() => {}}>
+      <h3>Explore color sets</h3>
+      <p>Pick a palette</p>
+    </Card>,
+  );
+  const card = screen.getByTestId('card');
+  const content = card.querySelector('.md-card__content') as HTMLElement;
+  const action = screen.getByRole('button', { name: 'Explore color sets Pick a palette' });
+
+  expect(content.id).not.toBe('');
+  expect(action).toHaveAttribute('aria-labelledby', content.id);
+  expect(action).not.toHaveAttribute('aria-label');
+  expect(screen.queryByRole('button', { name: 'Card action' })).toBeNull();
+});
+
+test('an interactive card forwards aria-labelledby to the action button so a title can name it', () => {
+  render(
+    <Card data-testid="card" aria-labelledby="card-title" onClick={() => {}}>
+      <h3 id="card-title">Explore color sets</h3>
+      <button type="button">More options</button>
+    </Card>,
+  );
+  const card = screen.getByTestId('card');
+  const action = screen.getByRole('button', { name: 'Explore color sets' });
+
+  expect(action).toHaveAttribute('data-card-action');
+  expect(action).toHaveAttribute('aria-labelledby', 'card-title');
+  expect(card).not.toHaveAttribute('aria-labelledby');
+  expect(card.querySelector('.md-card__content')).not.toHaveAttribute('id');
+});
+
+test('aria-labelledby outranks aria-label on the action button, as on a static card root', () => {
+  render(
+    <>
+      <Card data-testid="static" role="region" aria-label="Fallback" aria-labelledby="static-title">
+        <h3 id="static-title">Static title</h3>
+      </Card>
+      <Card data-testid="card" aria-label="Fallback" aria-labelledby="card-title" onClick={() => {}}>
+        <h3 id="card-title">Clickable title</h3>
+      </Card>
+    </>,
+  );
+
+  expect(screen.getByRole('region', { name: 'Static title' })).toBe(screen.getByTestId('static'));
+  const action = screen.getByRole('button', { name: 'Clickable title' });
+  expect(action).toHaveAttribute('aria-labelledby', 'card-title');
+  expect(action).toHaveAttribute('aria-label', 'Fallback');
+});
+
+test('interactiveLabel replaces a forwarded aria-labelledby on the action button', () => {
+  render(
+    <Card aria-labelledby="card-title" interactiveLabel="Open article" onClick={() => {}}>
+      <h3 id="card-title">Article title</h3>
+    </Card>,
+  );
+
+  const action = screen.getByRole('button', { name: 'Open article' });
+  expect(action).not.toHaveAttribute('aria-labelledby');
+});
+
+test('a non-interactive ripple card stays hovered while the pointer crosses its children', () => {
+  render(
+    <Card data-testid="card" ripple>
+      <h3 data-testid="title">Title</h3>
+    </Card>,
+  );
+  const card = screen.getByTestId('card');
+  const title = screen.getByTestId('title');
+  const surface = card.querySelector(':scope > .salty-ripple .salty-ripple-surface');
+  const hoverPointer = { isPrimary: true, pointerId: 1, pointerType: 'mouse', buttons: 0 } as const;
+
+  fireEvent.pointerEnter(card, hoverPointer);
+  fireEvent.pointerEnter(title, hoverPointer);
+  fireEvent.pointerLeave(title, hoverPointer);
+  expect(surface).toHaveClass('--hover');
+
+  fireEvent.pointerLeave(card, hoverPointer);
+  expect(surface).not.toHaveClass('--hover');
 });
 
 // =============================================================================
@@ -447,6 +599,20 @@ test('mouse hover toggles the ripple hover state on enter and leave', () => {
 
   fireEvent.pointerLeave(host, { isPrimary: true, pointerId: 1, pointerType: 'mouse', buttons: 0 });
   expect(surface).not.toHaveClass('--hover');
+});
+
+test('pointerleave aimed at a descendant keeps hover and the press alive', () => {
+  const { host, surface } = renderRipple({ minimumPressDuration: 0 }, <span data-testid="child">Text</span>);
+  const child = screen.getByTestId('child');
+
+  fireEvent.pointerEnter(host, { isPrimary: true, pointerId: 1, pointerType: 'mouse', buttons: 0 });
+  fireEvent.pointerDown(host, mouseDown);
+  expect(surface).toHaveClass('--hover');
+  expect(surface).toHaveClass('--press');
+
+  fireEvent.pointerLeave(child, { isPrimary: true, pointerId: 1, pointerType: 'mouse', buttons: 1 });
+  expect(surface).toHaveClass('--hover');
+  expect(surface).toHaveClass('--press');
 });
 
 test('touch hover events are ignored', () => {

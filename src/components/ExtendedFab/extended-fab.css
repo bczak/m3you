@@ -1,24 +1,55 @@
 /* =============================================================================
-   ExtendedFAB — M3 Spec
-   Wraps Button with FAB-specific overrides: shape large (16px), elevation
+   ExtendedFAB — M3 Expressive Spec
+   Wraps Button with FAB-specific overrides: kit Small (56dp), Medium (80dp)
+   and Large (96dp) geometry, plus FAB elevation (rest 3, hover 4, pressed 3;
+   lowered 1/2/1).
    Source: m3.material.io/components/extended-fab/specs
    ============================================================================= */
 
 .md-button.md-extended-fab {
+  --_extended-fab-elevation: var(--md-sys-elevation-3);
   gap: 12px;
-  box-shadow: var(--md-sys-elevation-3);
 
-  /* ── Size-dependent shape (EFAB small=corner-large, large=corner-extra-large) ── */
+  /* ── Legacy `size` scale ──
+     xs/sm have no kit counterpart and only take the FAB shape. md and lg render
+     the kit Small and Large EFABs; Button md/lg already supply their height,
+     typescale and (md) 24dp icon. Kept above the `fabSize` blocks so that
+     fabSize="medium" (which also resolves to data-size="md") wins on order.
+     Every inline padding here and below subtracts Button's --_outline-width
+     (1px at md, 2px at lg, 0 unless outlined), so the outlined stroke sits
+     inside the same box and an outlined FAB stays as wide as a filled one. */
   &[data-size="xs"],
-  &[data-size="sm"],
-  &[data-size="md"] {
+  &[data-size="sm"] {
     border-radius: var(--md-sys-shape-corner-large);
     gap: 8px;
   }
 
+  /* Kit Small: 16dp inline padding, 8dp gap, corner-large. */
+  &[data-size="md"] {
+    padding-inline: calc(16px - var(--_outline-width, 0px));
+    gap: 8px;
+    border-radius: var(--md-sys-shape-corner-large);
+  }
+
+  /* Kit Large: 28dp inline padding, 16dp gap, 36dp icon, corner-extra-large. */
+  &[data-size="lg"] {
+    padding-inline: calc(28px - var(--_outline-width, 0px));
+    gap: 16px;
+    border-radius: var(--md-sys-shape-corner-extra-large);
+
+    & svg {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  /* ── Kit `fabSize` scale ──
+     Each block sets --_height too, so geometry derived from it (e.g. the
+     FABMenu trigger morph) matches the rendered height. */
   &[data-fab-size="small"] {
-    height: 56px;
-    padding-inline: 16px;
+    --_height: 56px;
+    height: var(--_height);
+    padding-inline: calc(16px - var(--_outline-width, 0px));
     gap: 8px;
     border-radius: var(--md-sys-shape-corner-large);
     font-family: var(--md-sys-typescale-title-medium-font);
@@ -34,8 +65,9 @@
   }
 
   &[data-fab-size="medium"] {
-    height: 80px;
-    padding-inline: 26px;
+    --_height: 80px;
+    height: var(--_height);
+    padding-inline: calc(26px - var(--_outline-width, 0px));
     gap: 12px;
     border-radius: var(--md-sys-shape-corner-large-increased);
     font-family: var(--md-sys-typescale-title-large-font);
@@ -51,8 +83,9 @@
   }
 
   &[data-fab-size="large"] {
-    height: 96px;
-    padding-inline: 28px;
+    --_height: 96px;
+    height: var(--_height);
+    padding-inline: calc(28px - var(--_outline-width, 0px));
     gap: 16px;
     border-radius: var(--md-sys-shape-corner-extra-large);
     font-family: var(--md-sys-typescale-headline-small-font);
@@ -67,21 +100,38 @@
     }
   }
 
-  &[data-size="lg"] {
-    border-radius: var(--md-sys-shape-corner-extra-large);
-    gap: 16px;
+  /* ── Elevation level per state ──
+     Hover lifts to level 4; a press drops back to the resting level (the kit's
+     Pressed state matches Enabled), so :active comes after :hover. */
+  &:hover {
+    --_extended-fab-elevation: var(--md-sys-elevation-4);
   }
 
-  &:hover {
-    box-shadow: var(--md-sys-elevation-4);
+  &:active {
+    --_extended-fab-elevation: var(--md-sys-elevation-3);
   }
 
   &[data-lowered] {
-    box-shadow: var(--md-sys-elevation-1);
+    --_extended-fab-elevation: var(--md-sys-elevation-1);
 
     &:hover {
-      box-shadow: var(--md-sys-elevation-2);
+      --_extended-fab-elevation: var(--md-sys-elevation-2);
     }
+
+    &:active {
+      --_extended-fab-elevation: var(--md-sys-elevation-1);
+    }
+  }
+}
+
+/* Paints the elevation. At 0,4,0 this out-specifies Button's per-variant and
+   per-size shadows (e.g. elevated + md = level 2 at 0,3,0) whatever order the
+   stylesheets load in, so every variant and size rests at the FAB level. */
+.md-button.md-extended-fab[data-variant][data-size] {
+  box-shadow: var(--_extended-fab-elevation);
+
+  &:is([data-disabled], :disabled) {
+    box-shadow: none;
   }
 }
 
@@ -115,7 +165,11 @@
   color: var(--md-sys-color-on-tertiary-container);
 }
 
-.md-button.md-extended-fab:disabled[data-fab-color] {
+/* Disabled colour roles. `:is()` also catches [data-disabled] without native
+   :disabled (Base UI's focusableWhenDisabled), where the 0,3,0 colour-role
+   rules above would otherwise tie with Button's disabled rule and win or lose
+   on stylesheet order. */
+.md-button.md-extended-fab:is(:disabled, [data-disabled])[data-fab-color] {
   background-color: color-mix(
     in srgb,
     var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
@@ -126,5 +180,4 @@
     var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
     transparent
   );
-  box-shadow: none;
 }

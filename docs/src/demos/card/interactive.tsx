@@ -8,6 +8,7 @@ export default function CardInteractive() {
     <Card
       variant="filled"
       ripple
+      interactiveLabel="Clickable card"
       onClick={() => setClicks((value) => value + 1)}
       style={{ padding: '1.25rem', width: '16rem', cursor: 'pointer' }}
     >

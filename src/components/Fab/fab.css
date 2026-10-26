@@ -6,15 +6,29 @@
    Source: m3.material.io/components/floating-action-button/specs
    ============================================================================= */
 
-/* Compound selector ensures correct specificity vs IconButton base rules */
+/* Cascade order: fab.tsx imports IconButton before this file, so these rules
+   always follow icon-button.css (in the published bundle and in dev) and win
+   the (0,3,0) ties with its square-shape and size rules. The shape and size
+   rules stay at (0,3,0) on purpose: FAB menu's open-state morph
+   (`.md-icon-button.md-fab.md-fab-menu-trigger[data-menu-state="open"]`,
+   0,4,0) has to beat them whatever order the two files land in. */
 .md-icon-button.md-fab {
-  box-shadow: var(--md-sys-elevation-3);
+  /* Elevation is resolved into one private property and painted by a single
+     high-specificity rule at the end of this file, so IconButton's variant
+     shadows (elevated, elevated + size, selected) can never override it. */
+  --_fab-elevation: var(--md-sys-elevation-3);
 
   &:hover {
-    box-shadow: var(--md-sys-elevation-4);
+    --_fab-elevation: var(--md-sys-elevation-4);
   }
 
-  /* ── Shape: corner-large for sm/md ── */
+  /* Kit: Pressed rests back at level 3; only Hovered lifts to level 4. A
+     mouse press still matches :hover, so this has to come after it. */
+  &:active {
+    --_fab-elevation: var(--md-sys-elevation-3);
+  }
+
+  /* ── Shape: corner-large for xs/sm/md ── */
   &[data-size="xs"],
   &[data-size="sm"],
   &[data-size="md"] {
@@ -35,7 +49,7 @@
   }
 
   /* ── Shape + size override: corner-extra-large for lg (96×96) ── */
-  &[data-size="lg"][data-shape="square"] {
+  &[data-size="lg"] {
     --_height: 96px;
     height: var(--_height);
     width: 96px;
@@ -47,12 +61,16 @@
     }
   }
 
-  /* ── Lowered elevation ── */
+  /* ── Lowered elevation: rest 1, hover 2, pressed back to 1 ── */
   &[data-lowered] {
-    box-shadow: var(--md-sys-elevation-1);
+    --_fab-elevation: var(--md-sys-elevation-1);
 
     &:hover {
-      box-shadow: var(--md-sys-elevation-2);
+      --_fab-elevation: var(--md-sys-elevation-2);
+    }
+
+    &:active {
+      --_fab-elevation: var(--md-sys-elevation-1);
     }
   }
 }
@@ -86,6 +104,15 @@
 .md-icon-button.md-fab[data-fab-color="tertiary-container"] {
   background-color: var(--md-sys-color-tertiary-container);
   color: var(--md-sys-color-on-tertiary-container);
+}
+
+/* The one rule that paints the FAB's elevation. At (0,5,0) it outranks every
+   IconButton shadow rule — elevated (0,2,0), elevated + size (0,3,0) and
+   selected elevated (0,3,0) — whatever the bundle order, so every variant and
+   size rests at level 3 like the kit. `:not(:disabled)` leaves disabled FABs
+   to the flat disabled treatment (IconButton's and the one below). */
+.md-icon-button.md-fab:not(:disabled)[data-variant][data-size] {
+  box-shadow: var(--_fab-elevation);
 }
 
 /* Color-role rules are intentionally followed by a higher-specificity disabled

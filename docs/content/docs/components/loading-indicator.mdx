@@ -26,11 +26,29 @@ this site's logo and hero are clipped from them.
 
 <Example name="loading-indicator/basic" title="Small, medium and large" />
 
+### Custom size
+
+For a size off the scale, set a `width` through `style` (a class has to
+outrank the `.md-loading-indicator[data-size]` rule). The height follows it,
+and the shape stays at the kit's 38/48 of the container, so a 96px indicator
+draws a 76px shape. The indicator keeps its circle even in a flex or grid row
+that would otherwise stretch it to a taller sibling.
+
+<Example name="loading-indicator/custom-size" title="96px, uncontained and contained" />
+
 ## Contained
 
 The contained variant sits on a filled surface, for use over content.
 
 <Example name="loading-indicator/contained" title="Uncontained and contained" />
+
+## Colour
+
+The indicator uses the primary role, or on-primary-container when contained
+(the container itself is primary-container). Pass `color` (any CSS colour or
+token, such as `var(--md-sys-color-tertiary)`) to change it. It combines with
+a `style` you pass, so a custom width and a custom colour can be used together.
+If `style` also sets `--md-loading-indicator-color`, the `color` prop wins.
 
 ## Props
 

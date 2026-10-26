@@ -1,4 +1,4 @@
-import { Check, Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Chip } from 'm3you';
 import { useState } from 'react';
 
@@ -19,7 +19,6 @@ export default function ChipTypes() {
             key={label}
             type="filter"
             selected={filters.includes(label)}
-            leadingIcon={filters.includes(label) ? <Check size={18} aria-hidden="true" /> : undefined}
             onClick={() =>
               setFilters((current) =>
                 current.includes(label) ? current.filter((item) => item !== label) : [...current, label],
@@ -31,7 +30,7 @@ export default function ChipTypes() {
         ))}
       </div>
       <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-        <Chip type="input" trailingIcon={<X size={16} aria-hidden="true" />} onClose={() => undefined}>
+        <Chip type="input" onClose={() => undefined}>
           dilnoza@example.com
         </Chip>
       </div>

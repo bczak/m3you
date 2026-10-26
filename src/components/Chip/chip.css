@@ -2,14 +2,17 @@
    Chip — M3 Spec
    Height: 32px, shape: small (8px), label-large, icon 18px
    4 types (assist, filter, input, suggestion) × 2 variants (outlined, elevated)
-   Source: m3.material.io/components/chips/specs
+   Opt-in Expressive morph: 12px rest, 8px pressed, pill when selected
+   Source: m3.material.io/components/chips/specs; morph shapes from androidx
+   Compose material3 ChipsTokens (37.2.1, Expressive chip tokens)
    ============================================================================= */
 
 .md-chip {
   box-sizing: border-box;
   position: relative;
   display: inline-flex;
-  height: 32px;
+  --_height: 32px;
+  height: var(--_height);
   cursor: pointer;
   align-items: center;
   border-radius: var(--md-sys-shape-corner-small);
@@ -21,15 +24,32 @@
   border: none;
   outline: none;
   overflow: hidden;
-  --_base-padding: 16px;
+  /* The kit keys colour to the chip type, not the outlined/elevated style:
+     the label is On Surface Variant on every unselected chip except Assist
+     (On Surface, below), and the hover / focus / press layer is On Surface
+     Variant on every unselected chip, Assist included. */
+  color: var(--md-sys-color-on-surface-variant);
+  --ripple-color: var(--md-sys-color-on-surface-variant);
+  /* Leading / trailing space — 16dp beside a label, 8dp beside an icon;
+     input chips use 12dp beside a label and 4dp beside an avatar. */
+  --_leading-space: 16px;
+  --_trailing-space: 16px;
+  padding-block: 0;
+  padding-inline: var(--_leading-space) var(--_trailing-space);
   transition:
     color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
+  /* Focus: ring plus the focus state layer (kit: Focused fills the state
+     layer). Closable input chips draw both on the wrapper — see below. */
   &:focus-visible {
     outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
     outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+    background-image: linear-gradient(
+      color-mix(in srgb, var(--ripple-color) calc(var(--md-sys-state-focus-opacity) * 100%), transparent),
+      color-mix(in srgb, var(--ripple-color) calc(var(--md-sys-state-focus-opacity) * 100%), transparent)
+    );
   }
 
   &:disabled {
@@ -42,57 +62,118 @@
     flex-shrink: 0;
   }
 
-  /* ── Padding: default (no leading/trailing icon) ── */
-  padding-left: var(--_base-padding);
-  padding-right: var(--_base-padding);
+  /* ── Leading / trailing space ──
+     Only the custom properties change here, so the order below — not
+     selector specificity — decides which one wins: input 12dp, then 8dp
+     beside an icon, then 4dp beside an avatar. */
+  &[data-type="input"] {
+    --_leading-space: 12px;
+    --_trailing-space: 12px;
+  }
 
   &[data-has-leading-icon] {
-    --_base-padding-left: 8px;
-    padding-left: var(--_base-padding-left);
+    --_leading-space: 8px;
   }
 
   &[data-has-trailing-icon] {
-    --_base-padding-right: 8px;
-    padding-right: var(--_base-padding-right);
+    --_trailing-space: 8px;
+  }
+
+  &[data-type="input"][data-has-avatar] {
+    --_leading-space: 4px;
+    border-radius: calc(var(--_height) / 2);
   }
 
   /* ── Variant: outlined ── */
   &[data-variant="outlined"] {
     background-color: transparent;
-    color: var(--md-sys-color-on-surface-variant);
     border: 1px solid var(--md-sys-color-outline-variant);
   }
 
   /* ── Variant: elevated ── */
   &[data-variant="elevated"] {
     background-color: var(--md-sys-color-surface-container-low);
-    color: var(--md-sys-color-on-surface);
     box-shadow: var(--md-sys-elevation-1);
     border: none;
   }
 
-  /* ── Filter selected ── */
-  &:is([data-type="filter"], [data-type="input"], [data-type="suggestion"])[data-selected="true"] {
-    background-color: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
-    border-color: transparent;
+  /* ── Type: assist ── */
+  &[data-type="assist"] {
+    color: var(--md-sys-color-on-surface);
   }
 
-  &[data-type="assist"] .md-chip__leading-icon {
+  /* Disabled assist icons fall back to the inherited disabled colour. */
+  &[data-type="assist"]:not(:disabled, [data-disabled]) .md-chip__leading-icon {
     color: var(--md-sys-color-primary);
   }
 
-  &[data-type="input"] {
-    padding-inline: 12px;
+  /* ── Selected (filter, input, suggestion) ── */
+  &:is([data-type="filter"], [data-type="input"], [data-type="suggestion"])[data-selected="true"] {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    --ripple-color: var(--md-sys-color-on-secondary-container);
+    border-color: transparent;
   }
 
-  &[data-type="input"][data-has-leading-icon] {
-    padding-inline-start: 8px;
+  /* ── Expressive shape morph (opt-in: `morph`) ──
+     Compose's Expressive chip tokens: 12dp (corner medium) at rest, 8dp
+     (corner small) while pressed, a full pill once a filter or input chip is
+     selected. Opt-in because the baseline M3 chip — material-web's tokens
+     and the default above — stays at 8dp. The corners ride the effects
+     spring, as every in-place corner morph in the library does. An input
+     chip with an avatar keeps its concentric pill at rest (the rule above
+     out-ranks this one). */
+  &[data-morph] {
+    border-radius: var(--md-sys-shape-corner-medium);
+    transition:
+      color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      border-radius var(--md-sys-motion-duration-spring-default-effects)
+      var(--md-sys-motion-easing-spring-default-effects);
   }
 
-  &[data-type="input"][data-has-avatar] {
-    padding-inline-start: 4px;
-    border-radius: calc(32px / 2);
+  &[data-morph]:is([data-type="filter"], [data-type="input"])[data-selected="true"] {
+    border-radius: calc(var(--_height) / 2);
+  }
+
+  /* Pressed out-ranks selected, as in Compose's toggleable shapes. A
+     closable chip morphs for its own action, not for its remove control. */
+  &[data-morph]:not(:disabled, [data-disabled], :has(> .md-chip__close:active)):active {
+    border-radius: var(--md-sys-shape-corner-small);
+  }
+
+  /* ── Interaction elevation ──
+     Kit: elevated Filter rises to level 2 on hover and settles back to 1
+     while pressed; elevated Assist and Suggestion rise to 2 only while
+     pressed. A selected outlined Filter or Suggestion lifts to level 1 on
+     hover, and a selected outlined Suggestion to 2 while pressed. */
+  @media (hover: hover) {
+    &[data-variant="elevated"][data-type="filter"]:not(:disabled):hover {
+      box-shadow: var(--md-sys-elevation-2);
+    }
+
+    &[data-variant="outlined"]:is([data-type="filter"], [data-type="suggestion"])[data-selected="true"]:not(
+        :disabled
+      ):hover {
+      box-shadow: var(--md-sys-elevation-1);
+    }
+  }
+
+  &[data-variant="elevated"][data-type="filter"]:not(:disabled):active {
+    box-shadow: var(--md-sys-elevation-1);
+  }
+
+  &[data-variant="elevated"]:is([data-type="assist"], [data-type="suggestion"]):not(:disabled):active {
+    box-shadow: var(--md-sys-elevation-2);
+  }
+
+  &[data-variant="outlined"][data-type="filter"][data-selected="true"]:not(:disabled):active {
+    box-shadow: none;
+  }
+
+  &[data-variant="outlined"][data-type="suggestion"][data-selected="true"]:not(:disabled):active {
+    box-shadow: var(--md-sys-elevation-2);
   }
 }
 
@@ -114,6 +195,22 @@
   background-color: transparent;
 }
 
+/* Disabled + selected (kit: Filter and Suggestion, both styles): the 12%
+   disabled container fill with no stroke, and the disabled label — not the
+   selected On Secondary Container colours. */
+.md-chip:is([data-type="filter"], [data-type="input"], [data-type="suggestion"]):is(
+  :disabled,
+  [data-disabled]
+)[data-selected="true"] {
+  color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  border-color: transparent;
+}
+
 /* ── Filter check icon container ── */
 .md-chip__filter-icon {
   display: inline-flex;
@@ -122,11 +219,17 @@
   overflow: hidden;
   transition: width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   width: 0;
-  margin-right: 0;
+  margin-inline-end: 0;
 
   &[data-selected="true"] {
     width: 18px;
-    margin-right: 8px;
+    margin-inline-end: 8px;
+  }
+
+  /* With its own leading icon, a filter chip swaps that icon for the check
+     in place: the slot is already 18dp wide, so it must not grow from 0. */
+  &[data-replaces-icon] {
+    transition: none;
   }
 
   & svg {
@@ -146,7 +249,7 @@
   flex: 0 0 24px;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
+  margin-inline-end: 8px;
   overflow: hidden;
   border-radius: 50%;
 
@@ -162,7 +265,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
+  margin-inline-end: 8px;
 }
 
 /* ── Trailing icon ── */
@@ -170,15 +273,39 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 8px;
+  margin-inline-start: 8px;
 }
 
 /* ── Closable input chip ──
    The wrapper <span> carries the chip's visual box; the chip action lives in a
    nested button and the remove control is its sibling — never nested inside it
-   (nested interactive elements are invalid HTML). */
+   (nested interactive elements are invalid HTML). Both buttons sit in the
+   wrapper's one grid cell, full height, so together they cover the whole chip:
+   the primary spans all of it and the remove button lies over its end, from
+   the 8dp gap after the label to the chip's edge (material-web's trailing
+   action covers the same area). */
 .md-chip--closable {
+  display: inline-grid;
   cursor: default;
+  padding-inline: 0;
+  /* The remove button: 8dp gap, 18dp icon, 8dp trailing space beside an icon. */
+  --_close-width: calc(8px + 18px + 8px);
+}
+
+.md-chip--closable > :is(.md-chip__primary, .md-chip__close) {
+  grid-area: 1 / 1;
+  align-self: stretch;
+}
+
+/* The primary button's own outline would be clipped to two bars by the
+   wrapper's overflow, so the wrapper draws the ring and focus layer. */
+.md-chip--closable:has(> .md-chip__primary:focus-visible) {
+  outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+  outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--ripple-color) calc(var(--md-sys-state-focus-opacity) * 100%), transparent),
+    color-mix(in srgb, var(--ripple-color) calc(var(--md-sys-state-focus-opacity) * 100%), transparent)
+  );
 }
 
 .md-chip[data-disabled] {
@@ -186,13 +313,18 @@
 }
 
 .md-chip__primary {
+  /* It spans the whole chip, so the state layer and press ripple it hosts
+     cover the chip with its corners, and the ripple — which settles on the
+     centre of its host — settles on the chip's centre. The end padding keeps
+     the label clear of the remove button lying over it. */
   position: relative;
   display: inline-flex;
-  align-self: stretch;
   align-items: center;
   margin: 0;
-  padding: 0;
+  padding-block: 0;
+  padding-inline: var(--_leading-space) var(--_close-width);
   border: none;
+  border-radius: inherit;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -200,40 +332,74 @@
   cursor: pointer;
   outline: none;
   overflow: hidden;
-  transform-origin: right center;
-
-  &:focus-visible {
-    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
-    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
-  }
+  /* Removing the chip squeezes the primary to nothing (chip.tsx). It spans the
+     whole chip, so collapsing onto its end edge would slide the label under the
+     remove icon to the chip's far edge; collapsing onto its centre keeps the
+     label clear of the icon in either direction (a :dir(rtl) override would be
+     lowered to a :lang() list by the build's CSS minifier). */
+  transform-origin: center;
 }
 
-/* ── Close button (input chips) ── */
+/* The end padding only keeps the label clear while the chip is as wide as its
+   content. A chip squeezed narrower (a long address in a narrow wrapping
+   group: the chip's overflow lets it shrink) would otherwise push the label
+   through that padding and under the remove icon, whose button has no fill.
+   The label shrinks instead and is cut off near the content edge, 8dp before
+   the icon. The clip leaves 2dp of slack beside the label (so at least 6dp
+   stays clear) and its full height above and below, so a chip at its natural
+   width renders exactly as before: a glyph's ink may overhang its advance,
+   and overflow would cut it. */
+.md-chip__primary > .md-chip__label {
+  min-width: 0;
+  clip-path: inset(-100% -2px);
+}
+
+/* ── Close button (input chips) ──
+   Later in the cell than the primary, so it paints and hit-tests above it. */
 .md-chip__close {
   box-sizing: border-box;
   position: relative;
   display: inline-flex;
-  width: 18px;
-  height: 18px;
+  justify-self: end;
+  width: var(--_close-width);
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
   padding: 0;
-  margin-left: 8px;
+  margin: 0;
   border: none;
   background: transparent;
   color: inherit;
   outline: none;
-  overflow: hidden;
-  transition: background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
-  &:focus-visible {
-    outline: 1px solid var(--md-sys-color-primary);
+  /* The state layer and press ripple (both .salty-ripple) fill the button,
+     so the ripple measures it and settles on its centre, which is the icon's.
+     The clip draws them as an 18dp circle on the icon. */
+  & > .salty-ripple {
+    clip-path: circle(9px);
   }
+}
 
-  & svg {
-    width: 18px;
-    height: 18px;
+.md-chip__close-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+
+/* The ring circles the icon: on the button it would trace the whole
+   full-height target. 18 + 2 × (2 + 3) = 28dp fits inside the 32dp chip,
+   whose overflow would clip anything larger. */
+.md-chip__close:focus-visible > .md-chip__close-icon {
+  outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+  outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+}
+
+/* Reduced motion: the morph snaps between shapes instead of springing.
+   Dropping border-radius (the last transition) from the property list keeps
+   the colour and elevation fades. */
+@media (prefers-reduced-motion: reduce) {
+  .md-chip[data-morph] {
+    transition-property: color, background-color, box-shadow;
   }
 }

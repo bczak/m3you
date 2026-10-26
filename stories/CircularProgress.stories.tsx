@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 import { CircularProgress } from '../src/components/CircularProgress/circular-progress';
 import { ShowcaseGrid, ShowcasePanel } from './_helpers/storybook-showcase';
 
@@ -38,13 +39,14 @@ const meta = {
     },
     strokeWidth: {
       control: { type: 'range', min: 1, max: 12, step: 1 },
-      description: 'Thickness of the arc stroke in px.',
+      description: 'Thickness of the arc stroke in px. The ring keeps its radius and the box grows with the stroke.',
       table: { category: 'Appearance', defaultValue: { summary: '4' } },
     },
     thickness: {
       control: 'inline-radio',
       options: [4, 8],
-      description: 'Kit-backed physical stroke thickness. This overrides the legacy free-form strokeWidth extension.',
+      description:
+        'Kit-backed physical stroke thickness (the box grows to 44px flat / 52px wavy at 8dp). This overrides the legacy free-form strokeWidth extension.',
       table: { category: 'Appearance', defaultValue: { summary: '4' } },
     },
   },
@@ -105,7 +107,7 @@ export const Wavy: Story = {
       <ShowcasePanel
         eyebrow="Expressive · Determinate"
         title="Wavy ring"
-        description="The Material 3 Expressive circular indicator uses a sine-wave active arc with a flat track and a small gap. The ring flattens at 100%."
+        description="The Material 3 Expressive circular indicator uses a sine-wave active arc with a flat track on the wave's crest and a 4dp gap. The completed ring stays wavy."
       >
         <div className="sb-m3-demo-row">
           <CircularProgress variant="wavy" size="sm" value={28} />
@@ -131,12 +133,100 @@ export const Wavy: Story = {
 };
 
 export const Thickness: Story = {
+  parameters: {
+    controls: {
+      disable: true,
+    },
+  },
   render: () => (
-    <div className="sb-m3-demo-row">
-      <CircularProgress value={64} thickness={4} />
-      <CircularProgress value={64} thickness={8} />
-      <CircularProgress value={64} variant="wavy" thickness={4} />
-      <CircularProgress value={64} variant="wavy" thickness={8} />
-    </div>
+    <ShowcaseGrid dense>
+      <ShowcasePanel
+        eyebrow="Determinate"
+        title="4dp and 8dp"
+        description="The ring keeps its radius and the box grows with the stroke: 40 → 44px flat, 48 → 52px wavy. The wave's amplitude does not change."
+      >
+        <div className="sb-m3-demo-row">
+          <CircularProgress value={64} thickness={4} />
+          <CircularProgress value={64} thickness={8} />
+          <CircularProgress value={64} variant="wavy" thickness={4} />
+          <CircularProgress value={64} variant="wavy" thickness={8} />
+        </div>
+      </ShowcasePanel>
+
+      <ShowcasePanel
+        eyebrow="Indeterminate"
+        title="4dp and 8dp"
+        description="The track follows the moving arc and keeps a 4dp gap at both ends."
+      >
+        <div className="sb-m3-demo-row">
+          <CircularProgress type="indeterminate" thickness={4} />
+          <CircularProgress type="indeterminate" thickness={8} />
+          <CircularProgress type="indeterminate" variant="wavy" thickness={4} />
+          <CircularProgress type="indeterminate" variant="wavy" thickness={8} />
+        </div>
+      </ShowcasePanel>
+    </ShowcaseGrid>
   ),
+};
+
+/** A rule an app writes against its own class name, loaded after the library's stylesheet. */
+const CONSUMER_RULE = '.sb-circular-progress-20 { width: 20px; height: 20px; }';
+
+export const Sizing: Story = {
+  parameters: {
+    controls: {
+      disable: true,
+    },
+  },
+  render: () => (
+    <ShowcaseGrid dense>
+      <style>{CONSUMER_RULE}</style>
+      <ShowcasePanel
+        eyebrow="Sizing"
+        title="Computed box or your own"
+        description="The box comes from size and the stroke. A stylesheet rule on your own class, or a width and height in style, overrides it, and the whole ring scales to fit."
+      >
+        <div className="sb-m3-demo-row">
+          <CircularProgress data-testid="flat" value={64} />
+          <CircularProgress data-testid="flat-8" value={64} thickness={8} />
+          <CircularProgress data-testid="wavy" value={64} variant="wavy" />
+          <CircularProgress data-testid="flat-20" value={64} className="sb-circular-progress-20" />
+          <CircularProgress data-testid="wavy-20" value={64} variant="wavy" className="sb-circular-progress-20" />
+          <CircularProgress data-testid="flat-80" value={64} style={{ width: 80, height: 80 }} />
+        </div>
+      </ShowcasePanel>
+    </ShowcaseGrid>
+  ),
+  play: async ({ canvas }) => {
+    /** Rendered edge of the root, its svg, and how far the svg's viewBox is scaled to fill it. */
+    const measure = (id: string) => {
+      const root = canvas.getByTestId(id);
+      const svg = root.querySelector('svg') as SVGSVGElement;
+      return {
+        root: root.getBoundingClientRect(),
+        svg: svg.getBoundingClientRect(),
+        scale: svg.getScreenCTM()?.a ?? Number.NaN,
+      };
+    };
+
+    // [test id, rendered edge, the box the component computes (its viewBox)]
+    const cases = [
+      ['flat', 40, 40],
+      ['flat-8', 44, 44],
+      ['wavy', 48, 48],
+      // A consumer's class rule wins over the box the component computes — on both variants.
+      ['flat-20', 20, 40],
+      ['wavy-20', 20, 48],
+      ['flat-80', 80, 40],
+    ] as const;
+    for (const [id, edge, viewBox] of cases) {
+      const { root, svg, scale } = measure(id);
+      await expect(root.width).toBeCloseTo(edge);
+      await expect(root.height).toBeCloseTo(edge);
+      // The svg fills the box and the ring the component drew in viewBox units scales with it.
+      await expect(svg.width).toBeCloseTo(edge);
+      await expect(svg.height).toBeCloseTo(edge);
+      await expect(scale).toBeCloseTo(edge / viewBox);
+    }
+  },
 };

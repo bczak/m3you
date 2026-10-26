@@ -5,8 +5,10 @@ import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 import {
   type CarouselLayout,
+  type CarouselMetrics,
   type CarouselScrollMode,
   clampCarouselIndex,
+  getCarouselAlignmentPoint,
   getCarouselSizeRoles,
   getClampedCarouselLargeCount,
   getNearestCarouselItem,
@@ -72,6 +74,8 @@ type CarouselItemContextValue = {
   layout: CarouselLayout;
 };
 
+type CarouselAnimations = Map<HTMLElement, Animation>;
+
 const CarouselItemContext = React.createContext<CarouselItemContextValue | null>(null);
 const SETTLE_DELAY = 120;
 
@@ -101,46 +105,191 @@ function setActiveItem(items: HTMLElement[], activeIndex: number) {
   }
 }
 
-function animateRoleChange(item: HTMLElement, previousRect: DOMRect, animationStore: Set<Animation>) {
-  const nextRect = item.getBoundingClientRect();
-  if (nextRect.width === 0 || nextRect.height === 0 || previousRect.width === 0 || previousRect.height === 0) return;
-  const translateX = previousRect.left - nextRect.left;
-  const translateY = previousRect.top - nextRect.top;
-  const scaleX = previousRect.width / nextRect.width;
-  const scaleY = previousRect.height / nextRect.height;
-  if (translateX === 0 && translateY === 0 && scaleX === 1 && scaleY === 1) return;
-  const animation = item.animate(
-    [{ transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})` }, { transform: 'none' }],
-    { duration: 500, easing: 'cubic-bezier(0.2, 0, 0, 1)' },
-  );
-  animationStore.add(animation);
-  const removeAnimation = () => animationStore.delete(animation);
-  animation.finished.then(removeAnimation, removeAnimation);
+function readPixels(element: Element) {
+  return Number.parseFloat(getComputedStyle(element).width) || 0;
 }
 
+const PROBE_LENGTHS = ['large', 'medium', 'small', 'gap'] as const;
+
+/**
+ * Resolves the multi-browse lengths to px. They are public tokens that accept
+ * any CSS length (`24rem`, `min(40vw, 400px)`…), so they are measured from a
+ * probe inside the viewport — where `cqi` resolves as it does for the items —
+ * which is inserted and removed before the browser paints.
+ */
+function measureCarouselMetrics(viewport: HTMLUListElement): CarouselMetrics {
+  const probe = viewport.ownerDocument.createElement('li');
+  probe.className = 'md-carousel__probe';
+  probe.setAttribute('aria-hidden', 'true');
+  for (const length of PROBE_LENGTHS) {
+    const span = viewport.ownerDocument.createElement('span');
+    span.dataset.length = length;
+    probe.append(span);
+  }
+  viewport.append(probe);
+  const [largeItemMaxWidth, mediumItemWidth, smallItemWidth, gap] = Array.from(probe.children, readPixels);
+  const contentWidth = readPixels(probe);
+  probe.remove();
+  return { contentWidth, largeItemMaxWidth, mediumItemWidth, smallItemWidth, gap };
+}
+
+/** Fallbacks for --md-sys-motion-duration/easing-spring-default-spatial. */
+const MORPH_DURATION = 500;
+const MORPH_EASING = 'cubic-bezier(0.38, 1.21, 0.22, 1)';
+
+function readMorphTiming(viewport: HTMLElement): KeyframeAnimationOptions {
+  const style = getComputedStyle(viewport);
+  const durationToken = style.getPropertyValue('--md-sys-motion-duration-spring-default-spatial').trim();
+  const easing = style.getPropertyValue('--md-sys-motion-easing-spring-default-spatial').trim();
+  const duration = Number.parseFloat(durationToken);
+  return {
+    duration: Number.isFinite(duration) ? (durationToken.endsWith('ms') ? duration : duration * 1000) : MORPH_DURATION,
+    easing: easing || MORPH_EASING,
+  };
+}
+
+const MORPHING_ROLES: ReadonlySet<string | undefined> = new Set(['large', 'medium', 'small']);
+/** The layout and role (and, for multi-browse large items, the large count) each item was last sized for. */
+const appliedItemSizes = new WeakMap<HTMLElement, string>();
+
+/**
+ * Morphs an item's real width rather than scaling it, so its 28dp corners and
+ * its content keep their shape while it grows or shrinks. Neighbours reflow
+ * with it; a snapping viewport stays snapped to the active item, and a
+ * free-scrolling one is held on it by `holdCarouselItem`.
+ */
+function morphItemWidth(
+  item: HTMLElement,
+  fromWidth: number,
+  timing: KeyframeAnimationOptions,
+  animations: CarouselAnimations,
+) {
+  animations.get(item)?.cancel();
+  // Only the start keyframe is given (offset 0 — a lone keyframe would default to
+  // the end), so the morph animates towards the item's underlying flex-basis and
+  // lands on whatever its new size role resolves to, even mid-resize.
+  const animation = item.animate([{ flexBasis: `${fromWidth}px`, offset: 0 }], timing);
+  animations.set(item, animation);
+  const release = () => {
+    if (animations.get(item) === animation) animations.delete(item);
+  };
+  animation.finished.then(release, release);
+}
+
+/**
+ * Sizes every item for the active one and morphs the items whose size changed.
+ * Returns whether any item that was already sized changed size.
+ */
 function applyCarouselRoles(
   viewport: HTMLUListElement,
   layout: CarouselLayout,
   activeIndex: number,
   reducedMotion: boolean,
-  animationStore: Set<Animation>,
+  animations: CarouselAnimations,
 ) {
   const items = getCarouselItems(viewport);
-  const previousRects = reducedMotion ? [] : items.map((item) => item.getBoundingClientRect());
+  // Read every on-screen width before any role changes, so a morph starts where
+  // the item is — including mid-way through an earlier morph.
+  const previousWidths = reducedMotion ? [] : items.map(readPixels);
   const width = viewport.getBoundingClientRect().width || viewport.clientWidth;
-  const roles = getCarouselSizeRoles(layout, items.length, activeIndex, width, reducedMotion);
-  const largeCount = getClampedCarouselLargeCount(width, items.length);
-  viewport.style.setProperty('--md-carousel-large-count', String(largeCount));
-  viewport.style.setProperty('--md-carousel-reserved-gaps', `${(largeCount + 1) * 8}px`);
+  const metrics = layout === 'multi-browse' && !reducedMotion ? measureCarouselMetrics(viewport) : undefined;
+  const roles = getCarouselSizeRoles(layout, items.length, activeIndex, width, reducedMotion, metrics);
+  const largeCount = getClampedCarouselLargeCount(width, items.length, metrics);
+  const changes = [];
   for (let index = 0; index < items.length; index += 1) {
-    items[index].dataset.sizeRole = roles[index];
+    const item = items[index];
+    const role = roles[index];
+    const previousSize = appliedItemSizes.get(item);
+    // The large count only sizes multi-browse's large items.
+    const size =
+      layout === 'multi-browse' && role === 'large' ? `${layout} ${role} ${largeCount}` : `${layout} ${role}`;
+    // A plain resize keeps the size, and any morph still running towards it.
+    if (previousSize === size) continue;
+    const fromWidth = previousWidths[index];
+    // Mount, reduced motion, an unpainted item and the switch to or from uniform
+    // or full sizing don't morph: the new size applies at once, even mid-morph.
+    const morphs =
+      !reducedMotion &&
+      previousSize !== undefined &&
+      MORPHING_ROLES.has(role) &&
+      MORPHING_ROLES.has(item.dataset.sizeRole) &&
+      fromWidth > 0;
+    changes.push({ item, role, size, fromWidth, morphs, resized: previousSize !== undefined });
+  }
+  // Every morph starts — pinning its item at its current width — before any
+  // size changes. Reading the timing tokens forces a layout, and a layout that
+  // saw some items already shrunk and others not yet grown would narrow the
+  // strip and clamp its scroll position.
+  const timing = changes.some((change) => change.morphs) ? readMorphTiming(viewport) : undefined;
+  for (const { item, fromWidth, morphs } of changes) {
+    if (timing && morphs) morphItemWidth(item, fromWidth, timing, animations);
+    else animations.get(item)?.cancel();
+  }
+  viewport.style.setProperty('--md-carousel-large-count', String(largeCount));
+  for (const { item, role, size } of changes) {
+    item.dataset.sizeRole = role;
+    appliedItemSizes.set(item, size);
   }
   setActiveItem(items, activeIndex);
-  if (!reducedMotion) {
-    for (let index = 0; index < items.length; index += 1) {
-      animateRoleChange(items[index], previousRects[index], animationStore);
-    }
-  }
+  return changes.some((change) => change.resized);
+}
+
+/** Where an item's alignment point sits relative to the viewport's, along the inline axis. */
+function getItemAlignmentOffset(viewport: HTMLElement, item: HTMLElement, alignment: CarouselAlignment, rtl: boolean) {
+  return (
+    getCarouselAlignmentPoint(item.getBoundingClientRect(), 'horizontal', alignment, rtl) -
+    getCarouselAlignmentPoint(viewport.getBoundingClientRect(), 'horizontal', alignment, rtl)
+  );
+}
+
+type CarouselScrollHold = {
+  frame: number | null;
+  /** The scroll offset the carousel last wrote, so its own corrections are not taken for the user scrolling. */
+  scrollLeft: number;
+};
+
+/**
+ * Keeps a free-scrolling viewport on the active item while the items around it
+ * change size. Nothing snaps it back, so without this the items shrinking
+ * before it would carry it off the start. The scroll position is corrected on
+ * every frame of the morph, and the hold lets go as soon as the user scrolls.
+ */
+function holdCarouselItem(
+  viewport: HTMLElement,
+  item: HTMLElement,
+  offset: number,
+  alignment: CarouselAlignment,
+  rtl: boolean,
+  animations: CarouselAnimations,
+): CarouselScrollHold {
+  const hold: CarouselScrollHold = { frame: null, scrollLeft: viewport.scrollLeft };
+  const correct = () => {
+    const drift = getItemAlignmentOffset(viewport, item, alignment, rtl) - offset;
+    // Instant even under an inherited `scroll-behavior: smooth`: a smooth
+    // correction would land frames late and read as the user scrolling.
+    if (Math.abs(drift) >= 0.5) viewport.scrollBy({ left: drift, behavior: 'instant' });
+    hold.scrollLeft = viewport.scrollLeft;
+  };
+  const step = () => {
+    hold.frame = null;
+    if (!item.isConnected || Math.abs(viewport.scrollLeft - hold.scrollLeft) > 1) return;
+    correct();
+    if (animations.size > 0) hold.frame = requestAnimationFrame(step);
+  };
+  correct();
+  if (animations.size > 0) hold.frame = requestAnimationFrame(step);
+  return hold;
+}
+
+function releaseCarouselHold(holdRef: React.MutableRefObject<CarouselScrollHold | null>) {
+  const frame = holdRef.current?.frame;
+  if (frame != null) cancelAnimationFrame(frame);
+  holdRef.current = null;
+}
+
+/** Whether the viewport is still where the hold last put it — so a scroll event is the hold's own. */
+function isHeldScroll(viewport: HTMLElement, hold: CarouselScrollHold | null) {
+  return hold !== null && Math.abs(viewport.scrollLeft - hold.scrollLeft) <= 1;
 }
 
 function updateCarouselParallax(viewport: HTMLUListElement, layout: CarouselLayout, reducedMotion: boolean) {
@@ -209,8 +358,9 @@ const Carousel = React.forwardRef<HTMLElement, React.PropsWithoutRef<CarouselPro
     const viewportRef = React.useRef<HTMLUListElement | null>(null);
     const frameRef = React.useRef<number | null>(null);
     const settleTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-    const animationsRef = React.useRef<Set<Animation> | null>(null);
-    if (animationsRef.current === null) animationsRef.current = new Set<Animation>();
+    const scrollHoldRef = React.useRef<CarouselScrollHold | null>(null);
+    const animationsRef = React.useRef<CarouselAnimations | null>(null);
+    if (animationsRef.current === null) animationsRef.current = new Map();
     const animations = animationsRef.current;
     const childrenArray = React.Children.toArray(children).filter(isCarouselItemElement);
     const itemCount = childrenArray.length;
@@ -224,19 +374,46 @@ const Carousel = React.forwardRef<HTMLElement, React.PropsWithoutRef<CarouselPro
     const [reducedMotion, setReducedMotion] = React.useState(prefersReducedMotion);
     const actualScrollMode = resolveCarouselScrollMode(layout, scrollMode);
 
+    const largeItemMaxWidthLength = toCssLength(largeItemMaxWidth);
+    const appliedLargeItemMaxWidthRef = React.useRef(largeItemMaxWidthLength);
+
     const componentStyle = {
       ...style,
-      '--md-carousel-large-item-max-width': toCssLength(largeItemMaxWidth),
+      '--md-carousel-large-item-max-width': largeItemMaxWidthLength,
       ...(itemHeight === undefined ? null : { '--md-carousel-item-height': toCssLength(itemHeight) }),
     } as React.CSSProperties;
+
+    const applyRoles = React.useCallback(
+      (viewport: HTMLUListElement, activeIndex: number) => {
+        // Nothing re-snaps a free-scrolling viewport, so it is held on the active
+        // item while the items before it change size.
+        const item = actualScrollMode === 'free' ? getCarouselItems(viewport)[activeIndex] : undefined;
+        const rtl = item ? getComputedStyle(viewport).direction === 'rtl' : false;
+        const offset = item ? getItemAlignmentOffset(viewport, item, actualAlignment, rtl) : 0;
+        const resized = applyCarouselRoles(viewport, layout, activeIndex, reducedMotion, animations);
+        // A hold only has meaning for a free, horizontal scroll. A layout or scroll
+        // mode change re-applies the roles, so once the carousel snaps — full-screen
+        // always does, vertically — a hold left over from free scrolling is dropped:
+        // it would keep correcting against the snap and take every scroll that
+        // leaves scrollLeft alone for its own.
+        if (!item) {
+          releaseCarouselHold(scrollHoldRef);
+          return;
+        }
+        if (!resized) return;
+        releaseCarouselHold(scrollHoldRef);
+        scrollHoldRef.current = holdCarouselItem(viewport, item, offset, actualAlignment, rtl, animations);
+      },
+      [actualAlignment, actualScrollMode, animations, layout, reducedMotion],
+    );
 
     const applyLayout = React.useCallback(() => {
       const viewport = viewportRef.current;
       if (!viewport) return;
       activeIndexRef.current = clampCarouselIndex(activeIndexRef.current, childrenArray.length);
-      applyCarouselRoles(viewport, layout, activeIndexRef.current, reducedMotion, animations);
+      applyRoles(viewport, activeIndexRef.current);
       updateCarouselParallax(viewport, layout, reducedMotion);
-    }, [animations, childrenArray.length, layout, reducedMotion]);
+    }, [applyRoles, childrenArray.length, layout, reducedMotion]);
 
     const settle = React.useCallback(() => {
       const viewport = viewportRef.current;
@@ -257,9 +434,9 @@ const Carousel = React.forwardRef<HTMLElement, React.PropsWithoutRef<CarouselPro
       );
       const changed = nearestIndex !== activeIndexRef.current;
       activeIndexRef.current = nearestIndex;
-      applyCarouselRoles(viewport, layout, nearestIndex, reducedMotion, animations);
+      applyRoles(viewport, nearestIndex);
       if (changed) onActiveIndexChange?.(nearestIndex);
-    }, [actualAlignment, animations, layout, onActiveIndexChange, reducedMotion]);
+    }, [actualAlignment, applyRoles, layout, onActiveIndexChange]);
 
     React.useEffect(() => {
       if (typeof window.matchMedia !== 'function') return;
@@ -313,19 +490,31 @@ const Carousel = React.forwardRef<HTMLElement, React.PropsWithoutRef<CarouselPro
       };
     }, [applyLayout]);
 
+    React.useLayoutEffect(() => {
+      // The cap decides how many large items a multi-browse row needs, and
+      // changing it resizes nothing the ResizeObserver can see.
+      if (appliedLargeItemMaxWidthRef.current === largeItemMaxWidthLength) return;
+      appliedLargeItemMaxWidthRef.current = largeItemMaxWidthLength;
+      applyLayout();
+    }, [applyLayout, largeItemMaxWidthLength]);
+
     React.useEffect(() => {
       const viewport = viewportRef.current;
       /* v8 ignore next -- React assigns the viewport ref before passive effects run */
       if (!viewport) return;
-      viewport.addEventListener('scrollend', settle);
-      return () => viewport.removeEventListener('scrollend', settle);
+      const handleScrollEnd = () => {
+        if (!isHeldScroll(viewport, scrollHoldRef.current)) settle();
+      };
+      viewport.addEventListener('scrollend', handleScrollEnd);
+      return () => viewport.removeEventListener('scrollend', handleScrollEnd);
     }, [settle]);
 
     React.useEffect(
       () => () => {
         if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
         if (settleTimerRef.current !== null) clearTimeout(settleTimerRef.current);
-        for (const animation of animations) animation.cancel();
+        releaseCarouselHold(scrollHoldRef);
+        for (const animation of animations.values()) animation.cancel();
         animations.clear();
       },
       [animations],
@@ -340,6 +529,10 @@ const Carousel = React.forwardRef<HTMLElement, React.PropsWithoutRef<CarouselPro
         frameRef.current = null;
         updateCarouselParallax(viewport, layout, reducedMotion);
       });
+      // The hold's own corrections keep the active item where the user left it,
+      // so they don't settle again; the user scrolling ends the hold.
+      if (isHeldScroll(viewport, scrollHoldRef.current)) return;
+      releaseCarouselHold(scrollHoldRef);
       if (settleTimerRef.current !== null) clearTimeout(settleTimerRef.current);
       settleTimerRef.current = setTimeout(settle, SETTLE_DELAY);
     };

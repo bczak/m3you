@@ -47,7 +47,12 @@ export type {
 export { CircularProgress } from './components/CircularProgress/circular-progress';
 export type { DatePickerProps } from './components/DatePicker/date-picker';
 export { DatePicker } from './components/DatePicker/date-picker';
-export type { DialogContentProps, DialogHeaderProps, FullScreenDialogHeaderProps } from './components/Dialog/dialog';
+export type {
+  DialogBodyProps,
+  DialogContentProps,
+  DialogHeaderProps,
+  FullScreenDialogHeaderProps,
+} from './components/Dialog/dialog';
 export {
   Dialog,
   DialogBody,
@@ -71,7 +76,11 @@ export {
 } from './components/Dialog/dialog';
 export type { DividerProps } from './components/Divider/divider';
 export { Divider } from './components/Divider/divider';
-export type { ExtendableFABProps } from './components/ExtendableFab/extendable-fab';
+export type {
+  ExtendableFABProps,
+  ExtendableFABSize,
+  ExtendableFABVariant,
+} from './components/ExtendableFab/extendable-fab';
 export { ExtendableFAB } from './components/ExtendableFab/extendable-fab';
 export type { ExtendedFABProps } from './components/ExtendedFab/extended-fab';
 export { ExtendedFAB } from './components/ExtendedFab/extended-fab';
@@ -90,6 +99,7 @@ export type {
   ListAppearance,
   ListDividerProps,
   ListItemAccordionProps,
+  ListItemLeadingType,
   ListItemProps,
   ListItemSwipeProps,
   ListItemSwipeSide,
@@ -110,6 +120,7 @@ export type {
 export { LoadingIndicator } from './components/LoadingIndicator/loading-indicator';
 export { SHAPE_NAMES, SHAPE_POLYGONS, type ShapeName } from './components/LoadingIndicator/shapes';
 export type {
+  MenuColor,
   MenuContentProps,
   MenuDividerProps,
   MenuGroupProps,
@@ -181,7 +192,14 @@ export {
 } from './components/SideSheet/side-sheet';
 export type { SkeletonProps, SkeletonShape } from './components/Skeleton/skeleton';
 export { Skeleton } from './components/Skeleton/skeleton';
-export type { RangeSliderInputProps, RangeSliderProps, SliderProps } from './components/Slider/slider';
+export type {
+  RangeSliderInputProps,
+  RangeSliderProps,
+  SliderMode,
+  SliderOrientation,
+  SliderProps,
+  SliderSize,
+} from './components/Slider/slider';
 export { RangeSlider, Slider } from './components/Slider/slider';
 export type { SnackbarHostProps, SnackbarProps } from './components/Snackbar/snackbar';
 export { Snackbar, SnackbarHost } from './components/Snackbar/snackbar';

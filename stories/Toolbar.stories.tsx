@@ -78,7 +78,9 @@ function useToolbarSelection(initial: Record<string, boolean>) {
     }));
   };
 
-  const selectedProp = (key: string) => (selected[key] ? true : undefined);
+  // Always a boolean, so an unselected toggle still renders as a toggle
+  // (`aria-pressed="false"`) and takes the kit's unselected colours.
+  const selectedProp = (key: string) => Boolean(selected[key]);
 
   return { selected, toggle, selectedProp };
 }
@@ -663,6 +665,62 @@ function VerticalToolbarRow(args: ComponentProps<typeof Toolbar>) {
   );
 }
 
+function StatesRow(args: ComponentProps<typeof Toolbar>) {
+  const { toggle, selectedProp } = useToolbarSelection({
+    download: false,
+    share: true,
+    edit: false,
+    more: true,
+  });
+
+  return (
+    <Toolbar {...args}>
+      <IconButton
+        variant="standard"
+        size="sm"
+        aria-label="Download"
+        selected={selectedProp('download')}
+        onClick={() => toggle('download')}
+      >
+        <DownloadIcon />
+      </IconButton>
+      <IconButton
+        variant="standard"
+        size="sm"
+        aria-label="Share"
+        selected={selectedProp('share')}
+        onClick={() => toggle('share')}
+      >
+        <ShareIcon />
+      </IconButton>
+      <IconButton variant="standard" size="sm" aria-label="Delete (disabled)" disabled>
+        <Trash2Icon />
+      </IconButton>
+      <IconButton variant="standard" size="sm" aria-label="Enhance (disabled, off)" selected={false} disabled>
+        <WandSparklesIcon />
+      </IconButton>
+      <IconButton variant="standard" size="sm" aria-label="Save (disabled, on)" selected disabled>
+        <StarIcon />
+      </IconButton>
+      <IconButton
+        variant="outlined"
+        size="sm"
+        aria-label="More options"
+        selected={selectedProp('more')}
+        onClick={() => toggle('more')}
+      >
+        <MoreVerticalIcon />
+      </IconButton>
+      <Button variant="text" size="sm" selected={selectedProp('edit')} onClick={() => toggle('edit')}>
+        Edit
+      </Button>
+      <Button variant="text" size="sm" selected disabled>
+        Locked
+      </Button>
+    </Toolbar>
+  );
+}
+
 function StoryStack({ children }: { children: ReactNode }) {
   return (
     <div
@@ -703,7 +761,7 @@ export const FloatingSpecs: Story = {
         </div>
 
         <div style={{ display: 'grid', placeItems: 'center', minHeight: 160 }}>
-          <FloatingFormatRow type="floating" color="vibrant" layout="horizontal" gap={8} padding={12} />
+          <FloatingFormatRow type="floating" color="vibrant" layout="horizontal" />
         </div>
       </StoryStack>
     </div>
@@ -807,6 +865,42 @@ export const Vertical: Story = {
   render: () => (
     <div style={{ display: 'grid', placeItems: 'center', minHeight: 280 }}>
       <VerticalToolbarRow type="floating" color="standard" layout="vertical" />
+    </div>
+  ),
+};
+
+export const States: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Toolbar actions in each state, in light and dark. Disabled actions drop to 38% on-surface in both colours, ' +
+          'and a disabled toggle sits on a 10% on-surface container whether or not it is selected. Selected ' +
+          'actions stay fully round, and a selected outlined action keeps its inverse-surface container on the ' +
+          'vibrant surface.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {(['light', 'dark'] as const).map((theme) => (
+        <div
+          key={theme}
+          data-theme={theme}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 24,
+            padding: 24,
+            borderRadius: 16,
+            background: 'var(--md-sys-color-surface)',
+          }}
+        >
+          <StatesRow type="floating" color="standard" />
+          <StatesRow type="floating" color="vibrant" />
+        </div>
+      ))}
     </div>
   ),
 };
