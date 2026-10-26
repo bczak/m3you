@@ -537,6 +537,120 @@ export const ScrollableDialog: Story = {
 };
 
 // =============================================================================
+// ListDialogFocusRing — interactive rows in a bleeding body. The body is a
+// scroll container and its rows reach its edges, so a focused row draws its
+// ring inside itself: an outer ring would be clipped by the scroll box, and
+// around a lone row, which fills the box, clipped away entirely.
+// =============================================================================
+
+function BackupAccountDialog({ title, accounts }: { title: string; accounts: string[] }) {
+  return (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button variant="tonal" size="sm" shape="round">
+            {title}
+          </Button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>Choose the account your photos and settings are backed up to.</DialogDescription>
+        <DialogBody bleed>
+          <List
+            appearance="standard"
+            mode="single-select"
+            aria-label="Accounts"
+            defaultValue={accounts[0]}
+            style={dialogListStyle}
+          >
+            {accounts.map((account) => (
+              <ListItem key={account} value={account} headline={account} leading={<UserIcon aria-hidden="true" />} />
+            ))}
+          </List>
+        </DialogBody>
+        <DialogFooter>
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                Cancel
+              </Button>
+            }
+          />
+          <DialogClose
+            render={
+              <Button variant="text" size="sm" shape="round">
+                OK
+              </Button>
+            }
+          />
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+const themeVar = (token: string) => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+
+export const ListDialogFocusRing: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A focused row in a `DialogBody bleed` draws its focus ring inside its own box. The body scrolls and the rows reach its edges, so a ring outside the row would be clipped — along the sides of every row, and all the way round a single row, which fills the scroll box. The body sets the list's `--md-list-item-focus-indicator-offset` to the inner focus-indicator offset.",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: 12 }}>
+      <BackupAccountDialog title="Set backup account" accounts={backupAccounts} />
+      <BackupAccountDialog title="Confirm backup account" accounts={backupAccounts.slice(0, 1)} />
+    </div>
+  ),
+  play: async ({ canvas, userEvent, step }) => {
+    for (const title of ['Set backup account', 'Confirm backup account']) {
+      await step(`${title}: the keyboard-focused row's ring is drawn inside the row`, async () => {
+        await userEvent.click(canvas.getByRole('button', { name: title }));
+        const popup = await waitFor(() => {
+          const element = document.querySelector<HTMLElement>('.md-dialog-content');
+          if (!element) throw new Error('dialog did not open');
+          return element;
+        });
+        const body = popup.querySelector<HTMLElement>('.md-dialog-body') as HTMLElement;
+        const rows = [...body.querySelectorAll<HTMLElement>('[role="option"]')];
+
+        // Move focus onto the last row with the keyboard.
+        await waitFor(() => expect(rows).toContain(document.activeElement));
+        await userEvent.keyboard('{End}');
+        const row = rows[rows.length - 1];
+        await expect(row).toHaveFocus();
+        await expect(row.matches(':focus-visible')).toBe(true);
+
+        const ring = getComputedStyle(row);
+        await expect(ring.outlineStyle).toBe('solid');
+        await expect(ring.outlineWidth).toBe(themeVar('--md-sys-state-focus-indicator-thickness'));
+        await expect(ring.outlineOffset).toBe(themeVar('--md-sys-state-focus-indicator-inner-offset'));
+        // The ring's outer edge is offset + width from the row's border box:
+        // at or inside it, nothing of the ring falls outside the row.
+        await expect(Number.parseFloat(ring.outlineOffset) + Number.parseFloat(ring.outlineWidth)).toBeLessThanOrEqual(
+          0,
+        );
+
+        // The row reaches the scroll box's sides, and a lone row fills it.
+        await expect(row.offsetLeft).toBe(body.offsetLeft);
+        await expect(row.offsetWidth).toBe(body.clientWidth);
+        if (rows.length === 1) await expect(row.offsetHeight).toBe(body.clientHeight);
+
+        await userEvent.keyboard('{Escape}');
+        await waitFor(() => expect(document.querySelector('.md-dialog-content')).toBeNull());
+      });
+    }
+  },
+};
+
+// =============================================================================
 // Destructive — delete confirmation with destructive action color
 // =============================================================================
 
