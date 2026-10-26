@@ -1,20 +1,37 @@
 ---
 title: Connected button group
-description: Flush segments whose corners round as selection moves.
+description: Tightly spaced segments whose corners round as selection moves.
 ---
 
-The segments sit flush against each other. The selected segment rounds fully
-while its neighbours square off, and the radii animate as selection moves — this
-is the clearest demonstration of why the library never uses
-`border-radius: 9999px`, which cannot interpolate.
+The segments sit 2px apart. The selected segment rounds fully while its
+neighbours square off, and the radii animate as selection moves — this is the
+clearest demonstration of why the library never uses `border-radius: 9999px`,
+which cannot interpolate.
 
 Like the standard group, selection is by index.
+
+The group adds no padding around its segments, so it is exactly as tall as its
+buttons. At `xs` and `sm` each segment still carries its own 48px touch target.
 
 <Example
   name="connected-button-group/basic"
   title="Single selection"
   description="Click between segments and watch the corners travel."
 />
+
+## Corners
+
+Every corner where two segments meet uses the group's **inner radius** — 4, 8, 8,
+16 and 20px from `xs` to `xl`. The two outer ends depend on `shape`:
+
+- `round` (default) — the outer ends are pills.
+- `square` — the outer ends use the inner radius too, so every unselected
+  segment has the same corners.
+
+A selected segment rounds fully in both shapes. An unselected segment raises its
+inner radius one step while it is hovered, focused or pressed — to 12, 12, 16, 28
+and 32px — and springs back on release. A round group's pill ends stay put, and
+disabled segments keep their resting corners.
 
 ## Orientation
 

@@ -22,6 +22,21 @@ the pattern for text formatting and filter toolbars.
 
 <Example name="standard-button-group/multiple" title="Multiple selection" />
 
+## Icon buttons
+
+An `IconButton` in a standard group is laid out at the **wide** width
+(40 / 52 / 72 / 128 / 184px from `xs` to `xl`), as in the M3 kit. The group only
+widens icon buttons left on the default width, and it reads each button's own
+`size`, so an explicit `width="narrow"` or `width="wide"` — or a `size` that
+differs from the group's — is kept. `width="default"` cannot opt out: it is the
+same as leaving `width` unset.
+
+<Example
+  name="standard-button-group/icon-widths"
+  title="Icon button widths"
+  description="Icon buttons go wide by default; width='narrow' keeps them narrow."
+/>
+
 ## Props
 
 <PropsTable of="StandardButtonGroup" extends="<div>" />

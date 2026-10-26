@@ -5,8 +5,8 @@ export default function ButtonShapes() {
     <>
       <Button shape="round">Round</Button>
       <Button shape="square">Square</Button>
-      <Button shape="round" morph>
-        Morph on press
+      <Button shape="round" morph={false}>
+        No morph
       </Button>
     </>
   );

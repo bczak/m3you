@@ -277,3 +277,37 @@ export const IconOnlySquare: Story = {
     );
   },
 };
+
+/**
+ * Icon buttons in a standard group default to the wide width. The group only
+ * widens buttons left on `width="default"`, so an explicit `width="narrow"` or
+ * `"wide"` is kept.
+ */
+export const IconWidths: Story = {
+  render: () => {
+    const widths = ['default', 'narrow', 'wide'] as const;
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
+        {widths.map((width) => (
+          <StandardButtonGroup
+            key={width}
+            size="sm"
+            selectionMode="multiple"
+            defaultValue={[0]}
+            aria-label={`Text style, width ${width}`}
+          >
+            <IconButton aria-label="Bold" variant="tonal" width={width}>
+              <BoldIcon />
+            </IconButton>
+            <IconButton aria-label="Italic" variant="tonal" width={width}>
+              <ItalicIcon />
+            </IconButton>
+            <IconButton aria-label="Underline" variant="tonal" width={width}>
+              <UnderlineIcon />
+            </IconButton>
+          </StandardButtonGroup>
+        ))}
+      </div>
+    );
+  },
+};

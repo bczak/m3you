@@ -60,7 +60,8 @@ export interface FABMenuItemOption {
 
 type FABMenuTriggerProps = React.ComponentProps<'button'> & {
   icon?: React.ReactNode;
-  label?: React.ReactNode;
+  /** ExtendedFAB's visible label. Becomes the accessible name while the menu is open and the label is hidden. */
+  label?: string;
   color?: FABColor;
   'data-fab-color'?: FABColor;
 };
@@ -79,11 +80,22 @@ export interface FABMenuProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Icon shown on the trigger while the menu is open. Defaults to a cross. */
   closeIcon?: React.ReactNode;
   /**
-   * Color role shared by menu segments and an unconfigured trigger. An item
-   * that sets its own `color` overrides this for that item only; the trigger is
-   * never affected by an item's colour.
+   * Color role shared by menu segments and the trigger. An item that sets its
+   * own `color` overrides this for that item only; the trigger is never
+   * affected by an item's colour. While the menu is open, the trigger becomes
+   * the kit's close button and takes the solid role of a container colour —
+   * `primary-container` → `primary`, `secondary-container` → `secondary`,
+   * `tertiary-container` → `tertiary` — while the segments keep the container.
    */
   color?: FABColor;
+  /**
+   * The trigger: a `FAB` (any `fabSize`) or an `ExtendedFAB`. The menu owns its
+   * colour, so the trigger's own `color`, and the fill of its `variant`, do not
+   * change what renders — set the menu's `color` instead, or `data-fab-color`
+   * on the trigger to override it. While open, the trigger morphs into a 56dp
+   * circular close button with a 20dp icon, whatever size it rests at. An
+   * ExtendedFAB's `label` stays its accessible name while the label is hidden.
+   */
   children: React.ReactElement<FABMenuTriggerProps>;
 }
 
@@ -233,6 +245,13 @@ const FABMenu = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<FABMenuPr
       if (isExtendedFAB) {
         triggerOverrides.icon = closeIconElement;
         triggerOverrides.label = '';
+        // The visible label is gone and the close icon is decorative, so the
+        // label moves into aria-label: the button keeps the same name in both
+        // states and aria-expanded carries the change, like the FAB trigger.
+        triggerOverrides['aria-label'] = children.props['aria-label'] ?? children.props.label;
+        // The kit's close button keeps its circle when pressed (State=Pressed,
+        // r=28); Button's press morph would square it off mid-click.
+        triggerOverrides.morph = false;
       } else {
         triggerOverrides.children = closeIconElement;
       }
@@ -275,6 +294,8 @@ const FABMenu = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<FABMenuPr
                 variant="tonal"
                 shape="round"
                 size="md"
+                // The kit's FAB menu items keep their pill shape when pressed.
+                morph={false}
                 className="md-fab-menu-item"
                 data-fab-color={item.color ?? color}
                 data-state={state}
