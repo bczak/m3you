@@ -331,21 +331,40 @@ const trackLimits = (geometry: WavyGeometry, wave: Wave, startAngle: number, end
   return { start, end: 360 + end };
 };
 
+/** Degrees a round cap of radius `cap` on a point `radius` from the centre spans round the ring either side of it. */
+const capReach = (cap: number, radius: number) => (Math.asin(Math.min(1, cap / radius)) * 180) / Math.PI;
+
 /**
  * Angle of the wave point whose round cap just reaches `edge` — clockwise of it for `direction` 1, anticlockwise for
- * −1. A cap of radius `strokeWidth / 2` on a point `r` from the centre spans asin(cap / r) either side of it; `r`
- * depends on the angle, so iterate. The map contracts (the cap's reach changes at most about half as fast as the
- * angle, even on the steep sm 8 dp wave), so a fixed 24 rounds settle well below a thousandth of a degree.
+ * −1. That point sits `offset` from the edge where the cap's reach, asin(cap / r), equals the offset. `r` depends on
+ * the angle, so the reach lies between the crest's and the trough's, which brackets the answer. On a steep wave (sm
+ * with a 12 px stroke) the reach changes faster than the angle: iterating `offset = reach(offset)` does not settle, and
+ * there can be several solutions. The wave runs in towards the edge from beyond them, so it stops at the first point
+ * whose cap reaches the edge — the solution farthest from it. Step in from the trough's reach to the first sample that
+ * reaches, then bisect between it and the sample before. The visible end then moves with the edge, never backwards.
  */
-const CAP_ITERATIONS = 24;
+const CAP_SAMPLES = 32;
+const CAP_BISECTIONS = 40;
 const capCentre = (wave: Wave, edge: number, direction: 1 | -1): number => {
   const cap = wave.strokeWidth / 2;
-  let degrees = edge;
-  for (let i = 0; i < CAP_ITERATIONS; i++) {
-    const radius = wavyRadiusAt({ ...wave, degrees });
-    degrees = edge + (direction * Math.asin(Math.min(1, cap / radius)) * 180) / Math.PI;
+  // Positive while the cap of the point `offset` from the edge stops short of it.
+  const clearance = (offset: number) =>
+    offset - capReach(cap, wavyRadiusAt({ ...wave, degrees: edge + direction * offset }));
+  // The wave runs `amplitude` either side of its mean circle, `diameter / 2` from the centre.
+  const nearest = capReach(cap, wave.diameter / 2 + wave.amplitude);
+  const farthest = capReach(cap, wave.diameter / 2 - wave.amplitude);
+  const step = (farthest - nearest) / CAP_SAMPLES;
+
+  let sample = 1;
+  while (sample < CAP_SAMPLES && clearance(farthest - sample * step) > 0) sample++;
+  let clear = farthest - (sample - 1) * step;
+  let reaching = farthest - sample * step;
+  for (let i = 0; i < CAP_BISECTIONS; i++) {
+    const offset = (clear + reaching) / 2;
+    if (clearance(offset) > 0) clear = offset;
+    else reaching = offset;
   }
-  return degrees;
+  return edge + direction * clear;
 };
 
 /** Active wave from 0° to `sweep`, and the track filling the rest of the ring with an ARC_GAP at both ends. */

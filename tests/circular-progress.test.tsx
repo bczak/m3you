@@ -506,6 +506,64 @@ test.each(
   }
 });
 
+/**
+ * How far round the ring, in degrees, the active indicator visibly reaches: the round cap of every point of its
+ * centre-line counts, not only the end points', since on a steep wave a point short of the end can reach further.
+ */
+const visibleExtent = (container: HTMLElement, box: number, stroke: number) => {
+  const c = box / 2;
+  const wave = activePoints(container.querySelector('.md-circular-progress__wavy-active'));
+  return {
+    start: Math.min(...wave.map((p) => angleOf(p, c) - capReach(p, c, stroke / 2))),
+    end: Math.max(...wave.map((p) => angleOf(p, c) + capReach(p, c, stroke / 2))),
+  };
+};
+
+// On sm with a 12px stroke the cap's reach changes faster than the angle, so the old fixed-point search for the end
+// cap oscillated instead of settling: at 58.1% (209.16°) the indicator stopped at ~202.69°, and going from 57% to
+// 58% moved its end backwards.
+test('wavy determinate on a steep wave: the caps still reach exactly 0° and the value, which only moves forward', async () => {
+  const { container, rerender } = render(<CircularProgress variant="wavy" size="sm" strokeWidth={12} />);
+  const ends: number[] = [];
+  for (const value of [57, 58, 58.1]) {
+    rerender(<CircularProgress variant="wavy" size="sm" strokeWidth={12} value={value} />);
+    const extent = visibleExtent(container, 36, 12);
+    expect(extent.end).toBeCloseTo(value * 3.6, 3);
+    expect(extent.start).toBeCloseTo(0, 3);
+    ends.push(extent.end);
+  }
+  expect(ends[1]).toBeGreaterThan(ends[0]);
+  expect(ends[2]).toBeGreaterThan(ends[1]);
+  expect(ends[2]).toBeCloseTo(209.16, 3);
+});
+
+test.each([
+  'sm',
+  'md',
+  'lg',
+] as const)('wavy determinate %s: across the value range at 4, 8 and 12px strokes, the indicator only grows', (size) => {
+  for (const stroke of [4, 8, 12]) {
+    const box = WAVY_BOX[size] + stroke - 4;
+    const { container, rerender, unmount } = render(
+      <CircularProgress variant="wavy" size={size} strokeWidth={stroke} />,
+    );
+    let minimum = Number.NaN;
+    let previous = Number.NEGATIVE_INFINITY;
+    for (let tenths = 5; tenths < 1000; tenths += 5) {
+      const value = tenths / 10;
+      rerender(<CircularProgress variant="wavy" size={size} strokeWidth={stroke} value={value} />);
+      const { start, end } = visibleExtent(container, box, stroke);
+      // Small values draw the shortest legible arc; past it the indicator covers exactly [0, value].
+      if (Number.isNaN(minimum)) minimum = end;
+      expect(end).toBeGreaterThanOrEqual(previous);
+      expect(end).toBeCloseTo(Math.max(value * 3.6, minimum), 3);
+      expect(start).toBeCloseTo(0, 3);
+      previous = end;
+    }
+    unmount();
+  }
+});
+
 test('wavy determinate drops the track once there is no room for it between the gaps', async () => {
   const { container } = render(<CircularProgress variant="wavy" value={99} />);
   expect(container.querySelector('.md-circular-progress__wavy-active')).not.toBeNull();
