@@ -292,7 +292,10 @@ const CardRipple = ({
 
   const handlePointerLeave = React.useCallback(
     (event: PointerEvent) => {
-      if (!isEligiblePointerEvent(event)) {
+      // The capture listener also sees `pointerleave` aimed at descendants
+      // (the pointer moving from a heading back onto the padding). Only the
+      // card's own boundary ends hover and the press.
+      if (event.target !== getParentHost() || !isEligiblePointerEvent(event)) {
         return;
       }
 
@@ -302,7 +305,7 @@ const CardRipple = ({
         endPress();
       }
     },
-    [endPress, isEligiblePointerEvent],
+    [endPress, getParentHost, isEligiblePointerEvent],
   );
 
   const handlePointerUp = React.useCallback(

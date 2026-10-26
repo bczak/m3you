@@ -22,6 +22,8 @@
 /* ── Rich Tooltip ── */
 
 .md-rich-tooltip {
+  /* Like the plain tooltip, the max width caps the outer box (padding included). */
+  box-sizing: border-box;
   max-width: 320px;
   border-radius: var(--md-sys-shape-corner-medium);
   background-color: var(--md-sys-color-surface-container);

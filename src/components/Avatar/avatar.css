@@ -10,11 +10,16 @@
   border-radius: 50%;
   background-color: var(--md-avatar-container-color, var(--md-sys-color-primary-container));
   color: var(--md-avatar-label-color, var(--md-sys-color-on-primary-container));
-  font-family: var(--md-sys-typescale-label-large-font);
-  font-size: var(--md-sys-typescale-label-large-size);
-  line-height: var(--md-sys-typescale-label-large-line-height);
-  font-weight: var(--md-sys-typescale-label-large-weight);
-  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  /*
+   * The kit sets the monogram initial at 16/24 Medium with 0.1 tracking: Title
+   * Medium's size, line height and weight, but Label Large's tracking rather
+   * than Title Medium's 0.15.
+   */
+  font-family: var(--md-avatar-label-text-font, var(--md-sys-typescale-title-medium-font));
+  font-size: var(--md-avatar-label-text-size, var(--md-sys-typescale-title-medium-size));
+  line-height: var(--md-avatar-label-text-line-height, var(--md-sys-typescale-title-medium-line-height));
+  font-weight: var(--md-avatar-label-text-weight, var(--md-sys-typescale-title-medium-weight));
+  letter-spacing: var(--md-avatar-label-text-tracking, var(--md-sys-typescale-label-large-tracking));
   text-transform: uppercase;
 }
 

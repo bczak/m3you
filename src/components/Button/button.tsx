@@ -15,7 +15,12 @@ export type ButtonProps = Omit<React.ComponentProps<'button'>, 'color'> & {
   shape?: 'round' | 'square';
   /** Size on the M3 scale. Changes height, padding, label typescale and corner radius together. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  /** Swap to the opposite shape while the button is held — the Expressive press gesture. */
+  /**
+   * Tighten the corners to the smaller pressed radius while the button is held — the Expressive press
+   * gesture (8px at `xs`/`sm`, 12px at `md`, 16px at `lg`/`xl`, for both shapes). On by default, as in
+   * every M3 pressed state; pass `false` to keep the resting shape. A connected button group turns it off and
+   * shapes its segments itself.
+   */
   morph?: boolean;
   /** Renders the selected state. Setting this also emits `aria-pressed`, making the button a toggle. */
   selected?: boolean;
@@ -43,7 +48,7 @@ const Button = forwardRef<HTMLButtonElement, React.PropsWithoutRef<ButtonProps>>
 
     const size = sizeProp ?? groupProps?.size ?? 'sm';
     const shape = shapeProp ?? groupProps?.shape ?? 'round';
-    const morph = morphProp ?? groupProps?.morph ?? false;
+    const morph = morphProp ?? groupProps?.morph ?? true;
     const selected = selectedProp ?? groupProps?.selected;
     const color = colorProp ?? groupProps?.color;
     const selectedValue = selected !== undefined ? String(selected) : undefined;

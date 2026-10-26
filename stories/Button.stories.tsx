@@ -31,7 +31,8 @@ const meta = {
     shape: {
       control: 'inline-radio',
       options: ['round', 'square'],
-      description: 'Corner shape. Animates between the two while pressed when `morph` is on.',
+      description:
+        'Corner shape at rest. With `morph` on, the corners tighten to the smaller pressed radius while held.',
       table: { category: 'Appearance', defaultValue: { summary: 'round' } },
     },
     size: {
@@ -42,8 +43,9 @@ const meta = {
     },
     morph: {
       control: 'boolean',
-      description: 'Enables the pressed shape-morph spring animation.',
-      table: { category: 'Behavior', defaultValue: { summary: 'false' } },
+      description:
+        'Pressed shape morph: the corners tighten to 8/12/16px while held, as in every M3 Pressed state. On by default; set `false` to keep the resting shape.',
+      table: { category: 'Behavior', defaultValue: { summary: 'true' } },
     },
     selected: {
       control: 'boolean',

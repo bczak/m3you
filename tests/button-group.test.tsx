@@ -7,6 +7,7 @@ import { ButtonGroup } from '../src/components/ButtonGroup/button-group';
 import { ButtonGroupContext, useButtonGroup } from '../src/components/ButtonGroup/button-group-context';
 import { ConnectedButtonGroup } from '../src/components/ButtonGroup/connected-button-group';
 import { StandardButtonGroup } from '../src/components/ButtonGroup/standard-button-group';
+import { IconButton } from '../src/components/IconButton/icon-button';
 
 const buttonGroupCss = readFileSync('src/components/ButtonGroup/button-group.css', 'utf8');
 
@@ -350,4 +351,167 @@ test('controlled selection reflects value and does not self-update', async () =>
   expect(onValueChange).toHaveBeenLastCalledWith([0, 1]);
   // controlled: internal state unchanged, b stays unselected until parent updates value
   expect(b).not.toHaveAttribute('data-selected');
+});
+
+// =============================================================================
+// Standard group press-expand — outlined stroke stays inside the button box
+// =============================================================================
+
+test('press-expand and neighbour squeeze subtract each button’s own outline width', () => {
+  const rules = [
+    /> \.md-button\[data-morph\]:active\s*\{\s*padding-inline:\s*calc\(var\(--_base-padding\) \+ var\(--_press-expand\) - var\(--_outline-width, 0px\)\)/,
+    /> \.md-button\[data-morph\]:active \+ \.md-button\s*\{\s*padding-inline:\s*calc\(var\(--_base-padding\) - var\(--_press-squeeze\) - var\(--_outline-width, 0px\)\)/,
+    /> \.md-button:has\(\+ \.md-button\[data-morph\]:active\)\s*\{\s*padding-inline:\s*calc\(var\(--_base-padding\) - var\(--_press-squeeze\) - var\(--_outline-width, 0px\)\)/,
+  ];
+  for (const rule of rules) {
+    expect(buttonGroupCss).toMatch(rule);
+  }
+});
+
+// =============================================================================
+// Connected group geometry (kit: Buttons / Connected button group,
+// Building Blocks / Button group / Connected segments)
+// =============================================================================
+
+/** The stylesheet without comments, so a rule's selector can be read back verbatim. */
+const buttonGroupRules = buttonGroupCss.replace(/\/\*[\s\S]*?\*\//g, '');
+
+/** The declaration block of the rule whose whole selector is `selector`. */
+function ruleBody(selector: RegExp) {
+  const match = buttonGroupRules.match(new RegExp(`${selector.source}\\s*\\{([^}]*)\\}`));
+  expect(match, `no rule for ${selector}`).not.toBeNull();
+  return match?.[1] ?? '';
+}
+
+test('connected group adds no padding around its segments', () => {
+  const connectedRules = buttonGroupCss.match(/\.md-button-group\[data-connected-group\][^{]*\{[^}]*\}/g) ?? [];
+  expect(connectedRules.length).toBeGreaterThan(0);
+  for (const rule of connectedRules) {
+    expect(rule).not.toMatch(/(^|[\s{;])padding\s*:/);
+  }
+  expect(ruleBody(/\.md-button-group\[data-connected-group\]\s*/)).toMatch(/gap:\s*2px/);
+});
+
+// The focus ring sits 2px outside a segment, i.e. across the 2px gap and onto
+// the next segment, which paints later and hid that side of the ring.
+test('a focused connected segment rises above its neighbours so its ring is not painted over', () => {
+  const selector = '.md-button-group[data-connected-group] > :is(.md-button, .md-icon-button)';
+  expect(
+    ruleBody(/\.md-button-group\[data-connected-group\] > :is\(\.md-button, \.md-icon-button\):focus-visible\s*/),
+  ).toMatch(/^\s*z-index:\s*1;\s*$/);
+
+  // z-index only applies to positioned boxes: both segment kinds are position: relative.
+  for (const [file, root] of [
+    ['src/components/Button/button.css', 'md-button'],
+    ['src/components/IconButton/icon-button.css', 'md-icon-button'],
+  ]) {
+    expect(readFileSync(file, 'utf8')).toMatch(new RegExp(`\\.${root}\\s*\\{[^}]*position:\\s*relative`));
+  }
+
+  render(
+    <ConnectedButtonGroup>
+      <Button>Text segment</Button>
+      <IconButton aria-label="Icon segment" />
+    </ConnectedButtonGroup>,
+  );
+  expect(screen.getByRole('button', { name: 'Text segment' }).matches(selector)).toBe(true);
+  expect(screen.getByRole('button', { name: 'Icon segment' }).matches(selector)).toBe(true);
+});
+
+test('connected segments raise their inner radius one step on hover, focus and press', () => {
+  const steps = {
+    xs: ['extra-small', 'medium'],
+    sm: ['small', 'medium'],
+    md: ['small', 'large'],
+    lg: ['large', 'extra-large'],
+    xl: ['large-increased', 'extra-large-increased'],
+  };
+  for (const [size, [rest, active]] of Object.entries(steps)) {
+    const body = ruleBody(new RegExp(`\\.md-button-group\\[data-connected-group\\]\\[data-size="${size}"\\]\\s*`));
+    expect(body).toContain(`--_connected-inner-radius: var(--md-sys-shape-corner-${rest});`);
+    expect(body).toContain(`--_connected-inner-radius-active: var(--md-sys-shape-corner-${active});`);
+  }
+
+  // Set on the segment itself, for unselected, enabled segments only.
+  const segment =
+    '> :is\\(\\.md-button, \\.md-icon-button\\):not\\(\\[data-selected="true"\\]\\):not\\(:disabled\\):not\\(\\[data-disabled\\]\\)';
+  const override = /\{\s*--_connected-inner-radius:\s*var\(--_connected-inner-radius-active\);\s*\}/;
+  expect(buttonGroupCss).toMatch(new RegExp(`${segment}:focus-visible,`));
+  expect(buttonGroupCss).toMatch(new RegExp(`${segment}:active\\s*${override.source}`));
+  expect(buttonGroupCss).toMatch(
+    new RegExp(
+      `@media \\(hover: hover\\)\\s*\\{\\s*\\.md-button-group\\[data-connected-group\\]\\s*${segment}:hover\\s*${override.source}`,
+    ),
+  );
+});
+
+test('square connected segments use the inner radius on every corner, outer ends included', () => {
+  expect(buttonGroupCss).not.toContain('--_connected-outer-square');
+  // No square rule is scoped to an end segment any more.
+  expect(buttonGroupCss).not.toMatch(/\[data-shape="square"\]:(first|last)-child/);
+
+  const selector = buttonGroupRules.match(
+    /([^{}]*\[data-shape="square"\]\[data-size\])\s*\{\s*border-radius:\s*var\(--_connected-inner-radius\);/,
+  )?.[1];
+  expect(selector).toBeDefined();
+
+  render(
+    <ConnectedButtonGroup shape="square" defaultValue={[1]}>
+      <Button>First</Button>
+      <Button>Middle</Button>
+      <Button>Last</Button>
+    </ConnectedButtonGroup>,
+  );
+  // The rule's whole selector list, matched against the rendered segments.
+  const matchesRule = (name: string) => screen.getByRole('button', { name }).matches((selector ?? '').trim());
+  expect(matchesRule('First')).toBe(true);
+  expect(matchesRule('Last')).toBe(true);
+
+  // A round group's ends keep their pill outer corners.
+  render(
+    <ConnectedButtonGroup shape="round">
+      <Button>Round first</Button>
+      <Button>Round middle</Button>
+      <Button>Round last</Button>
+    </ConnectedButtonGroup>,
+  );
+  expect(matchesRule('Round first')).toBe(false);
+  expect(matchesRule('Round middle')).toBe(true);
+  expect(matchesRule('Round last')).toBe(false);
+});
+
+// =============================================================================
+// Standard group icon buttons — Wide by default, explicit widths honoured
+// =============================================================================
+
+test('standard group widens only icon buttons left on the default width, keyed on their own size', () => {
+  const widths = { xs: 40, sm: 52, md: 72, lg: 128, xl: 184 };
+  for (const [size, width] of Object.entries(widths)) {
+    expect(
+      ruleBody(
+        new RegExp(
+          `\\.md-button-group\\[data-standard-group\\] > \\.md-icon-button\\[data-width="default"\\]\\[data-size="${size}"\\]\\s*`,
+        ),
+      ),
+    ).toMatch(new RegExp(`width:\\s*${width}px`));
+  }
+  // Nothing forces a width on every icon button regardless of its own width axis.
+  expect(buttonGroupCss).not.toMatch(/\[data-standard-group\]\[data-size="[a-z]+"\] > \.md-icon-button\s*\{/);
+});
+
+test('an IconButton keeps an explicit width inside a StandardButtonGroup', () => {
+  render(
+    <StandardButtonGroup size="xs">
+      <IconButton aria-label="Default" />
+      <IconButton aria-label="Narrow" width="narrow" />
+      <IconButton aria-label="Wide" width="wide" size="md" />
+    </StandardButtonGroup>,
+  );
+  const defaultWidth = screen.getByRole('button', { name: 'Default' });
+  expect(defaultWidth).toHaveAttribute('data-width', 'default');
+  expect(defaultWidth).toHaveAttribute('data-size', 'xs');
+  expect(screen.getByRole('button', { name: 'Narrow' })).toHaveAttribute('data-width', 'narrow');
+  const wide = screen.getByRole('button', { name: 'Wide' });
+  expect(wide).toHaveAttribute('data-width', 'wide');
+  expect(wide).toHaveAttribute('data-size', 'md');
 });

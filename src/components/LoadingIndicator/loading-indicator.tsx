@@ -7,9 +7,12 @@ import { SHAPE_NAMES, SHAPE_POLYGONS } from './shapes';
 export type LoadingIndicatorVariant = 'uncontained' | 'contained';
 
 export type LoadingIndicatorProps = React.ComponentProps<'div'> & {
-  /** Diameter on the M3 scale. */
+  /** Diameter on the M3 scale (24, 48 or 64px). For another size, set `style={{ width }}`. */
   size?: 'sm' | 'md' | 'lg';
-  /** Override the indicator colour. Defaults to the primary role. */
+  /**
+   * Override the indicator colour (wins over a token set in `style`). Defaults to
+   * primary, or on-primary-container when contained.
+   */
   color?: string;
   /** M3 appearance variant. Defaults to 'uncontained'. */
   variant?: LoadingIndicatorVariant;
@@ -40,8 +43,11 @@ const ensurePolygonStyles = (): void => {
 ensurePolygonStyles();
 
 const LoadingIndicator = forwardRef<HTMLDivElement, PropsWithoutRef<LoadingIndicatorProps>>(
-  ({ className, size = 'md', color, variant, container, ...props }, ref) => {
+  ({ className, size = 'md', color, variant, container, style, ...props }, ref) => {
     const resolvedVariant: LoadingIndicatorVariant = variant ?? (container ? 'contained' : 'uncontained');
+    // Merge rather than replace: a consumer `style` (e.g. a custom width) must
+    // not discard the colour, and `color` wins over a token set in `style`.
+    const rootStyle = color ? ({ ...style, '--md-loading-indicator-color': color } as React.CSSProperties) : style;
 
     // Re-inject on render too — covers hot-module-reload and cases where the
     // parent document replaces <head> (Storybook docs frames, test teardown).
@@ -57,7 +63,7 @@ const LoadingIndicator = forwardRef<HTMLDivElement, PropsWithoutRef<LoadingIndic
         className={cx('md-loading-indicator', className)}
         data-size={size}
         data-variant={resolvedVariant}
-        style={color ? ({ '--md-loading-indicator-color': color } as React.CSSProperties) : undefined}
+        style={rootStyle}
         {...props}
       >
         <div className="md-loading-indicator__container" aria-hidden="true">

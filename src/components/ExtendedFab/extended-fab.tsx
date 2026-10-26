@@ -11,7 +11,12 @@ import type { FABColor, FABSize } from '../Fab/fab';
 // FAB menu's (0,4,0) open-trigger circle.
 import './extended-fab.css';
 
-export type ExtendedFABProps = Omit<ButtonProps, 'shape' | 'color'> & {
+export type ExtendedFABProps = Omit<ButtonProps, 'shape' | 'color' | 'morph'> & {
+  /**
+   * Tighten the corners while pressed. Off by default: like a FAB, an M3
+   * extended FAB keeps its corner radius when pressed.
+   */
+  morph?: boolean;
   /** Icon shown before the label. */
   icon?: React.ReactNode;
   /** Text label. Required — the component measures it to animate its own width. */
@@ -26,7 +31,19 @@ export type ExtendedFABProps = Omit<ButtonProps, 'shape' | 'color'> & {
 
 const ExtendedFAB = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ExtendedFABProps>>(
   (
-    { className, variant = 'tonal', size = 'md', lowered = false, color, fabSize, icon, label, children, ...props },
+    {
+      className,
+      variant = 'tonal',
+      size = 'md',
+      lowered = false,
+      morph = false,
+      color,
+      fabSize,
+      icon,
+      label,
+      children,
+      ...props
+    },
     ref,
   ) => {
     const resolvedSize = fabSize === 'large' ? 'lg' : fabSize ? 'md' : size;
@@ -37,6 +54,7 @@ const ExtendedFAB = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<Ex
         variant={variant}
         size={resolvedSize}
         shape="square"
+        morph={morph}
         className={cx('md-extended-fab', className)}
         data-lowered={lowered || undefined}
         data-fab-color={color}

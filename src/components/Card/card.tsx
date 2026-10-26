@@ -32,11 +32,24 @@ export type CardProps = React.ComponentProps<'div'> & {
   variant?: 'elevated' | 'filled' | 'outlined';
   /** Render the disabled state and block interaction. */
   disabled?: boolean;
-  /** Show a Material ripple on press. Set this whenever the card is clickable. */
+  /**
+   * Show a Material ripple on press. Defaults to on for a clickable card (one
+   * with `onClick`) and off otherwise; pass `false` to turn it off.
+   */
   ripple?: boolean;
-  /** Controlled dragged state (level 1 elevation with a 16% state layer). */
+  /**
+   * Controlled dragged state: a 16% state layer, plus level 1 elevation on
+   * elevated and filled cards. Outlined cards keep their border and no shadow.
+   */
   dragged?: boolean;
-  /** Accessible name for the full-card action overlay. Falls back to `aria-label`. */
+  /**
+   * Accessible name for the full-card action of a clickable card. Without it the
+   * action takes the card's `aria-labelledby` and `aria-label` (labelledby wins,
+   * as on any element), and with neither it is named by the card's content.
+   * Naming from the content reads all of it, nested controls included, so pass a
+   * short label (or `aria-labelledby` pointing at the title) when the card holds
+   * more than a title.
+   */
   interactiveLabel?: string;
 };
 
@@ -50,6 +63,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
       dragged = false,
       interactiveLabel,
       'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
       onClick,
       onKeyDown,
       onPointerCancelCapture,
@@ -64,6 +78,19 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
   ) => {
     const isInteractive = Boolean(onClick);
     const shouldRenderRipple = ripple ?? isInteractive;
+    const contentId = React.useId();
+    // A clickable card's name lives on its action button. `interactiveLabel`
+    // replaces any ARIA naming; otherwise `aria-label` and `aria-labelledby`
+    // move to the button as-is, so `aria-labelledby` keeps its usual precedence.
+    // With none of them the button is named by the card's content.
+    const actionLabel = interactiveLabel ?? ariaLabel;
+    const forwardedLabelledBy = interactiveLabel === undefined ? ariaLabelledBy : undefined;
+    const namedByContent = actionLabel === undefined && forwardedLabelledBy === undefined;
+    const actionLabelledBy = namedByContent ? contentId : forwardedLabelledBy;
+    const contentLabelId = isInteractive && namedByContent ? contentId : undefined;
+    // A static card is a plain div, so its labelling passes straight through
+    // (pair it with a `role`, e.g. `region`, for the name to be exposed).
+    const rootLabelling = isInteractive ? undefined : { 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy };
 
     // Capture-phase pointer tracking lets the card know when the pointer is over
     // a nested control so surface feedback can stay quiet for child interactions.
@@ -112,12 +139,15 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
             type="button"
             className="md-card__action"
             data-card-action=""
-            aria-label={interactiveLabel ?? ariaLabel ?? 'Card action'}
+            aria-label={actionLabel}
+            aria-labelledby={actionLabelledBy}
             disabled={disabled}
             onClick={(event) => onClick?.(event as unknown as React.MouseEvent<HTMLDivElement>)}
           />
         ) : null}
-        <div className="md-card__content">{children}</div>
+        <div className="md-card__content" id={contentLabelId}>
+          {children}
+        </div>
       </>
     );
 
@@ -137,6 +167,7 @@ const Card = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<CardProps>>(
         data-ripple={shouldRenderRipple && !disabled ? '' : undefined}
         data-disabled={disabled || undefined}
         data-dragged={dragged || undefined}
+        {...rootLabelling}
         {...props}
       >
         {content}

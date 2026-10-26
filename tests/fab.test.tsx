@@ -131,3 +131,10 @@ test.each([
 
   expect(screen.getByRole('button', { name: 'Compose' })).toHaveAttribute('data-size', expected);
 });
+
+test('ExtendedFAB keeps its corner radius when pressed unless morph opts in', async () => {
+  const { rerender } = render(<ExtendedFAB label="Compose" />);
+  expect(screen.getByRole('button', { name: 'Compose' })).not.toHaveAttribute('data-morph');
+  rerender(<ExtendedFAB label="Compose" morph />);
+  expect(screen.getByRole('button', { name: 'Compose' })).toHaveAttribute('data-morph', 'true');
+});

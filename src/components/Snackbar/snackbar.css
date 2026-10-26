@@ -1,7 +1,10 @@
 /* =============================================================================
    Snackbar — M3 Spec
    Shape: extra-small (4px), BG: inverse-surface, Elevation: level3
-   Single-line: 48px, Two-line: 68px
+   Single-line: 48px, Two-line: 68px, Longer action: 112px (two-line message)
+   Insets (kit): 16px before the message; 16px after it when nothing follows;
+   4px between the message and the action; 8px after a trailing action; and a
+   48px frame around the 40px close button, so it sits 4px from its neighbours.
    Source: m3.material.io/components/snackbar/specs
    ============================================================================= */
 
@@ -34,7 +37,8 @@
 
 .md-snackbar__message {
   flex: 1;
-  padding: 14px 0 14px 16px;
+  padding-block: 14px;
+  padding-inline: 16px 0;
   font-family: var(--md-sys-typescale-body-medium-font);
   font-size: var(--md-sys-typescale-body-medium-size);
   line-height: var(--md-sys-typescale-body-medium-line-height);
@@ -42,26 +46,43 @@
   letter-spacing: var(--md-sys-typescale-body-medium-tracking);
 }
 
+/* Text only — nothing follows the message, so it keeps the 16px end inset. */
+.md-snackbar__message:last-child {
+  padding-inline-end: 16px;
+}
+
+/* Longer action — the message gets its own row (14px above, none below); the
+   action row adds the 14px between them. */
 .md-snackbar[data-layout="longerAction"] .md-snackbar__message {
   flex: none;
-  padding: 14px 16px 4px;
+  padding: 14px 16px 0;
+}
+
+/* …and with no action row below it, it closes like a text-only snackbar. */
+.md-snackbar[data-layout="longerAction"] .md-snackbar__message:last-child {
+  padding-bottom: 14px;
 }
 
 .md-snackbar__actions {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  padding-right: 8px;
 }
 
+/* Longer action — a 48px row 10px under the message, flush to the bottom and
+   end edges. The action's block margin and the close frame supply the insets. */
 .md-snackbar[data-layout="longerAction"] .md-snackbar__actions {
   justify-content: flex-end;
-  gap: 4px;
-  padding: 0 8px 8px 16px;
+  padding-block: 10px 0;
+  padding-inline: 8px 0;
 }
 
-/* Action button — 3-class specificity (0,3,0) beats button.css's (0,2,0) */
+/* Action button — 3-class specificity (0,3,0) beats button.css's (0,2,0).
+   The kit's Snackbar-action pads its label by 12px, not Button sm's 16px, and
+   its 4px block margin makes a 48px row, the height of the close frame. */
 .md-snackbar .md-snackbar__action.md-button {
+  padding-inline: 12px;
+  margin-block: 4px;
   color: var(--md-sys-color-inverse-primary);
 
   &:focus-visible {
@@ -69,8 +90,21 @@
   }
 }
 
-/* Close button — 3-class specificity beats icon-button.css's (0,2,0) */
+/* Beside the message, 4px from the text. */
+.md-snackbar:not([data-layout="longerAction"]) .md-snackbar__action.md-button {
+  margin-inline-start: 4px;
+}
+
+/* No close button after it: 8px from the container's end edge. */
+.md-snackbar .md-snackbar__action.md-button:last-child {
+  margin-inline-end: 8px;
+}
+
+/* Close button — 3-class specificity beats icon-button.css's (0,2,0).
+   The 4px margin is the kit's 48px close-affordance frame around the 40px
+   container: 4px from the action, the end edge and (longer action) the bottom. */
 .md-snackbar .md-snackbar__close.md-icon-button {
+  margin: 4px;
   color: var(--md-sys-color-inverse-on-surface);
 
   &:focus-visible {

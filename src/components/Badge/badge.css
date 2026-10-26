@@ -21,9 +21,10 @@
   }
 
   &[data-size="large"] {
-    height: 16px;
-    min-width: 16px;
-    border-radius: 8px;
+    --_height: 16px;
+    height: var(--_height);
+    min-width: var(--_height);
+    border-radius: calc(var(--_height) / 2);
     background-color: var(--md-sys-color-error);
     padding-inline: 4px;
     font-family: var(--md-sys-typescale-label-small-font);
@@ -59,6 +60,10 @@
 
 .md-badge-anchor__badge {
   position: absolute;
+  /* Flex (not block) so the wrapper shrink-wraps the badge's own 16px/6px box
+     instead of the inherited text line box; the translate(±50%) offsets and
+     circular insets then centre the badge itself on the anchor point. */
+  display: flex;
 
   &[data-position="top-right"] {
     right: 0;
@@ -103,5 +108,16 @@
   &[data-position="bottom-left"][data-overlap="circular"] {
     bottom: 14%;
     left: 14%;
+  }
+}
+
+/* Forced colors replaces the badge fill with Canvas, which hides the dot and
+   strips the count's pill; paint it with system colours instead. The
+   [data-size] attribute matches the size and colour rules' specificity so this
+   later rule wins over every colour role. */
+@media (forced-colors: active) {
+  .md-badge[data-size] {
+    background-color: CanvasText;
+    color: Canvas;
   }
 }

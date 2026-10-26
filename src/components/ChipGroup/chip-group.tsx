@@ -5,7 +5,7 @@ import * as React from 'react';
 import { cx } from '../../lib/cx';
 
 export type ChipGroupProps = React.ComponentProps<'div'> & {
-  /** Scroll keeps a single horizontal row; wrap allows chips onto additional rows. */
+  /** Scroll keeps a single horizontal row; wrap allows chips onto additional rows, 16px apart. */
   layout?: 'scroll' | 'wrap';
 };
 

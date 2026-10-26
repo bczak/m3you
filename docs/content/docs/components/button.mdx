@@ -15,7 +15,7 @@ shapes with the Expressive spring curve.
     variant: ['filled', 'tonal', 'elevated', 'outlined', 'text'],
     size: ['sm', 'xs', 'md', 'lg', 'xl'],
     shape: ['round', 'square'],
-    morph: false,
+    morph: true,
     disabled: false,
   }}
   snippetChildren="Press me"
@@ -42,13 +42,18 @@ typescale and corner radius together — you never set those separately.
 
 ## Shape and morph
 
-Round is the default. Square gives a more structural feel, and `morph` swaps to
-the other shape while the button is held — the Expressive shape-change gesture.
+Round is the default. Square gives a more structural feel. While a button is
+held its corners tighten to a smaller radius — 8px at `xs` and `sm`, 12px at
+`md`, 16px at `lg` and `xl` — the Expressive press gesture. `morph` is on by
+default, as in every M3 pressed state; pass `morph={false}` to keep the resting
+shape. Inside a connected button group this press morph is off: the group
+shapes its segments instead, growing the corners where they meet while a segment
+is hovered, focused or pressed.
 
 <Example
   name="button/shapes"
   title="Shape and morph"
-  description="Press and hold the third button to see the morph."
+  description="Press and hold each button. The third has morph={false} and keeps its shape."
 />
 
 ## Icons

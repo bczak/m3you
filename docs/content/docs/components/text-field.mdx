@@ -1,22 +1,29 @@
 ---
 title: Text field
-description: Filled and outlined fields with labels and supporting text.
+description: Filled, outlined and tonal fields with labels and supporting text.
 ---
 
 import { TextField } from 'm3you';
 
-Text fields collect typed input. Both variants animate the label into the field
-outline on focus. Use `type="textarea"` for multiline input and control its
-initial height with `rows`. Use `supportingText` for guidance that is always
-relevant, and `errorText` for a message that replaces it when `error` is set.
+Text fields collect typed input. Every variant floats the label out of the
+input on focus: into the top of the container for `filled` and `tonal`, into a
+notch in the border for `outlined`. Use `type="textarea"` for multiline input
+and control its initial height with `rows`. Use `supportingText` for guidance
+that is always relevant, and `errorText` for a message that replaces it when
+`error` is set.
 
 `onValueChange` gives you the string directly, so you rarely need to reach into
 the event.
 
+The label, the indicator line and the outline animate between states over
+150ms on the standard easing. With `prefers-reduced-motion: reduce` the label
+moves and resizes without animating and the strokes thicken immediately. Only
+the colour and opacity changes still fade.
+
 <Playground
   name="TextField"
   controls={{
-    variant: ['filled', 'outlined'],
+    variant: ['filled', 'outlined', 'tonal'],
     label: 'Label',
     supportingText: 'Supporting text',
     type: ['text', 'email', 'password', 'number', 'search', 'tel', 'url', 'textarea'],
@@ -33,6 +40,30 @@ the event.
 ## Variants
 
 <Example name="text-field/variants" title="Filled, outlined and with an icon" layout="stretch" />
+
+## Tonal
+
+<Callout type="warn" title="Provisional">
+  `variant="tonal"` follows the rounded, tonal text field that Jetpack Compose
+  recommends for Expressive style (`TextFieldDefaults.roundedShape` and
+  `TextFieldDefaults.tonalColors()`). Material has not published tokens for it
+  yet, and the upstream values are marked as placeholders, so its corner and
+  colours may change in a minor release.
+</Callout>
+
+The tonal field has medium corners on all four sides, a `surface-container`
+fill and no indicator line. It lays out like `filled`, so leading and trailing
+icons, `prefixText`, `suffixText`, supporting text, the character counter and
+`type="textarea"` all work the same way. In the error state the container turns
+`error-container` and the label `error`. Disabled dims the container to 38%.
+In forced-colours mode, which repaints the fill, the field draws a
+system-colour outline so its edge stays visible.
+
+With no indicator line to thicken, focus shows as the label turning `primary`
+plus the shared focus ring around the container. The ring keeps focus visible
+when there is no label to recolour, and without relying on colour alone.
+
+<Example name="text-field/tonal" title="Tonal (provisional)" layout="stretch" />
 
 ## Validation and affixes
 

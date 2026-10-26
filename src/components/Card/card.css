@@ -48,12 +48,9 @@
     border-radius: inherit;
     background: transparent;
     cursor: pointer;
+    /* The focus ring belongs to the card root (below): drawn on this inset
+       button it would sit inside the card edge, under the content layer. */
     outline: none;
-
-    &:focus-visible {
-      outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
-      outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
-    }
   }
 
   & > .md-card__content {
@@ -94,11 +91,24 @@
     transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
+  /* Focus ring outside the card, like the kit's 364dp indicator around a
+     360dp card. The root's own outline is not clipped by its overflow and
+     follows its corner radius (12 + 2 = 14dp). */
+  &[data-interactive]:has(> .md-card__action:focus-visible) {
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+  }
+
+  /* State-layer opacities come from the system tokens (focus 10%, dragged
+     16%), not the Card states page's literal #1c1b1f fills (focus 8%,
+     pressed and dragged 12%). Those fills are bound to no variable and
+     contradict the kit's own M3/State Layers collection, which defines only
+     the 08 / 10 / 16 steps that every other component already follows. */
   &[data-interactive]:has(> .md-card__action:focus-visible)::before {
     opacity: var(--md-sys-state-focus-opacity);
   }
 
-  &[data-interactive][data-ripple][data-variant="elevated"]:hover {
+  &[data-interactive][data-ripple][data-variant="elevated"]:not([data-dragged]):hover {
     box-shadow: var(--md-sys-elevation-2);
   }
 
@@ -111,7 +121,9 @@
     box-shadow: var(--md-sys-elevation-1);
   }
 
-  &[data-dragged] {
+  /* Kit: Elevated and Filled Dragged sit at level 1; Outlined Dragged keeps
+     only its stroke and state layer, with no shadow. */
+  &[data-dragged]:not([data-variant="outlined"]) {
     box-shadow: var(--md-sys-elevation-1);
   }
 

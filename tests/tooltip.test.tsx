@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, test } from 'vitest';
 import { Button } from '../src/components/Button/button';
@@ -11,8 +12,33 @@ import {
   TooltipTrigger,
 } from '../src/components/Tooltip/tooltip';
 
+const tooltipCss = readFileSync('src/components/Tooltip/tooltip.css', 'utf8');
+
+/** Returns the declaration block of the first rule whose selector is exactly `selector`. */
+function ruleBody(selector: string): string {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = tooltipCss.match(new RegExp(`(?:^|\\n)${escaped} \\{([^}]*)\\}`));
+  return match?.[1] ?? '';
+}
+
 afterEach(() => {
   cleanup();
+});
+
+// =============================================================================
+// Geometry (CSS text — happy-dom applies no layout)
+// =============================================================================
+
+// The kit's plain tooltip max width is the outer box (Multi line = 200 wide incl.
+// 8px side padding). Both tooltips must use border-box so their max-width caps
+// the painted box rather than the content box (rich would otherwise be 352px).
+test('plain and rich tooltips cap their outer box with border-box sizing', () => {
+  const plain = ruleBody('.md-tooltip');
+  const rich = ruleBody('.md-rich-tooltip');
+  expect(plain).toMatch(/box-sizing: border-box;/);
+  expect(plain).toMatch(/max-width: 200px;/);
+  expect(rich).toMatch(/box-sizing: border-box;/);
+  expect(rich).toMatch(/max-width: 320px;/);
 });
 
 // =============================================================================

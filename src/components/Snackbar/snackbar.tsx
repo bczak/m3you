@@ -29,6 +29,8 @@ export type SnackbarProps = React.ComponentProps<'output'> & {
 const Snackbar = React.forwardRef<HTMLOutputElement, React.PropsWithoutRef<SnackbarProps>>(
   ({ className, layout = 'singleLine', message, actionLabel, onAction, closable, onClose, ...props }, ref) => {
     const hasActions = Boolean(actionLabel || closable);
+    // The kit's Snackbar-action and close affordance stay fully round when pressed,
+    // so both opt out of the Expressive press morph that Button and IconButton default to.
 
     return (
       <output ref={ref} aria-live="polite" className={cx('md-snackbar', className)} data-layout={layout} {...props}>
@@ -36,7 +38,14 @@ const Snackbar = React.forwardRef<HTMLOutputElement, React.PropsWithoutRef<Snack
         {hasActions ? (
           <div className="md-snackbar__actions">
             {actionLabel ? (
-              <Button variant="text" size="sm" shape="round" morph onClick={onAction} className="md-snackbar__action">
+              <Button
+                variant="text"
+                size="sm"
+                shape="round"
+                morph={false}
+                onClick={onAction}
+                className="md-snackbar__action"
+              >
                 {actionLabel}
               </Button>
             ) : null}
@@ -45,6 +54,7 @@ const Snackbar = React.forwardRef<HTMLOutputElement, React.PropsWithoutRef<Snack
                 variant="standard"
                 size="sm"
                 shape="round"
+                morph={false}
                 aria-label="Dismiss"
                 onClick={onClose}
                 className="md-snackbar__close"
