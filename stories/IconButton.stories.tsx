@@ -55,7 +55,6 @@ const VariantStory = ({ variant }: { variant: 'standard' | 'filled' | 'elevated'
                   shape={shape}
                   size={size}
                   width={width}
-                  morph
                 >
                   <StarIcon />
                 </IconButton>
@@ -68,7 +67,6 @@ const VariantStory = ({ variant }: { variant: 'standard' | 'filled' | 'elevated'
                   shape={shape}
                   size={size}
                   width={width}
-                  morph
                   disabled
                 >
                   <StarIcon />
@@ -114,10 +112,47 @@ export const Selected: Story = {
             <span style={{ fontSize: '14px', fontWeight: 600 }}>{shape}</span>
             {variants.map((variant) => (
               <div key={variant} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <IconButton aria-label="Example action" variant={variant} shape={shape} morph selected={false}>
+                <IconButton aria-label="Example action" variant={variant} shape={shape} selected={false}>
                   <StarIcon />
                 </IconButton>
-                <IconButton aria-label="Example action" variant={variant} shape={shape} morph selected>
+                <IconButton aria-label="Example action" variant={variant} shape={shape} selected>
+                  <StarIcon />
+                </IconButton>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  },
+};
+
+export const ColouredToggle: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'With `color` set, an unselected standard toggle keeps the neutral on-surface-variant icon; the colour role marks the selected state only, since standard has no container to show it. An unselected outlined toggle keeps the colour-role icon inside its outline, and selecting it fills a colour-role container. A button with no `selected` prop keeps the colour role.',
+      },
+    },
+  },
+  render: () => {
+    const variants = ['standard', 'outlined'] as const;
+    const colors = ['primary', 'secondary', 'tertiary', 'error'] as const;
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {variants.map((variant) => (
+          <div key={variant} style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            {colors.map((color) => (
+              <div key={color} style={{ display: 'flex', gap: '8px' }}>
+                <IconButton aria-label={`${color} action`} variant={variant} color={color}>
+                  <StarIcon />
+                </IconButton>
+                <IconButton aria-label={`${color} unselected`} variant={variant} color={color} selected={false}>
+                  <StarIcon />
+                </IconButton>
+                <IconButton aria-label={`${color} selected`} variant={variant} color={color} selected>
                   <StarIcon />
                 </IconButton>
               </div>

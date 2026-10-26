@@ -13,7 +13,7 @@ export type ToggleIconButtonProps = IconButtonProps & {
 };
 
 const ToggleIconButton = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<ToggleIconButtonProps>>(
-  ({ defaultSelected = false, selected: selectedProp, onSelectedChange, onClick, morph = true, ...props }, ref) => {
+  ({ defaultSelected = false, selected: selectedProp, onSelectedChange, onClick, ...props }, ref) => {
     const isControlled = selectedProp !== undefined;
     const [internalSelected, setInternalSelected] = useState(defaultSelected);
     const selected = isControlled ? selectedProp : internalSelected;
@@ -27,7 +27,9 @@ const ToggleIconButton = React.forwardRef<HTMLButtonElement, React.PropsWithoutR
       onClick?.(e);
     };
 
-    return <IconButton ref={ref} selected={selected} morph={morph} onClick={toggleIconSelected} {...props} />;
+    // `morph` rides along in `props`: IconButton already defaults it on, and
+    // leaving it unset lets a button group's own `morph` apply.
+    return <IconButton ref={ref} selected={selected} onClick={toggleIconSelected} {...props} />;
   },
 );
 ToggleIconButton.displayName = 'ToggleIconButton';

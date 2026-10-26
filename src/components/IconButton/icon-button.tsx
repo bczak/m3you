@@ -14,7 +14,12 @@ export type IconButtonProps = Omit<React.ComponentProps<'button'>, 'color'> & {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   /** Horizontal padding, without changing height — useful for tuning target size in a dense row. */
   width?: 'narrow' | 'default' | 'wide';
-  /** Swap to the opposite shape while the button is held. */
+  /**
+   * Tighten the corners to the smaller pressed radius while the button is held
+   * (8dp at xs/sm, 12dp at md, 16dp at lg/xl), as every M3 icon button does.
+   * On by default — a button group's `morph` applies when this is omitted, and
+   * `false` opts out.
+   */
   morph?: boolean;
   /** Renders the selected state and emits `aria-pressed`. */
   selected?: boolean;
@@ -43,7 +48,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, React.PropsWithoutRef<Ico
 
     const size = sizeProp ?? groupProps?.size ?? 'sm';
     const shape = shapeProp ?? groupProps?.shape ?? 'round';
-    const morph = morphProp ?? groupProps?.morph ?? false;
+    const morph = morphProp ?? groupProps?.morph ?? true;
     const selected = selectedProp ?? groupProps?.selected;
     const color = colorProp ?? groupProps?.color;
     const selectedValue = selected !== undefined ? String(selected) : undefined;

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { expect, test } from 'vitest';
@@ -18,6 +19,15 @@ test('renders FAB with the icon-button implementation', async () => {
   expect(button).toHaveAttribute('data-shape', 'square');
   expect(button).toHaveAttribute('data-width', 'default');
   expect(button).toHaveAttribute('data-size', 'md');
+});
+
+// An icon button morphs on press by default; the kit's FAB keeps its radius.
+test('FAB keeps its corners when pressed unless morph is asked for', () => {
+  const { rerender } = render(<FAB aria-label="Create" />);
+  expect(screen.getByRole('button', { name: 'Create' })).not.toHaveAttribute('data-morph');
+
+  rerender(<FAB aria-label="Create" morph />);
+  expect(screen.getByRole('button', { name: 'Create' })).toHaveAttribute('data-morph', 'true');
 });
 
 test('forwards refs through FAB', async () => {
@@ -109,6 +119,94 @@ test('FAB falls back to size when fabSize is absent', async () => {
   render(<FAB aria-label="Create" size="lg" />);
 
   expect(screen.getByRole('button', { name: 'Create' })).toHaveAttribute('data-size', 'lg');
+});
+
+// =============================================================================
+// Cascade — happy-dom loads no CSS, so these read the source text
+// =============================================================================
+
+const fabCss = readFileSync('src/components/Fab/fab.css', 'utf8');
+const fabSource = readFileSync('src/components/Fab/fab.tsx', 'utf8');
+
+/** The declaration block of the first rule whose selector is exactly `selector`. */
+const fabRule = (selector: string, from = 0) => {
+  const start = fabCss.indexOf(`${selector} {`, from);
+  expect(start, `missing rule ${selector}`).toBeGreaterThan(-1);
+  return { start, body: fabCss.slice(start, fabCss.indexOf('}', start)) };
+};
+
+// The FAB's shape and size rules tie with IconButton's square-shape rules at
+// (0,3,0), so fab.css has to land after icon-button.css. The bundle and dev
+// both emit CSS in import order, so the IconButton import must come first.
+test('FAB loads its stylesheet after IconButton so its corners win the tie', () => {
+  const iconButtonImport = fabSource.indexOf("from '../IconButton/icon-button'");
+  const fabCssImport = fabSource.indexOf("import './fab.css'");
+  expect(iconButtonImport).toBeGreaterThan(-1);
+  expect(fabCssImport).toBeGreaterThan(iconButtonImport);
+});
+
+// Kit: Default 56dp r16 (Corner/Large), Medium 80dp r20 (Corner/Large-increased),
+// Large 96dp r28 (Corner/Extra-large). The rules stay at (0,3,0) so FAB menu's
+// (0,4,0) open-state morph still rounds the trigger.
+test('FAB sizes carry the kit corner radii without out-ranking the FAB menu morph', () => {
+  expect(fabRule('  &[data-fab-size="medium"]').body).toContain(
+    'border-radius: var(--md-sys-shape-corner-large-increased);',
+  );
+  const large = fabRule('  &[data-size="lg"]').body;
+  expect(large).toContain('width: 96px;');
+  expect(large).toContain('border-radius: var(--md-sys-shape-corner-extra-large);');
+  expect(fabCss).not.toContain('&[data-size="lg"][data-shape="square"]');
+  expect(fabCss).toMatch(
+    /&\[data-size="xs"\],\s*&\[data-size="sm"\],\s*&\[data-size="md"\] \{\s*border-radius: var\(--md-sys-shape-corner-large\);/,
+  );
+});
+
+// Kit: every FAB rests at level 3, lifts to 4 on hover and settles back to 3
+// while pressed. One (0,5,0) rule paints the shadow so IconButton's elevated
+// variant rules (up to 0,3,0) cannot pull an elevated FAB down to level 1 or 2.
+test('FAB paints its elevation from one rule that outranks the icon-button variants', () => {
+  const painter = fabRule('.md-icon-button.md-fab:not(:disabled)[data-variant][data-size]');
+  expect(painter.body).toContain('box-shadow: var(--_fab-elevation);');
+
+  // Every other enabled shadow goes through the private property.
+  const shadows = [...fabCss.matchAll(/box-shadow: ([^;]+);/g)].map((match) => match[1]);
+  expect(shadows.sort()).toEqual(['none', 'var(--_fab-elevation)']);
+
+  const base = fabRule('.md-icon-button.md-fab');
+  expect(base.body).toContain('--_fab-elevation: var(--md-sys-elevation-3);');
+  const hover = fabRule('  &:hover', base.start);
+  const active = fabRule('  &:active', base.start);
+  expect(hover.body).toContain('--_fab-elevation: var(--md-sys-elevation-4);');
+  expect(active.body).toContain('--_fab-elevation: var(--md-sys-elevation-3);');
+  // Same specificity, so pressed has to follow hover to win while a mouse is down.
+  expect(active.start).toBeGreaterThan(hover.start);
+});
+
+test('a lowered FAB rests at level 1, lifts to 2 on hover and drops back when pressed', () => {
+  const lowered = fabRule('  &[data-lowered]');
+  expect(lowered.body).toContain('--_fab-elevation: var(--md-sys-elevation-1);');
+  const hover = fabRule('    &:hover', lowered.start);
+  const active = fabRule('    &:active', lowered.start);
+  expect(hover.body).toContain('--_fab-elevation: var(--md-sys-elevation-2);');
+  expect(active.body).toContain('--_fab-elevation: var(--md-sys-elevation-1);');
+  expect(active.start).toBeGreaterThan(hover.start);
+});
+
+// The painter needs data-variant and data-size, and skips disabled buttons so
+// they stay flat; check the rendered attributes it keys off.
+test('FAB renders the attributes its elevation rule keys off', () => {
+  const { rerender } = render(<FAB aria-label="Create" variant="elevated" lowered />);
+  const button = screen.getByRole('button', { name: 'Create' });
+  expect(button).toHaveAttribute('data-variant', 'elevated');
+  expect(button).toHaveAttribute('data-size', 'md');
+  expect(button).toHaveAttribute('data-lowered', 'true');
+
+  rerender(<FAB aria-label="Create" fabSize="medium" disabled />);
+  expect(button).toHaveAttribute('data-variant', 'tonal');
+  expect(button).toHaveAttribute('data-fab-size', 'medium');
+  expect(button).not.toHaveAttribute('data-lowered');
+  expect(button).toBeDisabled();
+  expect(fabRule('.md-icon-button.md-fab:disabled[data-fab-color]').body).toContain('box-shadow: none;');
 });
 
 test.each([
