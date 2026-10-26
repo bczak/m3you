@@ -181,7 +181,14 @@ export {
 } from './components/SideSheet/side-sheet';
 export type { SkeletonProps, SkeletonShape } from './components/Skeleton/skeleton';
 export { Skeleton } from './components/Skeleton/skeleton';
-export type { RangeSliderInputProps, RangeSliderProps, SliderProps } from './components/Slider/slider';
+export type {
+  RangeSliderInputProps,
+  RangeSliderProps,
+  SliderMode,
+  SliderOrientation,
+  SliderProps,
+  SliderSize,
+} from './components/Slider/slider';
 export { RangeSlider, Slider } from './components/Slider/slider';
 export type { SnackbarHostProps, SnackbarProps } from './components/Snackbar/snackbar';
 export { Snackbar, SnackbarHost } from './components/Snackbar/snackbar';
