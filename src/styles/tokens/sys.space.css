@@ -1,0 +1,32 @@
+/* =============================================================================
+   M3 Spacing Tokens — 8dp scale
+   Source: material-web labs/gb/styles/space/md-space-tokens.scss (2026), the
+   spacing system introduced with M3's adaptive layout guidance. Step names are
+   hundredths of the unit, so --md-sys-space-150 is 1.5 × 8px = 12px.
+
+   Upstream declares these inside `@layer md.sys.space`; m3you keeps every
+   system token unlayered on :root, so these follow suit and override the same
+   way the rest of the token set does.
+   ============================================================================= */
+
+:root {
+  --md-sys-space-unit: 8px;
+  --md-sys-space-0: calc(var(--md-sys-space-unit) * 0);
+  --md-sys-space-25: calc(var(--md-sys-space-unit) * 0.25);
+  --md-sys-space-50: calc(var(--md-sys-space-unit) * 0.5);
+  --md-sys-space-75: calc(var(--md-sys-space-unit) * 0.75);
+  --md-sys-space-100: var(--md-sys-space-unit);
+  --md-sys-space-125: calc(var(--md-sys-space-unit) * 1.25);
+  --md-sys-space-150: calc(var(--md-sys-space-unit) * 1.5);
+  --md-sys-space-175: calc(var(--md-sys-space-unit) * 1.75);
+  --md-sys-space-200: calc(var(--md-sys-space-unit) * 2);
+  --md-sys-space-250: calc(var(--md-sys-space-unit) * 2.5);
+  --md-sys-space-300: calc(var(--md-sys-space-unit) * 3);
+  --md-sys-space-400: calc(var(--md-sys-space-unit) * 4);
+  --md-sys-space-450: calc(var(--md-sys-space-unit) * 4.5);
+  --md-sys-space-500: calc(var(--md-sys-space-unit) * 5);
+  --md-sys-space-600: calc(var(--md-sys-space-unit) * 6);
+  --md-sys-space-700: calc(var(--md-sys-space-unit) * 7);
+  --md-sys-space-800: calc(var(--md-sys-space-unit) * 8);
+  --md-sys-space-900: calc(var(--md-sys-space-unit) * 9);
+}

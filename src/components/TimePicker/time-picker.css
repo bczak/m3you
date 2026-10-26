@@ -71,8 +71,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
   }
 }
 
@@ -95,8 +95,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
   }
 }
 
@@ -214,8 +214,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: -3px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
   }
 }
 
@@ -343,7 +343,7 @@
   background: transparent;
   color: var(--md-sys-color-on-surface-variant);
   cursor: pointer;
-  transition: background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+  transition: background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 
   &:hover {
     background-color: color-mix(in srgb, var(--md-sys-color-on-background) 8%, transparent);
@@ -355,8 +355,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
   }
 }
 
@@ -377,15 +377,15 @@
   font-size: 14px;
   color: var(--md-sys-color-primary);
   cursor: pointer;
-  transition: background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+  transition: background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 
   &:hover {
     background-color: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
   }
 }
 

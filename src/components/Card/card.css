@@ -19,7 +19,7 @@
     border-radius: inherit;
     background-color: var(--md-sys-color-on-surface);
     opacity: 0;
-    transition: opacity var(--md-sys-motion-duration-extra-short4) var(--md-sys-motion-easing-standard);
+    transition: opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
   & > .salty-ripple {
@@ -51,8 +51,8 @@
     outline: none;
 
     &:focus-visible {
-      outline: 2px solid var(--md-sys-color-primary);
-      outline-offset: -2px;
+      outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+      outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
     }
   }
 
@@ -91,7 +91,7 @@
   /* Interactive state */
   &[data-interactive] {
     cursor: pointer;
-    transition: box-shadow var(--md-sys-motion-duration-extra-short4) var(--md-sys-motion-easing-standard);
+    transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
   }
 
   &[data-interactive]:has(> .md-card__action:focus-visible)::before {

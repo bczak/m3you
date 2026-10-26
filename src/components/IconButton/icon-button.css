@@ -16,11 +16,11 @@
   border: none;
   padding: 0;
   transition:
-    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     border-radius var(--md-sys-motion-duration-spring-default-effects)
     var(--md-sys-motion-easing-spring-default-effects),
-    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   outline: none;
   overflow: visible;
 
@@ -44,8 +44,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
     background-image: linear-gradient(
       color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent),
       color-mix(in srgb, currentColor calc(var(--md-sys-state-focus-opacity) * 100%), transparent)

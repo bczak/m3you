@@ -516,7 +516,7 @@ test('outer circle has a tokenized color transition', async () => {
   const { outer } = getOuterAndInner();
   expect(outer).toHaveClass('md-radio__outer');
   expect(radioCss).toContain(
-    'transition: border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard)',
+    'transition: border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard)',
   );
 });
 
@@ -525,7 +525,7 @@ test('inner dot has a tokenized transform transition', async () => {
   const { inner } = getOuterAndInner();
   expect(inner).toHaveClass('md-radio__inner');
   expect(radioCss).toContain(
-    'transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard)',
+    'transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard)',
   );
 });
 

@@ -47,7 +47,7 @@
 
 .md-circular-progress__indicator {
   stroke: currentColor;
-  transition: stroke-dashoffset var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+  transition: stroke-dashoffset var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 }
 
 .md-circular-progress__indicator[data-indeterminate] {

@@ -105,6 +105,33 @@ test('applyM3Theme targets a provided element', async () => {
   expect(document.documentElement.style.getPropertyValue('--md-sys-color-primary')).toBe('');
 });
 
+test('applyM3Theme re-declares the focus colour on the element it themes', () => {
+  // A var() inside a custom property resolves where it is declared, so an alias
+  // left on an ancestor would keep that ancestor's Secondary inside `el`.
+  const el = document.createElement('div');
+
+  applyM3Theme('#00ff00', el);
+
+  expect(el.style.getPropertyValue('--md-sys-state-focus-indicator-color')).toBe('var(--md-sys-color-secondary)');
+});
+
+test('the focus colour alias is declared in every colour scope, not on :root alone', () => {
+  const stateCss = readFileSync(resolve(process.cwd(), 'src/styles/tokens/sys.state.css'), 'utf8');
+  const declarations = [...stateCss.matchAll(/([^{}]+)\{([^}]*)\}/g)].filter(([, , body]) =>
+    body.includes('--md-sys-state-focus-indicator-color:'),
+  );
+
+  // One rule, so the alias cannot drift between scopes.
+  expect(declarations).toHaveLength(1);
+  const [, selector, body] = declarations[0];
+  const selectors = selector
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .split(',')
+    .map((s) => s.trim());
+  expect(selectors).toEqual([':root', '[data-theme="light"]', '[data-theme="dark"]']);
+  expect(body).toContain('--md-sys-state-focus-indicator-color: var(--md-sys-color-secondary);');
+});
+
 test('generateCustomColor returns a container pair per mode for a colour outside the scheme', async () => {
   const pair = generateCustomColor('#4caf50');
 
@@ -114,4 +141,33 @@ test('generateCustomColor returns a container pair per mode for a colour outside
   expect(pair.dark.onContainer).toMatch(HEX);
   // The container flips with the mode, the way the scheme's own containers do.
   expect(pair.light.container).not.toBe(pair.dark.container);
+});
+
+test('scoped data-theme blocks cover every role, read the applied seed, and include a light scope', () => {
+  const tokens = resolve(process.cwd(), 'src/styles/tokens');
+  const lightCss = readFileSync(resolve(tokens, 'sys.color.css'), 'utf8');
+  const darkCss = readFileSync(resolve(tokens, 'sys.color.dark.css'), 'utf8');
+  const block = (selector: string) => {
+    const start = darkCss.indexOf(`\n${selector} {\n`);
+    expect(start).toBeGreaterThan(-1);
+    return darkCss.slice(start, darkCss.indexOf('\n}', start + 1));
+  };
+  const defaults = (css: string) =>
+    Object.fromEntries([...css.matchAll(/--md-sys-color-([a-z-]+): (#[0-9a-f]{6});/g)].map((m) => [m[1], m[2]]));
+  const lightDefaults = defaults(lightCss);
+  const darkDefaults = defaults(darkCss);
+
+  for (const [selector, mode, expected] of [
+    ['[data-theme="dark"]', 'dark', darkDefaults],
+    ['[data-theme="light"]', 'light', lightDefaults],
+  ] as const) {
+    const css = block(selector);
+    // A nested scope inherits the seed applyM3Theme() published on an ancestor,
+    // and falls back to the default palette when there is none.
+    for (const [role, hex] of Object.entries(expected)) {
+      expect(css).toContain(`--md-sys-color-${role}: var(--md-seed-color-${role}-${mode}, ${hex});`);
+    }
+    expect(css).toContain('--md-sys-color-surface-tint: var(--md-sys-color-primary);');
+  }
+  expect(Object.keys(lightDefaults)).toHaveLength(48);
 });

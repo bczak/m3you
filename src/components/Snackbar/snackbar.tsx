@@ -94,7 +94,7 @@ const SnackbarHost = React.forwardRef<
           display: 'flex',
           justifyContent: 'center',
           transitionProperty: 'opacity',
-          transitionDuration: 'var(--md-sys-motion-duration-short2)',
+          transitionDuration: 'var(--md-sys-motion-duration-medium2)',
           transitionTimingFunction: 'var(--md-sys-motion-easing-standard-decelerate)',
         },
       }}

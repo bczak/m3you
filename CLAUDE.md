@@ -75,7 +75,8 @@ Following `@material/web`'s pattern:
   - `sys.shape.css` — 10-step M3 Expressive shape scale (0px to full)
   - `sys.typescale.css` — 15 type scales + Display XL + emphasized weights
   - `sys.elevation.css` — 6 levels as box-shadow values
-  - `sys.motion.css` — 7 easing curves + 16 durations + spring approximations
+  - `sys.motion.css` — 7 easing curves + 16 durations (M3 names: `short1-4` 50–200ms, `medium1-4` 250–400ms,
+    `long1-4` 450–600ms, `extra-long1-4` 700–1000ms) + spring approximations
   - `sys.state.css` — hover/focus/pressed/dragged/disabled opacities
   - `sys.color.css` — Light theme (49 roles, seed #416699)
   - `sys.color.dark.css` — Dark theme via `@media (prefers-color-scheme: dark)` + `[data-theme="dark"]`
@@ -122,7 +123,12 @@ Following `@material/web`'s pattern:
 - For **circles** (width === height): use `border-radius: 50%`
 - The `--md-sys-shape-corner-full` token exists in `sys.shape.css` for reference but must NOT be used in component CSS
 - This ensures smooth morph/shape animations — `9999px` breaks CSS transitions because intermediate values stay visually "round"
-- For morph transitions, use `--md-sys-motion-easing-spring-default-spatial` for the M3 Expressive spring feel
+- For **in-place shape morphs** (a corner reshaping on press/select — Button, IconButton, ButtonGroup, FabMenu),
+  use the effects spring: `var(--md-sys-motion-duration-spring-default-effects)
+  var(--md-sys-motion-easing-spring-default-effects)`. This is a deliberate choice (commit 2da0f71): the
+  official M3 token puts the pressed morph on fast-spatial, whose overshoot made the corner wobble after
+  release. Reserve the `-spatial` springs for motion that moves or resizes an element through space
+  (Carousel items, ExtendableFAB, List reorder, FAB menu expansion)
 
 ## Path Aliases
 

@@ -68,12 +68,23 @@ Six levels, expressed as `box-shadow` values:
 
 ## Motion
 
-Seven easing curves and sixteen durations, plus spring approximations:
+Seven easing curves and sixteen durations, plus spring approximations. The
+duration names follow M3: `short1`–`short4` are 50–200ms, `medium1`–`medium4`
+250–400ms, `long1`–`long4` 450–600ms and `extra-long1`–`extra-long4`
+700–1000ms.
+
+<Callout type="warn" title="Renamed durations">
+  Earlier releases shifted these names one tier: `extra-short1`–`4` held
+  50–200ms and `short2` was 300ms. If your own CSS uses the duration tokens,
+  move each reference up one tier to keep its timing — `extra-shortN` →
+  `shortN`, `shortN` → `mediumN`, `mediumN` → `longN`, `longN` →
+  `extra-longN`.
+</Callout>
 
 ```css
 transition: border-radius
-  var(--md-sys-motion-duration-short2)
-  var(--md-sys-motion-easing-spring-default-spatial);
+  var(--md-sys-motion-duration-spring-default-effects)
+  var(--md-sys-motion-easing-spring-default-effects);
 ```
 
 ## State
@@ -87,12 +98,71 @@ Opacities for interaction layers, so hover and pressed states stay consistent:
 --md-sys-state-dragged-opacity
 ```
 
-They are meant to be used through `color-mix`:
+They are unitless fractions (`0.08`), so convert them to a percentage when you
+use them through `color-mix`:
 
 ```css
 background-color: color-mix(
   in srgb,
-  var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity),
+  var(--md-sys-color-on-surface) calc(var(--md-sys-state-hover-opacity) * 100%),
   transparent
 );
+```
+
+The focus indicator is tokenised too: a 3px Secondary ring, drawn 2px outside
+the container, or flush inside it where an outer ring would be clipped:
+
+```css
+:focus-visible {
+  outline: var(--md-sys-state-focus-indicator-thickness) solid
+    var(--md-sys-state-focus-indicator-color);
+  outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
+  /* or --md-sys-state-focus-indicator-inner-offset */
+}
+```
+
+The colour token is an alias of `--md-sys-color-secondary`, and CSS resolves an
+alias on the element that declares it, not on the one that uses it. m3you
+re-declares it on `:root` and on every `[data-theme]` scope, and
+`applyM3Theme(seed, element)` re-declares it on the element it themes, so rings
+follow those scopes. If you override `--md-sys-color-secondary` on any other
+wrapper, re-declare the alias next to it, or rings inside keep the outer
+Secondary:
+
+```css
+.brand-section {
+  --md-sys-color-secondary: #6b5778;
+  --md-sys-state-focus-indicator-color: var(--md-sys-color-secondary);
+}
+```
+
+The same goes for restyling the ring: set the token on `:root, [data-theme]`,
+not on `:root` alone, or a nested scope resets it to Secondary.
+
+## Spacing
+
+An 8px scale for your own layout glue, named in hundredths of the unit —
+`--md-sys-space-150` is 1.5 × 8px = 12px. The names match material-web, so a
+theme can share overrides with it:
+
+```
+--md-sys-space-unit                     8px
+--md-sys-space-0 … --md-sys-space-900   0 → 72px
+  (0, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 400, 450, 500, 600, 700, 800, 900)
+```
+
+## Scrollbar
+
+Add `md-scrollbar` to any scroll container for the Material scrollbar: a thumb
+in Outline at 70% opacity with no track fill, as in Compose's non-interactive
+scrollbar. It is opt-in, and the thumb stays visible — CSS has no way to fade it
+out after scrolling stops.
+
+The colour applies in every browser; the thickness does not. Chromium and
+Firefox draw their own thin scrollbar width (in Chromium, a 6px thumb in a 10px
+track). Only engines that lack `scrollbar-color` and still read
+`::-webkit-scrollbar` get Compose's exact 4px thumb, inset 2px from each end.
+
+```tsx
+<div className="md-scrollbar" style={{ overflowY: 'auto', maxHeight: 320 }}>…</div>
 ```

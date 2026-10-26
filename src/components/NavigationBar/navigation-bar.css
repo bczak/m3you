@@ -58,11 +58,11 @@
   background-color: transparent;
   color: var(--md-sys-color-on-surface-variant);
   outline: none;
-  transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
     border-radius: var(--md-sys-shape-corner-medium);
   }
 
@@ -120,7 +120,7 @@
   justify-content: center;
   border-radius: 16px;
   background-color: transparent;
-  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   isolation: isolate;
 }
 
@@ -130,7 +130,7 @@
   inset: 0;
   border-radius: inherit;
   background-color: var(--md-navigation-bar-indicator-color);
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
   transform: scaleX(0);
   z-index: 0;
   pointer-events: none;
@@ -147,7 +147,7 @@
   border-radius: inherit;
   background-color: var(--md-navigation-bar-state-layer-color);
   opacity: 0;
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   z-index: 1;
   pointer-events: none;
 }
@@ -203,7 +203,7 @@
   line-height: var(--md-sys-typescale-label-medium-line-height);
   font-weight: var(--md-sys-typescale-label-medium-weight);
   letter-spacing: var(--md-sys-typescale-label-medium-tracking);
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-hidden="true"] {
     height: 0;
@@ -218,7 +218,7 @@
   line-height: var(--md-sys-typescale-label-medium-line-height);
   font-weight: var(--md-sys-typescale-label-medium-weight);
   letter-spacing: var(--md-sys-typescale-label-medium-tracking);
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-hidden="true"] {
     width: 0;
@@ -232,7 +232,7 @@
   inset: 0;
   border-radius: 20px;
   background-color: var(--md-navigation-bar-indicator-color);
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
   transform: scaleX(0);
   z-index: 0;
   pointer-events: none;
@@ -249,7 +249,7 @@
   border-radius: 20px;
   background-color: var(--md-navigation-bar-state-layer-color);
   opacity: 0;
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   z-index: 1;
   pointer-events: none;
 }
@@ -299,5 +299,5 @@
 }
 
 .md-navigation-bar-item__icon-fade {
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }

@@ -11,7 +11,7 @@
   inset: 0;
   z-index: var(--md-sys-z-index-dialog);
   background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-ending-style],
   &[data-starting-style] {

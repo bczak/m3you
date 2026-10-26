@@ -21,8 +21,8 @@
   }
 
   &:has(input:focus-visible) {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: -2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
     border-radius: 50%;
   }
 }
@@ -36,7 +36,7 @@
   border-radius: 50%;
   overflow: hidden;
   color: var(--md-sys-color-on-surface);
-  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
 .md-radio[data-variant="primary"][data-selected="true"] .md-radio__state-layer {
@@ -60,7 +60,7 @@
   justify-content: center;
   border-radius: 50%;
   border: 2px solid;
-  transition: border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-selected="false"][data-variant="primary"] {
     border-color: var(--md-sys-color-on-surface-variant);
@@ -98,7 +98,7 @@
 /* ── Inner dot (10px when selected, scale(0) when not) ── */
 .md-radio__inner {
   border-radius: 50%;
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-variant="primary"] {
     background-color: var(--md-sys-color-primary);

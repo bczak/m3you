@@ -21,8 +21,8 @@
   }
 
   &:has(input:focus-visible) {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: -2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-inner-offset);
     border-radius: calc(32px / 2);
   }
 }
@@ -41,8 +41,8 @@
   overflow: hidden;
   color: var(--md-sys-color-on-surface);
   transition:
-    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized),
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-checked="false"] {
     transform: translateX(-10px);
@@ -78,8 +78,8 @@
   border: 2px solid transparent;
   border-radius: calc(32px / 2);
   transition:
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   /* Unchecked */
   &[data-checked="false"][data-variant="primary"] {
@@ -114,16 +114,16 @@
   justify-content: center;
   border-radius: 50%;
   transition:
-    width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized),
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    height var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   & svg {
     transition:
-      color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-      transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-      opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+      color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   }
 
   /* Unchecked, no icon */
@@ -251,8 +251,8 @@
   align-items: center;
   justify-content: center;
   transition:
-    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   & svg {
     width: 16px;

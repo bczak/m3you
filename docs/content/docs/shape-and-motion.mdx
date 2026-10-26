@@ -37,12 +37,14 @@ value is a real number that can interpolate.
 ## Spring motion
 
 Shape transitions use the Expressive spring easing, which settles rather than
-stopping dead:
+stopping dead. A corner reshaping in place is an *effect*, so it rides the
+critically damped effects spring; the overshooting *spatial* springs are kept
+for elements that move or resize through space:
 
 ```css
 transition: border-radius
-  var(--md-sys-motion-duration-short2)
-  var(--md-sys-motion-easing-spring-default-spatial);
+  var(--md-sys-motion-duration-spring-default-effects)
+  var(--md-sys-motion-easing-spring-default-effects);
 ```
 
 Try it on the [connected button group](/docs/components/connected-button-group),

@@ -183,12 +183,12 @@
   transition:
     border-radius var(--md-sys-motion-duration-spring-default-spatial)
     var(--md-sys-motion-easing-spring-default-spatial),
-    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &:focus-visible {
-    outline: 3px solid var(--md-sys-color-primary);
-    outline-offset: 3px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
   }
 
   &:disabled,

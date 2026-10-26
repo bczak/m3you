@@ -21,7 +21,7 @@
   max-block-size: var(--available-height);
   flex-direction: column;
   outline: none;
-  animation: menu-in var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  animation: menu-in var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   /* Default (non-grouped): single container */
   overflow-y: auto;
@@ -132,8 +132,8 @@
   line-height: var(--md-sys-typescale-body-medium-line-height);
   outline: none;
   transition:
-    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   & > .salty-ripple {
     inset: 0;

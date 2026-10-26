@@ -1059,6 +1059,89 @@ test('opening a bounded menu brings its selected item into the scrollport', asyn
   }
 });
 
+test('opening a menu without a selected item, or without scrollIntoView support, scrolls nothing', async () => {
+  const original = Element.prototype.scrollIntoView;
+  const scrollIntoView = vi.fn();
+  Object.defineProperty(Element.prototype, 'scrollIntoView', { configurable: true, value: scrollIntoView });
+  const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+  try {
+    const { unmount } = render(
+      <Menu defaultOpen>
+        <MenuTrigger>Open</MenuTrigger>
+        <MenuContent>
+          <MenuItem>Only</MenuItem>
+        </MenuContent>
+      </Menu>,
+    );
+    await nextFrame();
+    expect(scrollIntoView).not.toHaveBeenCalled();
+    unmount();
+
+    // A popup detached from the document before the frame fires is skipped.
+    render(
+      <Menu defaultOpen>
+        <MenuTrigger>Open</MenuTrigger>
+        <MenuContent data-testid="detached">
+          <MenuItem selected>Selected</MenuItem>
+        </MenuContent>
+      </Menu>,
+    );
+    const popup = screen.getByTestId('detached');
+    const parent = popup.parentElement as HTMLElement;
+    const nextSibling = popup.nextSibling;
+    popup.remove();
+    await nextFrame();
+    expect(scrollIntoView).not.toHaveBeenCalled();
+    parent.insertBefore(popup, nextSibling);
+    cleanup();
+
+    // An engine without Element.scrollIntoView must not throw.
+    Object.defineProperty(Element.prototype, 'scrollIntoView', { configurable: true, value: undefined });
+    render(
+      <Menu defaultOpen>
+        <MenuTrigger>Open</MenuTrigger>
+        <MenuContent>
+          <MenuItem selected>Selected</MenuItem>
+        </MenuContent>
+      </Menu>,
+    );
+    await nextFrame();
+    expect(screen.getByText('Selected')).toBeInTheDocument();
+  } finally {
+    if (original) {
+      Object.defineProperty(Element.prototype, 'scrollIntoView', { configurable: true, value: original });
+    } else {
+      Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
+    }
+  }
+});
+
+test('MenuContent forwards object and callback refs to the popup', async () => {
+  const objectRef = createRef<HTMLDivElement>();
+  const { unmount } = render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent ref={objectRef} data-testid="content">
+        <MenuItem>Item 1</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(objectRef.current).toBe(screen.getByTestId('content'));
+  unmount();
+
+  const callbackRef = vi.fn();
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent ref={callbackRef} data-testid="content">
+        <MenuItem>Item 1</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(callbackRef).toHaveBeenCalledWith(screen.getByTestId('content'));
+});
+
 // =============================================================================
 // Stacking — popups must clear dialogs
 // =============================================================================

@@ -23,13 +23,13 @@
   overflow: hidden;
   --_base-padding: 16px;
   transition:
-    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
   }
 
   &:disabled {
@@ -120,7 +120,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  transition: width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   width: 0;
   margin-right: 0;
 
@@ -130,7 +130,7 @@
   }
 
   & svg {
-    transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
     transform: scale(0);
   }
 
@@ -203,8 +203,8 @@
   transform-origin: right center;
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
   }
 }
 
@@ -226,7 +226,7 @@
   color: inherit;
   outline: none;
   overflow: hidden;
-  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &:focus-visible {
     outline: 1px solid var(--md-sys-color-primary);

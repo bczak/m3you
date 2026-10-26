@@ -373,7 +373,9 @@ test('NavigationBarItem has an accessible shipped focus-visible outline', async 
   const item = screen.getByRole('button', { name: 'Home' });
   expect(item).toHaveClass('md-navigation-bar-item');
   expect(navigationBarCss).toContain('&:focus-visible {');
-  expect(navigationBarCss).toContain('outline: 2px solid var(--md-sys-color-primary)');
+  expect(navigationBarCss).toContain(
+    'outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color)',
+  );
 });
 
 /* =============================================================================

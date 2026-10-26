@@ -13,23 +13,26 @@
   --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
   --md-sys-motion-easing-linear: linear;
 
-  /* ── Duration Scale ── */
-  --md-sys-motion-duration-extra-short1: 50ms;
-  --md-sys-motion-duration-extra-short2: 100ms;
-  --md-sys-motion-duration-extra-short3: 150ms;
-  --md-sys-motion-duration-extra-short4: 200ms;
-  --md-sys-motion-duration-short1: 250ms;
-  --md-sys-motion-duration-short2: 300ms;
-  --md-sys-motion-duration-short3: 350ms;
-  --md-sys-motion-duration-short4: 400ms;
-  --md-sys-motion-duration-medium1: 450ms;
-  --md-sys-motion-duration-medium2: 500ms;
-  --md-sys-motion-duration-medium3: 550ms;
-  --md-sys-motion-duration-medium4: 600ms;
-  --md-sys-motion-duration-long1: 700ms;
-  --md-sys-motion-duration-long2: 800ms;
-  --md-sys-motion-duration-long3: 900ms;
-  --md-sys-motion-duration-long4: 1000ms;
+  /* ── Duration Scale ──
+     Names and values follow md.sys.motion.duration (material-web token set
+     34.0.21, MDC-Android 34.0.0): short 50–200ms, medium 250–400ms,
+     long 450–600ms, extra-long 700–1000ms. */
+  --md-sys-motion-duration-short1: 50ms;
+  --md-sys-motion-duration-short2: 100ms;
+  --md-sys-motion-duration-short3: 150ms;
+  --md-sys-motion-duration-short4: 200ms;
+  --md-sys-motion-duration-medium1: 250ms;
+  --md-sys-motion-duration-medium2: 300ms;
+  --md-sys-motion-duration-medium3: 350ms;
+  --md-sys-motion-duration-medium4: 400ms;
+  --md-sys-motion-duration-long1: 450ms;
+  --md-sys-motion-duration-long2: 500ms;
+  --md-sys-motion-duration-long3: 550ms;
+  --md-sys-motion-duration-long4: 600ms;
+  --md-sys-motion-duration-extra-long1: 700ms;
+  --md-sys-motion-duration-extra-long2: 800ms;
+  --md-sys-motion-duration-extra-long3: 900ms;
+  --md-sys-motion-duration-extra-long4: 1000ms;
 
   /* ── M3 Expressive: Spring-to-Curve Web Conversions ──
      Official cubic-bezier approximations of spring physics.

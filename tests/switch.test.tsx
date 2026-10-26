@@ -226,7 +226,7 @@ test('has tokenized transitions for animations', async () => {
   const { track } = getTrackAndThumb();
   expect(track).toHaveClass('md-switch__track');
   expect(switchCss).toContain(
-    'background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard)',
+    'background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard)',
   );
 });
 
@@ -236,7 +236,9 @@ test('has a visible focus outline for keyboard navigation', async () => {
   const { label } = getTrackAndThumb();
   expect(label).toHaveClass('md-switch');
   expect(switchCss).toContain('&:has(input:focus-visible) {');
-  expect(switchCss).toContain('outline: 2px solid var(--md-sys-color-primary)');
+  expect(switchCss).toContain(
+    'outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color)',
+  );
 });
 
 // State layer tests

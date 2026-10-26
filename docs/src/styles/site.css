@@ -51,7 +51,7 @@
      swatch keeps the same footprint. Scaling the selected one made the row look
      like a set of mismatched sizes. */
   box-shadow: 0 0 0 0 var(--md-sys-color-on-surface);
-  transition: box-shadow var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+  transition: box-shadow var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-standard);
 }
 
 .m3-seed__swatch:hover {
@@ -142,8 +142,8 @@
   overflow: hidden;
   text-decoration: none;
   transition:
-    background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
-    translate var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-spring-default-spatial);
+    background-color var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-standard),
+    translate var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-spring-default-spatial);
 }
 
 .m3-gallery__card:hover {
@@ -403,7 +403,7 @@
   border-radius: 50%;
   border: 3px solid transparent;
   cursor: pointer;
-  transition: transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-spring-default-spatial);
+  transition: transform var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-spring-default-spatial);
 }
 
 .theme__swatch:hover {

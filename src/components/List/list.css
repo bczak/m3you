@@ -62,11 +62,11 @@
   color: var(--md-list-item-color);
   outline: none;
   transition:
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     border-radius var(--md-sys-motion-duration-spring-default-spatial)
     var(--md-sys-motion-easing-spring-default-spatial),
-    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-lines="2"] {
     min-block-size: 72px;
@@ -110,8 +110,8 @@
   &:focus-visible,
   &:has(.md-list-item__action:focus-visible),
   &:has(.md-list-item__trailing :focus-visible) {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
     z-index: 2;
   }
 }

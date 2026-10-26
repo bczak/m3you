@@ -208,7 +208,7 @@
 /* ── Chevron rotation ── */
 
 .md-split-button__trigger svg {
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 }
 
 .md-split-button[data-open] .md-split-button__trigger svg {

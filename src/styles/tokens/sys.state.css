@@ -16,4 +16,24 @@
   --md-sys-state-dragged-opacity: var(--md-sys-state-opacity-16);
   --md-sys-state-disabled-opacity: 0.38;
   --md-sys-state-disabled-container-opacity: var(--md-sys-state-opacity-10);
+
+  /* Focus indicator — md.sys.state.focus-indicator (material-web token set
+     34.0.21) and the kit's "Focus indicator" instances: a 3dp Secondary stroke
+     drawn 2dp outside the container, or flush inside it where an outer ring
+     would be clipped or collide with a neighbour. */
+  --md-sys-state-focus-indicator-thickness: 3px;
+  --md-sys-state-focus-indicator-outer-offset: 2px;
+  --md-sys-state-focus-indicator-inner-offset: -3px;
+}
+
+/* The focus colour is an alias of Secondary. A var() inside a custom property
+   resolves on the element that declares it, and descendants inherit the
+   result, so declared on :root alone every ring would keep the root palette's
+   Secondary inside a nested [data-theme] scope. Re-declare it wherever a scope
+   sets its own colour roles, the way --md-sys-color-surface-tint is;
+   applyM3Theme() does the same on the element it themes. */
+:root,
+[data-theme="light"],
+[data-theme="dark"] {
+  --md-sys-state-focus-indicator-color: var(--md-sys-color-secondary);
 }

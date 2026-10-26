@@ -42,7 +42,7 @@
       transparent 100%
     );
     transform: translateX(-100%);
-    animation: md-skeleton-wave var(--md-sys-motion-duration-long4) var(--md-sys-motion-easing-standard) infinite;
+    animation: md-skeleton-wave var(--md-sys-motion-duration-extra-long4) var(--md-sys-motion-easing-standard) infinite;
     will-change: transform;
   }
 }

@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ArchiveIcon, InboxIcon, MoreVerticalIcon, StarIcon, UserIcon } from 'lucide-react';
 import { useState } from 'react';
 import { expect, waitFor } from 'storybook/test';
-import { page as browserPage } from 'vitest/browser';
 
 import { IconButton } from '../src/components/IconButton/icon-button';
 import { List, ListDivider, ListItem, ListItemAccordion, ListItemSwipe } from '../src/components/List/list';
@@ -155,6 +154,15 @@ export const FullRowHover: Story = {
     </List>
   ),
   play: async ({ canvas, step }) => {
+    // `vitest/browser` throws on evaluation outside Vitest's browser mode, so a
+    // top-level import blanks every story in this file in plain Storybook. Load
+    // it here instead: real-pointer :hover can only be driven under Vitest.
+    const browserPage = await import('vitest/browser').then(
+      (module) => module.page,
+      () => null,
+    );
+    if (!browserPage) return;
+
     const row = canvas.getByRole('option', { name: /Comfortable Balanced spacing/ });
     const surface = row.querySelector<HTMLElement>('.md-ripple-hover-layer__surface') as HTMLElement;
     const targets = [

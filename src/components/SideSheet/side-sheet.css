@@ -10,7 +10,7 @@
   inset: 0;
   z-index: var(--md-sys-z-index-dialog);
   background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
-  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
 
   &[data-ending-style],
   &[data-starting-style] {
@@ -137,7 +137,7 @@
 /* Base UI drawer transforms live with the component so direct imports work. */
 [data-slot="side-sheet-content"][data-swipe-direction="right"] {
   transform: translateX(var(--drawer-swipe-movement-x, 0px));
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
 }
 
 [data-slot="side-sheet-content"][data-swipe-direction="right"]:is([data-starting-style], [data-ending-style]) {
@@ -146,7 +146,7 @@
 
 [data-slot="side-sheet-content"][data-swipe-direction="left"] {
   transform: translateX(var(--drawer-swipe-movement-x, 0px));
-  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
 }
 
 [data-slot="side-sheet-content"][data-swipe-direction="left"]:is([data-starting-style], [data-ending-style]) {

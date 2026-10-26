@@ -46,10 +46,10 @@
   cursor: pointer;
   box-shadow: var(--md-sys-elevation-3);
   transition:
-    color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
-    background-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
-    border-color var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
-    box-shadow var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
     border-radius var(--md-sys-motion-duration-spring-default-spatial)
     var(--md-sys-motion-easing-spring-default-spatial),
     width var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial),
@@ -59,8 +59,8 @@
     var(--md-sys-motion-easing-spring-default-spatial);
 
   &:focus-visible {
-    outline: 2px solid var(--md-sys-color-primary);
-    outline-offset: 2px;
+    outline: var(--md-sys-state-focus-indicator-thickness) solid var(--md-sys-state-focus-indicator-color);
+    outline-offset: var(--md-sys-state-focus-indicator-outer-offset);
   }
 
   &:disabled,
@@ -265,8 +265,8 @@
   opacity: 0;
   transform: translateX(calc(var(--_extendable-fab-gap) * -0.5));
   transition:
-    opacity var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard),
-    transform var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-standard);
+    opacity var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
 }
 
 .md-extendable-fab[data-extended] .md-extendable-fab__label {

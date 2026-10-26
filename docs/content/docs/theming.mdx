@@ -61,6 +61,25 @@ Scope the override to change only part of a page:
 Because components read the token rather than a hard-coded colour, everything
 inside that section follows.
 
+### Nested `data-theme` sections
+
+A `data-theme="light"` or `data-theme="dark"` element sets every colour role
+again, so a direct `--md-sys-color-*` override on an ancestor does not reach
+inside it. Those scopes read seed variables instead, one pair per role:
+
+```css
+:root {
+  --md-seed-color-primary-light: #4f378a;
+  --md-seed-color-primary-dark: #cfbcff;
+  /* …one pair for every role */
+}
+```
+
+`applyM3Theme` publishes these for you, and the CSS the
+[theme playground](/theme) copies includes them, so either way a palette
+carries into nested light and dark sections. If you hand-write overrides and
+also nest `data-theme` scopes, set the seed variables as well as the roles.
+
 ## Per-component tokens
 
 Components also expose their own `--md-{component}-*` properties for cases where

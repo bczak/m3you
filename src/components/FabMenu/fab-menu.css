@@ -23,13 +23,13 @@
 
   &[data-state="open"] {
     opacity: 1;
-    transition: opacity var(--md-sys-motion-duration-short1) var(--md-sys-motion-easing-emphasized-decelerate);
+    transition: opacity var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized-decelerate);
   }
 
   &[data-state="closed"] {
     pointer-events: none;
     opacity: 0;
-    transition: opacity var(--md-sys-motion-duration-extra-short4) var(--md-sys-motion-easing-emphasized-accelerate);
+    transition: opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized-accelerate);
   }
 }
 
@@ -49,11 +49,11 @@
 .md-button.md-extended-fab.md-fab-menu-trigger {
   width: var(--_natural-width, auto);
   transition:
-    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     border-radius var(--md-sys-motion-duration-spring-default-spatial)
     var(--md-sys-motion-easing-spring-default-spatial),
-    box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
     width var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial),
     padding var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial),
     gap var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial);
@@ -92,13 +92,13 @@
     scale: 1;
     opacity: 1;
     transition:
-      transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized-decelerate),
+      transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized-decelerate),
       scale var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-fast-spatial),
-      opacity var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-emphasized-decelerate),
-      color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-      background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+      opacity var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized-decelerate),
+      color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+      background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
       border-radius var(--md-sys-motion-duration-spring-fast-spatial) var(--md-sys-motion-easing-spring-fast-spatial),
-      box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+      box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
   }
 
   &[data-state="closed"] {
@@ -107,9 +107,9 @@
     scale: 0.8;
     opacity: 0;
     transition:
-      transform var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-emphasized-accelerate),
-      scale var(--md-sys-motion-duration-extra-short3) var(--md-sys-motion-easing-emphasized-accelerate),
-      opacity var(--md-sys-motion-duration-extra-short2) var(--md-sys-motion-easing-emphasized-accelerate);
+      transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized-accelerate),
+      scale var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized-accelerate),
+      opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized-accelerate);
   }
 }
 

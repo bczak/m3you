@@ -14,7 +14,7 @@
   background-color: var(--md-sys-color-inverse-surface);
   color: var(--md-sys-color-inverse-on-surface);
   box-shadow: var(--md-sys-elevation-3);
-  animation: snackbar-slide-up var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard-decelerate);
+  animation: snackbar-slide-up var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard-decelerate);
 
   &[data-layout="singleLine"] {
     min-height: 48px;

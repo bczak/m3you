@@ -132,4 +132,9 @@ export function applyM3Theme(seedHex: string, element?: HTMLElement): void {
       role === 'surface-tint' ? 'var(--md-sys-color-primary)' : `light-dark(var(${lightName}), var(${darkName}))`,
     );
   }
+
+  // The focus indicator aliases Secondary, and a custom property resolves its
+  // var() where it is declared. Without re-declaring it here, focus rings inside
+  // `el` would keep the Secondary inherited from the nearest ancestor scope.
+  el.style.setProperty('--md-sys-state-focus-indicator-color', 'var(--md-sys-color-secondary)');
 }
