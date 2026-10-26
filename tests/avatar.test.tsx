@@ -1,9 +1,14 @@
+import { readFileSync } from 'node:fs';
+
 import { cleanup, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, expect, test } from 'vitest';
 
 import { Avatar } from '../src/components/Avatar/avatar';
 import { generateCustomColor } from '../src/lib/color';
+
+const avatarCss = readFileSync('src/components/Avatar/avatar.css', 'utf8');
+const typescaleCss = readFileSync('src/styles/tokens/sys.typescale.css', 'utf8');
 
 afterEach(() => {
   cleanup();
@@ -66,4 +71,26 @@ test('the image variant is coloured too — a transparent portrait sits on the c
 test('a colour that is not a hex is ignored rather than thrown', () => {
   render(<Avatar variant="monogram" data-testid="avatar" content="AJ" sourceColor="rebeccapurple" />);
   expect(screen.getByTestId('avatar').getAttribute('style')).toBeNull();
+});
+
+test('sets the monogram at the kit size: 16/24 Medium with 0.1 tracking', () => {
+  // Title Medium's size, line height and weight; Label Large's 0.1px tracking
+  // because Title Medium's is 0.15px and the kit initial uses 0.1. Each value
+  // sits behind a component token, and its system fallback is resolved here so
+  // the test checks what renders rather than which token name is written.
+  const root = avatarCss.match(/\.md-avatar \{[^}]*\}/)?.[0] ?? '';
+  const resolve = (property: string, componentToken: string) => {
+    const value = root.match(new RegExp(`\\n\\s*${property}: ([^;]+);`))?.[1] ?? '';
+    const fallback = value.match(
+      new RegExp(`^var\\(${componentToken}, var\\((--md-sys-typescale-[\\w-]+)\\)\\)$`),
+    )?.[1];
+    expect(fallback, `${property} is overridable through ${componentToken}`).toBeDefined();
+    return typescaleCss.match(new RegExp(`${fallback}: ([^;]+);`))?.[1];
+  };
+
+  expect(resolve('font-family', '--md-avatar-label-text-font')).toBe('var(--md-ref-typeface-plain)');
+  expect(resolve('font-size', '--md-avatar-label-text-size')).toBe('16px');
+  expect(resolve('line-height', '--md-avatar-label-text-line-height')).toBe('24px');
+  expect(resolve('font-weight', '--md-avatar-label-text-weight')).toBe('500');
+  expect(resolve('letter-spacing', '--md-avatar-label-text-tracking')).toBe('0.1px');
 });
