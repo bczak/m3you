@@ -4,6 +4,7 @@ import {
   SideSheetBody,
   SideSheetClose,
   SideSheetContent,
+  SideSheetFooter,
   SideSheetHeader,
   SideSheetTrigger,
 } from 'm3you';
@@ -15,11 +16,14 @@ export default function SideSheetBasic() {
       <SideSheetContent>
         <SideSheetHeader>Filters</SideSheetHeader>
         <SideSheetBody>
-          <p style={{ padding: '0 1.5rem', opacity: 0.75 }}>
+          <p style={{ margin: 0, color: 'var(--md-sys-color-on-surface-variant)' }}>
             Side sheets hold supporting content beside the main view, and can stay open on wide screens.
           </p>
         </SideSheetBody>
-        <SideSheetClose render={<Button variant="text">Close</Button>} />
+        <SideSheetFooter>
+          <SideSheetClose render={<Button variant="filled">Apply</Button>} />
+          <SideSheetClose render={<Button variant="text">Cancel</Button>} />
+        </SideSheetFooter>
       </SideSheetContent>
     </SideSheet>
   );
