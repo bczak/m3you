@@ -2,14 +2,18 @@
    Circular Progress — M3 Expressive
    Two appearance variants: `flat` (classic ring) and `wavy` (sine-wave arc
    with flat inactive track + gap, per Material 3 Expressive).
-   The box is sized inline by the component: it grows with the stroke so the
-   ring's centre-line stays fixed (kit: Flat 40 → 44, Wave 48 → 52 at 8 dp).
+   The component computes the box and sets it as --_size: it grows with the
+   stroke so the ring's centre-line stays fixed (kit: Flat 40 → 44, Wave
+   48 → 52 at 8 dp). Applying it here rather than inline leaves a consumer's
+   stylesheet free to resize the root; the svg and its ring scale to fit.
    ============================================================================= */
 
 .md-circular-progress {
   --_color: var(--md-circular-progress-color, var(--md-sys-color-primary));
   --_track-color: var(--md-circular-progress-track-color, var(--md-sys-color-secondary-container));
 
+  inline-size: var(--_size);
+  block-size: var(--_size);
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;

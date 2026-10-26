@@ -81,6 +81,15 @@ const computeWavyIndeterminateSweep = (
   return maxSweep - (maxSweep - minSweep) * smoothStep((u - phase * 3) / phase);
 };
 
+/**
+ * The root's style: the box the component computes from `size` and the stroke, handed to the stylesheet as `--_size`
+ * rather than set as an inline width and height. The `.md-circular-progress` rule applies it at ordinary specificity,
+ * so a consumer's stylesheet can still resize the root, and so can `style`. Either way the svg fills the box and its
+ * viewBox scales the whole ring with it.
+ */
+const boxStyle = (diameter: number, style: React.CSSProperties | undefined) =>
+  ({ '--_size': `${diameter}px`, ...style }) as React.CSSProperties;
+
 const CircularProgress = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<CircularProgressProps>>(
   (
     {
@@ -192,7 +201,6 @@ const flatIndeterminateVars = (circumference: number, separation: number): React
 
 const FlatCircularProgress = ({ rootProps, clampedValue, indeterminate, strokeWidth, size }: FlatProps) => {
   const { ref, style, ...rest } = rootProps;
-  // The box comes from `size` and the stroke, but a consumer's width/height win (as on the wavy variant).
   const diameter = FLAT_DIAMETER[size] + strokeWidth - REFERENCE_STROKE;
   const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -236,7 +244,7 @@ const FlatCircularProgress = ({ rootProps, clampedValue, indeterminate, strokeWi
   };
 
   return (
-    <div {...rest} ref={ref} style={{ width: diameter, height: diameter, ...style }}>
+    <div {...rest} ref={ref} style={boxStyle(diameter, style)}>
       <svg
         aria-hidden="true"
         viewBox={`0 0 ${diameter} ${diameter}`}
@@ -365,9 +373,7 @@ const WavyCircularProgress = ({ rootProps, clampedValue, indeterminate, size, st
   const geometry = wavyGeometry(size, strokeWidth);
   const { diameter, geometryDiameter } = geometry;
   const viewBox = `0 0 ${diameter} ${diameter}`;
-  // The component sizes the box from `size` and the stroke, but a consumer's width/height win, as on the flat
-  // variant — the svg scales to fill whatever box results.
-  const rootStyle = { width: diameter, height: diameter, ...style };
+  const rootStyle = boxStyle(diameter, style);
 
   // Animate the indeterminate sweep in a requestAnimationFrame loop — the
   // oscillation-with-dwell curve cannot be expressed as a CSS keyframe on a

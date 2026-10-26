@@ -43,9 +43,12 @@ the same rule (box = 4dp size + stroke − 4).
 
 <Example name="circular-progress/thickness" title="4dp and 8dp, flat and wavy" />
 
-A `width` and `height` in `style` override the computed box on both variants,
-and the whole ring scales to fill it: stroke, wave and gap together. Use
-`size` and `thickness` to stay on the kit's measurements.
+A `width` and `height` in `style`, or a stylesheet rule on your own
+`className`, override the computed box on both variants, and the whole ring
+scales to fill it: stroke, wave and gap together. The component applies its box
+with a single-class rule, so yours wins when it loads after `m3you/styles.css`
+or is more specific. Use `size` and `thickness` to stay on the kit's
+measurements.
 
 ## Props
 

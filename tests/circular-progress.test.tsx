@@ -51,6 +51,9 @@ const pointsOf = (d: string): Point[] => {
 
 const pathPoints = (element: Element | null): Point[] => pointsOf(element?.getAttribute('d') ?? '');
 
+/** The box the component computes, which it hands to the stylesheet as `--_size` rather than an inline size. */
+const boxOf = (root: HTMLElement) => root.style.getPropertyValue('--_size');
+
 /** Start point, radius and end point of a single-arc path `M x y A r r 0 large 0 x y`. */
 const arcOf = (element: Element | null) => {
   const [x0, y0, radius, , , , , x1, y1] = numbersOf(element?.getAttribute('d') ?? '');
@@ -318,8 +321,7 @@ test.each([
   ['lg', 8, 52, 22],
 ] as const)('flat %s at %ddp: %dpx box around a fixed centre-line radius of %d', (size, thickness, box, radius) => {
   const { container } = render(<CircularProgress size={size} thickness={thickness} value={40} />);
-  const root = screen.getByRole('progressbar');
-  expect(root).toHaveStyle({ width: `${box}px`, height: `${box}px` });
+  expect(boxOf(screen.getByRole('progressbar'))).toBe(`${box}px`);
   expect(container.querySelector('svg')).toHaveAttribute('viewBox', `0 0 ${box} ${box}`);
   for (const circle of container.querySelectorAll('circle')) {
     expect(circle).toHaveAttribute('r', String(radius));
@@ -329,11 +331,27 @@ test.each([
 
 test('flat: the legacy strokeWidth sizes the box the same way, and a consumer style still wins', async () => {
   const { rerender } = render(<CircularProgress strokeWidth={6} value={40} />);
-  expect(screen.getByRole('progressbar')).toHaveStyle({ width: '42px', height: '42px' });
+  expect(boxOf(screen.getByRole('progressbar'))).toBe('42px');
   expect(screen.getByRole('progressbar')).toHaveAttribute('data-thickness', '6');
 
   rerender(<CircularProgress value={40} style={{ width: 80, height: 80 }} />);
   expect(screen.getByRole('progressbar')).toHaveStyle({ width: '80px', height: '80px' });
+});
+
+// The box used to be an inline width and height, which no stylesheet rule can beat: a consumer's class sizing the
+// flat indicator to 20px rendered it at 40px. The stylesheet now applies `--_size` at ordinary specificity (the
+// Sizing story checks a consumer rule wins in Chromium; happy-dom loads no CSS).
+test.each([
+  ['flat', 'determinate'],
+  ['flat', 'indeterminate'],
+  ['wavy', 'determinate'],
+  ['wavy', 'indeterminate'],
+] as const)('%s %s: the box is left to the stylesheet, so a consumer rule can resize it', (variant, type) => {
+  render(<CircularProgress variant={variant} type={type} value={40} />);
+  const root = screen.getByRole('progressbar');
+  expect(boxOf(root)).toBe(variant === 'flat' ? '40px' : '48px');
+  expect(root.style.width).toBe('');
+  expect(root.style.height).toBe('');
 });
 
 /** The three flat indeterminate keyframes, read back from the custom properties the component sets on the svg. */
@@ -415,7 +433,7 @@ test.each([
   [8, 52],
 ] as const)('wavy at %ddp: %dpx box, track on the wave crest (r = 22), amplitude fixed at 1.6', (thickness, box) => {
   const { container, rerender } = render(<CircularProgress variant="wavy" thickness={thickness} value={0} />);
-  expect(screen.getByRole('progressbar')).toHaveStyle({ width: `${box}px`, height: `${box}px` });
+  expect(boxOf(screen.getByRole('progressbar'))).toBe(`${box}px`);
   expect(container.querySelector('svg')).toHaveAttribute('viewBox', `0 0 ${box} ${box}`);
   // Kit: Wave Progress=0 track is 48.16 / 52.17 — centre-line r ≈ 22.08 for both thicknesses.
   expect(arcOf(container.querySelector('.md-circular-progress__wavy-track')).radius).toBeCloseTo(22);
