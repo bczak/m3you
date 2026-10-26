@@ -1,7 +1,11 @@
 /* =============================================================================
    Toolbar — M3 Expressive
    Docked: 64dp container, 16dp edge insets, 32dp default icon spacing
-   Floating: pill surface, 8dp padding, 4dp default item spacing
+   Floating: 64dp pill. The kit lays actions into 48dp slots with 8dp main-axis
+   padding, 12dp cross-axis padding and a 4dp gap. A 40dp icon button sits 4dp
+   inside its slot, so 12dp shows from the edges and between icons. A text
+   button fills its slot's length, so it sits 8dp from the edge and 4dp from a
+   text neighbour.
    ============================================================================= */
 
 .md-toolbar {
@@ -29,15 +33,39 @@
   min-block-size: 64px;
 }
 
+/* The container carries the kit's padding and slot gap: 8dp on the main axis,
+   12dp on the cross axis (12 + 40 + 12 = 64) and 4dp between slots. */
 .md-toolbar[data-type="floating"] {
   --_toolbar-gap: 4px;
   --_toolbar-padding-inline: 8px;
-  --_toolbar-padding-block: 8px;
+  --_toolbar-padding-block: 12px;
 
   width: fit-content;
   min-block-size: 64px;
   border-radius: 32px;
   box-shadow: var(--md-sys-elevation-3);
+}
+
+.md-toolbar[data-type="floating"][data-layout="vertical"] {
+  --_toolbar-padding-inline: 12px;
+  --_toolbar-padding-block: 8px;
+}
+
+/* Our actions take their visible box in the layout (the 48dp touch target is
+   an overlay), so the slot's inset is added as a margin on the main axis. A
+   40dp icon button gets 4dp each side, so three of them span 168dp with 12dp
+   showing everywhere. A text button's slot is as wide as the button but 48dp
+   tall, so it only gets the inset in a vertical toolbar. The gap and padding
+   props keep the kit's meaning: the gap between slots and the container
+   padding. Actions inside the leading and trailing sections get the same. */
+.md-toolbar[data-type="floating"][data-layout="horizontal"] > .md-icon-button,
+.md-toolbar[data-type="floating"][data-layout="horizontal"] > .md-toolbar__section > .md-icon-button {
+  margin-inline: 4px;
+}
+
+.md-toolbar[data-type="floating"][data-layout="vertical"] > :is(.md-icon-button, .md-button),
+.md-toolbar[data-type="floating"][data-layout="vertical"] > .md-toolbar__section > :is(.md-icon-button, .md-button) {
+  margin-block: 4px;
 }
 
 .md-toolbar[data-layout="vertical"] {
@@ -54,38 +82,94 @@
   color: var(--md-sys-color-on-primary-container);
 }
 
-.md-toolbar[data-color="vibrant"] .md-icon-button[data-variant="standard"],
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="text"],
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="outlined"] {
+/* ── Actions ──
+   These rules recolour IconButton and Button to the toolbar's building blocks:
+   the kit's toolbar icon button is a standard IconButton and its toolbar button
+   is a text Button. Each rule leaves out disabled actions, so the components'
+   own 38% on-surface treatment still applies. A selected outlined action is
+   left out as well: it keeps its inverse-surface container and the matching
+   inverse-on-surface content. The exclusions sit in :where() so they add no
+   specificity, and the rules rank against the components as they did before.
+   The [data-selected="false"] line matches IconButton's reset for an unselected
+   coloured standard toggle, which would otherwise outrank this rule and paint
+   on-surface-variant onto the primary container. */
+.md-toolbar[data-color="vibrant"] .md-icon-button[data-variant="standard"]:where(:not(:disabled, [data-disabled])),
+.md-toolbar[data-color="vibrant"]
+  .md-icon-button[data-variant="standard"][data-selected="false"]:where(:not(:disabled, [data-disabled])),
+.md-toolbar[data-color="vibrant"] .md-button[data-variant="text"]:where(:not(:disabled, [data-disabled])),
+.md-toolbar[data-color="vibrant"]
+  .md-icon-button[data-variant="outlined"]:where(:not([data-selected="true"], :disabled, [data-disabled])),
+.md-toolbar[data-color="vibrant"]
+  .md-button[data-variant="outlined"]:where(:not([data-selected="true"], :disabled, [data-disabled])) {
   color: inherit;
 }
 
-.md-toolbar[data-color="vibrant"] .md-icon-button[data-variant="outlined"] {
-  color: inherit;
+.md-toolbar[data-color="vibrant"]
+  .md-icon-button[data-variant="outlined"]:where(:not([data-selected="true"], :disabled, [data-disabled])),
+.md-toolbar[data-color="vibrant"]
+  .md-button[data-variant="outlined"][data-size="xs"]:where(:not([data-selected="true"], :disabled, [data-disabled])),
+.md-toolbar[data-color="vibrant"]
+  .md-button[data-variant="outlined"][data-size="sm"]:where(:not([data-selected="true"], :disabled, [data-disabled])),
+.md-toolbar[data-color="vibrant"]
+  .md-button[data-variant="outlined"][data-size="md"]:where(:not([data-selected="true"], :disabled, [data-disabled])) {
   border-color: color-mix(in srgb, currentColor 32%, transparent);
 }
 
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="outlined"][data-size="xs"],
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="outlined"][data-size="sm"],
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="outlined"][data-size="md"] {
-  border-color: color-mix(in srgb, currentColor 32%, transparent);
-}
-
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="outlined"][data-size="lg"],
-.md-toolbar[data-color="vibrant"] .md-button[data-variant="outlined"][data-size="xl"] {
+.md-toolbar[data-color="vibrant"]
+  .md-button[data-variant="outlined"][data-size="lg"]:where(:not([data-selected="true"], :disabled, [data-disabled])),
+.md-toolbar[data-color="vibrant"]
+  .md-button[data-variant="outlined"][data-size="xl"]:where(:not([data-selected="true"], :disabled, [data-disabled])) {
   border-color: color-mix(in srgb, currentColor 40%, transparent);
 }
 
-.md-toolbar[data-color="standard"] :is(.md-icon-button, .md-button)[data-selected="true"][data-variant="standard"],
-.md-toolbar[data-color="standard"] :is(.md-icon-button, .md-button)[data-selected="true"][data-variant="text"] {
+.md-toolbar[data-color="standard"]
+  .md-icon-button[data-variant="standard"][data-selected="true"]:where(:not(:disabled, [data-disabled])),
+.md-toolbar[data-color="standard"]
+  .md-button[data-variant="text"][data-selected="true"]:where(:not(:disabled, [data-disabled])) {
   background-color: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
 }
 
 .md-toolbar[data-color="vibrant"]
-  :is(.md-icon-button, .md-button)[data-selected="true"]:is([data-variant="standard"], [data-variant="text"]) {
+  .md-icon-button[data-variant="standard"][data-selected="true"]:where(:not(:disabled, [data-disabled])),
+.md-toolbar[data-color="vibrant"]
+  .md-button[data-variant="text"][data-selected="true"]:where(:not(:disabled, [data-disabled])) {
   background-color: var(--md-sys-color-surface-container);
   color: var(--md-sys-color-on-surface);
+}
+
+/* A disabled toggle, selected or not, sits on the shared 10% on-surface
+   container with 38% content in both toolbar colours. A standalone standard
+   IconButton has no container when disabled, so the toolbar adds it. */
+.md-toolbar .md-icon-button[data-variant="standard"][data-selected]:is(:disabled, [data-disabled]),
+.md-toolbar .md-button[data-variant="text"][data-selected]:is(:disabled, [data-disabled]) {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+    transparent
+  );
+  color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-opacity) * 100%),
+    transparent
+  );
+}
+
+/* A selected toolbar action stays fully round instead of taking the
+   component's selected corner. Only a press changes its shape, so the
+   pressed morph is left to apply. */
+.md-toolbar
+.md-icon-button[data-variant="standard"][data-selected="true"][data-shape="round"]:where(:not([data-morph]:active)),
+.md-toolbar .md-button[data-variant="text"][data-selected="true"][data-shape="round"]:where(:not([data-morph]:active)) {
+  border-radius: calc(var(--_height) / 2);
+}
+
+/* A hovered toolbar text button lifts to level 1, selected or not. The shadow
+   drops again while it is pressed. */
+@media (hover: hover) {
+  .md-toolbar .md-button[data-variant="text"]:not(:disabled, [data-disabled]):hover:not(:active) {
+    box-shadow: var(--md-sys-elevation-1);
+  }
 }
 
 .md-toolbar[data-layout="horizontal"] {

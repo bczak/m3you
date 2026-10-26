@@ -30,6 +30,17 @@ Give it an `aria-label` that names the setting, not the action.
 
 <Example name="toggle-icon-button/basic" title="Across variants" />
 
+## Colour
+
+`color` swaps the M3 role family. A `standard` toggle has no container or
+outline, so the colour marks the selected state only: unselected, it keeps the
+neutral on-surface-variant icon, and selecting it brings the colour in.
+Otherwise a coloured standard toggle would look the same either way. An
+`outlined` toggle keeps the colour-role icon inside its outline when unselected
+(as an outlined `Button` does), and selecting it fills a colour-role container.
+
+<Example name="toggle-icon-button/colour" title="Coloured toggles, unselected and selected" />
+
 ## Props
 
 <PropsTable of="ToggleIconButton" extends="<button>" />

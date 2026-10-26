@@ -179,7 +179,7 @@
     border-radius: var(--md-sys-shape-corner-extra-large);
   }
 
-  /* ── Morph: pressed shape change ── */
+  /* ── Morph: pressed corners (on by default; `morph={false}` opts out) ── */
   &[data-morph][data-shape="round"][data-size="xs"]:active {
     border-radius: var(--md-sys-shape-corner-small);
   }
@@ -360,6 +360,16 @@
     color: var(--_icon-button-color);
   }
 
+  /* An unselected standard toggle stays neutral, as the filled reset above
+     does: standard has no container or outline, so the icon colour is the only
+     thing that shows selection at rest. Without this a coloured standard toggle
+     looks the same selected or not. Outlined is left out on purpose: its
+     selected state gets a coloured container (below), so a tinted unselected
+     icon is still distinguishable, and that matches Button's outlined/text. */
+  &[data-color]:not(:disabled)[data-selected="false"][data-variant="standard"] {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
   &[data-color]:not(:disabled)[data-selected="true"][data-variant="outlined"] {
     background-color: var(--_icon-button-color);
     color: var(--_icon-button-on-color);
@@ -429,7 +439,15 @@
     border-color: var(--md-sys-color-outline-variant);
   }
 
+  /* A selected outlined toggle swaps its outline for a container, so its
+     disabled form keeps that container at the shared 10% on-surface fill
+     (beating the transparent standard/outlined rule above). */
   &:disabled[data-selected="true"][data-variant="outlined"] {
+    background-color: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface) calc(var(--md-sys-state-disabled-container-opacity) * 100%),
+      transparent
+    );
     border-color: transparent;
   }
 }
