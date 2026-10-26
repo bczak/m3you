@@ -20,7 +20,7 @@ export default function FabMenuPerItemColor() {
         { icon: <Repeat size={20} aria-hidden="true" />, label: 'Transfer' },
       ]}
     >
-      <FAB variant="filled" aria-label="Record a transaction">
+      <FAB aria-label="Record a transaction">
         <Plus size={24} aria-hidden="true" />
       </FAB>
     </FABMenu>

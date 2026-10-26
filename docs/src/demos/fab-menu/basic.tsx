@@ -10,7 +10,7 @@ export default function FabMenuBasic() {
         { icon: <Mic size={20} aria-hidden="true" />, label: 'Audio' },
       ]}
     >
-      <FAB variant="filled" aria-label="Create">
+      <FAB aria-label="Create">
         <Plus size={24} aria-hidden="true" />
       </FAB>
     </FABMenu>

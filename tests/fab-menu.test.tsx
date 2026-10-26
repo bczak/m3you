@@ -1,9 +1,38 @@
-import { cleanup, fireEvent, render } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, test, vi } from 'vitest';
 import { ExtendedFAB } from '../src/components/ExtendedFab/extended-fab';
+import { FAB } from '../src/components/Fab/fab';
 import { FABMenu, type FABMenuItemOption } from '../src/components/FabMenu/fab-menu';
 
 afterEach(cleanup);
+
+// happy-dom loads no stylesheets, so the CSS contract is read as text. Comments
+// are stripped and whitespace collapsed so selectors match however the
+// formatter wraps them.
+const fabMenuCss = readFileSync('src/components/FabMenu/fab-menu.css', 'utf8')
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .replace(/\s+/g, ' ');
+
+/** Body of the top-level rule whose selector is exactly `selector`, nested rules included. */
+function ruleBody(selector: string): string {
+  const head = `${selector} {`;
+  const at = fabMenuCss.indexOf(head);
+  expect(at, `missing rule: ${selector}`).toBeGreaterThan(-1);
+  let depth = 1;
+  let end = at + head.length;
+  while (depth > 0) {
+    const char = fabMenuCss[end++];
+    if (char === '{') depth++;
+    if (char === '}') depth--;
+  }
+  return fabMenuCss.slice(at + head.length, end - 1).trim();
+}
+
+const OPEN_FAB = '.md-icon-button.md-fab.md-fab-menu-trigger[data-menu-state="open"]';
+const OPEN_EXTENDED_FAB = '.md-button.md-extended-fab.md-fab-menu-trigger[data-menu-state="open"]';
+const OPEN_TRIGGER =
+  ':is(.md-icon-button.md-fab, .md-button.md-extended-fab).md-fab-menu-trigger[data-menu-state="open"]:not(:disabled)';
 
 const makeItems = (overrides: Partial<FABMenuItemOption>[] = []): FABMenuItemOption[] => {
   const base: FABMenuItemOption[] = [
@@ -39,6 +68,19 @@ test('renders closed by default with hidden content and no scrim', async () => {
   const trigger = container.querySelector('.md-fab-menu-trigger') as HTMLElement;
   expect(trigger).toHaveAttribute('aria-expanded', 'false');
   expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+});
+
+test('menu items opt out of the Button press morph, keeping the kit pill when pressed', () => {
+  const { container } = render(
+    <FABMenu items={makeItems()} open>
+      <button type="button">Add</button>
+    </FABMenu>,
+  );
+
+  for (const item of menuItems(container)) {
+    expect(item).toHaveClass('md-button');
+    expect(item).not.toHaveAttribute('data-morph');
+  }
 });
 
 test('clicking the trigger opens an uncontrolled menu and fires callbacks', async () => {
@@ -322,6 +364,55 @@ test('ExtendedFAB trigger measures, then morphs to icon/label on open and back o
   expect(onOpenChange).toHaveBeenLastCalledWith(false);
 });
 
+// The open ExtendedFAB hides its label and shows a decorative close icon, so the
+// label has to move into aria-label or the button is announced unnamed.
+test('an open ExtendedFAB trigger keeps its label as its accessible name', () => {
+  const { container } = render(
+    <FABMenu items={makeItems()}>
+      <ExtendedFAB label="Create" icon={<span aria-hidden="true">+</span>} />
+    </FABMenu>,
+  );
+
+  const trigger = container.querySelector('.md-fab-menu-trigger') as HTMLElement;
+  // Closed: the visible label names it, no aria-label needed.
+  expect(trigger).not.toHaveAttribute('aria-label');
+  expect(screen.getByRole('button', { name: 'Create' })).toBe(trigger);
+
+  fireEvent.click(trigger);
+  expect(trigger).toHaveTextContent('');
+  expect(trigger).toHaveAttribute('aria-label', 'Create');
+  expect(screen.getByRole('button', { name: 'Create', expanded: true })).toBe(trigger);
+});
+
+// Kit: the close button keeps r=28 when pressed, so the open ExtendedFAB drops
+// Button's press morph; the closed one keeps whatever the ExtendedFAB sets. The
+// trigger asks for `morph` explicitly so this does not depend on ExtendedFAB's
+// own default.
+test('an open ExtendedFAB trigger opts out of the press morph', () => {
+  const { container } = render(
+    <FABMenu items={makeItems()}>
+      <ExtendedFAB label="Create" icon={<span>+</span>} morph />
+    </FABMenu>,
+  );
+
+  const trigger = container.querySelector('.md-fab-menu-trigger') as HTMLElement;
+  expect(trigger).toHaveAttribute('data-morph', 'true');
+  fireEvent.click(trigger);
+  expect(trigger).not.toHaveAttribute('data-morph');
+  fireEvent.click(trigger);
+  expect(trigger).toHaveAttribute('data-morph', 'true');
+});
+
+test("an open ExtendedFAB trigger prefers the trigger's own aria-label over its label", () => {
+  render(
+    <FABMenu items={makeItems()} defaultOpen>
+      <ExtendedFAB label="Add" aria-label="Create a post" icon={<span>+</span>} />
+    </FABMenu>,
+  );
+
+  expect(screen.getByRole('button', { name: 'Create a post', expanded: true })).toHaveClass('md-fab-menu-trigger');
+});
+
 test('ExtendedFAB trigger that starts open does not measure', async () => {
   const { container } = render(
     <FABMenu items={makeItems()} defaultOpen>
@@ -352,6 +443,106 @@ test('the menu colour wins over a trigger colour prop, but not over data-fab-col
     </FABMenu>,
   );
   expect(container.querySelector('.md-fab-menu-trigger')).toHaveAttribute('data-fab-color', 'secondary');
+});
+
+// =============================================================================
+// Open trigger → the kit's close button
+// =============================================================================
+
+// Kit: one close button for every FAB menu — 56×56, r=28, 20dp icon — with no
+// size axis, so every resting size has to settle on it.
+test('an open trigger of any size resolves to the kit 56dp circle with a 20dp icon', () => {
+  for (const selector of [OPEN_FAB, OPEN_EXTENDED_FAB]) {
+    const body = ruleBody(selector);
+    expect(body).toContain('--_height: 56px;');
+    expect(body).toContain('width: var(--_height);');
+    expect(body).toContain('height: var(--_height);');
+    expect(body).toContain('border-radius: calc(var(--_height) / 2);');
+    expect(body).toContain('& svg { width: 20px; height: 20px; }');
+  }
+
+  // Button's 58px min-width would otherwise leave the ExtendedFAB a 58×56 pill.
+  expect(ruleBody(OPEN_EXTENDED_FAB)).toContain('min-width: 0;');
+
+  // The selectors match the large FAB and medium ExtendedFAB the kit sizes reach.
+  const { container, unmount } = render(
+    <FABMenu items={makeItems()} defaultOpen>
+      <FAB aria-label="Create" fabSize="large">
+        <span>+</span>
+      </FAB>
+    </FABMenu>,
+  );
+  const fab = container.querySelector('.md-fab-menu-trigger') as HTMLElement;
+  expect(fab.matches(OPEN_FAB)).toBe(true);
+  expect(fab).toHaveAttribute('data-size', 'lg');
+  expect(fab.querySelector('svg')).not.toBeNull();
+  unmount();
+
+  const extended = render(
+    <FABMenu items={makeItems()} defaultOpen>
+      <ExtendedFAB label="Create" icon={<span>+</span>} fabSize="medium" />
+    </FABMenu>,
+  );
+  const extendedTrigger = extended.container.querySelector('.md-fab-menu-trigger') as HTMLElement;
+  expect(extendedTrigger.matches(OPEN_EXTENDED_FAB)).toBe(true);
+  expect(extendedTrigger).toHaveAttribute('data-fab-size', 'medium');
+});
+
+test('a FAB trigger animates its size into the close button and keeps the effects spring on its corner', () => {
+  const transition = ruleBody('.md-icon-button.md-fab.md-fab-menu-trigger');
+  expect(transition).toContain(
+    'border-radius var(--md-sys-motion-duration-spring-default-effects) var(--md-sys-motion-easing-spring-default-effects)',
+  );
+  for (const property of ['width', 'height']) {
+    expect(transition).toContain(
+      `${property} var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial)`,
+    );
+  }
+  expect(ruleBody('.md-button.md-extended-fab.md-fab-menu-trigger')).toContain(
+    'height var(--md-sys-motion-duration-spring-default-spatial) var(--md-sys-motion-easing-spring-default-spatial)',
+  );
+});
+
+// Kit: segments use X Container / On X Container, the close button the solid X
+// role with On X — in every Color variant of Buttons/FAB menu.
+test('an open trigger swaps a container colour for its solid role, as the kit close button does', () => {
+  const body = ruleBody(OPEN_TRIGGER);
+  for (const role of ['primary', 'secondary', 'tertiary']) {
+    expect(body).toContain(
+      `&[data-fab-color="${role}-container"] { background-color: var(--md-sys-color-${role}); color: var(--md-sys-color-on-${role}); }`,
+    );
+  }
+
+  // The rule keys off the attributes the menu writes, for both trigger kinds.
+  for (const trigger of [
+    <FAB key="fab" aria-label="Create">
+      <span>+</span>
+    </FAB>,
+    <ExtendedFAB key="efab" label="Create" icon={<span>+</span>} />,
+  ]) {
+    const { container, unmount } = render(
+      <FABMenu items={makeItems()} defaultOpen color="primary-container">
+        {trigger}
+      </FABMenu>,
+    );
+    const element = container.querySelector('.md-fab-menu-trigger') as HTMLElement;
+    expect(element.matches(`${OPEN_TRIGGER}[data-fab-color="primary-container"]`)).toBe(true);
+    // The segments keep the container pair.
+    for (const item of menuItems(container)) {
+      expect(item).toHaveAttribute('data-fab-color', 'primary-container');
+    }
+    unmount();
+  }
+
+  // A closed or disabled trigger is left to the FAB's own colour rules.
+  const { container } = render(
+    <FABMenu items={makeItems()} defaultOpen>
+      <FAB aria-label="Create" disabled>
+        <span>+</span>
+      </FAB>
+    </FABMenu>,
+  );
+  expect((container.querySelector('.md-fab-menu-trigger') as HTMLElement).matches(OPEN_TRIGGER)).toBe(false);
 });
 
 // =============================================================================
