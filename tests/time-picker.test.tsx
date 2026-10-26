@@ -1,7 +1,27 @@
+import { readFileSync } from 'node:fs';
+import { Popover } from '@base-ui/react/popover';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef, type SetStateAction, useState } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
+import { Dialog, DialogContent } from '../src/components/Dialog/dialog';
 import { TimePicker } from '../src/components/TimePicker/time-picker';
+
+const timePickerCss = readFileSync('src/components/TimePicker/time-picker.css', 'utf8');
+
+// Body of the first rule whose selector is exactly `selector` (nested rules
+// included verbatim). happy-dom loads no CSS, so geometry is read from the text.
+const ruleBody = (selector: string) => {
+  const start = timePickerCss.indexOf(`\n${selector} {`);
+  expect(start, selector).toBeGreaterThanOrEqual(0);
+  let depth = 0;
+  for (let i = timePickerCss.indexOf('{', start); i < timePickerCss.length; i++) {
+    if (timePickerCss[i] === '{') depth++;
+    if (timePickerCss[i] === '}' && --depth === 0) {
+      return timePickerCss.slice(timePickerCss.indexOf('{', start) + 1, i);
+    }
+  }
+  throw new Error(`Unbalanced rule: ${selector}`);
+};
 
 const ORIGINAL_INNER_WIDTH = window.innerWidth;
 const ORIGINAL_INNER_HEIGHT = window.innerHeight;
@@ -483,9 +503,12 @@ test('clicking AM switches the period from PM back to AM', async () => {
 // Non-dialog (inline) mode — emit path
 // =============================================================================
 
-test('standalone picker is its own dialog surface and updates uncontrolled value', async () => {
-  render(<TimePicker defaultValue={{ hours: 10, minutes: 0 }} format="12h" orientation="portrait" />);
-  expect(screen.getByRole('dialog')).toHaveClass('md-time-picker');
+test('inline picker is not a dialog and updates its uncontrolled value', async () => {
+  const { container } = render(
+    <TimePicker defaultValue={{ hours: 10, minutes: 0 }} format="12h" orientation="portrait" />,
+  );
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(container.firstElementChild).toHaveClass('md-time-picker');
   fireEvent.click(screen.getByText('PM'));
   expect(screen.getByText('PM')).toHaveAttribute('aria-pressed', 'true');
   // 10 AM → 22 PM, still displays 10 in 12h
@@ -596,9 +619,18 @@ test('orientation="landscape" renders the landscape layout', async () => {
       orientation="landscape"
     />,
   );
-  expect(screen.getByRole('dialog')).toHaveAttribute('data-layout', 'landscape');
+  const dialog = screen.getByRole('dialog');
+  expect(dialog).toHaveAttribute('data-layout', 'landscape');
   expect(document.querySelector('.md-time-picker__dial-body')).toBeInTheDocument();
   expect(document.querySelector('.md-time-picker__period')).toHaveAttribute('data-orientation', 'horizontal');
+  // The header spans the top of the surface, as in the kit — it is not part of
+  // the fields column beside the dial.
+  expect(dialog.firstElementChild).toHaveClass('md-time-picker__header-text');
+  expect(document.querySelector('.md-time-picker__dial-body-left .md-time-picker__header-text')).toBeNull();
+  expect(document.querySelector('.md-time-picker__dial-body-left .md-time-picker__display')).toHaveAttribute(
+    'data-layout',
+    'column',
+  );
 });
 
 test('orientation="landscape" in input mode shows the top display and no dial body', async () => {
@@ -715,4 +747,369 @@ test('toggles mode from input back to dial', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Switch to clock dial' }));
   expect(screen.getByText('Select time')).toBeInTheDocument();
   expect(screen.getByTestId('clock-dial')).toBeInTheDocument();
+});
+
+// =============================================================================
+// Root hooks: mode and format
+// =============================================================================
+
+test('root carries data-mode and data-format so input mode can size to its content', async () => {
+  const { container } = render(
+    <TimePicker defaultValue={{ hours: 9, minutes: 15 }} format="24h" orientation="portrait" />,
+  );
+  const root = container.firstElementChild;
+  expect(root).toHaveAttribute('data-mode', 'dial');
+  expect(root).toHaveAttribute('data-format', '24h');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Switch to keyboard input' }));
+  expect(root).toHaveAttribute('data-mode', 'input');
+  expect(root).toHaveAttribute('data-format', '24h');
+});
+
+test('the 520px dial height does not apply to keyboard input', async () => {
+  expect(ruleBody('.md-time-picker')).not.toMatch(/min-height/);
+  expect(ruleBody('.md-time-picker[data-mode="dial"][data-layout="portrait"]')).toMatch(/min-height: 520px;/);
+  // Keyboard picker 24 hour is 264 wide (24 + 96 + 24 + 96 + 24).
+  expect(ruleBody('.md-time-picker[data-mode="input"][data-format="24h"]')).toMatch(/width: 264px;/);
+});
+
+test('the hour, separator and minute share one row in both modes', async () => {
+  render(<TimePicker defaultValue={{ hours: 9, minutes: 15 }} orientation="portrait" />);
+  const dialRow = document.querySelector('.md-time-picker__display-row');
+  expect(dialRow).toHaveAttribute('data-mode', 'dial');
+  expect(dialRow?.querySelectorAll('.md-time-picker__time-box')).toHaveLength(2);
+  expect(dialRow?.querySelector('.md-time-picker__colon')).toHaveAttribute('data-mode', 'dial');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Switch to keyboard input' }));
+  const inputRow = document.querySelector('.md-time-picker__display-row');
+  expect(inputRow).toHaveAttribute('data-mode', 'input');
+  expect(inputRow?.querySelectorAll('.md-time-picker__field-group')).toHaveLength(2);
+  expect(inputRow?.querySelector('.md-time-picker__colon')).toHaveAttribute('data-mode', 'input');
+  // The period selector sits beside the row, not inside it.
+  expect(inputRow?.querySelector('.md-time-picker__period')).toBeNull();
+});
+
+// =============================================================================
+// Footer: library IconButton and text Buttons
+// =============================================================================
+
+test('the mode toggle is a standard small IconButton', async () => {
+  render(<ControlledTimePicker />);
+  const toggle = screen.getByRole('button', { name: 'Switch to keyboard input' });
+  expect(toggle).toHaveClass('md-icon-button', 'md-time-picker__mode-btn');
+  expect(toggle).toHaveAttribute('data-variant', 'standard');
+  expect(toggle).toHaveAttribute('data-size', 'sm');
+  expect(toggle).toHaveAttribute('type', 'button');
+});
+
+test('Cancel and OK are small round text Buttons', async () => {
+  render(<ControlledTimePicker />);
+  for (const name of ['Cancel', 'OK']) {
+    const button = screen.getByRole('button', { name });
+    expect(button).toHaveClass('md-button', 'md-time-picker__action-btn');
+    expect(button).toHaveAttribute('data-variant', 'text');
+    expect(button).toHaveAttribute('data-size', 'sm');
+    expect(button).toHaveAttribute('data-shape', 'round');
+  }
+});
+
+// =============================================================================
+// Clock dial keyboard support
+// =============================================================================
+
+test('the dial is a focusable slider that reflects the active selection', async () => {
+  render(<ControlledTimePicker value={{ hours: 14, minutes: 30 }} format="12h" />);
+  const dial = screen.getByRole('slider', { name: 'Hour' });
+  expect(dial).toBe(screen.getByTestId('clock-dial'));
+  expect(dial).toHaveAttribute('tabindex', '0');
+  expect(dial).toHaveAttribute('aria-valuemin', '1');
+  expect(dial).toHaveAttribute('aria-valuemax', '12');
+  expect(dial).toHaveAttribute('aria-valuenow', '2');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Minutes' }));
+  const minuteDial = screen.getByRole('slider', { name: 'Minute' });
+  expect(minuteDial).toHaveAttribute('aria-valuemin', '0');
+  expect(minuteDial).toHaveAttribute('aria-valuemax', '59');
+  expect(minuteDial).toHaveAttribute('aria-valuenow', '30');
+});
+
+test('arrow keys step the 12h hour and wrap around the face, keeping the period', async () => {
+  render(<ControlledTimePicker value={{ hours: 23, minutes: 0 }} format="12h" />);
+  const dial = screen.getByRole('slider', { name: 'Hour' });
+  const hours = screen.getByRole('button', { name: 'Hours' });
+
+  fireEvent.keyDown(dial, { key: 'ArrowUp' });
+  expect(hours).toHaveTextContent('12');
+  fireEvent.keyDown(dial, { key: 'ArrowRight' });
+  expect(hours).toHaveTextContent('01');
+  expect(screen.getByText('PM')).toHaveAttribute('aria-pressed', 'true');
+  fireEvent.keyDown(dial, { key: 'ArrowDown' });
+  expect(hours).toHaveTextContent('12');
+  fireEvent.keyDown(dial, { key: 'ArrowLeft' });
+  expect(hours).toHaveTextContent('11');
+  fireEvent.keyDown(dial, { key: 'Home' });
+  expect(hours).toHaveTextContent('01');
+  fireEvent.keyDown(dial, { key: 'End' });
+  expect(hours).toHaveTextContent('12');
+  // Page keys move one hour on the hour dial.
+  fireEvent.keyDown(dial, { key: 'PageUp' });
+  expect(hours).toHaveTextContent('01');
+  fireEvent.keyDown(dial, { key: 'PageDown' });
+  expect(hours).toHaveTextContent('12');
+});
+
+test('arrow keys cover the full 0-23 range on the 24h hour dial', async () => {
+  render(<ControlledTimePicker value={{ hours: 0, minutes: 0 }} format="24h" />);
+  const dial = screen.getByRole('slider', { name: 'Hour' });
+  const hours = screen.getByRole('button', { name: 'Hours' });
+  expect(dial).toHaveAttribute('aria-valuemin', '0');
+  expect(dial).toHaveAttribute('aria-valuemax', '23');
+
+  fireEvent.keyDown(dial, { key: 'ArrowLeft' });
+  expect(hours).toHaveTextContent('23');
+  fireEvent.keyDown(dial, { key: 'ArrowUp' });
+  expect(hours).toHaveTextContent('00');
+  fireEvent.keyDown(dial, { key: 'End' });
+  expect(hours).toHaveTextContent('23');
+});
+
+test('the minute dial steps by one with arrows and by five with page keys', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 58 }} format="12h" />);
+  fireEvent.click(screen.getByRole('button', { name: 'Minutes' }));
+  const dial = screen.getByRole('slider', { name: 'Minute' });
+  const minutes = screen.getByRole('button', { name: 'Minutes' });
+
+  fireEvent.keyDown(dial, { key: 'ArrowUp' });
+  expect(minutes).toHaveTextContent('59');
+  fireEvent.keyDown(dial, { key: 'PageUp' });
+  expect(minutes).toHaveTextContent('04');
+  fireEvent.keyDown(dial, { key: 'PageDown' });
+  expect(minutes).toHaveTextContent('59');
+  fireEvent.keyDown(dial, { key: 'Home' });
+  expect(minutes).toHaveTextContent('00');
+  fireEvent.keyDown(dial, { key: 'ArrowDown' });
+  expect(minutes).toHaveTextContent('59');
+  // Hours are untouched by the minute dial.
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('10');
+});
+
+test('Enter on the hour dial advances to minutes; other keys are left alone', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 30 }} format="12h" />);
+  const dial = screen.getByRole('slider', { name: 'Hour' });
+
+  // Unhandled keys do not change the value or cancel the default action.
+  expect(fireEvent.keyDown(dial, { key: 'a' })).toBe(true);
+  expect(screen.getByRole('button', { name: 'Hours' })).toHaveTextContent('10');
+
+  // Handled keys cancel the default (no page scroll).
+  expect(fireEvent.keyDown(dial, { key: 'ArrowUp' })).toBe(false);
+
+  expect(fireEvent.keyDown(dial, { key: 'Enter' })).toBe(false);
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveAttribute('data-selected', 'true');
+  // The same element now drives the minutes, so focus stays on it.
+  expect(screen.getByRole('slider', { name: 'Minute' })).toBe(dial);
+
+  // Enter on the minute dial is a no-op and keeps the default action.
+  expect(fireEvent.keyDown(dial, { key: 'Enter' })).toBe(true);
+  expect(screen.getByRole('button', { name: 'Minutes' })).toHaveAttribute('data-selected', 'true');
+});
+
+test('keyboard changes in a dialog stay in the draft until OK', async () => {
+  render(<ControlledTimePicker value={{ hours: 10, minutes: 30 }} format="24h" />);
+  fireEvent.keyDown(screen.getByRole('slider', { name: 'Hour' }), { key: 'ArrowUp' });
+  expect(screen.getByTestId('time-display')).toHaveTextContent('10:30');
+  fireEvent.click(screen.getByRole('button', { name: 'OK' }));
+  expect(screen.getByTestId('time-display')).toHaveTextContent('11:30');
+});
+
+test('the focused dial shows the focus ring and a focus layer on the selected number', async () => {
+  expect(ruleBody('.md-time-picker__dial')).toMatch(
+    /&:focus-visible \{\s*outline: var\(--md-sys-state-focus-indicator-thickness\) solid var\(--md-sys-state-focus-indicator-color\);\s*outline-offset: var\(--md-sys-state-focus-indicator-outer-offset\);/,
+  );
+  expect(ruleBody('.md-time-picker__dial:focus-visible .md-time-picker__number[data-selected="true"]')).toMatch(
+    /var\(--md-sys-color-on-primary\) calc\(var\(--md-sys-state-focus-opacity\) \* 100%\)/,
+  );
+});
+
+// =============================================================================
+// Kit geometry, type and state (read from the stylesheet)
+// =============================================================================
+
+test('portrait dial spacing matches the kit (36 to the dial, 48px actions, 20 bottom inset)', async () => {
+  const root = ruleBody('.md-time-picker');
+  expect(root).toMatch(/gap: 20px;/);
+  expect(root).toMatch(/padding: 24px 24px 20px;/);
+  expect(root).toMatch(/border-radius: var\(--md-sys-shape-corner-extra-large\);/);
+  expect(ruleBody('.md-time-picker__dial-center')).toMatch(/margin-top: 16px;/);
+  expect(ruleBody('.md-time-picker__footer')).toMatch(/min-height: 48px;/);
+  expect(ruleBody('.md-time-picker__footer > .md-time-picker__mode-btn')).toMatch(/margin-inline-start: -8px;/);
+});
+
+test('landscape layout matches the kit columns', async () => {
+  const landscape = ruleBody('.md-time-picker[data-layout="landscape"]');
+  expect(landscape).toMatch(/width: 572px;/);
+  expect(landscape).toMatch(/height: 384px;/);
+  expect(landscape).toMatch(/gap: 0;/);
+  expect(landscape).toMatch(/& > \.md-time-picker__footer \{\s*margin-top: 20px;/);
+  const body = ruleBody('.md-time-picker__dial-body');
+  expect(body).toMatch(/align-items: flex-start;/);
+  expect(body).toMatch(/gap: 52px;/);
+  expect(ruleBody('.md-time-picker__dial-body-left')).toMatch(/width: 216px;/);
+  expect(ruleBody('.md-time-picker[data-format="12h"] .md-time-picker__dial-body-left')).toMatch(/padding-top: 72px;/);
+  expect(ruleBody('.md-time-picker__display')).toMatch(
+    /&\[data-layout="column"\] \{\s*flex-direction: column;\s*align-items: stretch;\s*gap: 16px;/,
+  );
+});
+
+test('separator is 24px wide with no gaps and 12px to the period', async () => {
+  const colon = ruleBody('.md-time-picker__colon');
+  expect(colon).toMatch(/width: 24px;/);
+  expect(colon).toMatch(/font-size: var\(--md-sys-typescale-display-large-size\);/);
+  expect(ruleBody('.md-time-picker__display-row')).not.toMatch(/gap:/);
+  expect(ruleBody('.md-time-picker__display')).toMatch(
+    /^\s*display: flex;\s*align-items: flex-start;\s*justify-content: center;\s*gap: 12px;/,
+  );
+  expect(ruleBody('.md-time-picker__period')).toMatch(/flex-shrink: 0;/);
+  expect(ruleBody('.md-time-picker__field-group')).toMatch(/gap: 7px;/);
+});
+
+test('24h portrait time boxes widen to 116px', async () => {
+  expect(
+    ruleBody('.md-time-picker[data-format="24h"][data-layout="portrait"] .md-time-picker__time-box[data-mode="dial"]'),
+  ).toMatch(/width: 116px;/);
+});
+
+test('time boxes use corner-small, display tokens and a hover layer over their fill', async () => {
+  const box = ruleBody('.md-time-picker__time-box');
+  expect(box).toMatch(/border-radius: var\(--md-sys-shape-corner-small\);/);
+  expect(box).toMatch(/font-size: var\(--md-sys-typescale-display-large-size\);/);
+  expect(box).toMatch(/line-height: var\(--md-sys-typescale-display-large-line-height\);/);
+  expect(box).toMatch(/background-color var\(--md-sys-motion-duration-short3\) var\(--md-sys-motion-easing-standard\)/);
+  expect(box).toMatch(
+    /&:hover \{\s*background-image: linear-gradient\(\s*color-mix\(in srgb, var\(--md-sys-color-on-surface\) calc\(var\(--md-sys-state-hover-opacity\) \* 100%\), transparent\)/,
+  );
+  expect(box).not.toMatch(/on-background/);
+
+  const input = ruleBody('.md-time-picker__time-input');
+  expect(input).toMatch(/font-size: var\(--md-sys-typescale-display-medium-size\);/);
+  expect(input).toMatch(/line-height: var\(--md-sys-typescale-display-medium-line-height\);/);
+  // A 2px primary stroke on the inherited 2px border: no width change, no 3px ring.
+  expect(input).toMatch(/&\[data-selected="true"\] \{\s*border-color: var\(--md-sys-color-primary\);/);
+  expect(input).not.toMatch(/border-width|3px solid/);
+  expect(timePickerCss).not.toMatch(/\b150ms\b|\b57px\b|\b45px\b/);
+});
+
+test('header is sentence-case label-medium and AM/PM use title-medium', async () => {
+  const header = ruleBody('.md-time-picker__header-text');
+  expect(header).toMatch(/font-weight: var\(--md-sys-typescale-label-medium-weight\);/);
+  expect(header).toMatch(/letter-spacing: var\(--md-sys-typescale-label-medium-tracking\);/);
+  expect(header).not.toMatch(/text-transform/);
+
+  const period = ruleBody('.md-time-picker__period-btn');
+  expect(period).toMatch(/font-size: var\(--md-sys-typescale-title-medium-size\);/);
+  expect(period).toMatch(/letter-spacing: var\(--md-sys-typescale-title-medium-tracking\);/);
+  expect(period).not.toMatch(/label-large/);
+});
+
+// =============================================================================
+// Dialog semantics — the same rules as DatePicker
+// =============================================================================
+
+test('a standalone open picker is a dialog named by its header, without aria-modal', async () => {
+  const ref = createRef<HTMLDivElement>();
+  render(<TimePicker ref={ref} open onOpenChange={() => {}} defaultValue={{ hours: 9, minutes: 15 }} />);
+  const dialog = screen.getByRole('dialog', { name: 'Select time' });
+  expect(dialog).toBe(ref.current);
+  // It adds no scrim and traps no focus, so it does not claim to be modal.
+  expect(dialog).not.toHaveAttribute('aria-modal');
+  expect(dialog).toHaveAttribute('data-dialog', 'true');
+
+  // The name follows the header: keyboard input reads "Enter time", headerLabel wins over both.
+  fireEvent.click(screen.getByRole('button', { name: 'Switch to keyboard input' }));
+  expect(screen.getByRole('dialog', { name: 'Enter time' })).toBe(dialog);
+});
+
+test('headerLabel names the standalone dialog', async () => {
+  render(<TimePicker open headerLabel="Set alarm" defaultValue={{ hours: 9, minutes: 15 }} />);
+  expect(screen.getByRole('dialog', { name: 'Set alarm' })).toHaveClass('md-time-picker');
+});
+
+test('the inline picker is not a dialog and has no actions', async () => {
+  const ref = createRef<HTMLDivElement>();
+  render(<TimePicker ref={ref} defaultValue={{ hours: 9, minutes: 15 }} orientation="portrait" />);
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  const root = ref.current;
+  expect(root).toHaveClass('md-time-picker');
+  expect(root).not.toHaveAttribute('role');
+  expect(root).not.toHaveAttribute('aria-label');
+  expect(root).not.toHaveAttribute('aria-modal');
+  expect(root).not.toHaveAttribute('data-dialog');
+  // The header stays visible text, read in order with the fields.
+  expect(root?.querySelector('.md-time-picker__header-text')).toHaveTextContent('Select time');
+  expect(screen.queryByRole('button', { name: 'OK' })).not.toBeInTheDocument();
+});
+
+test('inside a Dialog the open picker leaves the dialog role and name to the DialogContent', async () => {
+  const ref = vi.fn();
+  render(
+    <Dialog open>
+      <DialogContent aria-label="Select time">
+        <TimePicker ref={ref} open defaultValue={{ hours: 9, minutes: 15 }} orientation="portrait" />
+      </DialogContent>
+    </Dialog>,
+  );
+  const dialogs = screen.getAllByRole('dialog');
+  expect(dialogs).toHaveLength(1);
+  expect(dialogs[0]).toHaveClass('md-dialog-content');
+  expect(dialogs[0]).toHaveAccessibleName('Select time');
+  const picker = ref.mock.lastCall?.[0];
+  expect(picker).toHaveClass('md-time-picker');
+  expect(dialogs[0]).toContainElement(picker);
+  expect(picker).not.toHaveAttribute('role');
+  expect(picker).not.toHaveAttribute('aria-label');
+  expect(picker).not.toHaveAttribute('aria-modal');
+  // It keeps the dialog chrome.
+  expect(picker).toHaveAttribute('data-dialog', 'true');
+  expect(screen.getByRole('button', { name: 'OK' })).toBeInTheDocument();
+});
+
+test('an inline picker inside a Dialog adds no second dialog either', async () => {
+  render(
+    <Dialog open>
+      <DialogContent aria-label="Select time">
+        <TimePicker defaultValue={{ hours: 9, minutes: 15 }} orientation="portrait" />
+      </DialogContent>
+    </Dialog>,
+  );
+  expect(screen.getAllByRole('dialog')).toHaveLength(1);
+  expect(document.querySelector('.md-time-picker')).not.toHaveAttribute('role');
+});
+
+test('inside a Popover the popup is the one dialog', async () => {
+  render(
+    <Popover.Root open>
+      <Popover.Portal>
+        <Popover.Positioner>
+          <Popover.Popup aria-label="Alarm time">
+            <TimePicker open defaultValue={{ hours: 9, minutes: 15 }} orientation="portrait" />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>,
+  );
+  const dialogs = screen.getAllByRole('dialog');
+  expect(dialogs).toHaveLength(1);
+  expect(dialogs[0]).toHaveAccessibleName('Alarm time');
+  expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+});
+
+test('the surface draws no shadow, like the kit pickers and Dialog', async () => {
+  // Dial picker and Keyboard picker frames carry no drop shadow; the tonal surface-container-high fill is the
+  // elevation. A surrounding Dialog draws none either.
+  expect(timePickerCss).not.toMatch(/box-shadow|--md-sys-elevation/);
+  expect(ruleBody('.md-time-picker')).toMatch(/background-color: var\(--md-sys-color-surface-container-high\);/);
+});
+
+test('the 24h landscape fields are centred beside the dial, as in Compose', async () => {
+  expect(ruleBody('.md-time-picker[data-format="24h"] .md-time-picker__dial-body-left')).toMatch(/align-self: center;/);
 });
