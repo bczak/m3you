@@ -13,12 +13,23 @@ removed. **Suggestion** chips offer a next step.
 `ChipGroup` supplies either a horizontally scrolling row (the default) or a
 wrapping layout. Selection remains controlled by each child chip.
 
+A filter chip draws its own check when `selected`, so you never pass one. If you
+give a filter chip a `leadingIcon`, it shows while the chip is unselected and the
+check takes its place once selected. An input chip with `onClose` renders its own
+remove button, and its `trailingIcon` is not shown. The remove button covers the
+end of the chip at full height, from the gap after the label to the chip's edge,
+so you do not have to hit the 18px icon exactly. Its hover and press feedback and
+its focus ring stay on the icon. If the chip is squeezed narrower than its label,
+for example a long address in a narrow wrapping group, the label is cut off
+before the icon rather than running under it.
+
 <Playground
   name="Chip"
   controls={{
     type: ['assist', 'filter', 'input', 'suggestion'],
     variant: ['outlined', 'elevated'],
     selected: false,
+    morph: false,
     disabled: false,
   }}
   snippetChildren="Chip label"
@@ -28,6 +39,41 @@ wrapping layout. Selection remains controlled by each child chip.
 ## The four types
 
 <Example name="chip/types" title="Assist, filter and input" layout="stretch" />
+
+## Chip groups
+
+`ChipGroup` lays chips out 8px apart with 8px above and below them, so a single
+row of chips is 48px tall. That space also keeps an elevated chip's shadow from
+being clipped above and below by the scrolling row. There is no padding at the
+sides, so the first chip lines up with the group's start edge. The scrolling row
+clips anything that reaches past its start or end, so chips in it draw their
+focus ring just inside their edge instead of 2px outside it. That keeps the
+whole ring visible on the first chip, on the last chip once you scroll to the
+end, and on a chip that is partly scrolled out.
+
+The default `layout="scroll"` keeps the chips on one row that scrolls sideways.
+`layout="wrap"` moves chips that do not fit onto further rows, 16px apart.
+
+<Example
+  name="chip/groups"
+  title="Scrolling and wrapping groups"
+  description="The filter chips scroll on one row. The input chips wrap onto a second row."
+/>
+
+## Shape morph
+
+Chips keep the baseline M3 8px corners by default. Set `morph` to opt into the
+Expressive chip shapes from Jetpack Compose's Material 3 chip tokens: 12px
+corners at rest, 8px while pressed, and a full pill once a filter or input chip
+is selected. The corners spring between these shapes. With reduced motion, they
+change without animating. An input chip with an avatar keeps its pill shape at
+rest.
+
+<Example
+  name="chip/morph"
+  title="Expressive shape morph"
+  description="Select a chip to see it become a pill, and press and hold one to see its corners tighten."
+/>
 
 ## Props
 
