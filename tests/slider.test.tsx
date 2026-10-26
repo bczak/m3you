@@ -323,6 +323,79 @@ test('pointer input follows an explicit fractional step', () => {
   expect(onValueChange).toHaveBeenLastCalledWith(40.5);
 });
 
+// The native step grid: min + k × step, up to the last step that does not pass max
+test('without a step, pointer input keeps a fractional minimum and steps by 1 from it', () => {
+  const onValueChange = vi.fn();
+  const { container } = render(
+    <Slider aria-label="Volume" min={0.5} max={5.5} showTooltip onValueChange={onValueChange} />,
+  );
+  const root = container.firstChild as HTMLElement;
+  // 100px of travel over a range of 5: x = 6 + 20 × (value − 0.5).
+  layoutTrack(container);
+
+  fireEvent.pointerDown(root, { button: 0, pointerId: 1, clientX: 6, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith(0.5);
+  // 1.55 rounds to the step at 1.5, not to the whole number 2.
+  fireEvent.pointerMove(root, { pointerId: 1, clientX: 27, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith(1.5);
+  expect(container.querySelector('.md-slider__tooltip')?.textContent).toBe('1.5');
+  expect(screen.getByRole('slider')).toHaveValue('1.5');
+});
+
+test('pointer input tops out at the last step below a maximum the steps do not reach', () => {
+  const onValueChange = vi.fn();
+  const { container } = render(
+    <Slider aria-label="Volume" min={0} max={2.7} showTooltip onValueChange={onValueChange} />,
+  );
+  const root = container.firstChild as HTMLElement;
+  layoutTrack(container);
+
+  fireEvent.pointerDown(root, { button: 0, pointerId: 1, clientX: 106, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith(2);
+  expect(container.querySelector('.md-slider__tooltip')?.textContent).toBe('2');
+  expect(screen.getByRole('slider')).toHaveValue('2');
+  // 2.6 rounds up to 3, past the grid, so it holds at 2 too.
+  fireEvent.pointerMove(root, { pointerId: 1, clientX: 102.3, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith(2);
+  expect(onValueChange.mock.calls.flat()).not.toContain(2.7);
+});
+
+test('a value off the step grid renders where the native input puts it', () => {
+  const { container } = render(<Slider aria-label="Volume" min={0} max={2.7} value={2.7} />);
+  expect(screen.getByRole('slider')).toHaveValue('2');
+  expect((container.querySelector('.md-slider__handle') as HTMLElement).style.insetInlineStart).toBe(
+    'calc(74.0741% - 2.8889px)',
+  );
+});
+
+test('a fractional step lands on the grid without float drift', () => {
+  const onValueChange = vi.fn();
+  const { container } = render(
+    <Slider aria-label="Opacity" min={0.25} max={1.25} step={0.1} onValueChange={onValueChange} />,
+  );
+  const root = container.firstChild as HTMLElement;
+  layoutTrack(container);
+
+  // The minimum's two decimal places survive: 0.25 + 3 × 0.1, not 0.6.
+  fireEvent.pointerDown(root, { button: 0, pointerId: 1, clientX: 36, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith(0.55);
+  // 0.25 + 7 × 0.1 is 0.9500000000000001 in floating point.
+  fireEvent.pointerMove(root, { pointerId: 1, clientX: 76, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith(0.95);
+  expect(screen.getByRole('slider')).toHaveValue('0.95');
+});
+
+test('a step written in exponent form keeps its decimal places', () => {
+  const onValueChange = vi.fn();
+  const { container } = render(
+    <Slider aria-label="Gain" min={0} max={1e-6} step={1e-7} onValueChange={onValueChange} />,
+  );
+  layoutTrack(container);
+
+  fireEvent.pointerDown(container.firstChild as HTMLElement, { button: 0, pointerId: 1, clientX: 36, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith(3e-7);
+});
+
 // Discrete slider stop indicators
 test('discrete slider renders stop indicators away from the handle', async () => {
   const { container } = render(<Slider aria-label="Volume" step={25} value={50} />);
@@ -345,9 +418,23 @@ test('stops share the handle inset, so the end stops sit 6px in from the track e
   ]);
 });
 
-test('discrete slider with a single stop renders when far from the handle', async () => {
+test('stops sit on the step grid, with none at a maximum the steps do not reach', () => {
+  const { container, rerender } = render(<Slider aria-label="Volume" min={0} max={2.7} step={1} value={0} />);
+  const insets = () =>
+    Array.from(container.querySelectorAll<HTMLElement>('.md-slider__stop'), (stop) => stop.style.insetInlineStart);
+  // Stops at 1 and 2; the one at 0 sits under the handle.
+  expect(insets()).toEqual(['calc(37.037% + 1.5556px)', 'calc(74.0741% - 2.8889px)']);
+
+  // 0.3 / 0.1 is 2.9999999999999996 in floating point, yet the last stop still lands on the maximum.
+  rerender(<Slider aria-label="Volume" min={0} max={0.3} step={0.1} value={0} />);
+  expect(insets()).toEqual(['calc(33.3333% + 2px)', 'calc(66.6667% - 2px)', 'calc(100% - 6px)']);
+});
+
+test('a range shorter than one step holds the value at the minimum, as the native input does', () => {
   const { container } = render(<Slider aria-label="Volume" min={0} max={3} step={5} value={3} />);
-  expect(container.querySelectorAll('.md-slider__stop').length).toBe(1);
+  expect(screen.getByRole('slider')).toHaveValue('0');
+  // The only stop, at the minimum, sits under the handle.
+  expect(container.querySelectorAll('.md-slider__stop')).toHaveLength(0);
 });
 
 test('step of 0 is treated as a continuous slider', async () => {
@@ -575,6 +662,12 @@ test('centered mode leaves 2px of clearance on each side of the origin', () => {
   expect(active.style.insetInlineStart).toBe('calc(50% + 2px)');
   expect(active.style.insetInlineEnd).toBe('calc(50% + 8px)');
   expect(after.style.insetInlineStart).toBe('calc(50% + 8px)');
+});
+
+test('a continuous centered slider keeps its midpoint origin between steps', () => {
+  const { container } = render(<Slider aria-label="Balance" mode="centered" min={0} max={5} value={5} />);
+  // The origin stays at 2.5 although the value moves in whole steps.
+  expect(segments(container).active.style.insetInlineStart).toBe('calc(50% + 2px)');
 });
 
 // Right-to-left
@@ -844,6 +937,56 @@ test('RangeSlider vertical segments and handles are placed from the bottom', () 
   fireEvent.pointerDown(root, { button: 0, pointerId: 1, ...atY(90) });
   expect(onValueChange).toHaveBeenLastCalledWith([20, 90]);
   expect((container.querySelectorAll('.md-slider__thumb')[1] as HTMLElement).style.height).toBe('2px');
+});
+
+test('RangeSlider pointer input keeps a fractional minimum and steps by 1 from it', () => {
+  const onValueChange = vi.fn();
+  const { container } = render(
+    <RangeSlider min={0.5} max={5.5} defaultValue={[3.5, 5.5]} showTooltip onValueChange={onValueChange} />,
+  );
+  const root = container.firstChild as HTMLElement;
+  layoutTrack(container);
+  const [lower] = screen.getAllByRole('slider');
+
+  fireEvent.pointerDown(root, { button: 0, pointerId: 1, clientX: 6, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith([0.5, 5.5]);
+  fireEvent.pointerMove(root, { pointerId: 1, clientX: 27, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith([1.5, 5.5]);
+  expect(container.querySelector('.md-slider__tooltip')?.textContent).toBe('1.5');
+  expect(lower).toHaveValue('1.5');
+});
+
+test('RangeSlider tops out at the last step below a maximum the steps do not reach', () => {
+  const onValueChange = vi.fn();
+  const { container } = render(
+    <RangeSlider min={0} max={2.7} defaultValue={[0.2, 1.2]} showTooltip onValueChange={onValueChange} />,
+  );
+  const root = container.firstChild as HTMLElement;
+  layoutTrack(container);
+  const [lower, upper] = screen.getAllByRole('slider');
+  // Values off the grid start where the native inputs put them.
+  expect(lower).toHaveValue('0');
+  expect(upper).toHaveValue('1');
+
+  fireEvent.pointerDown(root, { button: 0, pointerId: 1, clientX: 106, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith([0, 2]);
+  expect(container.querySelector('.md-slider__tooltip')?.textContent).toBe('2');
+  expect(upper).toHaveValue('2');
+});
+
+test('RangeSlider lands a fractional step on the grid without float drift', () => {
+  const onValueChange = vi.fn();
+  const { container } = render(
+    <RangeSlider min={0.25} max={1.25} step={0.1} defaultValue={[0.25, 1.25]} onValueChange={onValueChange} />,
+  );
+  const root = container.firstChild as HTMLElement;
+  layoutTrack(container);
+
+  fireEvent.pointerDown(root, { button: 0, pointerId: 1, clientX: 36, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith([0.55, 1.25]);
+  fireEvent.pointerMove(root, { pointerId: 1, clientX: 76, clientY: 0 });
+  expect(onValueChange).toHaveBeenLastCalledWith([0.95, 1.25]);
+  expect(screen.getAllByRole('slider')[0]).toHaveValue('0.95');
 });
 
 test('RangeSlider orders its values, forwards both input refs and clamps native input changes', () => {

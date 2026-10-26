@@ -48,7 +48,7 @@ export type SliderProps = NativeSliderProps & {
   max?: number;
   /**
    * Step increment. Set to enable discrete mode with stop indicators. Without it the slider still moves in
-   * whole numbers, like a native range input.
+   * steps of 1 from `min`, like a native range input.
    */
   step?: number;
   /** Callback when value changes. */
@@ -83,7 +83,7 @@ export type RangeSliderProps = Omit<React.ComponentProps<'div'>, 'defaultValue' 
   onValueChange?: (value: RangeValue) => void;
   min?: number;
   max?: number;
-  /** Step increment. Without it the handles still move in whole numbers, like native range inputs. */
+  /** Step increment. Without it the handles still move in steps of 1 from `min`, like native range inputs. */
   step?: number;
   size?: SliderSize;
   orientation?: SliderOrientation;
@@ -100,15 +100,40 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, Number.isFinite(value) ? value : min));
 }
 
-function snap(value: number, min: number, max: number, step?: number) {
-  const clamped = clamp(value, min, max);
-  if (!step || step <= 0) return clamped;
-  const precision = Math.max(0, `${step}`.split('.')[1]?.length ?? 0);
-  return clamp(Number((min + Math.round((clamped - min) / step) * step).toFixed(precision)), min, max);
-}
-
 function effectiveStep(step?: number) {
   return step !== undefined && step > 0 ? step : NATIVE_DEFAULT_STEP;
+}
+
+/** Decimal places in a number as JavaScript writes it, so `1e-7` has 7. */
+function decimalPlaces(value: number) {
+  const [digits, exponent = '0'] = `${value}`.split('e');
+  return Math.max(0, (digits.split('.')[1]?.length ?? 0) - Number(exponent));
+}
+
+/**
+ * Whole steps that fit between `min` and `max`, counted in integers scaled to their decimal places so float
+ * division cannot drop the last one (0.3 / 0.1 is 2.9999999999999996).
+ */
+function stepCount(min: number, max: number, step: number) {
+  const scale = 10 ** Math.max(decimalPlaces(min), decimalPlaces(max), decimalPlaces(step));
+  return Math.floor(Math.round((max - min) * scale) / Math.round(step * scale));
+}
+
+/** The value `index` steps above `min`, rounded to the decimal places of `min` and `step` so float drift never shows. */
+function stepValue(min: number, step: number, index: number) {
+  return Number((min + index * step).toFixed(Math.max(decimalPlaces(min), decimalPlaces(step))));
+}
+
+/**
+ * Snaps to the native range input's step grid, `min + k * step` for whole k, stepping by 1 when `step` is
+ * missing. The grid tops out at the last step that does not pass `max`, which is `max` itself only when the
+ * range is a whole number of steps. The native input sanitises its value onto the same grid, so the state,
+ * the value indicator and aria-valuenow always agree.
+ */
+function snap(value: number, min: number, max: number, step?: number) {
+  const size = effectiveStep(step);
+  const index = Math.min(Math.round((clamp(value, min, max) - min) / size), stepCount(min, max, size));
+  return stepValue(min, size, index);
 }
 
 function normalizeRange(value: readonly [number, number], min: number, max: number, step?: number): RangeValue {
@@ -288,7 +313,10 @@ const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderPr
     const controlled = valueProp !== undefined;
     const [internalValue, setInternalValue] = React.useState(() => snap(defaultValue, min, max, step));
     const value = snap(controlled ? valueProp : internalValue, min, max, step);
-    const origin = snap(originProp ?? (min + max) / 2, min, max, step);
+    const isDiscrete = step !== undefined && step > 0;
+    // Only an explicit step pulls the origin onto the grid; a continuous slider keeps its midpoint as given.
+    const originValue = originProp ?? (min + max) / 2;
+    const origin = isDiscrete ? snap(originValue, min, max, step) : clamp(originValue, min, max);
     const percent = valuePercent(value, min, max);
     const originPercent = valuePercent(origin, min, max);
     const config = SIZE_CONFIG[size];
@@ -310,10 +338,8 @@ const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderPr
 
     const updateFromPointer = (event: React.PointerEvent<HTMLDivElement>) => {
       // The track is a child of the element the pointer events fire on, so it is always attached here.
-      const position = pointerPosition(event, trackRef.current as HTMLDivElement, orientation, min, max);
-      // Pointer input lands on the same grid as the native input (step 1 when none is set), so the state,
-      // the value indicator and aria-valuenow always agree.
-      updateValue(snap(position, min, max, effectiveStep(step)));
+      // updateValue snaps it onto the native input's step grid.
+      updateValue(pointerPosition(event, trackRef.current as HTMLDivElement, orientation, min, max));
     };
 
     // The whole slider box is the pointer surface: pressing the track jumps the handle there.
@@ -358,8 +384,7 @@ const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderPr
       ...activePosition,
       ...segmentRadii(orientation, config.trackShape, !centered, false),
     };
-    const isDiscrete = step !== undefined && step > 0;
-    const stopCount = isDiscrete ? Math.floor((max - min) / step) + 1 : 0;
+    const stopCount = isDiscrete ? stepCount(min, max, step) + 1 : 0;
     const tooltipLabel = formatTooltip ? formatTooltip(value) : String(value);
 
     return (
@@ -413,9 +438,10 @@ const Slider = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SliderPr
           />
           {isDiscrete
             ? Array.from({ length: stopCount }, (_, index) => {
-                const stopPercent = stopCount <= 1 ? 0 : (index / (stopCount - 1)) * 100;
+                // A stop sits at its own value, so none lands on a maximum the steps do not reach.
+                const stopValue = stepValue(min, step, index);
+                const stopPercent = valuePercent(stopValue, min, max);
                 if (Math.abs(stopPercent - percent) < 2) return null;
-                const stopValue = min + index * step;
                 const active = !centered
                   ? stopPercent <= percent
                   : stopPercent >= Math.min(percent, originPercent) && stopPercent <= Math.max(percent, originPercent);
@@ -530,8 +556,8 @@ const RangeSlider = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<Range
     // The track is a child of the element the pointer events fire on, so it is always attached here.
     const pointerAt = (event: React.PointerEvent<HTMLDivElement>) =>
       pointerPosition(event, trackRef.current as HTMLDivElement, orientation, min, max);
-    // Pointer input lands on the native inputs' grid (step 1 when none is set).
-    const snapPointer = (position: number) => snap(position, min, max, effectiveStep(step));
+    // Pointer input lands on the native inputs' step grid.
+    const snapPointer = (position: number) => snap(position, min, max, step);
 
     const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
       onPointerDown?.(event);

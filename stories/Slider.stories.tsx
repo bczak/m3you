@@ -45,7 +45,7 @@ const meta = {
     step: {
       control: 'number',
       description:
-        'Step increment. Set it to enable discrete mode with stop indicators. Without it the slider still moves in whole numbers, like a native range input.',
+        'Step increment. Set it to enable discrete mode with stop indicators. Without it the slider still moves in steps of 1 from the minimum, like a native range input.',
       table: { category: 'Behavior' },
     },
     showTooltip: {

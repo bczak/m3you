@@ -9,12 +9,14 @@ Sliders suit values where the exact number matters less than the relative
 position — volume, brightness, opacity. Setting `step` turns the slider discrete
 and draws stop indicators along the track.
 
-Without `step`, the slider still moves in whole numbers, like a native
-`<input type="range">`, so the value, the value indicator and the announced
-value always agree. For a fractional range such as `0`–`1`, pass a fractional
-`step` such as `0.1`; it also draws a stop indicator per step, so for a fine,
-continuous-looking control scale the range to whole numbers (say `0`–`100`)
-instead.
+Without `step`, the slider still moves in steps of 1 counted from `min`, like a
+native `<input type="range">`, so the value, the value indicator and the
+announced value always agree. With or without `step`, values stay on the native
+input's grid: when the steps do not divide the range evenly, the highest value
+is the last step below `max` (`2` for `0`–`2.7`). For a fractional range such as
+`0`–`1`, pass a fractional `step` such as `0.1`; it also draws a stop indicator
+per step, so for a fine, continuous-looking control scale the range to whole
+numbers (say `0`–`100`) instead.
 
 Use `mode="centered"` for values that diverge from an origin, or `RangeSlider`
 when the user needs to choose a lower and upper bound.
