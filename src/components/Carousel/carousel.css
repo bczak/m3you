@@ -68,7 +68,9 @@
   list-style: none;
   scroll-padding-inline: var(--md-carousel-inline-padding);
   container: md-carousel-viewport / inline-size;
-  touch-action: pan-y pinch-zoom;
+  /* Both pan axes stay with the browser: the strip's own scroll axis is what a
+     swipe moves, and the other axis keeps scrolling the page. */
+  touch-action: pan-x pan-y pinch-zoom;
 
   &::-webkit-scrollbar {
     display: none;
@@ -86,7 +88,6 @@
   block-size: var(--md-carousel-item-height);
   box-sizing: border-box;
   list-style: none;
-  transform-origin: center;
 
   &[data-size-role="large"] {
     flex-basis: min(
@@ -96,7 +97,8 @@
           100cqi -
           var(--md-carousel-medium-item-width) -
           var(--md-carousel-small-item-width) -
-          var(--md-carousel-reserved-gaps)
+          (var(--md-carousel-large-count) + 1) *
+          var(--md-carousel-gap)
         ) /
         var(--md-carousel-large-count)
       )
@@ -113,6 +115,41 @@
 
   &[data-size-role="uniform"] {
     flex-basis: var(--md-carousel-uncontained-item-width);
+  }
+}
+
+/* Resolves the multi-browse lengths to px for the large-item count. JS inserts
+   it and removes it again before the browser paints. */
+.md-carousel__probe {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 100cqi;
+  block-size: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  list-style: none;
+
+  & > span {
+    display: block;
+    block-size: 0;
+  }
+
+  & > [data-length="large"] {
+    inline-size: var(--md-carousel-large-item-max-width);
+  }
+
+  & > [data-length="medium"] {
+    inline-size: var(--md-carousel-medium-item-width);
+  }
+
+  & > [data-length="small"] {
+    inline-size: var(--md-carousel-small-item-width);
+  }
+
+  & > [data-length="gap"] {
+    inline-size: var(--md-carousel-gap);
   }
 }
 
@@ -144,14 +181,12 @@
 .md-carousel__viewport[data-layout="full-screen"] {
   flex-direction: column;
   block-size: var(--md-carousel-item-height, min(100svh, 720px));
-  gap: 16px;
   padding: 0;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior-block: contain;
   scroll-padding: 0;
   scroll-snap-type: block mandatory;
-  touch-action: pan-x pinch-zoom;
 
   & .md-carousel-item {
     flex: 0 0 100%;
