@@ -2,6 +2,7 @@ import './app-bar.css';
 import * as React from 'react';
 
 import { cx } from '../../lib/cx';
+import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
 export type AppBarProps = React.ComponentProps<'header'> & {
   /** Bar height and headline treatment. `search` turns the bar itself into a search field. */
@@ -24,6 +25,17 @@ export type AppBarProps = React.ComponentProps<'header'> & {
   trailingIcons?: React.ReactNode;
   /** Trailing content inside the `search` variant's field. */
   searchTrailing?: React.ReactNode;
+  /**
+   * Called when the `search` variant's field is activated by pointer or keyboard,
+   * typically to open a search view.
+   */
+  onSearchClick?: React.MouseEventHandler<HTMLButtonElement>;
+  /**
+   * Extra attributes for the `search` variant's field button, such as `aria-expanded`,
+   * `aria-controls` or a fuller `aria-label`. The button is named by the visible label
+   * by default; an override should still contain that label so voice control can target it.
+   */
+  searchProps?: Omit<React.ComponentPropsWithoutRef<'button'>, 'children' | 'onClick' | 'type'>;
   /** Centre the headline, for a screen with a single leading and trailing action. */
   centerAligned?: boolean;
 };
@@ -42,6 +54,8 @@ const AppBar = React.forwardRef<HTMLElement, React.PropsWithoutRef<AppBarProps>>
       leadingIcon,
       trailingIcons,
       searchTrailing,
+      onSearchClick,
+      searchProps,
       centerAligned = false,
       children,
       ...props
@@ -68,7 +82,20 @@ const AppBar = React.forwardRef<HTMLElement, React.PropsWithoutRef<AppBarProps>>
             ) : null}
 
             <div className="md-app-bar__search-field" data-center-aligned={centerAligned || undefined}>
-              <span className="md-app-bar__search-label">{label}</span>
+              {/* The button is a full-bleed sibling of the trailing content, so an icon
+                  button passed as `searchTrailing` is never nested inside it. */}
+              <button
+                type="button"
+                aria-label={label}
+                {...searchProps}
+                className={cx('md-app-bar__search-button', searchProps?.className)}
+                onClick={onSearchClick}
+              >
+                <Ripple />
+              </button>
+              <span className="md-app-bar__search-label" aria-hidden="true">
+                {label}
+              </span>
               {searchTrailing ? <div className="md-app-bar__search-trailing">{searchTrailing}</div> : null}
             </div>
 
