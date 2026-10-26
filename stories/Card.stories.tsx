@@ -148,7 +148,7 @@ export const States: Story = {
       </Card>
 
       {/* Interactive — owns the surface ripple */}
-      <Card variant="elevated" onClick={() => {}} style={{ padding: 24 }}>
+      <Card variant="elevated" interactiveLabel="Clickable surface" onClick={() => {}} style={{ padding: 24 }}>
         <div className="sb-m3-demo-stack">
           <p className="sb-m3-panel__eyebrow">Interactive</p>
           <h3 className="sb-m3-panel__title">Clickable surface</h3>
@@ -159,7 +159,13 @@ export const States: Story = {
       </Card>
 
       {/* Disabled interactive */}
-      <Card variant="outlined" disabled onClick={() => {}} style={{ padding: 24 }}>
+      <Card
+        variant="outlined"
+        disabled
+        interactiveLabel="Interaction suppressed"
+        onClick={() => {}}
+        style={{ padding: 24 }}
+      >
         <div className="sb-m3-demo-stack">
           <p className="sb-m3-panel__eyebrow">Disabled</p>
           <h3 className="sb-m3-panel__title">Interaction suppressed</h3>
@@ -168,6 +174,24 @@ export const States: Story = {
           </p>
         </div>
       </Card>
+    </ShowcaseGrid>
+  ),
+};
+
+/** Dragged lifts elevated and filled cards to level 1; an outlined card keeps only its border and state layer. */
+export const Dragged: Story = {
+  render: () => (
+    <ShowcaseGrid>
+      {(['elevated', 'filled', 'outlined'] as const).map((variant) => (
+        <Card key={variant} variant={variant} dragged style={{ padding: 24 }}>
+          <div className="sb-m3-demo-stack">
+            <p className="sb-m3-panel__eyebrow" style={{ textTransform: 'capitalize' }}>
+              {variant}
+            </p>
+            <h3 className="sb-m3-panel__title">Dragged</h3>
+          </div>
+        </Card>
+      ))}
     </ShowcaseGrid>
   ),
 };
