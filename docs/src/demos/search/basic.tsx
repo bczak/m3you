@@ -13,14 +13,28 @@ export default function SearchBasic() {
     <div style={{ width: '100%', maxWidth: '28rem' }}>
       {/* The bar renders its own SearchView around these children when it opens. */}
       <SearchBar placeholder="Search the docs" value={value} onValueChange={setValue}>
-        {matches.map((item) => (
-          <SearchSuggestionItem
-            key={item}
-            icon={value ? <TrendingUp size={20} aria-hidden="true" /> : <Clock size={20} aria-hidden="true" />}
+        {matches.length > 0 ? (
+          matches.map((item) => (
+            <SearchSuggestionItem
+              key={item}
+              icon={value ? <TrendingUp size={20} aria-hidden="true" /> : <Clock size={20} aria-hidden="true" />}
+            >
+              {item}
+            </SearchSuggestionItem>
+          ))
+        ) : (
+          <p
+            style={{
+              margin: 0,
+              padding: '1rem',
+              color: 'var(--md-sys-color-on-surface-variant)',
+              fontSize: 'var(--md-sys-typescale-body-large-size)',
+              lineHeight: 'var(--md-sys-typescale-body-large-line-height)',
+            }}
           >
-            {item}
-          </SearchSuggestionItem>
-        ))}
+            No results for “{value}”
+          </p>
+        )}
       </SearchBar>
     </div>
   );

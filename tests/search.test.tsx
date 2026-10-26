@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { createRef } from 'react';
+import { createRef, useState } from 'react';
 import { afterEach, expect, test, vi } from 'vitest';
 import { SearchView } from '../src/components/Search/search';
 import { SearchBar } from '../src/components/Search/search-bar';
@@ -171,6 +171,12 @@ test('SearchView with autoFocus=false does not focus the input', async () => {
 test('SearchBar renders as a non-button bar when it has no children', async () => {
   const { container } = render(<SearchBar />);
   expect(container.querySelector('.md-search-bar')).toBeInTheDocument();
+  expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  expect(screen.getByRole('textbox', { name: 'Search' })).toBeInTheDocument();
+});
+
+test('SearchBar with null children is still a plain field', async () => {
+  render(<SearchBar>{null}</SearchBar>);
   expect(screen.queryByRole('button')).not.toBeInTheDocument();
   expect(screen.getByRole('textbox', { name: 'Search' })).toBeInTheDocument();
 });
@@ -503,6 +509,48 @@ test('SearchBar wraps suggestion children in a single view with one query header
   expect(screen.getByRole('textbox', { name: 'Search input' })).toHaveValue('sh');
   const content = container.querySelector('.md-search-view__content') as HTMLElement;
   expect(content.querySelectorAll('.md-search-suggestion-item')).toHaveLength(2);
+});
+
+function FilteredSearchBar() {
+  const [value, setValue] = useState('');
+  const matches = ['Shape scale', 'Shadows'].filter((item) => item.toLowerCase().includes(value.toLowerCase()));
+  return (
+    <SearchBar value={value} onValueChange={setValue}>
+      {matches.map((item) => (
+        <SearchSuggestionItem key={item}>{item}</SearchSuggestionItem>
+      ))}
+    </SearchBar>
+  );
+}
+
+test('SearchBar keeps the open view and its focused input when the suggestions filter down to none', async () => {
+  const { container } = render(<FilteredSearchBar />);
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  await flushRaf();
+  const input = screen.getByRole('textbox', { name: 'Search input' });
+  expect(input).toHaveFocus();
+
+  fireEvent.change(input, { target: { value: 'sh' } });
+  expect(container.querySelectorAll('.md-search-suggestion-item')).toHaveLength(2);
+
+  fireEvent.change(input, { target: { value: 'zz' } });
+  expect(container.querySelectorAll('.md-search-suggestion-item')).toHaveLength(0);
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
+  expect(screen.getByRole('textbox', { name: 'Search input' })).toBe(input);
+  expect(input).toHaveFocus();
+
+  // Closed with no matches, the bar is still the expandable button, not a plain field.
+  fireEvent.keyDown(input, { key: 'Escape' });
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Search' })).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+});
+
+test('SearchBar is expandable from the start when its list of children is empty', async () => {
+  render(<SearchBar>{[]}</SearchBar>);
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
+  expect(screen.getAllByRole('textbox')).toHaveLength(1);
 });
 
 // =============================================================================

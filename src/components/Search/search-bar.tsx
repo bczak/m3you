@@ -57,7 +57,11 @@ export type SearchBarProps = Omit<React.ComponentProps<'div'>, 'onChange'> & {
    * @default 'expressive'
    */
   viewAppearance?: SearchViewProps['appearance'];
-  /** Content rendered in the expandable search view */
+  /**
+   * Content rendered in the expandable search view. Passing children, even an
+   * empty list, makes the bar expandable; omit them (or pass `null`) for a plain
+   * search field.
+   */
   children?: React.ReactNode;
 };
 
@@ -96,7 +100,11 @@ const SearchBar = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<SearchB
     const isControlledOpen = open !== undefined;
     const isOpen = isControlledOpen ? open : internalOpen;
 
-    const hasView = React.Children.count(children) > 0;
+    // Any children make the bar expandable, an empty list included. Counting the
+    // rendered nodes instead would turn a list that filters down to no matches
+    // into a plain field, unmounting the open view under its focused input.
+    // Omitted or `null` children still give the plain field, as they always have.
+    const hasView = children !== undefined && children !== null;
 
     const updateOpen = React.useCallback(
       (next: boolean) => {

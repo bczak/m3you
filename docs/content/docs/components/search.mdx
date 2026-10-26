@@ -9,10 +9,15 @@ children: the bar becomes a button that opens its own `SearchView` around them,
 and manages the transition between the two. Without children it is a plain
 search field.
 
+Any children make the bar expandable, an empty list included, so a list
+filtered down to no matches leaves the open view and its input in place while
+the user keeps typing. Show an empty state there instead of nothing, as the
+example below does.
+
 <Example
   name="search/basic"
   title="Filtering suggestions"
-  description="Focus the field and type — the suggestions filter live."
+  description="Open the bar and type — the suggestions filter live, down to an empty state."
   layout="stretch"
 />
 
