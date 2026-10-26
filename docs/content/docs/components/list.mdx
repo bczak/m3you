@@ -8,9 +8,54 @@ Lists present a continuous set of related items. Each `ListItem` takes a
 slots — `lineCount` tells it how many lines to reserve.
 
 The Expressive `segmented` appearance separates rows into rounded containers and
-is the recommended Material 3 look.
+is the recommended Material 3 look. Its rows use the Expressive list item — 10px
+of block padding, 12px between slots, and 52/64/80px rows for one, two and three
+lines. The `standard` appearance keeps the baseline list item: 8px of padding
+(12px for three lines), 16px between slots, and 56/72/88px rows.
+
+In either appearance a selected, focused, pressed or dragged row morphs to the
+16px large corner; an expanded accordion row stays at rest.
 
 <Example name="list/basic" title="A three-line list" layout="stretch" />
+
+## Density
+
+`density` shortens rows on the M3 density scale: each step removes 4px of row
+height and 2px of block padding. On the standard list that gives the kit's
+tables — 48/64/80px at `-2` and 40/56/72px at `-4`. A 48px control in a row (a
+selection checkbox, a trailing icon button) keeps its full target and overflows
+the row's padding rather than growing the row.
+
+```tsx
+<List appearance="standard" density={-2}>…</List>
+```
+
+The row geometry is exposed as custom properties on the list:
+`--md-list-item-one-line-height`, `--md-list-item-two-line-height`,
+`--md-list-item-three-line-height`, `--md-list-item-padding-block`,
+`--md-list-item-three-line-padding-block`, `--md-list-item-padding-inline`,
+`--md-list-item-slot-gap` and `--md-list-item-icon-size`.
+
+## Leading and trailing icons
+
+An icon passed straight into `leading` or `trailing` — a bare `<svg>`, such as
+a lucide icon — takes the appearance's icon size: 24px in a standard row and
+20px in a segmented one, as the Expressive list item has it. The slot is as
+wide as that icon, so segmented text starts 48px in. Controls, avatars and
+thumbnails keep their own size, and so does an `<svg>` in a leading slot that
+sets `leadingType` — an avatar drawn as SVG. Set `--md-list-item-icon-size` on
+the list to change the icon size.
+
+## Leading media
+
+A bare `<img>` in `leading` is a 40px avatar circle. Set `leadingType="image"`
+for a 56px thumbnail or `leadingType="video"` for a 114x64 video thumbnail —
+both on the extra-small corner with a 1px outline-variant stroke. A video row
+pads 12px above and below its thumbnail.
+
+```tsx
+<ListItem headline="Holiday" leadingType="image" leading={<img src={src} alt="" />} />
+```
 
 ## Width
 
@@ -46,6 +91,10 @@ slot.
 <ListItem value="txn-1" headline="Weekly groceries" selectionIndicator="none" />
 ```
 
+A `disabled` row fades its leading content, text and trailing content to the
+disabled opacity and plays no ripple. A disabled row that is also selected
+trades the secondary-container fill for a faint on-surface container.
+
 <Example
   name="list/selection"
   title="Single and multiple selection"
@@ -55,8 +104,23 @@ slot.
 ## Disclosure and swipe actions
 
 `ListItemAccordion` renders an accessible disclosure button and labelled
-panel. `ListItemSwipe` reveals focusable actions with pointer drag; Escape
-closes an open action.
+panel; its chevron sits in a 32x40 capsule that fills with surface-container
+once expanded, and clears while the row is hovered, focused or pressed so the
+row's state layer shows through. `ListItemSwipe` reveals focusable actions with pointer drag;
+Escape closes an open action. Each side's action is a primary, fully rounded
+reveal element sitting 2px beside the row — pass an icon `<button>` with an
+`aria-label` for the kit's look. The sides are logical: `startAction` sits at
+the inline start and is uncovered by a drag toward the inline end, so in a
+right-to-left list it is on the right and the row slides left to show it.
+
+A closed row's actions sit under its surface, so keyboard focus reaching one
+slides that side open. Focus moving off the action — on to the row's content or
+out of the row — closes a side that focus opened; a side opened by a swipe stays
+open. When a side closes while its action still holds focus — Escape, the
+action itself, or a controlled `revealedSide` — focus moves to the row's first
+focusable content, or off the hidden button if there is none. The action's
+focus ring is drawn inside the pill in its content colour: the row clips an
+outer ring, and the default secondary ring would barely show on primary.
 
 <Example name="list/interactions" title="Disclosure and swipe" layout="stretch" />
 

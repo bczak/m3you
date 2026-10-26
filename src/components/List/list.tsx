@@ -79,6 +79,16 @@ export type ListSelectionIndicatorKind = 'check' | 'radio' | 'checkbox' | 'none'
 
 export type ListSelectionIndicator = ListSelectionIndicatorKind | React.ReactNode;
 
+/**
+ * How a direct `<img>` (or `<video>`) in the leading slot is framed.
+ *
+ * `avatar` — a 40px circle. What a bare `<img>` gets when no type is set.
+ * `image` — the kit's 56x56 thumbnail: Corner/Extra-small, 1px Outline Variant.
+ * `video` — the kit's 114x64 thumbnail, same corner and stroke; the row pads
+ * 12px above and below it, as the kit's video rows do.
+ */
+export type ListItemLeadingType = 'avatar' | 'image' | 'video';
+
 export type ListItemProps = Omit<React.ComponentProps<'li'>, 'children' | 'onClick' | 'value'> & {
   /** Stable selection value. Required when the parent list is selectable. */
   value?: string;
@@ -90,6 +100,11 @@ export type ListItemProps = Omit<React.ComponentProps<'li'>, 'children' | 'onCli
   supportingText?: React.ReactNode;
   /** Content at the start of the row — an icon, avatar or thumbnail. */
   leading?: React.ReactNode;
+  /**
+   * How a direct `<img>`/`<video>` in `leading` is framed. A bare `<img>` is a
+   * 40px avatar circle unless this says `image` or `video`.
+   */
+  leadingType?: ListItemLeadingType;
   /** Content at the end of the row — an icon, a switch, or metadata. */
   trailing?: React.ReactNode;
   /** How many lines of vertical space to reserve, so rows in a list stay aligned. */
@@ -154,7 +169,12 @@ export type ListItemSwipeProps = Omit<React.ComponentProps<'li'>, 'onChange'> & 
   revealedSide?: ListItemSwipeSide;
   /** Initial revealed side for uncontrolled use. */
   defaultRevealedSide?: ListItemSwipeSide;
-  /** Called whenever a swipe, Escape, or action requests a new revealed side. */
+  /**
+   * Called whenever a swipe, Escape, an action, or keyboard focus requests a
+   * new revealed side. Focusing a hidden action reveals its side, and focus
+   * moving off the action — to the row's content or out of the row — closes a
+   * side that focus opened.
+   */
   onRevealedSideChange?: (side: ListItemSwipeSide) => void;
   /** Action exposed by dragging toward the inline end. */
   startAction?: React.ReactNode;
@@ -477,6 +497,7 @@ const ListItem = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemP
       overline,
       supportingText,
       leading,
+      leadingType,
       trailing,
       lineCount: lineCountProp,
       href,
@@ -541,7 +562,11 @@ const ListItem = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemP
     const content = (includeTrailing: boolean) => (
       <>
         {selectionIndicatorPosition === 'leading' ? selectionMark : null}
-        {leading ? <span className="md-list-item__leading">{leading}</span> : null}
+        {leading ? (
+          <span className="md-list-item__leading" data-leading={leadingType}>
+            {leading}
+          </span>
+        ) : null}
         <span className="md-list-item__content">
           {overline ? <span className="md-list-item__overline">{overline}</span> : null}
           <span id={headlineId} className="md-list-item__headline">
@@ -588,7 +613,9 @@ const ListItem = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemP
             tabIndex={disabled ? -1 : 0}
             onClick={handleLinkClick}
           >
-            <Ripple />
+            {/* An <a> has no `disabled` property for the ripple to read, so a
+                disabled link row would still play its press ripple. */}
+            <Ripple disabled={disabled} />
             {content(includeTrailing)}
           </a>
         );
@@ -640,7 +667,8 @@ const ListItem = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemP
           tabIndex={disabled ? undefined : 0}
           onClick={handleSelectionClick}
         >
-          <Ripple />
+          {/* An <li aria-disabled> has no `disabled` property either. */}
+          <Ripple disabled={disabled} />
           <div className="md-list-item__layout">{content(true)}</div>
         </li>
       );
@@ -752,7 +780,9 @@ const ListItemAccordion = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<
             {supportingText ? <span className="md-list-item__supporting-text">{supportingText}</span> : null}
           </span>
           {trailing ? <span className="md-list-item__trailing">{trailing}</span> : null}
-          <ChevronDown className="md-list-item-accordion__icon" aria-hidden="true" />
+          <span className="md-list-item-accordion__indicator" aria-hidden="true">
+            <ChevronDown className="md-list-item-accordion__icon" aria-hidden="true" />
+          </span>
         </button>
         <section id={panelId} aria-labelledby={buttonId} className="md-list-item-accordion__panel" hidden={!expanded}>
           {children}
@@ -789,6 +819,18 @@ function renderSwipeAction(action: React.ReactNode, side: Exclude<ListItemSwipeS
   );
 }
 
+type SwipeActionsRef = { readonly current: HTMLDivElement | null };
+
+/**
+ * Which of a row's action sides holds `node`, if either does. Both sides are
+ * always rendered, so once the row has mounted both refs are set.
+ */
+function getSwipeActionSide(start: SwipeActionsRef, end: SwipeActionsRef, node: EventTarget): ListItemSwipeSide {
+  if ((start.current as HTMLDivElement).contains(node as Node)) return 'start';
+  if ((end.current as HTMLDivElement).contains(node as Node)) return 'end';
+  return null;
+}
+
 const ListItemSwipe = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<ListItemSwipeProps>>(
   (
     {
@@ -800,6 +842,8 @@ const ListItemSwipe = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<List
       children,
       className,
       onKeyDown,
+      onFocus,
+      onBlur,
       ...props
     },
     ref,
@@ -807,7 +851,18 @@ const ListItemSwipe = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<List
     const controlled = revealedSideProp !== undefined;
     const [internalSide, setInternalSide] = React.useState<ListItemSwipeSide>(defaultRevealedSide);
     const [dragOffset, setDragOffset] = React.useState<number | null>(null);
-    const dragRef = React.useRef<{ pointerId: number; startX: number; initialOffset: number } | null>(null);
+    const dragRef = React.useRef<{
+      pointerId: number;
+      startX: number;
+      initialOffset: number;
+      direction: 1 | -1;
+    } | null>(null);
+    // The side keyboard focus opened, so focus moving off its action can close
+    // it again instead of leaving every row it tabbed through open.
+    const focusRevealRef = React.useRef<ListItemSwipeSide>(null);
+    const startActionsRef = React.useRef<HTMLDivElement | null>(null);
+    const endActionsRef = React.useRef<HTMLDivElement | null>(null);
+    const surfaceRef = React.useRef<HTMLDivElement | null>(null);
     const revealedSide = controlled ? revealedSideProp : internalSide;
     const restingOffset = revealedSide === 'start' ? SWIPE_REVEAL_PX : revealedSide === 'end' ? -SWIPE_REVEAL_PX : 0;
     const currentOffset = dragOffset ?? restingOffset;
@@ -820,11 +875,59 @@ const ListItemSwipe = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<List
       [controlled, onRevealedSideChange],
     );
 
-    const close = React.useCallback(() => updateSide(null), [updateSide]);
+    const close = React.useCallback(() => {
+      focusRevealRef.current = null;
+      updateSide(null);
+    }, [updateSide]);
+
+    // A hidden action sits under the row's surface, where its focus ring is
+    // painted out of sight, so focus reaching it slides its side open. Focus
+    // moving on to the row's own content closes a side that focus opened: the
+    // open row pushes 72px of that content out of view, its focus ring with it.
+    const handleFocus = (event: React.FocusEvent<HTMLLIElement>) => {
+      onFocus?.(event);
+      const side = getSwipeActionSide(startActionsRef, endActionsRef, event.target);
+      if (side === null) {
+        if (focusRevealRef.current !== null) close();
+        return;
+      }
+      if (side === revealedSide) return;
+      focusRevealRef.current = side;
+      updateSide(side);
+    };
+
+    const handleBlur = (event: React.FocusEvent<HTMLLIElement>) => {
+      onBlur?.(event);
+      const next = event.relatedTarget;
+      if (focusRevealRef.current === null || (next instanceof Node && event.currentTarget.contains(next))) return;
+      // The window losing focus blurs the action but leaves it the document's
+      // active element; the row stays open for the user's return.
+      if (next === null && event.target === event.currentTarget.ownerDocument.activeElement) return;
+      close();
+    };
+
+    // Once a side closes — Escape, an action, a swipe or the owner — an action
+    // that still holds focus has slid under the surface, where Enter would
+    // trigger it unseen. Focus moves to the row's own content, or off the
+    // hidden button when the row has nothing focusable.
+    React.useEffect(() => {
+      const surface = surfaceRef.current as HTMLDivElement;
+      const active = surface.ownerDocument.activeElement as HTMLElement;
+      const side = getSwipeActionSide(startActionsRef, endActionsRef, active);
+      if (side === null || side === revealedSide) return;
+      const content = Array.from(surface.querySelectorAll<HTMLElement>(INTERACTIVE_SELECTOR)).find(
+        (element) => element.tabIndex >= 0 && !isDisabledTarget(element),
+      );
+      if (content) content.focus();
+      else active.blur();
+    }, [revealedSide]);
 
     const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
       if (event.button !== 0 || (event.target as Element).closest(INTERACTIVE_SELECTOR)) return;
-      dragRef.current = { pointerId: event.pointerId, startX: event.clientX, initialOffset: restingOffset };
+      // The offset is logical — positive opens the start side, which sits on
+      // the right in a right-to-left row — so an RTL drag counts leftward.
+      const direction = getComputedStyle(event.currentTarget).direction === 'rtl' ? -1 : 1;
+      dragRef.current = { pointerId: event.pointerId, startX: event.clientX, initialOffset: restingOffset, direction };
       event.currentTarget.setPointerCapture?.(event.pointerId);
     };
 
@@ -833,7 +936,7 @@ const ListItemSwipe = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<List
       if (!drag || drag.pointerId !== event.pointerId) return;
       const next = Math.max(
         -SWIPE_REVEAL_PX,
-        Math.min(SWIPE_REVEAL_PX, drag.initialOffset + event.clientX - drag.startX),
+        Math.min(SWIPE_REVEAL_PX, drag.initialOffset + (event.clientX - drag.startX) * drag.direction),
       );
       setDragOffset(next);
     };
@@ -845,6 +948,8 @@ const ListItemSwipe = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<List
       dragRef.current = null;
       setDragOffset(null);
       event.currentTarget.releasePointerCapture?.(event.pointerId);
+      // The pointer now owns the row's state; focus leaving it no longer closes it.
+      focusRevealRef.current = null;
       if (finalOffset >= SWIPE_THRESHOLD_PX && startAction) updateSide('start');
       else if (finalOffset <= -SWIPE_THRESHOLD_PX && endAction) updateSide('end');
       else updateSide(null);
@@ -866,15 +971,18 @@ const ListItemSwipe = React.forwardRef<HTMLLIElement, React.PropsWithoutRef<List
         data-revealed-side={revealedSide ?? undefined}
         data-dragging={dragOffset !== null || undefined}
         onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         style={{ ...props.style, '--md-list-swipe-offset': `${currentOffset}px` } as React.CSSProperties}
       >
-        <div className="md-list-item-swipe__actions md-list-item-swipe__actions--start">
+        <div ref={startActionsRef} className="md-list-item-swipe__actions md-list-item-swipe__actions--start">
           {renderSwipeAction(startAction, 'start', close)}
         </div>
-        <div className="md-list-item-swipe__actions md-list-item-swipe__actions--end">
+        <div ref={endActionsRef} className="md-list-item-swipe__actions md-list-item-swipe__actions--end">
           {renderSwipeAction(endAction, 'end', close)}
         </div>
         <div
+          ref={surfaceRef}
           className="md-list-item-swipe__surface"
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}

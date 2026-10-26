@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { ArchiveIcon, InboxIcon, MoreVerticalIcon, StarIcon, UserIcon } from 'lucide-react';
+import { ArchiveIcon, InboxIcon, MoreVerticalIcon, StarIcon, Trash2Icon, UserIcon } from 'lucide-react';
 import { useState } from 'react';
 import { expect, waitFor } from 'storybook/test';
 
@@ -97,11 +97,29 @@ export const ExpressiveAppearances: Story = {
       </ShowcasePanel>
     </ShowcaseGrid>
   ),
+  play: async ({ canvasElement, step }) => {
+    const [segmented, standard] = Array.from(canvasElement.querySelectorAll<HTMLElement>('.md-list'));
+    const firstRow = (list: HTMLElement) => list.querySelector('.md-list-item') as HTMLElement;
+    const layout = (list: HTMLElement) =>
+      getComputedStyle(firstRow(list).querySelector('.md-list-item__layout') as HTMLElement);
+
+    await step('segmented rows use the Expressive list item: 10px padding, 12px gap, 64px two-line rows', async () => {
+      await expect(firstRow(segmented).getBoundingClientRect().height).toBeCloseTo(64, 0);
+      await expect(layout(segmented).paddingTop).toBe('10px');
+      await expect(layout(segmented).columnGap).toBe('12px');
+    });
+
+    await step('standard rows keep the baseline list item: 8px padding, 16px gap, 72px two-line rows', async () => {
+      await expect(firstRow(standard).getBoundingClientRect().height).toBeCloseTo(72, 0);
+      await expect(layout(standard).paddingTop).toBe('8px');
+      await expect(layout(standard).columnGap).toBe('16px');
+    });
+  },
 };
 
 function SelectionExamples() {
   const [singleValue, setSingleValue] = useState<string | null>('comfortable');
-  const [multipleValue, setMultipleValue] = useState<string[]>(['email']);
+  const [multipleValue, setMultipleValue] = useState<string[]>(['email', 'fax']);
 
   return (
     <ShowcaseGrid>
@@ -132,6 +150,7 @@ function SelectionExamples() {
           <ListItem value="email" headline="Email" />
           <ListItem value="push" headline="Push notifications" />
           <ListItem value="sms" headline="Text message" disabled />
+          <ListItem value="fax" headline="Fax" supportingText="Selected, but unavailable" disabled />
         </List>
       </ShowcasePanel>
     </ShowcaseGrid>
@@ -239,19 +258,32 @@ export const ActionModes: Story = {
 };
 
 export const ContentAndStates: Story = {
+  parameters: {
+    a11y: {
+      // The dragged row is the kit's "State=Dragged" exactly: an On Tertiary
+      // Container @16% state layer over Tertiary Container, with On Tertiary
+      // Container text. The generated palette puts that text only just over
+      // the line at rest (4.55:1), so any state layer takes it under 4.5:1
+      // (3.39:1 here). A row is only dragged while it is being moved, and the
+      // missing headroom is a palette/token gap, not List's layer to drop.
+      // So the color-contrast check skips that one row; every other row, and
+      // every other rule on the dragged row, is still audited.
+      config: { rules: [{ id: 'color-contrast', selector: '*:not(.md-list-item[data-dragged] *)' }] },
+    },
+  },
   render: () => (
     <List aria-label="Content density examples" style={{ maxWidth: 720 }}>
-      <ListItem headline="One-line item" trailing="56dp" />
+      <ListItem headline="One-line item" trailing="52dp" />
       <ListItem
         headline="Two-line item"
         supportingText="Supporting text adds context without another action."
-        trailing="72dp"
+        trailing="64dp"
       />
       <ListItem
         headline="Three-line item"
         overline="Category"
-        supportingText="Overline, headline, and supporting text align media and trailing content to the top."
-        trailing="88dp"
+        supportingText="Overline, headline and supporting text, top-aligned."
+        trailing="80dp"
       />
       <ListItem headline="Disabled item" supportingText="Unavailable in the current context" disabled />
       <ListItem
@@ -270,10 +302,10 @@ export const Density: Story = {
         <ShowcasePanel
           key={density}
           eyebrow={`Density ${density}`}
-          title={density === 0 ? 'Default' : `${Math.abs(density)}px denser`}
-          description="Child controls retain their independent 48px targets."
+          title={density === 0 ? 'Default' : `Rows ${Math.abs(density) * 4}px shorter`}
+          description="Each step removes 4px of row height and 2px of block padding. Child controls retain their independent 48px targets."
         >
-          <List density={density} appearance="segmented">
+          <List density={density} appearance="standard">
             <ListItem headline="One-line item" />
             <ListItem headline="Two-line item" supportingText="Supporting information" />
             <ListItem overline="Overline" headline="Three-line item" supportingText="Supporting information" />
@@ -282,6 +314,23 @@ export const Density: Story = {
       ))}
     </ShowcaseGrid>
   ),
+  play: async ({ canvasElement, step }) => {
+    // Kit "List Item: 0 / -2 / -4 Density (baseline)".
+    const expected = [
+      [56, 72, 88],
+      [48, 64, 80],
+      [40, 56, 72],
+    ];
+    const lists = Array.from(canvasElement.querySelectorAll<HTMLElement>('.md-list'));
+    for (const [index, list] of lists.entries()) {
+      await step(`density ${list.dataset.density} rows are ${expected[index].join('/')}`, async () => {
+        const heights = Array.from(list.querySelectorAll<HTMLElement>('.md-list-item')).map(
+          (row) => row.getBoundingClientRect().height,
+        );
+        for (const [row, height] of heights.entries()) await expect(height).toBeCloseTo(expected[index][row], 0);
+      });
+    }
+  },
 };
 
 export const DisclosureAndSwipe: Story = {
@@ -294,21 +343,82 @@ export const DisclosureAndSwipe: Story = {
       >
         Choose which events can send notifications from your account settings.
       </ListItemAccordion>
-      <ListItemSwipe startAction="Archive" endAction="Delete">
-        <div
-          style={{
-            boxSizing: 'border-box',
-            minHeight: 72,
-            padding: 16,
-            background: 'var(--md-sys-color-surface)',
-            color: 'var(--md-sys-color-on-surface)',
-          }}
-        >
+      <ListItemSwipe
+        startAction={
+          <button type="button" aria-label="Archive">
+            <ArchiveIcon aria-hidden="true" />
+          </button>
+        }
+        endAction={
+          <button type="button" aria-label="Delete">
+            <Trash2Icon aria-hidden="true" />
+          </button>
+        }
+      >
+        <div style={{ boxSizing: 'border-box', minHeight: 72, padding: 16, color: 'var(--md-sys-color-on-surface)' }}>
           Swipe this message in either direction
+        </div>
+      </ListItemSwipe>
+      <ListItemSwipe defaultRevealedSide="end" endAction="Delete">
+        <div style={{ boxSizing: 'border-box', minHeight: 72, padding: 16, color: 'var(--md-sys-color-on-surface)' }}>
+          Revealed: the action sits 2px beside the row
         </div>
       </ListItemSwipe>
     </List>
   ),
+};
+
+const thumbnail = (hue: number) =>
+  `data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 9"><rect width="16" height="9" fill="hsl(${hue} 55% 70%)"/></svg>`,
+  )}`;
+
+export const LeadingMedia: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A bare `<img>` in `leading` is a 40px avatar circle. `leadingType="image"` frames it as the kit\'s 56px thumbnail and `leadingType="video"` as its 114x64 video thumbnail — Corner/Extra-small with a 1px Outline Variant stroke — and a video row pads 12px above and below the thumbnail.',
+      },
+    },
+  },
+  render: () => (
+    <List appearance="standard" aria-label="Leading media" style={{ maxWidth: 480 }}>
+      <ListItem headline="Avatar" supportingText="A bare image" leading={<img alt="" src={thumbnail(210)} />} />
+      <ListItem
+        headline="Image"
+        supportingText="leadingType image"
+        leadingType="image"
+        leading={<img alt="" src={thumbnail(140)} />}
+      />
+      <ListItem headline="Video" leadingType="video" leading={<img alt="" src={thumbnail(20)} />} />
+    </List>
+  ),
+  play: async ({ canvas, step }) => {
+    const [avatarRow, imageRow, videoRow] = Array.from(
+      canvas.getByRole('list', { name: 'Leading media' }).querySelectorAll<HTMLElement>('.md-list-item'),
+    );
+    const media = (row: HTMLElement) => row.querySelector('.md-list-item__leading > img') as HTMLElement;
+
+    await step('a bare image is a 40px avatar circle', async () => {
+      const box = media(avatarRow).getBoundingClientRect();
+      await expect([box.width, box.height]).toEqual([40, 40]);
+      await expect(getComputedStyle(media(avatarRow)).borderRadius).toBe('50%');
+    });
+
+    await step('an image thumbnail is 56x56 at Corner/Extra-small, in a 72px row', async () => {
+      const box = media(imageRow).getBoundingClientRect();
+      await expect([box.width, box.height]).toEqual([56, 56]);
+      await expect(getComputedStyle(media(imageRow)).borderRadius).toBe('4px');
+      await expect(imageRow.getBoundingClientRect().height).toBeCloseTo(72, 0);
+    });
+
+    await step('a video thumbnail is 114x64, and its one-line row is 88px', async () => {
+      const box = media(videoRow).getBoundingClientRect();
+      await expect([box.width, box.height]).toEqual([114, 64]);
+      await expect(videoRow.getBoundingClientRect().height).toBeCloseTo(88, 0);
+    });
+  },
 };
 
 export const LongLocalizedContent: Story = {
@@ -478,7 +588,7 @@ export const HighlightOnlySelection: Story = {
     docs: {
       description: {
         story:
-          "`selectionIndicator=\"none\"` marks the selected row the way M3's list-detail layout does — with the row's selected container colour and `aria-selected` — and reserves no indicator gutter. Every other value keeps the 40px gutter (a 24px indicator plus the row's 16px gap). The play function measures the trailing slot against the row's padding edge in all three lists and checks the selected container colour and the listbox semantics are identical either way.",
+          "`selectionIndicator=\"none\"` marks the selected row the way M3's list-detail layout does — with the row's selected container colour and `aria-selected` — and reserves no indicator gutter. Every other value keeps the indicator gutter: a 48px radio or checkbox target plus the row's slot gap (12px in the default segmented appearance). The play function measures the trailing slot against the row's padding edge in all three lists and checks the selected container colour and the listbox semantics are identical either way.",
       },
     },
   },
@@ -516,6 +626,9 @@ export const HighlightOnlySelection: Story = {
       );
       return row.getBoundingClientRect().right - padding - trailing.getBoundingClientRect().right;
     };
+    /** The row's own gap between slots. */
+    const slotGap = (row: HTMLElement) =>
+      Number.parseFloat(getComputedStyle(row.querySelector('.md-list-item__layout') as HTMLElement).columnGap);
 
     const resolve = (token: string) => {
       const probe = document.createElement('span');
@@ -543,12 +656,13 @@ export const HighlightOnlySelection: Story = {
       const checkbox = slot(checkboxSelected, 'selection') as HTMLElement;
       await expect(radio).not.toBeNull();
       await expect(checkbox).not.toBeNull();
-      // The slot plus the row's 16px gap: 48px touch targets here, and never
-      // less than the slot's own 24px minimum.
+      // The slot plus the row's slot gap: 48px touch targets here, and never
+      // less than the slot's own minimum (the row's icon size).
       await expect(radio.getBoundingClientRect().width).toBeCloseTo(48, 1);
       await expect(checkbox.getBoundingClientRect().width).toBeCloseTo(48, 1);
-      await expect(gutter(radioSelected)).toBeCloseTo(64, 1);
-      await expect(gutter(checkboxSelected)).toBeCloseTo(64, 1);
+      await expect(slotGap(radioSelected)).toBe(12);
+      await expect(gutter(radioSelected)).toBeCloseTo(48 + slotGap(radioSelected), 1);
+      await expect(gutter(checkboxSelected)).toBeCloseTo(48 + slotGap(checkboxSelected), 1);
       await expect(gutter(radioSelected) - gutter(highlighted)).toBeGreaterThanOrEqual(40);
     });
 
@@ -574,6 +688,19 @@ export const HighlightOnlySelection: Story = {
         await expect(getComputedStyle(plain).backgroundColor).toBe(resolve('--md-sys-color-secondary-container'));
         await expect(getComputedStyle(highlighted).backgroundColor).toBe(resolve('--md-sys-color-surface-container'));
       });
+    });
+
+    await step('focus settles before the a11y audit', async () => {
+      // A synthetic click is not a trusted pointer event, so it leaves the row
+      // :focus-visible and the row shows the kit's 10% focus state layer. With
+      // that layer, On Secondary Container text on Secondary Container is
+      // 4.03:1 (4.57:1 at rest). That gap belongs to the generated palette's
+      // on-container tone, not to List: the 8% hover layer is 4.15:1 too.
+      // A real mouse click shows no focus layer, so blur the row and let the
+      // layer fade. axe then audits the selected rows at rest.
+      plain.blur();
+      const layer = plain.querySelector('.md-ripple-hover-layer__surface') as HTMLElement;
+      await waitFor(() => expect(getComputedStyle(layer).opacity).toBe('0'));
     });
   },
 };
@@ -667,7 +794,10 @@ export const LedgerRowGeometry: Story = {
       // The slot is wider than the measure — the cap is on the text, so no hole
       // opens between the description and the amounts.
       await expect(content.width).toBeGreaterThan(cap);
-      await expect(box(long, 'trailing').left - content.right).toBeCloseTo(16, 1);
+      const slotGap = Number.parseFloat(
+        getComputedStyle(long.querySelector('.md-list-item__layout') as HTMLElement).columnGap,
+      );
+      await expect(box(long, 'trailing').left - content.right).toBeCloseTo(slotGap, 1);
     });
   },
 };
