@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, waitFor } from 'storybook/test';
 
 import { Button } from '../src/components/Button/button';
 import { DatePicker, type DateRange } from '../src/components/DatePicker/date-picker';
@@ -108,6 +109,42 @@ export const Modal: Story = {
       <DatePicker variant="modal" defaultValue={DEFAULT_DATE} minDate={new Date(2020, 0, 1)} maxDate={MAX_DATE} />
     </div>
   ),
+  // By keyboard alone: the menu opens the year grid on the shown year, scrolled into view and the grid's one
+  // tab stop. The arrows walk the grid, Home and End stop at the enabled ends, and Enter or Space picks.
+  play: async ({ canvas, userEvent }) => {
+    const menu = canvas.getByRole('button', { name: /, select year$/ });
+    const year = (value: number) => canvas.getByRole('option', { name: String(value) });
+    menu.focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(year(2026)).toHaveFocus());
+    const grid = canvas.getByRole('listbox', { name: 'Select year' }).getBoundingClientRect();
+    const shown = year(2026).getBoundingClientRect();
+    await expect(grid.height).toBeGreaterThan(0);
+    await expect(shown.top).toBeGreaterThanOrEqual(grid.top);
+    await expect(shown.bottom).toBeLessThanOrEqual(grid.bottom);
+
+    // Shift+Tab leaves the grid for the menu, and Tab comes back to the same year.
+    await userEvent.tab({ shift: true });
+    await expect(menu).toHaveFocus();
+    await userEvent.tab();
+    await expect(year(2026)).toHaveFocus();
+
+    await userEvent.keyboard('{ArrowLeft}{ArrowUp}');
+    await expect(year(2022)).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(menu).toHaveTextContent('April 2022');
+    await expect(menu).toHaveFocus();
+
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(year(2022)).toHaveFocus());
+    await userEvent.keyboard('{Home}');
+    await expect(year(2020)).toHaveFocus();
+    await userEvent.keyboard('{End}');
+    await expect(year(2026)).toHaveFocus();
+    await userEvent.keyboard(' ');
+    await expect(menu).toHaveTextContent('April 2026');
+    await expect(menu).toHaveFocus();
+  },
 };
 
 // =============================================================================

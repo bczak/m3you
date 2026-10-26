@@ -192,11 +192,38 @@ function getCalendarDays(year: number, month: number): CalendarDay[] {
 /** `returnFocus` is true when focus was inside the list and should go back to its trigger. */
 type CloseList = (returnFocus: boolean) => void;
 
-function useOptionList(onClose: CloseList) {
+/** What `useOptionList` gives each option button: its roving tab stop and its keyboard handling. */
+type RovingProps = Pick<React.ButtonHTMLAttributes<HTMLButtonElement>, 'tabIndex' | 'onFocus' | 'onKeyDown'>;
+
+interface OptionListConfig {
+  /** Options, rendered in order as the list's direct children. */
+  count: number;
+  /** Options per row: 3 in the modal year grid, 1 in the docked lists. */
+  columns: number;
+  /** Where the tab stop goes before any option has had focus, in order of preference (`-1` for none). */
+  preferred: number[];
+  isDisabled: (index: number) => boolean;
+  onClose: CloseList;
+}
+
+/**
+ * A listbox of option buttons with one tab stop: the option that last had focus, else the first enabled
+ * `preferred` option, else the first enabled one. Opening the list moves focus to it and scrolls it into view.
+ * The arrows follow the layout (Up/Down one row; Left/Right one option in a grid, mirrored in RTL), Home and End
+ * reach the first and last enabled option, and none of them lands on a disabled one. Enter and Space pick, as
+ * on any button.
+ */
+function useOptionList({ count, columns, preferred, isDisabled, onClose }: OptionListConfig) {
   const listRef = React.useRef<HTMLDivElement>(null);
+  const [focused, setFocused] = React.useState(-1);
+  const isEnabled = (index: number) => index >= 0 && index < count && !isDisabled(index);
+  const enabled = Array.from({ length: count }, (_, i) => i).filter(isEnabled);
+  const tabStop = [focused, ...preferred].find(isEnabled) ?? enabled[0];
 
   React.useEffect(() => {
-    listRef.current?.querySelector('[data-selected]')?.scrollIntoView({ block: 'center' });
+    const option = listRef.current?.querySelector<HTMLElement>(':scope > [tabindex="0"]');
+    option?.focus({ preventScroll: true });
+    option?.scrollIntoView({ block: 'center' });
   }, []);
 
   // Escape pressed elsewhere on the page also closes the list. Inside the picker the root's own
@@ -209,10 +236,35 @@ function useOptionList(onClose: CloseList) {
     return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  return listRef;
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>, index: number) => {
+    // A single column has no sideways neighbour, so Left/Right are left alone there.
+    const across = columns > 1 ? (getComputedStyle(e.currentTarget).direction === 'rtl' ? -1 : 1) : 0;
+    const steps = new Map([
+      ['ArrowUp', -columns],
+      ['ArrowDown', columns],
+      ['ArrowLeft', -across],
+      ['ArrowRight', across],
+    ]);
+    const step = steps.get(e.key);
+    let target: number | undefined;
+    if (e.key === 'Home') target = enabled[0];
+    else if (e.key === 'End') target = enabled[enabled.length - 1];
+    else if (step) target = isEnabled(index + step) ? index + step : undefined;
+    else return;
+    e.preventDefault();
+    if (target !== undefined) (listRef.current?.children[target] as HTMLElement).focus();
+  };
+
+  const optionProps = (index: number): RovingProps => ({
+    tabIndex: index === tabStop ? 0 : -1,
+    onFocus: () => setFocused(index),
+    onKeyDown: (e) => handleKeyDown(e, index),
+  });
+
+  return { listRef, optionProps };
 }
 
-interface ListOptionProps {
+interface ListOptionProps extends RovingProps {
   label: React.ReactNode;
   selected: boolean;
   disabled: boolean;
@@ -220,7 +272,7 @@ interface ListOptionProps {
 }
 
 /** Docked month/year list row. */
-const ListOption = ({ label, selected, disabled, onPick }: ListOptionProps) => (
+const ListOption = ({ label, selected, disabled, onPick, ...roving }: ListOptionProps) => (
   <button
     type="button"
     role="option"
@@ -229,6 +281,7 @@ const ListOption = ({ label, selected, disabled, onPick }: ListOptionProps) => (
     disabled={disabled}
     onClick={onPick}
     className="md-date-picker__list-item"
+    {...roving}
   >
     {selected ? <Check className="md-date-picker__list-icon" /> : <span className="md-date-picker__list-icon" />}
     {label}
@@ -245,7 +298,13 @@ interface MonthListProps {
 }
 
 const MonthList = ({ month, isMonthDisabled, onSelect, onClose }: MonthListProps) => {
-  const listRef = useOptionList(onClose);
+  const { listRef, optionProps } = useOptionList({
+    count: MONTH_NAMES.length,
+    columns: 1,
+    preferred: [month],
+    isDisabled: isMonthDisabled,
+    onClose,
+  });
 
   return (
     <div ref={listRef} className="md-date-picker__list" role="listbox" aria-label="Select month">
@@ -259,6 +318,7 @@ const MonthList = ({ month, isMonthDisabled, onSelect, onClose }: MonthListProps
             onSelect(i);
             onClose(true);
           }}
+          {...optionProps(i)}
         />
       ))}
     </div>
@@ -276,9 +336,16 @@ interface YearListProps {
 }
 
 const YearList = ({ year, variant, isYearDisabled, onSelect, onClose }: YearListProps) => {
-  const listRef = useOptionList(onClose);
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 201 }, (_, i) => currentYear - 100 + i);
+  // The tab stop starts on the shown year, else this year; the modal grid has three years to a row.
+  const { listRef, optionProps } = useOptionList({
+    count: years.length,
+    columns: variant === 'modal' ? 3 : 1,
+    preferred: [years.indexOf(year), years.indexOf(currentYear)],
+    isDisabled: (i) => isYearDisabled(years[i]),
+    onClose,
+  });
   const pick = (y: number) => () => {
     onSelect(y);
     onClose(true);
@@ -287,7 +354,7 @@ const YearList = ({ year, variant, isYearDisabled, onSelect, onClose }: YearList
   if (variant === 'modal') {
     return (
       <div ref={listRef} className="md-date-picker__years" role="listbox" aria-label="Select year">
-        {years.map((y) => {
+        {years.map((y, i) => {
           const disabled = isYearDisabled(y);
           return (
             <button
@@ -299,6 +366,7 @@ const YearList = ({ year, variant, isYearDisabled, onSelect, onClose }: YearList
               disabled={disabled}
               onClick={pick(y)}
               className="md-date-picker__year"
+              {...optionProps(i)}
             >
               <Ripple disabled={disabled} />
               {y}
@@ -311,8 +379,15 @@ const YearList = ({ year, variant, isYearDisabled, onSelect, onClose }: YearList
 
   return (
     <div ref={listRef} className="md-date-picker__list" role="listbox" aria-label="Select year">
-      {years.map((y) => (
-        <ListOption key={y} label={y} selected={y === year} disabled={isYearDisabled(y)} onPick={pick(y)} />
+      {years.map((y, i) => (
+        <ListOption
+          key={y}
+          label={y}
+          selected={y === year}
+          disabled={isYearDisabled(y)}
+          onPick={pick(y)}
+          {...optionProps(i)}
+        />
       ))}
     </div>
   );
@@ -826,6 +901,15 @@ const DatePicker = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<DatePi
       setSlideDirection(null);
       setView(viewFor(current));
     }
+  }
+
+  // The bounds decide which typed dates count, so new bounds re-read the fields into the draft: an entry
+  // rejected as out of range can turn valid without another keystroke, and OK must commit what it shows.
+  const boundsKey = toSelectionKey([minDay ?? null, maxDay ?? null]);
+  const [prevBoundsKey, setPrevBoundsKey] = React.useState(boundsKey);
+  if (boundsKey !== prevBoundsKey) {
+    setPrevBoundsKey(boundsKey);
+    if (isDialog && isInput) setDraftValue(resolveInputs(inputTexts));
   }
 
   // A selection set from outside the fields (a new `value`, a calendar pick) replaces the typed text,

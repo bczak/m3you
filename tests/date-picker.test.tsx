@@ -477,6 +477,143 @@ test('Escape returns focus to the menu button only when focus was in the list', 
 });
 
 // =============================================================================
+// Month and year list keyboard: one tab stop, arrows follow the layout
+// =============================================================================
+
+const THIS_YEAR = new Date().getFullYear();
+
+function yearOption(year: number) {
+  return screen.getByRole('option', { name: String(year) });
+}
+
+/** The open list's options that Tab reaches. */
+function tabbableOptions() {
+  return screen.getAllByRole('option').filter((option) => option.getAttribute('tabindex') === '0');
+}
+
+test('modal: opening the year grid focuses the shown year, its only tab stop, and scrolls it into view', () => {
+  const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView');
+  render(<DatePicker variant="modal" defaultValue={new Date(2023, 5, 15)} />);
+  fireEvent.click(screen.getByRole('button', { name: YEAR_MENU }));
+  expect(yearOption(2023)).toHaveFocus();
+  expect(tabbableOptions()).toEqual([yearOption(2023)]);
+  expect(scrollIntoView.mock.contexts).toEqual([yearOption(2023)]);
+  scrollIntoView.mockRestore();
+});
+
+test('modal: the year tab stop falls back to this year, then to the first enabled year', () => {
+  // The shown year lies before minDate, so it cannot take focus.
+  const shown = new Date(THIS_YEAR - 3, 5, 15);
+  const { unmount } = render(
+    <DatePicker variant="modal" defaultValue={shown} minDate={new Date(THIS_YEAR - 1, 0, 1)} />,
+  );
+  fireEvent.click(screen.getByRole('button', { name: YEAR_MENU }));
+  expect(yearOption(THIS_YEAR)).toHaveFocus();
+  expect(tabbableOptions()).toEqual([yearOption(THIS_YEAR)]);
+  unmount();
+
+  render(<DatePicker variant="modal" defaultValue={shown} minDate={new Date(THIS_YEAR + 2, 0, 1)} />);
+  fireEvent.click(screen.getByRole('button', { name: YEAR_MENU }));
+  expect(yearOption(THIS_YEAR + 2)).toHaveFocus();
+  expect(tabbableOptions()).toEqual([yearOption(THIS_YEAR + 2)]);
+});
+
+test('modal: Left/Right step one year and Up/Down one row of three; the tab stop follows focus', () => {
+  render(<DatePicker variant="modal" defaultValue={new Date(2023, 5, 15)} />);
+  fireEvent.click(screen.getByRole('button', { name: YEAR_MENU }));
+  expect(fireEvent.keyDown(yearOption(2023), { key: 'ArrowRight' })).toBe(false);
+  expect(yearOption(2024)).toHaveFocus();
+  expect(tabbableOptions()).toEqual([yearOption(2024)]);
+  fireEvent.keyDown(yearOption(2024), { key: 'ArrowDown' });
+  expect(yearOption(2027)).toHaveFocus();
+  fireEvent.keyDown(yearOption(2027), { key: 'ArrowLeft' });
+  expect(yearOption(2026)).toHaveFocus();
+  fireEvent.keyDown(yearOption(2026), { key: 'ArrowUp' });
+  expect(yearOption(2023)).toHaveFocus();
+  // Enter and Space are left to the button, which picks the year.
+  expect(fireEvent.keyDown(yearOption(2023), { key: 'Enter' })).toBe(true);
+  expect(fireEvent.keyDown(yearOption(2023), { key: ' ' })).toBe(true);
+  expect(yearOption(2023)).toHaveFocus();
+});
+
+test('modal: in a right-to-left layout Left and Right are mirrored', () => {
+  render(
+    <div style={{ direction: 'rtl' }}>
+      <DatePicker variant="modal" defaultValue={new Date(2023, 5, 15)} />
+    </div>,
+  );
+  fireEvent.click(screen.getByRole('button', { name: YEAR_MENU }));
+  fireEvent.keyDown(yearOption(2023), { key: 'ArrowLeft' });
+  expect(yearOption(2024)).toHaveFocus();
+  fireEvent.keyDown(yearOption(2024), { key: 'ArrowRight' });
+  expect(yearOption(2023)).toHaveFocus();
+});
+
+test('modal: Home and End reach the first and last enabled year; arrows do not land on disabled years', () => {
+  render(
+    <DatePicker
+      variant="modal"
+      defaultValue={new Date(2023, 5, 15)}
+      minDate={new Date(2020, 5, 1)}
+      maxDate={new Date(2025, 5, 1)}
+    />,
+  );
+  fireEvent.click(screen.getByRole('button', { name: YEAR_MENU }));
+  fireEvent.keyDown(yearOption(2023), { key: 'Home' });
+  expect(yearOption(2020)).toHaveFocus();
+  for (const key of ['ArrowLeft', 'ArrowUp']) {
+    expect(fireEvent.keyDown(yearOption(2020), { key })).toBe(false);
+    expect(yearOption(2020)).toHaveFocus();
+  }
+  fireEvent.keyDown(yearOption(2020), { key: 'End' });
+  expect(yearOption(2025)).toHaveFocus();
+  for (const key of ['ArrowRight', 'ArrowDown']) {
+    fireEvent.keyDown(yearOption(2025), { key });
+    expect(yearOption(2025)).toHaveFocus();
+  }
+});
+
+test('docked: the year list has one tab stop and moves by one row; Left/Right are left alone', () => {
+  render(<DatePicker defaultValue={new Date(2023, 5, 15)} />);
+  fireEvent.click(screen.getByRole('button', { name: YEAR_MENU }));
+  expect(yearOption(2023)).toHaveFocus();
+  expect(tabbableOptions()).toEqual([yearOption(2023)]);
+  fireEvent.keyDown(yearOption(2023), { key: 'ArrowDown' });
+  expect(yearOption(2024)).toHaveFocus();
+  expect(fireEvent.keyDown(yearOption(2024), { key: 'ArrowRight' })).toBe(true);
+  expect(fireEvent.keyDown(yearOption(2024), { key: 'ArrowLeft' })).toBe(true);
+  expect(yearOption(2024)).toHaveFocus();
+  fireEvent.keyDown(yearOption(2024), { key: 'ArrowUp' });
+  expect(yearOption(2023)).toHaveFocus();
+  fireEvent.keyDown(yearOption(2023), { key: 'End' });
+  expect(yearOption(THIS_YEAR + 100)).toHaveFocus();
+  fireEvent.keyDown(yearOption(THIS_YEAR + 100), { key: 'ArrowDown' });
+  expect(yearOption(THIS_YEAR + 100)).toHaveFocus();
+  fireEvent.keyDown(yearOption(THIS_YEAR + 100), { key: 'Home' });
+  expect(yearOption(THIS_YEAR - 100)).toHaveFocus();
+});
+
+test('docked: the month list focuses the shown month and keeps the arrows inside the range', () => {
+  render(
+    <DatePicker defaultValue={new Date(2026, 3, 18)} minDate={new Date(2026, 2, 31)} maxDate={new Date(2026, 4, 1)} />,
+  );
+  fireEvent.click(screen.getByRole('button', { name: MONTH_MENU }));
+  const month = (name: string) => screen.getByRole('option', { name });
+  expect(month('April')).toHaveFocus();
+  expect(tabbableOptions()).toEqual([month('April')]);
+  fireEvent.keyDown(month('April'), { key: 'Home' });
+  expect(month('March')).toHaveFocus();
+  fireEvent.keyDown(month('March'), { key: 'ArrowUp' });
+  expect(month('March')).toHaveFocus();
+  fireEvent.keyDown(month('March'), { key: 'End' });
+  expect(month('May')).toHaveFocus();
+  fireEvent.keyDown(month('May'), { key: 'ArrowDown' });
+  expect(month('May')).toHaveFocus();
+  fireEvent.keyDown(month('May'), { key: 'ArrowUp' });
+  expect(month('April')).toHaveFocus();
+});
+
+// =============================================================================
 // Keyboard grid navigation
 // =============================================================================
 
@@ -1293,6 +1430,33 @@ test('a real date outside minDate/maxDate names the allowed range', () => {
   rerender(<DatePicker open defaultValue={APRIL_14} defaultMode="input" maxDate={new Date(2026, 3, 30)} />);
   fireEvent.change(dateField(), { target: { value: '05/01/2026' } });
   expect(screen.getByText('Enter a date on or before 04/30/2026')).toBeInTheDocument();
+});
+
+test('new bounds re-read the typed date: OK commits an entry they now allow without another keystroke', () => {
+  const onChange = vi.fn();
+  const { rerender } = render(
+    <DialogHarness defaultMode="input" maxDate={new Date(2026, 3, 30)} onChange={onChange} />,
+  );
+  fireEvent.change(dateField(), { target: { value: '05/04/2026' } });
+  expect(screen.getByText('Enter a date on or before 04/30/2026')).toBeInTheDocument();
+  expect(pickerHeadline()).toHaveTextContent('Enter date');
+
+  rerender(<DialogHarness defaultMode="input" maxDate={new Date(2026, 4, 31)} onChange={onChange} />);
+  expect(screen.queryByText(/^Enter a date/)).not.toBeInTheDocument();
+  expect(pickerHeadline()).toHaveTextContent('Mon, May 4');
+  fireEvent.click(screen.getByRole('button', { name: 'OK' }));
+  expect(onChange).toHaveBeenCalledExactlyOnceWith(new Date(2026, 4, 4));
+  expect(screen.getByTestId('committed')).toHaveTextContent('Mon May 04 2026');
+});
+
+test('new bounds leave a date picked on the calendar in the draft', () => {
+  const onChange = vi.fn();
+  const { rerender } = render(<DialogHarness maxDate={new Date(2026, 3, 25)} onChange={onChange} />);
+  fireEvent.click(screen.getByRole('button', { name: /April 20, 2026/ }));
+  rerender(<DialogHarness maxDate={new Date(2026, 3, 30)} onChange={onChange} />);
+  expect(pickerHeadline()).toHaveTextContent('Mon, Apr 20');
+  fireEvent.click(screen.getByRole('button', { name: 'OK' }));
+  expect(onChange).toHaveBeenCalledExactlyOnceWith(new Date(2026, 3, 20));
 });
 
 test('OK with an invalid entry stays open, shows the error and focuses the field', () => {

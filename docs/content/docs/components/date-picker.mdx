@@ -145,6 +145,16 @@ cross its edge; they stop at `minDate` and `maxDate`. Enter or Space picks the
 focused day. In a range, the first press sets the start and the second sets the
 end.
 
+Opening the month or year list moves focus to the shown month or year and
+scrolls it into view. If that entry is disabled, focus goes to this year in the
+year list, otherwise to the first selectable entry. Only one entry is in the tab
+order: the one that last had focus. Up and Down move one row, which is one entry
+in the docked lists and three years in the modal year grid. In the year grid,
+Left and Right move one year, mirrored in a right-to-left layout. Home and End
+jump to the first and last selectable entry. The arrows stop at `minDate` and
+`maxDate`. Enter or Space picks the focused entry, closes the list and returns
+focus to its menu button.
+
 While a month or year list is open, Escape pressed anywhere in the picker
 closes the list and stops there. A surrounding `Dialog` or popover stays open
 and keeps the draft. If focus was in the list, it returns to the list's menu
