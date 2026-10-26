@@ -93,7 +93,7 @@
       "radioMark": 20,
       "threeLineBlockPadding": 12
     },
-    "list.density": { "0": [56, 72, 88], "-2": [52, 68, 84], "-4": [48, 64, 84] },
+    "list.density": { "0": [56, 72, 88], "-2": [48, 64, 80], "-4": [40, 56, 72] },
     "slider": {
       "touchWrapperWidth": 68,
       "touchWrapperHeight": 48,
@@ -121,7 +121,7 @@
       "inputTypeLineHeight": 52
     },
     "progress.thickness": [4, 8],
-    "linearProgress": { "amplitudes": [4, 8], "wavelengths": [20, 40], "gap": 4 },
+    "linearProgress": { "amplitudes": [3, 3], "wavelengths": [20, 40], "gap": 4 },
     "circularProgress": { "arcGap": 4, "waveCycles": 9 },
     "loadingIndicator": { "root": 48, "shapeFrame": 38 }
   },
@@ -140,7 +140,7 @@
     "checkbox.unselected.outline": "on-surface-variant",
     "radioButton.unselected.outline": "on-surface-variant",
     "chip.outlined.border": "outline-variant",
-    "menu.container": "surface-container-low",
+    "menu.container": "surface-container",
     "tabs.defaultContainer": "surface",
     "navigationBar.container": "surface-container",
     "navigationRail.collapsed.activeLabel": "secondary",
@@ -157,7 +157,7 @@
     "fab.rest": 3,
     "fab.hover": 4,
     "fabMenu.scrim": 0,
-    "menu": 3,
+    "menu": 2,
     "toolbar.floating": 3,
     "bottomSheet.standard": 3,
     "bottomSheet.modal": 0,
@@ -183,6 +183,7 @@
     "extension": { "display-xlarge": true },
     "componentTracking": {
       "badge": 0.1,
+      "navigationBar.label": 0.1,
       "navigationRail.collapsedLabel": 0.1
     },
     "appBar.supportingWeight": 500,
@@ -190,7 +191,7 @@
     "list.overline": "label-medium"
   },
   "motion": {
-    "shapeMorph": { "duration": "spring-default-spatial", "easing": "spring-default-spatial" },
+    "shapeMorph": { "duration": "spring-default-effects", "easing": "spring-default-effects" },
     "loadingIndicator": "spring-default-spatial",
     "inventedStaticFigmaMotionAllowed": false
   },
@@ -261,7 +262,9 @@
     "LoadingIndicator size extensions",
     "Skeleton loading placeholder",
     "OTPInput one-time code field",
-    "Display XLarge"
+    "Display XLarge",
+    "Menu container, row geometry and elevation from material.you (surface-container, level 2) instead of the kit (surface-container-low, level 3)",
+    "Corner morphs on the effects spring instead of the kit token's fast-spatial spring"
   ],
   "intentionalNonComponents": [
     "Segmented Button kit page",

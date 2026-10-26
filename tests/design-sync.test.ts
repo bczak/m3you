@@ -162,11 +162,13 @@ test('measurements resolve exact roles, borders, elevations, and opacity in both
   expect(draggedItem?.boxShadow).toBe(elevationShadow[fixture.elevation['list.dragged'] as number]);
   expect(draggedItem?.borderRadius).toBe('16px');
 
-  const hoveredMenuItem = menus?.themes.light.find(
-    (entry) => entry.selector === 'md-menu-item' && entry.background.includes('/ 0.08)'),
+  // Menu state layers are ripple child parts (md-ripple-hover-layer__surface),
+  // which the measurement does not record; the Active row itself must not paint
+  // a second layer under them. The opacity values are pinned by the state-token test.
+  const activeMenuItem = menus?.themes.light.find(
+    (entry) => entry.selector === 'md-menu-item' && 'popupOpen' in entry.data,
   );
-  const measuredAlpha = Number(hoveredMenuItem?.background.match(/\/ ([\d.]+)\)/)?.[1]);
-  expect(Math.abs(measuredAlpha - fixture.stateOpacity.hover)).toBeLessThanOrEqual(fixture.tolerance.opacity);
+  expect(activeMenuItem?.background).toBe('rgba(0, 0, 0, 0)');
 });
 
 test('regenerated measurements stay within audited geometry tolerances', () => {
@@ -207,7 +209,8 @@ test('regenerated measurements stay within audited geometry tolerances', () => {
   const linearHeights = story('communication-linear-progress--thickness')
     .filter((entry) => entry.selector === 'md-linear-progress')
     .map((entry) => entry.height);
-  expect(linearHeights).toEqual(expect.arrayContaining([4, 8, 12, 24]));
+  // Flat rows are 4 / 8 dp; wavy rows add the fixed 3dp amplitude above and below.
+  expect(linearHeights).toEqual(expect.arrayContaining([4, 8, 10, 14]));
 
   const toolbar = story('navigation-toolbar--floating-specs').find((entry) => entry.selector === 'md-toolbar');
   near(toolbar?.height ?? 0, fixture.geometry.toolbar.crossAxis);
