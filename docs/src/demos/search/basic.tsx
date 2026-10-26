@@ -1,5 +1,5 @@
 import { Clock, TrendingUp } from 'lucide-react';
-import { SearchBar, SearchSuggestionItem, SearchView } from 'm3you';
+import { SearchBar, SearchSuggestionItem } from 'm3you';
 import { useState } from 'react';
 
 const SUGGESTIONS = ['Material 3 shape scale', 'Dynamic colour', 'Expressive motion', 'Navigation rail'];
@@ -11,17 +11,16 @@ export default function SearchBasic() {
 
   return (
     <div style={{ width: '100%', maxWidth: '28rem' }}>
+      {/* The bar renders its own SearchView around these children when it opens. */}
       <SearchBar placeholder="Search the docs" value={value} onValueChange={setValue}>
-        <SearchView>
-          {matches.map((item) => (
-            <SearchSuggestionItem
-              key={item}
-              icon={value ? <TrendingUp size={20} aria-hidden="true" /> : <Clock size={20} aria-hidden="true" />}
-            >
-              {item}
-            </SearchSuggestionItem>
-          ))}
-        </SearchView>
+        {matches.map((item) => (
+          <SearchSuggestionItem
+            key={item}
+            icon={value ? <TrendingUp size={20} aria-hidden="true" /> : <Clock size={20} aria-hidden="true" />}
+          >
+            {item}
+          </SearchSuggestionItem>
+        ))}
       </SearchBar>
     </div>
   );

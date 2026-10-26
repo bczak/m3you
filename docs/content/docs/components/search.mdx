@@ -4,8 +4,10 @@ description: A search bar that expands into a full search view.
 ---
 
 The search bar is the collapsed state; the search view is what it expands into,
-holding recent and suggested results. Put `SearchView` inside `SearchBar` and the
-component manages the transition between them.
+holding recent and suggested results. Pass the suggestions as `SearchBar`
+children: the bar becomes a button that opens its own `SearchView` around them,
+and manages the transition between the two. Without children it is a plain
+search field.
 
 <Example
   name="search/basic"
@@ -14,9 +16,66 @@ component manages the transition between them.
   layout="stretch"
 />
 
+## Trailing action and avatar
+
+`trailingIcon` sits in a 48dp slot after the query, and `avatar` after that,
+where an `Avatar` is sized to 30dp. Neither slot is a button of its own, so pass
+an `IconButton` with an `aria-label` and handler for an action such as voice
+search. The plain bar swaps the trailing icon for a Clear button while there is
+a query; the avatar stays. On an expandable bar the whole bar is the button, so
+keep trailing content decorative there.
+
+<Example name="search/trailing" title="Voice search, with and without an avatar" layout="stretch" />
+
+## Layouts
+
+`viewMode` picks where the expanded view sits. `docked` (the default) anchors
+it over the bar on wide screens; below 768px it covers the screen like
+`fullScreen`.
+
+`viewAppearance` picks its style. The default, `expressive`, is the M3
+Expressive contained layout: a pill query bar and a separate results surface
+rounded 12dp, 2dp apart. Docked fills both with Surface Container High.
+Full-screen fills the screen with Surface Container Low and leaves the results
+unfilled. Its bar sits 24dp from each screen edge at rest and widens to 12dp
+while the search has focus, on a spatial spring that snaps instead under
+reduced motion. Place the collapsed bar 24dp from the screen edges on compact
+screens and the opening view picks up where it left off.
+
+`viewAppearance="baseline"` opts into the divided layout: a single surface with
+a divider under the query header, a 28dp card when docked and a 72dp header
+full-screen. M3 no longer recommends it ("Use contained"). A standalone
+`SearchView` takes the same two values as `appearance`.
+
+<Callout type="warn" title="Default changed">
+  `viewAppearance` (and `SearchView`'s `appearance`) used to default to
+  `baseline`. They now default to `expressive`, so an expanded view that set
+  neither switches from the divided card to the contained layout: the divider
+  is gone, the results get their own 12dp surface 2dp below a pill bar, and
+  full-screen paints Surface Container Low with the bar inset from the edges.
+  Pass `viewAppearance="baseline"` (or `appearance="baseline"`) to keep the
+  divided look.
+</Callout>
+
+<Example name="search/layouts" title="Contained (default) and divided (baseline)" layout="stretch" />
+
+An `onClick` on an expandable bar runs before the bar opens; call
+`event.preventDefault()` in it to keep the view closed.
+
+## Standalone view
+
+`SearchView` is exported for a search view you place and open yourself, for
+example a search route that is always expanded. It draws its own query header
+(back arrow, input, Clear button) above its children, so do not put it inside a
+`SearchBar`: the bar already wraps its children in one, and a nested view
+renders a second, unconnected header. `mode` is `docked` or `fullScreen`,
+`onBack` runs for the back arrow and Escape, and the input takes focus on mount
+unless `autoFocus={false}`.
+
 ## Props
 
 <PropsTable of="SearchBar" extends="<div>" />
+<PropsTable of="SearchView" extends="<div>" />
 <PropsTable of="SearchSuggestionItem" extends="<button>" />
 
 <SpecLink slug="search" source="src/components/Search" />
