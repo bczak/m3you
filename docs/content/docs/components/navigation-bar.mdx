@@ -10,6 +10,12 @@ targets get too small.
 Each item needs a `value`, an `icon` and a `label`. Pass `activeIcon` to swap in
 a filled icon when selected, which is the Material convention.
 
+Every item responds to taps across the bar's full 64dp height. That includes
+`orientation="horizontal"`, where only a 40dp pill is drawn. The bottom safe-area
+inset the bar adds below the items does not respond to taps.
+On a vertical item the focus ring sits inside the item. On a horizontal item it
+is a round ring 2dp outside the pill.
+
 <Example
   name="navigation-bar/basic"
   title="Four destinations"
