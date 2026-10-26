@@ -38,13 +38,14 @@ const meta = {
     },
     strokeWidth: {
       control: { type: 'range', min: 1, max: 12, step: 1 },
-      description: 'Thickness of the arc stroke in px.',
+      description: 'Thickness of the arc stroke in px. The ring keeps its radius and the box grows with the stroke.',
       table: { category: 'Appearance', defaultValue: { summary: '4' } },
     },
     thickness: {
       control: 'inline-radio',
       options: [4, 8],
-      description: 'Kit-backed physical stroke thickness. This overrides the legacy free-form strokeWidth extension.',
+      description:
+        'Kit-backed physical stroke thickness (the box grows to 44px flat / 52px wavy at 8dp). This overrides the legacy free-form strokeWidth extension.',
       table: { category: 'Appearance', defaultValue: { summary: '4' } },
     },
   },
@@ -105,7 +106,7 @@ export const Wavy: Story = {
       <ShowcasePanel
         eyebrow="Expressive · Determinate"
         title="Wavy ring"
-        description="The Material 3 Expressive circular indicator uses a sine-wave active arc with a flat track and a small gap. The ring flattens at 100%."
+        description="The Material 3 Expressive circular indicator uses a sine-wave active arc with a flat track on the wave's crest and a 4dp gap. The completed ring stays wavy."
       >
         <div className="sb-m3-demo-row">
           <CircularProgress variant="wavy" size="sm" value={28} />
@@ -131,12 +132,38 @@ export const Wavy: Story = {
 };
 
 export const Thickness: Story = {
+  parameters: {
+    controls: {
+      disable: true,
+    },
+  },
   render: () => (
-    <div className="sb-m3-demo-row">
-      <CircularProgress value={64} thickness={4} />
-      <CircularProgress value={64} thickness={8} />
-      <CircularProgress value={64} variant="wavy" thickness={4} />
-      <CircularProgress value={64} variant="wavy" thickness={8} />
-    </div>
+    <ShowcaseGrid dense>
+      <ShowcasePanel
+        eyebrow="Determinate"
+        title="4dp and 8dp"
+        description="The ring keeps its radius and the box grows with the stroke: 40 → 44px flat, 48 → 52px wavy. The wave's amplitude does not change."
+      >
+        <div className="sb-m3-demo-row">
+          <CircularProgress value={64} thickness={4} />
+          <CircularProgress value={64} thickness={8} />
+          <CircularProgress value={64} variant="wavy" thickness={4} />
+          <CircularProgress value={64} variant="wavy" thickness={8} />
+        </div>
+      </ShowcasePanel>
+
+      <ShowcasePanel
+        eyebrow="Indeterminate"
+        title="4dp and 8dp"
+        description="The track follows the moving arc and keeps a 4dp gap at both ends."
+      >
+        <div className="sb-m3-demo-row">
+          <CircularProgress type="indeterminate" thickness={4} />
+          <CircularProgress type="indeterminate" thickness={8} />
+          <CircularProgress type="indeterminate" variant="wavy" thickness={4} />
+          <CircularProgress type="indeterminate" variant="wavy" thickness={8} />
+        </div>
+      </ShowcasePanel>
+    </ShowcaseGrid>
   ),
 };

@@ -7,7 +7,12 @@ import { CircularProgress } from 'm3you';
 
 Use determinate progress when you know how much work is left, and indeterminate
 when you do not. The `wavy` variant is the Material 3 Expressive treatment — the
-track ripples rather than sitting flat.
+active indicator ripples while the track stays flat.
+
+The active indicator and the track are separated by a 4dp gap at each end, and
+in the indeterminate state the track follows the moving arc. At `value={0}`
+only the track is drawn; at `value={100}` only the indicator is drawn, and the
+wavy ring stays wavy.
 
 <Playground
   name="CircularProgress"
@@ -28,6 +33,19 @@ track ripples rather than sitting flat.
 ## Wavy
 
 <Example name="circular-progress/wavy" title="The wavy variant at three sizes" />
+
+## Thickness
+
+`thickness` takes the kit's 4dp or 8dp stroke. The ring keeps its radius and the
+box grows with the stroke: a medium flat indicator is 40px at 4dp and 44px at
+8dp, and a medium wavy one is 48px and 52px. The free-form `strokeWidth` follows
+the same rule (box = 4dp size + stroke − 4).
+
+<Example name="circular-progress/thickness" title="4dp and 8dp, flat and wavy" />
+
+A `width` and `height` in `style` override the computed box on both variants,
+and the whole ring scales to fill it: stroke, wave and gap together. Use
+`size` and `thickness` to stay on the kit's measurements.
 
 ## Props
 
