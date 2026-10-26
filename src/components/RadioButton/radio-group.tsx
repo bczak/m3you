@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { useFormReset } from '../../lib/use-form-reset';
 import { RadioGroupContext, type RadioGroupContextValue } from './radio-group-context';
 
 export type RadioGroupProps = {
@@ -40,6 +40,21 @@ const RadioGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<RadioG
     const value = isControlled ? valueProp : internalValue;
     const generatedName = React.useId();
     const name = nameProp ?? generatedName;
+    const groupRef = React.useRef<HTMLDivElement>(null);
+
+    React.useImperativeHandle(ref, () => groupRef.current as HTMLDivElement);
+
+    // A form reset puts each radio back to its `checked` attribute without a
+    // `change` event. That attribute is whether the item was selected when it
+    // mounted, not whether it is the `defaultValue`, so return both the state
+    // and the radios to `defaultValue`: the visuals then match what the form
+    // will submit.
+    useFormReset(groupRef, !isControlled, (group) => {
+      for (const radio of Array.from(group.querySelectorAll<HTMLInputElement>('input[type="radio"]'))) {
+        if (radio.name === name) radio.checked = radio.value === defaultValue;
+      }
+      setInternalValue(defaultValue);
+    });
 
     const handleValueChange = React.useCallback(
       (newValue: string) => {
@@ -64,7 +79,7 @@ const RadioGroup = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<RadioG
 
     return (
       <RadioGroupContext.Provider value={contextValue}>
-        <div ref={ref} role="radiogroup" className={className} {...props}>
+        <div ref={groupRef} role="radiogroup" className={className} {...props}>
           {children}
         </div>
       </RadioGroupContext.Provider>

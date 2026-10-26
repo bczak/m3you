@@ -3,14 +3,16 @@ import { Check, X } from 'lucide-react';
 import * as React from 'react';
 import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
+import { useFormReset } from '../../lib/use-form-reset';
 
 /**
  * Material Design 3 Switch Component
  *
  * M3 Specs:
- * - Track: 52dp x 32dp with full rounded corners
- * - Handle (thumb): 16dp unchecked, 24dp checked
- * - Handle has 40dp state layer for hover/ripple
+ * - Track: 52dp x 32dp with full rounded corners — also the component's layout box
+ * - Handle (thumb): 16dp unchecked, 24dp checked or with icons, 28dp pressed
+ * - Handle has a 40dp state layer for hover/ripple, painted beneath it
+ * - 48dp touch target overflows the track (68dp x 48dp hit area)
  * - Optional icons inside handle (16dp)
  */
 
@@ -48,6 +50,16 @@ const Switch = React.forwardRef<HTMLInputElement, React.PropsWithoutRef<SwitchPr
 
     // Merge refs
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+
+    // A form reset restores the input without a `change` event, so the internal
+    // state (and the input React keeps in step with it) would hold on to the
+    // old value; return both to `defaultChecked`. The input needs it too: the
+    // reset restored its `checked` attribute, which React set from the state at
+    // mount.
+    useFormReset(inputRef, !isControlled, (input) => {
+      (input as HTMLInputElement).checked = defaultChecked;
+      setInternalChecked(defaultChecked);
+    });
 
     const updateSwitchChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!isControlled) {

@@ -18,6 +18,7 @@ export default function RadioButtonGroup() {
             htmlFor={`${groupId}-${option.value}`}
             style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
           >
+            {/* The <label> names the radio; RadioGroupItem only falls back to its value without one. */}
             <RadioGroupItem id={`${groupId}-${option.value}`} value={option.value} />
             {option.label}
           </label>
