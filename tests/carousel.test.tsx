@@ -765,6 +765,95 @@ test('a size change that does not morph is held at once, and a snapping carousel
   expect(viewport.scrollLeft).toBe(420);
 });
 
+test('a carousel that stops scrolling freely mid-morph drops its hold and leaves the snap to the browser', () => {
+  const { created } = mockAnimations();
+  const { rerender } = render(
+    <Carousel label="Free" scrollMode="free">
+      {carouselItems()}
+    </Carousel>,
+  );
+  act(flushAnimationFrames);
+  const viewport = screen.getByRole('list');
+  const items = screen.getAllByRole('listitem');
+  const widths = [188, 120, 56, 56, 56];
+  layOutStrip(viewport, items, (index) => widths[index]);
+  viewport.scrollLeft = 152;
+  fireEvent(viewport, new Event('scrollend'));
+  expect(created).toHaveLength(3);
+  expect(animationFrames.size).toBe(1);
+
+  rerender(
+    <Carousel label="Free" scrollMode="snap">
+      {carouselItems()}
+    </Carousel>,
+  );
+  expect(animationFrames.size).toBe(0);
+  const scrollBy = vi.spyOn(viewport, 'scrollBy');
+  widths.splice(0, 3, 122, 154, 88);
+  act(flushAnimationFrames);
+  expect(scrollBy).not.toHaveBeenCalled();
+  expect(viewport.scrollLeft).toBe(152);
+});
+
+test('switching a free carousel to full-screen drops its hold, so vertical scrolls move the active item', () => {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+  const onActiveIndexChange = vi.fn();
+  const { rerender } = render(
+    <Carousel label="Free" scrollMode="free" onActiveIndexChange={onActiveIndexChange}>
+      {carouselItems()}
+    </Carousel>,
+  );
+  act(flushAnimationFrames);
+  const viewport = screen.getByRole('list');
+  const items = screen.getAllByRole('listitem');
+  const layOutColumn = (activeIndex: number) => {
+    vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 412, height: 800 }));
+    for (const [index, item] of items.entries()) {
+      vi.spyOn(item, 'getBoundingClientRect').mockReturnValue(
+        rect({ top: (index - activeIndex) * 808, width: 412, height: 800 }),
+      );
+    }
+  };
+
+  // Crossing a breakpoint on the first item resizes the row, and the hold keeps it at scrollLeft 0.
+  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 600, height: 220 }));
+  act(() => resizeCallbacks.at(-1)?.([], {} as ResizeObserver));
+  expect(viewport.style.getPropertyValue('--md-carousel-large-count')).toBe('2');
+  expect(viewport.scrollLeft).toBe(0);
+
+  // Full-screen snaps vertically, so neither its scroll events nor its scrollend
+  // are the hold's own, although they leave scrollLeft at 0.
+  rerender(
+    <Carousel label="Free" layout="full-screen" scrollMode="free" onActiveIndexChange={onActiveIndexChange}>
+      {carouselItems()}
+    </Carousel>,
+  );
+  layOutColumn(2);
+  viewport.scrollTop = 1616;
+  fireEvent.scroll(viewport);
+  act(() => vi.advanceTimersByTime(120));
+  expect(onActiveIndexChange).toHaveBeenLastCalledWith(2);
+  expect(items[2]).toHaveAttribute('data-active');
+  layOutColumn(3);
+  viewport.scrollTop = 2424;
+  fireEvent(viewport, new Event('scrollend'));
+  expect(onActiveIndexChange).toHaveBeenLastCalledWith(3);
+  expect(items[3]).toHaveAttribute('data-active');
+
+  // Going back to free scrolling holds afresh on the inline axis, and the user scrolling lets go of it.
+  rerender(
+    <Carousel label="Free" scrollMode="free" onActiveIndexChange={onActiveIndexChange}>
+      {carouselItems()}
+    </Carousel>,
+  );
+  const offsetOf = layOutStrip(viewport, items, (index) => [56, 56, 56, 188, 120][index]);
+  viewport.scrollLeft = 80;
+  expect(offsetOf(1)).toBe(0);
+  fireEvent.scroll(viewport);
+  act(() => vi.advanceTimersByTime(120));
+  expect(onActiveIndexChange).toHaveBeenLastCalledWith(1);
+});
+
 test('every morph starts, and the timing tokens are read, before any item changes size', () => {
   render(<Carousel label="Order">{carouselItems()}</Carousel>);
   const viewport = screen.getByRole('list');

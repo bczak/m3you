@@ -391,7 +391,16 @@ const Carousel = React.forwardRef<HTMLElement, React.PropsWithoutRef<CarouselPro
         const rtl = item ? getComputedStyle(viewport).direction === 'rtl' : false;
         const offset = item ? getItemAlignmentOffset(viewport, item, actualAlignment, rtl) : 0;
         const resized = applyCarouselRoles(viewport, layout, activeIndex, reducedMotion, animations);
-        if (!item || !resized) return;
+        // A hold only has meaning for a free, horizontal scroll. A layout or scroll
+        // mode change re-applies the roles, so once the carousel snaps — full-screen
+        // always does, vertically — a hold left over from free scrolling is dropped:
+        // it would keep correcting against the snap and take every scroll that
+        // leaves scrollLeft alone for its own.
+        if (!item) {
+          releaseCarouselHold(scrollHoldRef);
+          return;
+        }
+        if (!resized) return;
         releaseCarouselHold(scrollHoldRef);
         scrollHoldRef.current = holdCarouselItem(viewport, item, offset, actualAlignment, rtl, animations);
       },
