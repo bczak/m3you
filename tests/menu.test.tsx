@@ -1,14 +1,16 @@
 import { readFileSync } from 'node:fs';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
-import { afterEach, beforeAll, expect, test, vi } from 'vitest';
+import { afterEach, beforeAll, expect, expectTypeOf, test, vi } from 'vitest';
 import {
   Menu,
+  type MenuColor,
   MenuContent,
   MenuDivider,
   MenuGroup,
   MenuItem,
   MenuLabel,
+  type MenuProps,
   MenuSub,
   MenuSubContent,
   MenuSubTrigger,
@@ -16,6 +18,13 @@ import {
 } from '../src/components/Menu/menu';
 
 const menuCss = readFileSync('src/components/Menu/menu.css', 'utf8');
+
+/** Declarations of the first rule written as `selector {` (nested or top-level). */
+function ruleBody(selector: string): string {
+  const start = menuCss.indexOf(`${selector} {`);
+  if (start < 0) throw new Error(`menu.css has no rule for ${selector}`);
+  return menuCss.slice(start + selector.length + 2, menuCss.indexOf('}', start));
+}
 
 // Polyfill Element.prototype.animate for m3-ripple (happy-dom lacks Web Animations API)
 beforeAll(() => {
@@ -322,6 +331,81 @@ test('vibrant color uses tertiary-container background', async () => {
     </Menu>,
   );
   expect(screen.getByTestId('content')).toHaveAttribute('data-color', 'vibrant');
+  expect(ruleBody('&[data-color="vibrant"]')).toContain('background-color: var(--md-sys-color-tertiary-container)');
+});
+
+test('vibrant content and state layers take on-tertiary-container', async () => {
+  render(
+    <Menu defaultOpen color="vibrant">
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent data-testid="content">
+        <MenuGroup label="Edit">
+          <MenuItem data-testid="item" trailingText="⌘C">
+            <svg data-testid="icon" aria-hidden="true" />
+            Copy
+          </MenuItem>
+        </MenuGroup>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(screen.getByTestId('item')).toHaveAttribute('data-color', 'vibrant');
+  expect(screen.getByText('Edit')).toHaveClass('md-menu-label');
+  // Kit Menu item/Vibrant: state layers are On Tertiary Container. They are
+  // currentColor, so the row's content colour carries the role.
+  expect(ruleBody('&[data-color="vibrant"]')).toContain('color: var(--md-sys-color-on-tertiary-container)');
+  expect(ruleBody('.md-menu[data-color="vibrant"] .md-menu-group')).toContain(
+    'color: var(--md-sys-color-on-tertiary-container)',
+  );
+  expect(ruleBody('.md-menu[data-color="vibrant"] .md-menu-label')).toContain('color: inherit');
+  // The item's own vibrant rule (second `&[data-color="vibrant"]` block).
+  const itemRule = menuCss.slice(menuCss.indexOf('.md-menu-item {'));
+  expect(itemRule).toMatch(
+    /&\[data-color="vibrant"\] \{\s*--_content-color: var\(--md-sys-color-on-tertiary-container\);/,
+  );
+  expect(itemRule).toMatch(/\.md-menu-item \{[^}]*?color: var\(--_content-color\);/s);
+});
+
+test('a sub-menu of a vibrant menu shares its colour scheme', async () => {
+  render(
+    <Menu defaultOpen color="vibrant">
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuSub>
+          <MenuSubTrigger data-testid="sub-trigger">More</MenuSubTrigger>
+          <MenuSubContent data-testid="sub-content">
+            <MenuItem data-testid="sub-item">Nested</MenuItem>
+          </MenuSubContent>
+        </MenuSub>
+      </MenuContent>
+    </Menu>,
+  );
+  const trigger = screen.getByTestId('sub-trigger');
+  expect(trigger).toHaveAttribute('data-color', 'vibrant');
+  fireEvent.click(trigger);
+  const subContent = await screen.findByTestId('sub-content');
+  expect(subContent).toHaveClass('md-menu');
+  expect(subContent).toHaveAttribute('data-color', 'vibrant');
+  expect(screen.getByTestId('sub-item')).toHaveAttribute('data-color', 'vibrant');
+});
+
+test('an unknown color value falls back to the standard scheme', async () => {
+  render(
+    // @ts-expect-error color is typed as 'standard' | 'vibrant'
+    <Menu defaultOpen color="primary">
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent data-testid="content">
+        <MenuItem data-testid="item">Item 1</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(screen.getByTestId('content')).toHaveAttribute('data-color', 'standard');
+  expect(screen.getByTestId('item')).toHaveAttribute('data-color', 'standard');
+});
+
+test('the color prop is typed as the exported MenuColor union, not a free string', () => {
+  // Kit Menu: Theme axis = Vibrant | Standard.
+  expectTypeOf<MenuColor>().toEqualTypeOf<'standard' | 'vibrant'>();
+  expectTypeOf<MenuProps['color']>().toEqualTypeOf<MenuColor | undefined>();
 });
 
 test('standard selected item has tertiary-container bg', async () => {
@@ -925,7 +1009,7 @@ test('menu items use the deployed list inset and spacing', async () => {
   expect(menuCss).toContain('padding-inline: 12px');
 });
 
-test('menu items have an explicit hover state layer', async () => {
+test('hover is a single 8% layer: the ripple hover layer, not a row background', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -934,11 +1018,66 @@ test('menu items have an explicit hover state layer', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('item')).toHaveClass('md-menu-item');
-  expect(menuCss).toMatch(/&:hover \{[^}]*?background-color: color-mix/s);
+  const hoverLayer = screen.getByTestId('item').querySelector<HTMLElement>(':scope > .md-ripple-hover-layer');
+  expect(hoverLayer).not.toBeNull();
+  // Kit State=Hovered: one state layer at 8% in the row's content colour.
+  expect(hoverLayer?.style.getPropertyValue('--md-ripple-hover-opacity')).toBe('0.08');
+  // The row must not paint a second hover layer underneath the ripple's.
+  expect(menuCss).not.toMatch(/&:hover \{/);
 });
 
-test('menu item uses the deployed focus state layer', async () => {
+/** Specificity of a selector as [ids, classes/attributes/pseudo-classes, types/pseudo-elements], `&` read as `.md-menu-item`. */
+function specificity(selector: string): [number, number, number] {
+  const total: [number, number, number] = [0, 0, 0];
+  // :not()/:is()/:has() count as their most specific argument; :where() counts nothing.
+  const rest = selector.replace(/&/g, '.md-menu-item').replace(/:(not|is|has|where)\(([^()]*)\)/g, (_, fn, args) => {
+    if (fn !== 'where') {
+      const best = (args as string)
+        .split(',')
+        .map((arg) => specificity(arg.trim()))
+        .reduce((a, b) => (compareSpecificity(a, b) >= 0 ? a : b));
+      for (const i of [0, 1, 2] as const) total[i] += best[i];
+    }
+    return '';
+  });
+  total[0] += (rest.match(/#[\w-]+/g) ?? []).length;
+  total[1] += (rest.match(/\.[\w-]+|\[[^\]]*\]|(?<!:):[\w-]+/g) ?? []).length;
+  total[2] += (rest.match(/::[\w-]+|(?:^|[\s>+~])[a-z][\w-]*/gi) ?? []).length;
+  return total;
+}
+
+function compareSpecificity(a: [number, number, number], b: [number, number, number]): number {
+  return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+}
+
+/** Every rule prelude in a stylesheet, comments stripped and whitespace collapsed. */
+function preludes(css: string): string[] {
+  return [...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{};]+)\{/g)].map(([, prelude]) =>
+    prelude.replace(/\s+/g, ' ').trim(),
+  );
+}
+
+const FORCED_COLORS_MEDIA = '@media (forced-colors: active) {';
+
+/** A stylesheet split into the body of its forced-colours block and the rest of the sheet (brace-matched). */
+function splitForcedColors(css: string): { forced: string; rest: string } {
+  const start = css.indexOf(FORCED_COLORS_MEDIA);
+  if (start < 0) return { forced: '', rest: css };
+  const open = start + FORCED_COLORS_MEDIA.length - 1;
+  let depth = 0;
+  let close = open;
+  do {
+    if (css[close] === '{') depth++;
+    if (css[close] === '}') depth--;
+    close++;
+  } while (depth > 0 && close < css.length);
+  return { forced: css.slice(open + 1, close - 1), rest: css.slice(0, start) + css.slice(close) };
+}
+
+const FOCUS_LAYER_SELECTOR = '&:focus-visible > .salty-ripple.md-ripple-hover-layer > .md-ripple-hover-layer__surface';
+const ACTIVE_LAYER_SELECTOR = '&[data-popup-open] > .md-ripple-hover-layer > .md-ripple-hover-layer__surface';
+
+test('keyboard focus is a single 10% layer: the ripple hover layer, not a row background', async () => {
   render(
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
@@ -947,8 +1086,91 @@ test('menu item uses the deployed focus state layer', async () => {
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('item')).toHaveClass('md-menu-item');
-  expect(menuCss).toMatch(/&:focus-visible \{[^}]*?background-color: color-mix/s);
+  expect(
+    screen
+      .getByTestId('item')
+      .querySelector(':scope > .salty-ripple.md-ripple-hover-layer > .md-ripple-hover-layer__surface'),
+  ).not.toBeNull();
+  // Kit State=Focused: one state layer at 10% (--md-sys-state-focus-opacity).
+  expect(ruleBody(FOCUS_LAYER_SELECTOR)).toContain('opacity: var(--md-sys-state-focus-opacity)');
+  expect(menuCss).not.toMatch(/&:focus-visible \{/);
+});
+
+test('specificity helper follows the selectors-4 rules it relies on', () => {
+  expect(specificity('.a:hover > .b')).toEqual([0, 3, 0]);
+  expect(specificity(':not(:disabled, [aria-disabled="true"]):hover')).toEqual([0, 2, 0]);
+  expect(specificity(':where(.a, .b) > #c')).toEqual([1, 0, 0]);
+  expect(specificity('& > svg')).toEqual([0, 1, 1]);
+  expect(specificity('.a .b::before')).toEqual([0, 2, 1]);
+});
+
+test('a hovered, keyboard-focused row shows one 10% layer, not hover and focus stacked', () => {
+  // Base UI moves focus with the pointer, so after an arrow key the hovered
+  // row is also :focus-visible (and an open sub-menu trigger is Active too).
+  // The kit has no combined state: hover (8%), Active (8%) and focus (10%)
+  // must drive the SAME element, with focus winning, rather than separate
+  // layers that composite to ~17%.
+  const rippleCss = readFileSync('src/lib/m3-ripple.css', 'utf8');
+  const hoverSelector = preludes(rippleCss).find(
+    (prelude) => prelude.includes(':hover') && prelude.endsWith('.md-ripple-hover-layer__surface'),
+  );
+  expect(hoverSelector).toBeDefined();
+
+  // Every state rule in menu.css lands on the ripple hover layer's surface…
+  // (The forced-colours block is left out: there the ripple is hidden and a
+  // ring stands in for it; see the forced-colours test below.)
+  const stateRules = preludes(splitForcedColors(menuCss).rest).filter((prelude) =>
+    /:hover|:focus-visible|\[data-popup-open\]/.test(prelude),
+  );
+  expect(stateRules.sort()).toEqual([ACTIVE_LAYER_SELECTOR, FOCUS_LAYER_SELECTOR].sort());
+  // …and none paints a second layer through the ripple's ::before.
+  expect(menuCss).not.toContain('::before');
+
+  // Focus outranks both 8% rules outright, so it wins in any bundle order.
+  expect(compareSpecificity(specificity(FOCUS_LAYER_SELECTOR), specificity(hoverSelector as string))).toBeGreaterThan(
+    0,
+  );
+  expect(compareSpecificity(specificity(FOCUS_LAYER_SELECTOR), specificity(ACTIVE_LAYER_SELECTOR))).toBeGreaterThan(0);
+});
+
+test('forced colours stand system-colour edges in for the hidden ripple layers', () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuItem data-testid="item">Item 1</MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  // Premise: the hover/focus layer is a .salty-ripple, which m3-ripple hides
+  // under forced colours, so without these rules keyboard focus is invisible.
+  const layer = screen.getByTestId('item').querySelector(':scope > .md-ripple-hover-layer');
+  expect(layer).toHaveClass('salty-ripple');
+  const upstreamCss = readFileSync('node_modules/m3-ripple/dist/ripple.css', 'utf8');
+  expect(splitForcedColors(upstreamCss).forced).toMatch(/\.salty-ripple \{\s*display: none;/);
+
+  const { forced } = splitForcedColors(menuCss);
+  const body = (selector: string) => {
+    const start = forced.indexOf(`${selector} {`);
+    expect(start).toBeGreaterThanOrEqual(0);
+    return forced.slice(start, forced.indexOf('}', start));
+  };
+  // The UA drops the elevation shadow, so the surface (each group when grouped) gets an edge.
+  expect(body('.md-menu:not([data-grouped]),\n  .md-menu-group')).toContain('outline: 1px solid CanvasText');
+  // The focused row draws the shared focus-indicator ring, flush inside the row…
+  const focus = body('.md-menu-item:focus-visible');
+  expect(focus).toContain('outline: var(--md-sys-state-focus-indicator-thickness) solid Highlight');
+  expect(focus).toContain('outline-offset: var(--md-sys-state-focus-indicator-inner-offset)');
+  // …which outranks the row's resting `outline: none`, as the edge does the popup's.
+  expect(ruleBody('.md-menu-item')).toContain('outline: none');
+  expect(compareSpecificity(specificity('.md-menu-item:focus-visible'), specificity('.md-menu-item'))).toBeGreaterThan(
+    0,
+  );
+  expect(compareSpecificity(specificity('.md-menu:not([data-grouped])'), specificity('.md-menu'))).toBeGreaterThan(0);
+  // Disabled rows, whose 38% colour-mix is forced back to full text colour,
+  // use GrayText; the block comes after the equal-specificity base rule.
+  expect(body('.md-menu-item[data-disabled]')).toContain('color: GrayText');
+  expect(menuCss.indexOf(FORCED_COLORS_MEDIA)).toBeGreaterThan(menuCss.indexOf('&[data-disabled] {'));
 });
 
 test('menu item keeps the hover layer while its submenu is open', async () => {
@@ -958,18 +1180,28 @@ test('menu item keeps the hover layer while its submenu is open', async () => {
       <MenuContent>
         <MenuSub>
           <MenuSubTrigger data-testid="sub">More</MenuSubTrigger>
-          <MenuSubContent>
+          <MenuSubContent data-testid="sub-content">
             <MenuItem>Nested</MenuItem>
           </MenuSubContent>
         </MenuSub>
       </MenuContent>
     </Menu>,
   );
-  expect(screen.getByTestId('sub')).toHaveClass('md-menu-item');
-  // Kit state "Active": 8% state layer on the trigger whose submenu is open.
-  expect(menuCss).toMatch(
-    /&\[data-popup-open\] > \.salty-ripple \.salty-ripple-surface::before \{[^}]*?opacity: var\(--md-sys-state-hover-opacity\);/s,
+  const trigger = screen.getByTestId('sub');
+  expect(trigger).toHaveClass('md-menu-item');
+  expect(trigger).not.toHaveAttribute('data-popup-open');
+  fireEvent.click(trigger);
+  await screen.findByTestId('sub-content');
+  // Base UI marks the open trigger; the CSS below keys the Active layer off it.
+  expect(trigger).toHaveAttribute('data-popup-open');
+  expect(trigger.querySelector(':scope > .md-ripple-hover-layer > .md-ripple-hover-layer__surface')).not.toBeNull();
+  // Kit state "Active": one 8% state layer on the trigger whose submenu is
+  // open. It is the trigger's own hover layer held on, so hovering the open
+  // trigger cannot stack a second 8% layer (the ripple ::before) beneath it.
+  expect(ruleBody('&[data-popup-open] > .md-ripple-hover-layer > .md-ripple-hover-layer__surface')).toContain(
+    'opacity: var(--md-sys-state-hover-opacity)',
   );
+  expect(menuCss).not.toMatch(/\[data-popup-open\][^{]*::before/);
 });
 
 test('disabled menu item dims its icon and trailing text with the label', async () => {
@@ -988,7 +1220,108 @@ test('disabled menu item dims its icon and trailing text with the label', async 
   expect(item).toHaveAttribute('data-disabled');
   expect(screen.getByTestId('icon').parentElement).toBe(item);
   // Kit: leading and trailing elements at 38% alongside the label.
-  expect(menuCss).toMatch(/&\[data-disabled\] > svg,[^{]*\.md-menu-item__trailing,[^{]*\{\s*color: inherit;/s);
+  expect(menuCss).toMatch(
+    /&:is\([^)]*\[data-disabled\][^)]*\) > svg,[^{]*:is\([^)]*\[data-disabled\][^)]*\) \.md-menu-item__trailing,[^{]*\{\s*color: inherit;/s,
+  );
+  // …by dimming the row's own on-role, so vibrant rows dim on-tertiary-container.
+  expect(ruleBody('&[data-disabled]')).toContain(
+    'color: color-mix(in srgb, var(--_content-color) calc(var(--md-sys-state-disabled-opacity) * 100%), transparent)',
+  );
+});
+
+test('selected rows recolour their icon, trailing and supporting text with the label', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent>
+        <MenuItem data-testid="item" selected trailingText="⌘F" supportingText="Pinned">
+          <svg data-testid="icon" aria-hidden="true" />
+          Favorite
+        </MenuItem>
+      </MenuContent>
+    </Menu>,
+  );
+  const item = screen.getByTestId('item');
+  expect(item).toHaveAttribute('data-selected');
+  expect(screen.getByTestId('icon').parentElement).toBe(item);
+  expect(item.querySelector('.md-menu-item__trailing')).not.toBeNull();
+  expect(item.querySelector('.md-menu-item__supporting')).not.toBeNull();
+  // Kit: content on the selected container takes its on-role
+  // (on-tertiary-container, or on-tertiary in vibrant), not on-surface-variant.
+  expect(ruleBody('&[data-selected]')).toContain('--_content-color: var(--md-sys-color-on-tertiary-container)');
+  expect(ruleBody('&[data-selected][data-color="vibrant"]')).toContain(
+    '--_content-color: var(--md-sys-color-on-tertiary)',
+  );
+  for (const part of ['> svg', '.md-menu-item__trailing', '.md-menu-item__supporting', '.md-menu-item__chevron']) {
+    expect(menuCss).toContain(`&:is([data-color="vibrant"], [data-selected], [data-disabled]) ${part}`);
+  }
+});
+
+test('a disabled selected row drops the standard fill but keeps the vibrant tertiary fill', async () => {
+  render(
+    <>
+      <Menu defaultOpen>
+        <MenuTrigger>Open</MenuTrigger>
+        <MenuContent>
+          <MenuItem data-testid="standard" selected disabled>
+            Standard
+          </MenuItem>
+        </MenuContent>
+      </Menu>
+      <Menu defaultOpen color="vibrant">
+        <MenuTrigger>Open vibrant</MenuTrigger>
+        <MenuContent>
+          <MenuItem data-testid="vibrant" selected disabled>
+            Vibrant
+          </MenuItem>
+        </MenuContent>
+      </Menu>
+    </>,
+  );
+  for (const id of ['standard', 'vibrant']) {
+    expect(screen.getByTestId(id)).toHaveAttribute('data-selected');
+    expect(screen.getByTestId(id)).toHaveAttribute('data-disabled');
+  }
+  expect(screen.getByTestId('standard')).toHaveAttribute('data-color', 'standard');
+  expect(screen.getByTestId('vibrant')).toHaveAttribute('data-color', 'vibrant');
+
+  // Kit Standard State=Disabled, Selected=True: no fill, content back on the surface.
+  const standard = ruleBody('&[data-disabled][data-selected]');
+  expect(standard).toContain('--_menu-item-container: transparent');
+  expect(standard).toContain('--_content-color: var(--md-sys-color-on-surface)');
+  // Kit Vibrant: Tertiary fill kept; content is on-tertiary dimmed to 38% by
+  // the [data-disabled] rule (this selector outranks the vibrant-selected one).
+  const vibrant = ruleBody('&[data-disabled][data-selected][data-color="vibrant"]');
+  expect(vibrant).toContain('--_menu-item-container: var(--md-sys-color-tertiary)');
+  expect(vibrant).toContain('--_content-color: var(--md-sys-color-on-tertiary)');
+  // The old on-surface 10% container is gone.
+  expect(menuCss).not.toContain('disabled-container-opacity');
+});
+
+test('rows meeting an inner group edge keep the 4dp inner corner', async () => {
+  render(
+    <Menu defaultOpen>
+      <MenuTrigger>Open</MenuTrigger>
+      <MenuContent grouped>
+        <MenuGroup data-testid="first">
+          <MenuItem>Favorite</MenuItem>
+          <MenuItem data-testid="first-last">Share</MenuItem>
+        </MenuGroup>
+        <MenuGroup data-testid="last">
+          <MenuItem data-testid="last-only">Delete</MenuItem>
+        </MenuGroup>
+      </MenuContent>
+    </Menu>,
+  );
+  expect(screen.getByTestId('first-last').parentElement).toBe(screen.getByTestId('first'));
+  expect(screen.getByTestId('last-only').parentElement).toBe(screen.getByTestId('last'));
+  // Kit: groups meet on the 8dp small corner, and the row 4dp inside it stays at 4dp.
+  expect(ruleBody('.md-menu-group:not(:first-child) > .md-menu-item:first-child:not([data-selected])')).toMatch(
+    /border-top-left-radius: var\(--_inner-radius\);\s*border-top-right-radius: var\(--_inner-radius\);/,
+  );
+  expect(ruleBody('.md-menu-group:not(:last-child) > .md-menu-item:last-child:not([data-selected])')).toMatch(
+    /border-bottom-left-radius: var\(--_inner-radius\);\s*border-bottom-right-radius: var\(--_inner-radius\);/,
+  );
 });
 
 test('menu divider uses the deployed inset', async () => {

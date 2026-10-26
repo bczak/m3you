@@ -6,7 +6,8 @@ import { useContext } from 'react';
 import { cx } from '../../lib/cx';
 import { M3Ripple as Ripple } from '../../lib/m3-ripple';
 
-type MenuColor = 'standard' | 'vibrant';
+/** Menu colour scheme: `standard` (surface container) or `vibrant` (tertiary container). */
+export type MenuColor = 'standard' | 'vibrant';
 const MenuColorContext = React.createContext<MenuColor>('standard');
 
 // =============================================================================
@@ -14,8 +15,13 @@ const MenuColorContext = React.createContext<MenuColor>('standard');
 // =============================================================================
 
 export interface MenuProps {
-  /** @deprecated accepted for backwards-compatible tests/stories; styling is token-driven. */
-  color?: string;
+  /**
+   * Colour scheme. `standard` sits on the surface container; `vibrant` tints
+   * the whole menu, sub-menus included, with the tertiary container. Selected
+   * items use the tertiary container (standard) or tertiary (vibrant).
+   * @default 'standard'
+   */
+  color?: MenuColor;
   /** Open state (controlled). Pair with `onOpenChange`. */
   open?: boolean;
   /** Initial open state when uncontrolled. */
@@ -29,6 +35,7 @@ export interface MenuProps {
 
 function Menu({ color = 'standard', open, defaultOpen, onOpenChange, modal = true, children }: MenuProps) {
   return (
+    // Normalise untyped (JS) values so an unknown scheme falls back to standard.
     <MenuColorContext.Provider value={color === 'vibrant' ? 'vibrant' : 'standard'}>
       <BaseMenu.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} modal={modal}>
         {children}
@@ -363,10 +370,13 @@ export interface MenuSubContentProps extends React.HTMLAttributes<HTMLDivElement
 
 const MenuSubContent = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<MenuSubContentProps>>(
   ({ className, children, portalProps, ...props }, ref) => {
+    // A sub-menu shares its root menu's colour scheme, so its surface matches
+    // the vibrant styling its items already read from context.
+    const color = useContext(MenuColorContext);
     return (
       <BaseMenu.Portal {...portalProps}>
         <BaseMenu.Positioner className="md-popup-positioner" sideOffset={4}>
-          <BaseMenu.Popup ref={ref} className={cx('md-menu', className)} {...props}>
+          <BaseMenu.Popup ref={ref} className={cx('md-menu', className)} data-color={color} {...props}>
             {children}
           </BaseMenu.Popup>
         </BaseMenu.Positioner>

@@ -110,6 +110,7 @@ export type {
 export { LoadingIndicator } from './components/LoadingIndicator/loading-indicator';
 export { SHAPE_NAMES, SHAPE_POLYGONS, type ShapeName } from './components/LoadingIndicator/shapes';
 export type {
+  MenuColor,
   MenuContentProps,
   MenuDividerProps,
   MenuGroupProps,

@@ -16,6 +16,16 @@ semantics.
 Use `MenuLabel` directly when a group needs a visible heading, or pass `label`
 to `MenuGroup` to have it rendered for you.
 
+Rows have no outline ring (except in forced-colours mode, below). A hovered row shows an 8% state layer, and the
+keyboard-focused row shows a 10% one, both in the row's content colour. Base UI
+moves focus with the pointer, so after an arrow key the row under the mouse is
+both hovered and focused. It still shows the single 10% layer; the two layers do
+not stack.
+
+In forced-colours mode (Windows High Contrast), state layers and the elevation
+shadow are not drawn. Instead, the focused row gets a `Highlight` ring, the menu
+surface gets a 1px `CanvasText` edge, and disabled rows use `GrayText`.
+
 Long menus are capped to the collision-safe height exposed by Base UI and
 scroll within their rounded surface. A visually `selected` item is scrolled
 into view when the menu opens; arrow-key navigation continues to keep the
@@ -26,6 +36,17 @@ highlighted item visible.
 ## Sub-menus
 
 <Example name="menu/submenu" title="A nested sub-menu" description="Hover “Send to”." />
+
+## Colour schemes
+
+`color="standard"` (the default) puts the menu on the surface container.
+`color="vibrant"` tints the whole menu, sub-menus included, with the tertiary
+container, and its labels, icons, shortcuts and state layers switch to
+on-tertiary-container. A `selected` item fills with the tertiary container in a
+standard menu and with tertiary in a vibrant one, and its icon and shortcut
+follow the label colour. The union is exported as the `MenuColor` type.
+
+<Example name="menu/vibrant" title="A vibrant menu" description="“Bold” is selected; hover “Share” for the sub-menu." />
 
 ## Props
 
