@@ -875,13 +875,17 @@ const DatePicker = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<DatePi
     inputErrors[field] !== null && (inputTouched[field] || inputTexts[field].trim().length >= INPUT_FORMAT.length);
 
   // State derived from prop changes is reset during render instead of mirrored through effects.
+  // `fieldTexts` is what the fields hold once these resets apply, which `inputTexts` only shows next render.
+  let fieldTexts = inputTexts;
   // Opening the dialog starts a fresh draft from the committed value.
   const [prevOpen, setPrevOpen] = React.useState(open);
+  const opening = open && !prevOpen;
   if (open !== prevOpen) {
     setPrevOpen(open);
     if (open) {
+      fieldTexts = formatInputDates(committedValue);
       setDraftValue(committedValue);
-      setInputTexts(formatInputDates(committedValue));
+      setInputTexts(fieldTexts);
       setInputTouched([false, false]);
       setListView(null);
       setSlideDirection(null);
@@ -896,7 +900,8 @@ const DatePicker = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<DatePi
     setListView(null);
     setInputTouched([false, false]);
     if (isInput) {
-      setInputTexts(formatInputDates(current));
+      fieldTexts = formatInputDates(current);
+      setInputTexts(fieldTexts);
     } else {
       setSlideDirection(null);
       setView(viewFor(current));
@@ -905,11 +910,12 @@ const DatePicker = React.forwardRef<HTMLDivElement, React.PropsWithoutRef<DatePi
 
   // The bounds decide which typed dates count, so new bounds re-read the fields into the draft: an entry
   // rejected as out of range can turn valid without another keystroke, and OK must commit what it shows.
+  // Opening takes precedence: its fresh draft is the committed value, whatever the last session typed.
   const boundsKey = toSelectionKey([minDay ?? null, maxDay ?? null]);
   const [prevBoundsKey, setPrevBoundsKey] = React.useState(boundsKey);
   if (boundsKey !== prevBoundsKey) {
     setPrevBoundsKey(boundsKey);
-    if (isDialog && isInput) setDraftValue(resolveInputs(inputTexts));
+    if (isDialog && isInput && !opening) setDraftValue(resolveInputs(fieldTexts));
   }
 
   // A selection set from outside the fields (a new `value`, a calendar pick) replaces the typed text,

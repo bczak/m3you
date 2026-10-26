@@ -1459,6 +1459,48 @@ test('new bounds leave a date picked on the calendar in the draft', () => {
   expect(onChange).toHaveBeenCalledExactlyOnceWith(new Date(2026, 3, 20));
 });
 
+test('reopening as the bounds change starts from the committed value, not what was last typed', () => {
+  const onChange = vi.fn();
+  const { rerender } = render(
+    <DatePicker open value={APRIL_14} defaultMode="input" maxDate={new Date(2026, 4, 31)} onChange={onChange} />,
+  );
+  fireEvent.change(dateField(), { target: { value: '05/04/2026' } });
+  expect(pickerHeadline()).toHaveTextContent('Mon, May 4');
+
+  // Closed from outside without OK, then reopened in the same render that relaxes maxDate.
+  rerender(
+    <DatePicker
+      open={false}
+      value={APRIL_14}
+      defaultMode="input"
+      maxDate={new Date(2026, 4, 31)}
+      onChange={onChange}
+    />,
+  );
+  rerender(
+    <DatePicker open value={APRIL_14} defaultMode="input" maxDate={new Date(2026, 5, 30)} onChange={onChange} />,
+  );
+  expect(dateField()).toHaveValue('04/14/2026');
+  expect(pickerHeadline()).toHaveTextContent('Tue, Apr 14');
+  fireEvent.click(screen.getByRole('button', { name: 'OK' }));
+  expect(onChange).not.toHaveBeenCalledWith(new Date(2026, 4, 4));
+});
+
+test('switching to input as the bounds change re-reads the fields the switch fills in', () => {
+  const props = { open: true, value: APRIL_14 } as const;
+  const { rerender } = render(<DatePicker {...props} mode="input" maxDate={new Date(2026, 3, 30)} />);
+  // Out of bounds, so the draft is empty; the text stays behind in the calendar.
+  fireEvent.change(dateField(), { target: { value: '05/04/2026' } });
+  expect(pickerHeadline()).toHaveTextContent('Enter date');
+  rerender(<DatePicker {...props} mode="calendar" maxDate={new Date(2026, 3, 30)} />);
+
+  // Back to input in the same render that would allow the old text: the fields show the empty draft,
+  // and the draft follows them rather than the text they replaced.
+  rerender(<DatePicker {...props} mode="input" maxDate={new Date(2026, 4, 31)} />);
+  expect(dateField()).toHaveValue('');
+  expect(pickerHeadline()).toHaveTextContent('Enter date');
+});
+
 test('OK with an invalid entry stays open, shows the error and focuses the field', () => {
   const onChange = vi.fn();
   render(<DialogHarness defaultMode="input" onChange={onChange} />);
