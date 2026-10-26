@@ -10,7 +10,11 @@ import { cx } from '../../lib/cx';
 // =============================================================================
 
 export interface BottomSheetProps extends Omit<DrawerPrimitive.Root.Props, 'swipeDirection'> {
-  /** Whether the bottom sheet is modal (with scrim) or standard (no scrim).
+  /**
+   * Whether the sheet is modal (`true`: 32% scrim, no shadow, focus trapped, page scroll locked) or
+   * standard (`false`: no scrim, elevation-3 shadow, the page behind stays interactive — a page press
+   * still dismisses the sheet unless `disablePointerDismissal` is set). `'trap-focus'` keeps the modal
+   * scrim and look and traps focus, but does not lock page scroll.
    * @default true
    */
   modal?: boolean | 'trap-focus';

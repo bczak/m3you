@@ -278,21 +278,3 @@
   transform: rotate(-90deg);
   transform-origin: center;
 }
-
-/* =============================================================================
-   Bottom Sheet — CSS variable-based transforms for Base UI Drawer
-   ============================================================================= */
-
-[data-slot="bottom-sheet-content"] {
-  transform: translateY(calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px)));
-  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
-}
-
-[data-slot="bottom-sheet-content"][data-starting-style],
-[data-slot="bottom-sheet-content"][data-ending-style] {
-  transform: translateY(100%);
-}
-
-[data-slot="bottom-sheet-content"][data-swiping] {
-  transition: none;
-}
