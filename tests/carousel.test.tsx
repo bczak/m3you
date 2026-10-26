@@ -5,9 +5,12 @@ import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 import { Carousel, CarouselItem } from '../src/components/Carousel/carousel';
 import {
+  type CarouselMetrics,
   clampCarouselIndex,
+  getCarouselAlignmentPoint,
   getCarouselLargeCount,
   getCarouselSizeRoles,
+  getClampedCarouselLargeCount,
   getNearestCarouselItem,
   resolveCarouselScrollMode,
 } from '../src/components/Carousel/carousel-layout';
@@ -194,6 +197,41 @@ test('carousel layout utilities resolve indexes, modes, responsive counts, and e
   expect(getCarouselSizeRoles('multi-browse', 1, 0, 900, false)).toEqual(['large']);
 });
 
+function kitMetrics(contentWidth: number, overrides: Partial<CarouselMetrics> = {}): CarouselMetrics {
+  return { contentWidth, largeItemMaxWidth: 360, mediumItemWidth: 120, smallItemWidth: 56, gap: 8, ...overrides };
+}
+
+test('the large count grows past the breakpoints only when capped large items would leave the row unfilled', () => {
+  // Kit frames and the breakpoints keep their counts: 188 / 184×2 / 200×3.
+  expect(getCarouselLargeCount(412, kitMetrics(380))).toBe(1);
+  expect(getCarouselLargeCount(600, kitMetrics(568))).toBe(2);
+  expect(getCarouselLargeCount(840, kitMetrics(808))).toBe(3);
+  // At 1320 three 360px items fill the row exactly, so no fourth is added.
+  expect(getCarouselLargeCount(1320, kitMetrics(1288))).toBe(3);
+  // Wider rows add large items: 4 × 298 at 1440, 5 × 332.8 at 1920.
+  expect(getCarouselLargeCount(1440, kitMetrics(1408))).toBe(4);
+  expect(getCarouselLargeCount(1920, kitMetrics(1888))).toBe(5);
+  // One gap is subtracted, not two: at 553px of content one 360px item leaves 1px empty.
+  expect(getCarouselLargeCount(585, kitMetrics(553))).toBe(2);
+  // A smaller cap needs more items.
+  expect(getCarouselLargeCount(600, kitMetrics(568, { largeItemMaxWidth: 120 }))).toBe(3);
+  // Unresolved lengths fall back to the breakpoints.
+  expect(getCarouselLargeCount(1920, kitMetrics(0, { largeItemMaxWidth: 0, gap: 0 }))).toBe(3);
+  expect(getCarouselLargeCount(1920)).toBe(3);
+
+  expect(getClampedCarouselLargeCount(1920, 20, kitMetrics(1888))).toBe(5);
+  expect(getClampedCarouselLargeCount(1920, 5, kitMetrics(1888))).toBe(3);
+  expect(getCarouselSizeRoles('multi-browse', 7, 0, 1920, false, kitMetrics(1888))).toEqual([
+    'large',
+    'large',
+    'large',
+    'large',
+    'large',
+    'medium',
+    'small',
+  ]);
+});
+
 test('nearest-item utility supports empty, start, center, vertical, and RTL anchors', () => {
   const viewport = rect({ left: 100, top: 100, width: 300, height: 300 });
   const items = [
@@ -207,6 +245,15 @@ test('nearest-item utility supports empty, start, center, vertical, and RTL anch
   expect(getNearestCarouselItem(viewport, items, 'horizontal', 'start', true)).toBe(1);
   expect(getNearestCarouselItem(viewport, items, 'vertical', 'start', false)).toBe(0);
   expect(getNearestCarouselItem(viewport, items, 'vertical', 'center', false)).toBe(1);
+});
+
+test('alignment points are the start edge in either direction, or the centre, on the scroll axis', () => {
+  const box = rect({ left: 10, top: 20, width: 100, height: 60 });
+  expect(getCarouselAlignmentPoint(box, 'horizontal', 'start', false)).toBe(10);
+  expect(getCarouselAlignmentPoint(box, 'horizontal', 'start', true)).toBe(110);
+  expect(getCarouselAlignmentPoint(box, 'horizontal', 'center', true)).toBe(60);
+  expect(getCarouselAlignmentPoint(box, 'vertical', 'start', false)).toBe(20);
+  expect(getCarouselAlignmentPoint(box, 'vertical', 'center', false)).toBe(50);
 });
 
 test('renders a labelled region, list semantics, positional descriptions, actions, header, styles, and refs', () => {
@@ -405,59 +452,429 @@ test('initialIndex clamps to the available items and scrolls without motion', ()
   expect(screen.getAllByRole('listitem')[0]).toHaveAttribute('data-active');
 });
 
-test('ResizeObserver applies expanded roles, FLIP transforms, and disconnects on cleanup', async () => {
-  let resolveAnimation = () => {};
-  const finished = new Promise<void>((resolve) => {
-    resolveAnimation = resolve;
+function mockAnimations() {
+  const created: Array<{ animation: Animation; cancel: ReturnType<typeof vi.fn>; finish: () => void }> = [];
+  const animate = vi.spyOn(Element.prototype, 'animate').mockImplementation(() => {
+    let finish = () => {};
+    let fail = (_reason: unknown) => {};
+    const finished = new Promise<Animation>((resolve, reject) => {
+      finish = () => resolve(animation);
+      fail = reject;
+    });
+    finished.catch(() => {});
+    const cancel = vi.fn(() => fail(new Error('cancelled')));
+    const animation = { cancel, finished } as unknown as Animation;
+    created.push({ animation, cancel, finish });
+    return animation;
   });
-  const cancelAnimation = vi.fn();
-  const animation = { cancel: cancelAnimation, finished } as unknown as Animation;
-  const { unmount } = render(<Carousel label="Responsive">{carouselItems()}</Carousel>);
+  return { animate, created };
+}
+
+function mockProbe(lengths: { content: number; large: number; medium: number; small: number; gap: number }) {
+  const original = globalThis.getComputedStyle;
+  return vi
+    .spyOn(globalThis, 'getComputedStyle')
+    .mockImplementation((element: Element, pseudoElement?: string | null) => {
+      if (element.classList.contains('md-carousel__probe')) {
+        return { width: `${lengths.content}px` } as CSSStyleDeclaration;
+      }
+      const length = (element as HTMLElement).dataset?.length as keyof typeof lengths | undefined;
+      if (length && element.parentElement?.classList.contains('md-carousel__probe')) {
+        return { width: `${lengths[length]}px` } as CSSStyleDeclaration;
+      }
+      return original.call(window, element, pseudoElement);
+    });
+}
+
+test('multi-browse resolves its lengths through a transient probe and fills wide rows with more large items', () => {
+  const computedStyle = mockProbe({ content: 1888, large: 360, medium: 120, small: 56, gap: 8 });
+  const probes = () =>
+    computedStyle.mock.calls.map(([element]) => element).filter((element) => element.matches('.md-carousel__probe'));
+  const items = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map((id) => (
+    <CarouselItem key={id} label={`Wide ${id}`} onClick={() => {}}>
+      Wide
+    </CarouselItem>
+  ));
+  const { rerender } = render(<Carousel label="Wide">{items}</Carousel>);
   const viewport = screen.getByRole('list');
-  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 1000, height: 240 }));
-  const items = screen.getAllByRole('listitem');
-  for (const [index, item] of items.entries()) {
-    const first = rect({ left: index * 100, width: 100, height: 200 });
-    const second = rect({ left: index * 120, width: index === 0 ? 200 : 100, height: 200 });
-    vi.spyOn(item, 'getBoundingClientRect').mockReturnValueOnce(first).mockReturnValue(second);
-    vi.spyOn(item, 'animate').mockReturnValue(animation);
-  }
-  act(() => resizeCallbacks[0]([], {} as ResizeObserver));
-  expect(items.map((item) => item.dataset.sizeRole)).toEqual(['large', 'large', 'large', 'medium', 'small']);
-  expect(viewport.style.getPropertyValue('--md-carousel-large-count')).toBe('3');
-  expect(viewport.style.getPropertyValue('--md-carousel-reserved-gaps')).toBe('32px');
-  expect(items[0].animate).toHaveBeenCalledWith(
-    expect.arrayContaining([expect.objectContaining({ transform: expect.stringContaining('scale(') })]),
-    expect.objectContaining({ duration: 500 }),
+  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 1920, height: 220 }));
+  act(() => resizeCallbacks.at(-1)?.([], {} as ResizeObserver));
+  expect(viewport.style.getPropertyValue('--md-carousel-large-count')).toBe('5');
+  expect(screen.getAllByRole('listitem').map((item) => item.dataset.sizeRole)).toEqual([
+    'large',
+    'large',
+    'large',
+    'large',
+    'large',
+    'medium',
+    'small',
+    'small',
+  ]);
+
+  const probe = probes().at(-1) as HTMLElement;
+  expect(probe).toHaveAttribute('aria-hidden', 'true');
+  expect(Array.from(probe.children, (child) => (child as HTMLElement).dataset.length)).toEqual([
+    'large',
+    'medium',
+    'small',
+    'gap',
+  ]);
+  expect(probe.isConnected).toBe(false);
+  expect(viewport.querySelector('.md-carousel__probe')).toBeNull();
+
+  // Layouts without a large-item count never probe.
+  const probeCount = probes().length;
+  rerender(
+    <Carousel label="Wide" layout="hero">
+      {items}
+    </Carousel>,
   );
-  unmount();
-  expect(resizeDisconnect).toHaveBeenCalled();
-  expect(cancelAnimation).toHaveBeenCalled();
-  resolveAnimation();
-  await finished;
+  expect(probes()).toHaveLength(probeCount);
 });
 
-test('FLIP skips zero and unchanged geometry and removes rejected animations', async () => {
-  const rejection = Promise.reject(new Error('cancelled'));
-  rejection.catch(() => {});
-  const rejectedAnimation = { cancel: vi.fn(), finished: rejection } as unknown as Animation;
-  render(<Carousel label="Geometry">{carouselItems().slice(0, 3)}</Carousel>);
+test('role changes morph item widths from their on-screen size with the spatial spring', async () => {
+  const { animate, created } = mockAnimations();
+  const { unmount } = render(<Carousel label="Morph">{carouselItems()}</Carousel>);
   const viewport = screen.getByRole('list');
-  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 700, height: 220 }));
-  const [zero, unchanged, changed] = screen.getAllByRole('listitem');
-  vi.spyOn(zero, 'getBoundingClientRect').mockReturnValue(rect());
-  vi.spyOn(unchanged, 'getBoundingClientRect').mockReturnValue(rect({ left: 10, width: 100, height: 100 }));
-  vi.spyOn(changed, 'getBoundingClientRect')
-    .mockReturnValueOnce(rect({ left: 200, width: 100, height: 100 }))
-    .mockReturnValue(rect({ left: 240, width: 120, height: 100 }));
-  const zeroAnimate = vi.spyOn(zero, 'animate');
-  const unchangedAnimate = vi.spyOn(unchanged, 'animate');
-  const changedAnimate = vi.spyOn(changed, 'animate').mockReturnValue(rejectedAnimation);
-  act(() => resizeCallbacks[0]([], {} as ResizeObserver));
-  expect(zeroAnimate).not.toHaveBeenCalled();
-  expect(unchangedAnimate).not.toHaveBeenCalled();
-  expect(changedAnimate).toHaveBeenCalled();
-  await rejection.catch(() => {});
+  const items = screen.getAllByRole('listitem');
+  const roles = () => items.map((item) => item.dataset.sizeRole);
+  const roleWidths: Record<string, string> = { large: '188px', medium: '120px', small: '56px' };
+  const paintWidths = () => {
+    for (const item of items) item.style.width = roleWidths[item.dataset.sizeRole as string];
+  };
+  const settleOn = (activeIndex: number) => {
+    for (const [index, item] of items.entries()) {
+      vi.spyOn(item, 'getBoundingClientRect').mockReturnValue(
+        rect({ left: (index - activeIndex) * 200, width: 100, height: 200 }),
+      );
+    }
+    fireEvent(viewport, new Event('scrollend'));
+  };
+
+  // Mounting sizes the items without morphing them.
+  expect(roles()).toEqual(['large', 'medium', 'small', 'small', 'small']);
+  expect(animate).not.toHaveBeenCalled();
+
+  paintWidths();
+  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 412, height: 220 }));
+  settleOn(1);
+  expect(roles()).toEqual(['small', 'large', 'medium', 'small', 'small']);
+  // Only the items whose role changed morph, each from the width it had on screen,
+  // towards its new flex-basis (no end keyframe), on the spring-default-spatial token values.
+  expect(animate.mock.contexts).toEqual([items[0], items[1], items[2]]);
+  expect(animate.mock.calls).toEqual([
+    [[{ flexBasis: '188px', offset: 0 }], { duration: 500, easing: 'cubic-bezier(0.38, 1.21, 0.22, 1)' }],
+    [[{ flexBasis: '120px', offset: 0 }], { duration: 500, easing: 'cubic-bezier(0.38, 1.21, 0.22, 1)' }],
+    [[{ flexBasis: '56px', offset: 0 }], { duration: 500, easing: 'cubic-bezier(0.38, 1.21, 0.22, 1)' }],
+  ]);
+
+  // An interrupted morph restarts from where the item is and replaces the running one.
+  paintWidths();
+  items[1].style.width = '150px';
+  viewport.style.setProperty('--md-sys-motion-duration-spring-default-spatial', '0.4s');
+  viewport.style.setProperty('--md-sys-motion-easing-spring-default-spatial', 'linear');
+  settleOn(2);
+  expect(roles()).toEqual(['small', 'small', 'large', 'medium', 'small']);
+  expect(created[1].cancel).toHaveBeenCalled();
+  expect(animate.mock.contexts.slice(3)).toEqual([items[1], items[2], items[3]]);
+  expect(animate.mock.calls[3]).toEqual([[{ flexBasis: '150px', offset: 0 }], { duration: 400, easing: 'linear' }]);
+
+  // A plain resize keeps roles and count, so nothing morphs.
+  paintWidths();
+  act(() => resizeCallbacks.at(-1)?.([], {} as ResizeObserver));
+  expect(animate).toHaveBeenCalledTimes(6);
+
+  // Crossing a breakpoint changes the large share, so even items that stay large morph.
+  viewport.style.setProperty('--md-sys-motion-duration-spring-default-spatial', '350ms');
+  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 600, height: 220 }));
+  act(() => resizeCallbacks.at(-1)?.([], {} as ResizeObserver));
+  expect(roles()).toEqual(['small', 'small', 'large', 'large', 'medium']);
+  expect(viewport.style.getPropertyValue('--md-carousel-large-count')).toBe('2');
+  expect(animate.mock.contexts.slice(6)).toEqual([items[2], items[3], items[4]]);
+  expect(animate.mock.calls[6][1]).toEqual({ duration: 350, easing: 'linear' });
+
+  // A finished morph is released; the ones still running are cancelled on unmount.
+  const finishedMorph = created[6];
+  finishedMorph.finish();
+  await finishedMorph.animation.finished;
+  unmount();
+  expect(finishedMorph.cancel).not.toHaveBeenCalled();
+  expect(created[3].cancel).toHaveBeenCalled();
+  expect(created[8].cancel).toHaveBeenCalled();
+});
+
+/**
+ * Lays the items out in a row the way a browser would — 16px of padding, 8px
+ * gaps, shifted by the viewport's scroll position — from the widths `widthOf`
+ * reports at the moment of reading.
+ */
+function layOutStrip(viewport: HTMLElement, items: HTMLElement[], widthOf: (index: number) => number) {
+  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 412, height: 220 }));
+  for (const [index, item] of items.entries()) {
+    item.style.width = `${widthOf(index)}px`;
+    vi.spyOn(item, 'getBoundingClientRect').mockImplementation(() => {
+      let left = 16 - viewport.scrollLeft;
+      for (let before = 0; before < index; before += 1) left += widthOf(before) + 8;
+      return rect({ left, width: widthOf(index), height: 200 });
+    });
+  }
+  return (index: number) => items[index].getBoundingClientRect().left;
+}
+
+test('a free-scrolling carousel holds the active item where the user left it while the items before it shrink', async () => {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+  const { created } = mockAnimations();
+  const onActiveIndexChange = vi.fn();
+  render(
+    <Carousel label="Free" scrollMode="free" onActiveIndexChange={onActiveIndexChange}>
+      {carouselItems()}
+    </Carousel>,
+  );
+  act(flushAnimationFrames);
+  const viewport = screen.getByRole('list');
+  const items = screen.getAllByRole('listitem');
+  const widths = [188, 120, 56, 56, 56];
+  const offsetOf = layOutStrip(viewport, items, (index) => widths[index]);
+
+  // The user leaves the second item 60px past the start; the large first item is far off it.
+  viewport.scrollLeft = 152;
+  expect([offsetOf(0), offsetOf(1)]).toEqual([-136, 60]);
+  fireEvent(viewport, new Event('scrollend'));
+  expect(onActiveIndexChange).toHaveBeenCalledWith(1);
+  expect(items.map((item) => item.dataset.sizeRole)).toEqual(['small', 'large', 'medium', 'small', 'small']);
+  expect(created).toHaveLength(3);
+  // Every morph starts from where its item is, so nothing has moved yet.
+  expect(viewport.scrollLeft).toBe(152);
+
+  // Each frame of the morph scrolls back by however far the items before it shrank,
+  // through the spring's overshoot too — instantly, even where the page sets
+  // `scroll-behavior: smooth`, so the correction lands in the frame it is made.
+  const scrollBy = vi.spyOn(viewport, 'scrollBy');
+  widths.splice(0, 3, 122, 154, 88);
+  act(flushAnimationFrames);
+  expect([viewport.scrollLeft, offsetOf(1)]).toEqual([86, 60]);
+  expect(scrollBy).toHaveBeenLastCalledWith({ left: -66, behavior: 'instant' });
+  widths.splice(0, 3, 40, 200, 128);
+  act(flushAnimationFrames);
+  expect([viewport.scrollLeft, offsetOf(1)]).toEqual([4, 60]);
+
+  // The last frame lands it, and the hold stops asking for frames.
+  for (const morph of created) morph.finish();
+  await Promise.all(created.map((morph) => morph.animation.finished));
+  widths.splice(0, 3, 56, 188, 120);
+  act(flushAnimationFrames);
+  expect([viewport.scrollLeft, offsetOf(1)]).toEqual([20, 60]);
+  expect(animationFrames.size).toBe(0);
+
+  // The shrunk first item is now nearer the start, but the hold's own scrolling
+  // is not the user's: neither its scroll events nor its scrollend settle again.
+  expect(offsetOf(0)).toBe(-4);
+  fireEvent.scroll(viewport);
+  act(() => vi.advanceTimersByTime(120));
+  fireEvent(viewport, new Event('scrollend'));
+  expect(onActiveIndexChange).toHaveBeenCalledTimes(1);
+  expect(items[1]).toHaveAttribute('data-active');
+
+  // The user scrolling ends the hold, and the carousel settles as usual.
+  viewport.scrollLeft = 30;
+  fireEvent.scroll(viewport);
+  act(() => vi.advanceTimersByTime(120));
+  expect(onActiveIndexChange).toHaveBeenLastCalledWith(0);
+});
+
+test('the hold lets go when the user scrolls between frames or its item leaves, and on unmount', () => {
+  const { created } = mockAnimations();
+  const { unmount } = render(
+    <Carousel label="Free" scrollMode="free">
+      {carouselItems()}
+    </Carousel>,
+  );
+  act(flushAnimationFrames);
+  const viewport = screen.getByRole('list');
+  const items = screen.getAllByRole('listitem');
+  const widths = [188, 120, 56, 56, 56];
+  layOutStrip(viewport, items, (index) => widths[index]);
+
+  viewport.scrollLeft = 152;
+  fireEvent(viewport, new Event('scrollend'));
+  expect(created).toHaveLength(3);
+  // A scroll the hold did not make, even before its scroll event arrives.
+  viewport.scrollLeft = 100;
+  widths.splice(0, 3, 122, 154, 88);
+  act(flushAnimationFrames);
+  expect(viewport.scrollLeft).toBe(100);
+  expect(animationFrames.size).toBe(0);
+
+  // The next settle holds the third item — until it leaves the document.
+  viewport.scrollLeft = 300;
+  fireEvent.scroll(viewport);
+  fireEvent(viewport, new Event('scrollend'));
+  expect(items[2]).toHaveAttribute('data-active');
+  Object.defineProperty(items[2], 'isConnected', { configurable: true, value: false });
+  widths.splice(0, 3, 56, 56, 188);
+  act(flushAnimationFrames);
+  expect(viewport.scrollLeft).toBe(300);
+  expect(animationFrames.size).toBe(0);
+  Reflect.deleteProperty(items[2], 'isConnected');
+
+  // A hold still running when the carousel unmounts cancels its frame.
+  widths.splice(0, 3, 56, 188, 120);
+  viewport.scrollLeft = 70;
+  fireEvent.scroll(viewport);
+  fireEvent(viewport, new Event('scrollend'));
+  expect(items[1]).toHaveAttribute('data-active');
+  act(flushAnimationFrames);
+  const pendingFrames = Array.from(animationFrames.keys());
+  expect(pendingFrames).toHaveLength(1);
+  unmount();
+  expect(window.cancelAnimationFrame).toHaveBeenCalledWith(pendingFrames[0]);
+});
+
+test('a size change that does not morph is held at once, and a snapping carousel is left to the browser', () => {
+  mediaMatches = true;
+  const roleWidths: Record<string, number> = { large: 340, small: 56 };
+  const { rerender } = render(
+    <Carousel label="Hero" layout="hero" scrollMode="free">
+      {carouselItems()}
+    </Carousel>,
+  );
+  act(flushAnimationFrames);
+  const viewport = screen.getByRole('list');
+  const items = screen.getAllByRole('listitem');
+  const offsetOf = layOutStrip(viewport, items, (index) => roleWidths[items[index].dataset.sizeRole as string]);
+
+  // Reduced motion resizes the items instantly, so the one correction happens with it.
+  viewport.scrollLeft = 360;
+  expect(offsetOf(1)).toBe(4);
+  fireEvent(viewport, new Event('scrollend'));
+  expect(items.map((item) => item.dataset.sizeRole)).toEqual(['small', 'large', 'small', 'small', 'small']);
+  expect([viewport.scrollLeft, offsetOf(1)]).toEqual([76, 4]);
+  expect(animationFrames.size).toBe(0);
+
+  // Snapping viewports re-snap to the active item themselves.
+  rerender(
+    <Carousel label="Hero" layout="hero" scrollMode="snap">
+      {carouselItems()}
+    </Carousel>,
+  );
+  viewport.scrollLeft = 420;
+  expect(offsetOf(2)).toBe(8);
+  fireEvent.scroll(viewport);
+  fireEvent(viewport, new Event('scrollend'));
+  expect(items[2]).toHaveAttribute('data-active');
+  expect(viewport.scrollLeft).toBe(420);
+});
+
+test('every morph starts, and the timing tokens are read, before any item changes size', () => {
+  render(<Carousel label="Order">{carouselItems()}</Carousel>);
+  const viewport = screen.getByRole('list');
+  const items = screen.getAllByRole('listitem');
+  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 412, height: 220 }));
+  for (const [index, item] of items.entries()) {
+    item.style.width = '100px';
+    vi.spyOn(item, 'getBoundingClientRect').mockReturnValue(rect({ left: (index - 2) * 200, width: 100, height: 200 }));
+  }
+  const sizes = () => items.map((item) => item.dataset.sizeRole).join(' ');
+  const before = sizes();
+  // A layout forced while some items had shrunk and others had not yet grown
+  // would narrow the strip and clamp its scroll position.
+  const seen: string[] = [];
+  const getStyle = globalThis.getComputedStyle;
+  vi.spyOn(globalThis, 'getComputedStyle').mockImplementation((element: Element, pseudoElement?: string | null) => {
+    if (element === viewport) seen.push(sizes());
+    return getStyle.call(window, element, pseudoElement);
+  });
+  vi.spyOn(Element.prototype, 'animate').mockImplementation(() => {
+    seen.push(sizes());
+    return { cancel: () => {}, finished: new Promise(() => {}) } as unknown as Animation;
+  });
+  fireEvent(viewport, new Event('scrollend'));
+  expect(sizes()).toBe('small small large medium small');
+  expect(seen.length).toBeGreaterThan(3);
+  expect(new Set(seen)).toEqual(new Set([before]));
+});
+
+test('morphs skip items that were never laid out and switches to or from uniform sizing', () => {
+  const animate = vi.spyOn(Element.prototype, 'animate');
+  const { rerender } = render(<Carousel label="Skips">{carouselItems()}</Carousel>);
+  const viewport = screen.getByRole('list');
+  const items = screen.getAllByRole('listitem');
+  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 412, height: 220 }));
+  for (const [index, item] of items.entries()) {
+    vi.spyOn(item, 'getBoundingClientRect').mockReturnValue(rect({ left: (index - 1) * 200, width: 100, height: 200 }));
+  }
+  // happy-dom lays nothing out, like a carousel inside a display: none panel.
+  fireEvent(viewport, new Event('scrollend'));
+  expect(items[1]).toHaveAttribute('data-size-role', 'large');
+  expect(animate).not.toHaveBeenCalled();
+
+  for (const item of items) item.style.width = '100px';
+  rerender(
+    <Carousel label="Skips" layout="uncontained">
+      {carouselItems()}
+    </Carousel>,
+  );
+  expect(items[1]).toHaveAttribute('data-size-role', 'uniform');
+  rerender(<Carousel label="Skips">{carouselItems()}</Carousel>);
+  expect(items[1]).toHaveAttribute('data-size-role', 'large');
+  expect(animate).not.toHaveBeenCalled();
+});
+
+test('a running morph keeps going through a resize but stops when the item switches to a size that does not morph', () => {
+  const { created } = mockAnimations();
+  const { rerender } = render(<Carousel label="Interrupted">{carouselItems()}</Carousel>);
+  const viewport = screen.getByRole('list');
+  const items = screen.getAllByRole('listitem');
+  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 412, height: 220 }));
+  for (const [index, item] of items.entries()) {
+    item.style.width = '100px';
+    vi.spyOn(item, 'getBoundingClientRect').mockReturnValue(rect({ left: (index - 1) * 200, width: 100, height: 200 }));
+  }
+  fireEvent(viewport, new Event('scrollend'));
+  expect(created).toHaveLength(3);
+
+  act(() => resizeCallbacks.at(-1)?.([], {} as ResizeObserver));
+  expect(created.map(({ cancel }) => cancel.mock.calls.length)).toEqual([0, 0, 0]);
+
+  // Uniform sizing applies at once instead of finishing the morph towards it.
+  rerender(
+    <Carousel label="Interrupted" layout="uncontained">
+      {carouselItems()}
+    </Carousel>,
+  );
+  expect(items[1]).toHaveAttribute('data-size-role', 'uniform');
+  expect(created).toHaveLength(3);
+  expect(created.map(({ cancel }) => cancel.mock.calls.length)).toEqual([1, 1, 1]);
+});
+
+test('changing the large-item cap re-counts the large items without waiting for a resize', () => {
+  const lengths = { content: 1408, large: 360, medium: 120, small: 56, gap: 8 };
+  mockProbe(lengths);
+  const items = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map((id) => (
+    <CarouselItem key={id} label={`Capped ${id}`} onClick={() => {}}>
+      Capped
+    </CarouselItem>
+  ));
+  const { rerender } = render(<Carousel label="Cap">{items}</Carousel>);
+  const viewport = screen.getByRole('list');
+  vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue(rect({ width: 1440, height: 220 }));
+  act(() => resizeCallbacks.at(-1)?.([], {} as ResizeObserver));
+  expect(viewport.style.getPropertyValue('--md-carousel-large-count')).toBe('4');
+
+  // Re-rendering with the same cap leaves the layout alone.
+  lengths.large = 200;
+  rerender(<Carousel label="Cap">{items}</Carousel>);
+  expect(viewport.style.getPropertyValue('--md-carousel-large-count')).toBe('4');
+
+  rerender(
+    <Carousel label="Cap" largeItemMaxWidth={200}>
+      {items}
+    </Carousel>,
+  );
+  expect(screen.getByRole('region').style.getPropertyValue('--md-carousel-large-item-max-width')).toBe('200px');
+  // (1408 − 120 − 56 − 8) / (200 + 8) → 6 large items.
+  expect(viewport.style.getPropertyValue('--md-carousel-large-count')).toBe('6');
+  expect(resizeCallbacks).toHaveLength(1);
 });
 
 test('reduced motion disables morphing and responds to media-query changes', () => {
@@ -776,8 +1193,43 @@ test('carousel CSS encodes M3 spacing, shapes, responsive sizing, snapping, touc
   expect(carouselCss).toContain('scroll-snap-type: inline mandatory');
   expect(carouselCss).toContain('scroll-snap-type: block mandatory');
   expect(carouselCss).toContain('scroll-snap-stop: always');
-  expect(carouselCss).toContain('touch-action: pan-y pinch-zoom');
-  expect(carouselCss).toContain('touch-action: pan-x pinch-zoom');
   expect(carouselCss).toContain('@media (prefers-reduced-motion: reduce)');
   expect(carouselCss).not.toContain('!important');
+});
+
+function cssRule(selector: string) {
+  const start = carouselCss.indexOf(`\n${selector} {`);
+  expect(start).toBeGreaterThanOrEqual(0);
+  return carouselCss.slice(start, carouselCss.indexOf('\n}', start));
+}
+
+test('carousel viewports leave both pan axes to the browser so every layout can be swiped', () => {
+  // The browser has to own the strip's own scroll axis, or touch swipes cannot scroll it.
+  expect(cssRule('.md-carousel__viewport')).toContain('touch-action: pan-x pan-y pinch-zoom;');
+  expect(carouselCss.match(/touch-action:/g)).toHaveLength(1);
+});
+
+test('full-screen items keep the 8dp carousel gap', () => {
+  const fullScreen = cssRule('.md-carousel__viewport[data-layout="full-screen"]');
+  expect(fullScreen).toContain('flex-direction: column;');
+  expect(fullScreen).not.toMatch(/\n {2}gap:/);
+  expect(cssRule('.md-carousel__viewport')).toContain('gap: var(--md-carousel-gap);');
+});
+
+test('large items reserve their gaps from the gap token, and items are never scaled', () => {
+  const item = cssRule('.md-carousel-item');
+  expect(item).toMatch(/\(var\(--md-carousel-large-count\) \+ 1\) \*\s+var\(--md-carousel-gap\)/);
+  expect(carouselCss).not.toContain('reserved-gaps');
+  expect(item).not.toContain('transform');
+});
+
+test('the length probe is out of flow, unpainted, and sized from the multi-browse tokens', () => {
+  const probe = cssRule('.md-carousel__probe');
+  expect(probe).toContain('position: absolute;');
+  expect(probe).toContain('visibility: hidden;');
+  expect(probe).toContain('inline-size: 100cqi;');
+  expect(probe).toContain('inline-size: var(--md-carousel-large-item-max-width);');
+  expect(probe).toContain('inline-size: var(--md-carousel-medium-item-width);');
+  expect(probe).toContain('inline-size: var(--md-carousel-small-item-width);');
+  expect(probe).toContain('inline-size: var(--md-carousel-gap);');
 });

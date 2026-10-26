@@ -1,7 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { CSSProperties } from 'react';
 
 import { Button } from '../src/components/Button/button';
-import { Carousel, CarouselItem, type CarouselLayout } from '../src/components/Carousel/carousel';
+import {
+  Carousel,
+  CarouselItem,
+  type CarouselLayout,
+  type CarouselScrollMode,
+} from '../src/components/Carousel/carousel';
 
 const meta = {
   title: 'Containment/Carousel',
@@ -89,10 +95,25 @@ const showAll = (
   </Button>
 );
 
-function LayoutExample({ layout, title }: { layout: CarouselLayout; title: string }) {
+function LayoutExample({
+  layout,
+  title,
+  scrollMode,
+}: {
+  layout: CarouselLayout;
+  title: string;
+  scrollMode?: CarouselScrollMode;
+}) {
   return (
     <div style={{ paddingBlock: 24 }}>
-      <Carousel label={title} title={title} layout={layout} showAllAction={showAll} itemHeight={260}>
+      <Carousel
+        label={title}
+        title={title}
+        layout={layout}
+        scrollMode={scrollMode}
+        showAllAction={showAll}
+        itemHeight={260}
+      >
         {Items({})}
       </Carousel>
     </div>
@@ -124,6 +145,18 @@ export const Playground: Story = {
 
 export const MultiBrowse: Story = {
   render: () => <LayoutExample layout="multi-browse" title="Multi-browse" />,
+};
+
+export const MultiBrowseFreeScroll: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Scrolls without snapping. When it comes to rest, the items morph around the item nearest the start, and the carousel keeps that item where the scroll left it.',
+      },
+    },
+  },
+  render: () => <LayoutExample layout="multi-browse" title="Free scrolling" scrollMode="free" />,
 };
 
 export const Uncontained: Story = {
@@ -214,6 +247,30 @@ export const HighItemCount: Story = {
             </CarouselItem>
           );
         })}
+      </Carousel>
+    </div>
+  ),
+};
+
+export const CustomSpacing: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The multi-browse sizes are tokens. A wider `--md-carousel-gap` still fills the row exactly: the large items give up the extra space.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ paddingBlock: 24 }}>
+      <Carousel
+        label="Wider gap"
+        title="16px gap"
+        showAllAction={showAll}
+        itemHeight={220}
+        style={{ '--md-carousel-gap': '16px' } as CSSProperties}
+      >
+        {Items({})}
       </Carousel>
     </div>
   ),
