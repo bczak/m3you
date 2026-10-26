@@ -319,14 +319,14 @@ describe('ExtendedFAB kit geometry and elevation', () => {
 
     // Kit Small: 16dp inline padding instead of Button md's 24dp.
     const md = cssBlock(root, '&[data-size="md"]');
-    expect(md).toContain('padding-inline: calc(16px - var(--_outline-width));');
+    expect(md).toContain('padding-inline: calc(16px - var(--_outline-width, 0px));');
     expect(md).toContain('gap: 8px;');
     expect(md).toContain('border-radius: var(--md-sys-shape-corner-large);');
 
     // fabSize="medium" also resolves to data-size="md"; its 26dp padding wins on source order.
     expect(root.indexOf('&[data-size="md"] {')).toBeLessThan(root.indexOf('&[data-fab-size="medium"] {'));
     expect(cssBlock(root, '&[data-fab-size="medium"]')).toContain(
-      'padding-inline: calc(26px - var(--_outline-width));',
+      'padding-inline: calc(26px - var(--_outline-width, 0px));',
     );
   });
 
@@ -335,7 +335,7 @@ describe('ExtendedFAB kit geometry and elevation', () => {
     expect(screen.getByRole('button', { name: 'Compose' })).toHaveAttribute('data-size', 'lg');
 
     const lg = cssBlock(root, '&[data-size="lg"]');
-    expect(lg).toContain('padding-inline: calc(28px - var(--_outline-width));');
+    expect(lg).toContain('padding-inline: calc(28px - var(--_outline-width, 0px));');
     expect(lg).toContain('gap: 16px;');
     expect(lg).toContain('border-radius: var(--md-sys-shape-corner-extra-large);');
     expect(cssBlock(lg, '& svg')).toMatch(/width: 36px;\s*height: 36px;/);
@@ -344,13 +344,16 @@ describe('ExtendedFAB kit geometry and elevation', () => {
   test('every size takes the outlined stroke out of its inline padding, as Button does', () => {
     // Button's outlined md/lg set --_outline-width (1px / 2px) and subtract it from
     // their own padding; a flat literal here would make outlined FABs 2-4px wider.
+    // The 0px fallback matters: without it, a Button stylesheet that does not define
+    // the property makes every calc() invalid at computed-value time, and the
+    // padding of filled FABs collapses to 0.
     const paddings = [...root.matchAll(/padding-inline: ([^;]+);/g)].map((m) => m[1]);
     expect(paddings).toEqual([
-      'calc(16px - var(--_outline-width))',
-      'calc(28px - var(--_outline-width))',
-      'calc(16px - var(--_outline-width))',
-      'calc(26px - var(--_outline-width))',
-      'calc(28px - var(--_outline-width))',
+      'calc(16px - var(--_outline-width, 0px))',
+      'calc(28px - var(--_outline-width, 0px))',
+      'calc(16px - var(--_outline-width, 0px))',
+      'calc(26px - var(--_outline-width, 0px))',
+      'calc(28px - var(--_outline-width, 0px))',
     ]);
   });
 

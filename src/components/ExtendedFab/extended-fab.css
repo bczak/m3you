@@ -26,14 +26,14 @@
 
   /* Kit Small: 16dp inline padding, 8dp gap, corner-large. */
   &[data-size="md"] {
-    padding-inline: calc(16px - var(--_outline-width));
+    padding-inline: calc(16px - var(--_outline-width, 0px));
     gap: 8px;
     border-radius: var(--md-sys-shape-corner-large);
   }
 
   /* Kit Large: 28dp inline padding, 16dp gap, 36dp icon, corner-extra-large. */
   &[data-size="lg"] {
-    padding-inline: calc(28px - var(--_outline-width));
+    padding-inline: calc(28px - var(--_outline-width, 0px));
     gap: 16px;
     border-radius: var(--md-sys-shape-corner-extra-large);
 
@@ -49,7 +49,7 @@
   &[data-fab-size="small"] {
     --_height: 56px;
     height: var(--_height);
-    padding-inline: calc(16px - var(--_outline-width));
+    padding-inline: calc(16px - var(--_outline-width, 0px));
     gap: 8px;
     border-radius: var(--md-sys-shape-corner-large);
     font-family: var(--md-sys-typescale-title-medium-font);
@@ -67,7 +67,7 @@
   &[data-fab-size="medium"] {
     --_height: 80px;
     height: var(--_height);
-    padding-inline: calc(26px - var(--_outline-width));
+    padding-inline: calc(26px - var(--_outline-width, 0px));
     gap: 12px;
     border-radius: var(--md-sys-shape-corner-large-increased);
     font-family: var(--md-sys-typescale-title-large-font);
@@ -85,7 +85,7 @@
   &[data-fab-size="large"] {
     --_height: 96px;
     height: var(--_height);
-    padding-inline: calc(28px - var(--_outline-width));
+    padding-inline: calc(28px - var(--_outline-width, 0px));
     gap: 16px;
     border-radius: var(--md-sys-shape-corner-extra-large);
     font-family: var(--md-sys-typescale-headline-small-font);
